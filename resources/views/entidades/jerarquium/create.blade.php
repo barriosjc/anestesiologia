@@ -10,6 +10,14 @@
             <div class="col-md-12">
 
                 @includeif('partials.errors')
+                @if ($message = Session::get('success'))
+        <div class="alert alert-success">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+        <div class="alert alert-danger">
+            <p>{{ $message }}</p>
+        </div>
 
                 <div class="card card-default">
                     <div class="card-header">
@@ -19,7 +27,7 @@
                         <form method="POST" action="{{ route('jerarquias.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
-                            @include('jerarquium.form')
+                            @include('entidades.jerarquium.form')
 
                         </form>
                     </div>

@@ -20,7 +20,7 @@
                             {{ method_field('PATCH') }}
                             @csrf
 
-                            @include('jerarquium.form')
+                            @include('entidades.jerarquium.form')
 
                         </form>
                     </div>

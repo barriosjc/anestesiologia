@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Jerarquium;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Empresa; 
+use Exception;
+use Throwable;
+// use Carbon\Exceptions\Exception;
 
 /**
  * Class JerarquiumController
@@ -18,10 +23,13 @@ class JerarquiumController extends Controller
      */
     public function index()
     {
-        $jerarquium = Jerarquium::paginate();
+        $jerarquiums = Jerarquium::paginate();
+        $users = User::all();
+        $jefeusers = User::all();
+        $empresas = Empresa::all();
 
-        return view('jerarquium.index', compact('jerarquium'))
-            ->with('i', (request()->input('page', 1) - 1) * $jerarquium->perPage());
+        return view('entidades.jerarquium.index', compact('jerarquiums', "users", "jefeusers", "empresas"))
+            ->with('i', (request()->input('page', 1) - 1) * $jerarquiums->perPage());
     }
 
     /**
@@ -32,7 +40,14 @@ class JerarquiumController extends Controller
     public function create()
     {
         $jerarquium = new Jerarquium();
-        return view('jerarquium.create', compact('jerarquium'));
+        $users = User::all();
+        $jefeusers = User::all();
+        // $empresas = Empresa::pluck("razon_social", "id")->toArray();
+        // $empresas = ["0" => " --- Select ---"] + $empresas;
+        $empresas = Empresa::select("razon_social", "id")->get();
+
+
+        return view('entidades.jerarquium.create',  compact('jerarquium', "users", "jefeusers", "empresas"));
     }
 
     /**
@@ -44,9 +59,16 @@ class JerarquiumController extends Controller
     public function store(Request $request)
     {
         request()->validate(Jerarquium::$rules);
+        try {   
+                $jerarquium = Jerarquium::create($request->all());
 
-        $jerarquium = Jerarquium::create($request->all());
+        } catch (Throwable $e) {
 
+
+            //dd($e->getMessage());
+            $msg = "Error reportado: ".$e->getMessage();
+            return back()->withErrors(['message' => $msg]);
+        }
         return redirect()->route('jerarquias.index')
             ->with('success', 'Jerarquium created successfully.');
     }
@@ -61,7 +83,7 @@ class JerarquiumController extends Controller
     {
         $jerarquium = Jerarquium::find($id);
 
-        return view('jerarquium.show', compact('jerarquium'));
+        return view('entidades.jerarquium.show', compact('jerarquium'));
     }
 
     /**
@@ -74,7 +96,7 @@ class JerarquiumController extends Controller
     {
         $jerarquium = Jerarquium::find($id);
 
-        return view('jerarquium.edit', compact('jerarquium'));
+        return view('entidades.jerarquium.edit', compact('jerarquium'));
     }
 
     /**

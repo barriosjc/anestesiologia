@@ -28,6 +28,11 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
+                    @if ($errors = Session::get('danger'))
+                        <div class="alert alert-danger">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
 
                     <div class="card-body">
                         <div class="table-responsive">
@@ -44,13 +49,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($jerarquium as $jerarquium)
+                                    @foreach ($jerarquiums as $jerarquium)
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             
 											<td>{{ $jerarquium->users_id }}</td>
 											<td>{{ $jerarquium->users_empresas_id }}</td>
-											<td>{{ $jerarquium->user_jefe_id }}</td>
+											<td>{{ $jerarquium->jefe_user_id }}</td>
 
                                             <td>
                                                 <form action="{{ route('jerarquias.destroy',$jerarquium->id) }}" method="POST">
@@ -68,7 +73,7 @@
                         </div>
                     </div>
                 </div>
-                {!! $jerarquium->links() !!}
+                {!! $jerarquiums->links() !!}
             </div>
         </div>
     </div>

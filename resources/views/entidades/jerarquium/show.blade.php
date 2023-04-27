@@ -30,7 +30,7 @@
                         </div>
                         <div class="form-group">
                             <strong>User Jefe Id:</strong>
-                            {{ $jerarquium->user_jefe_id }}
+                            {{ $jerarquium->jefe_user_id }}
                         </div>
 
                     </div>

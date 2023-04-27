@@ -13,17 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.main');
-});
-
 // Route::get('/main', function () {
 //     return view('layouts.main');
 // });
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\GrupalController;
@@ -33,7 +27,10 @@ use App\Http\Controllers\PeriodoController;
 use App\Http\Controllers\PeriodosMensualController;
 
 Route::group(['middleware' => 'auth'], function() {
-Route::resources( ['empresas' => EmpresaController::class, 
+    Route::get('/', function () {
+        return view('layouts.main');
+    });    
+    Route::resources( ['empresas' => EmpresaController::class, 
                     'grupals' => GrupalController::class,
                     'grupalusers' => grupalUserController::class,
                     'jerarquias' => JerarquiumController::class,
