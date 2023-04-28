@@ -24,7 +24,8 @@ use App\Http\Controllers\GrupalController;
 use App\Http\Controllers\GrupalUserController;
 use App\Http\Controllers\JerarquiumController;
 use App\Http\Controllers\PeriodoController;
-use App\Http\Controllers\PeriodosMensualController;
+// use App\Http\Controllers\PeriodosMensualController;
+use App\Http\Controllers\encuestas\EncuestaController;
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/', function () {
@@ -35,7 +36,7 @@ Route::group(['middleware' => 'auth'], function() {
                     'grupalusers' => grupalUserController::class,
                     'jerarquias' => JerarquiumController::class,
                     'periodos' => PeriodoController::class,
-                    'periodosmensual' => PeriodosMensualController::class,
                     ]
     );
+    Route::get('encuesta', [EncuestaController::class, 'index']);
 });

@@ -15,16 +15,17 @@
 </head>
 
 <body class="nav-fixed">
-    @include('layouts.bloques.header')
+    @include('layouts.main_secciones.header')
 
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            @include('layouts.bloques.sidebar')
+            @include('layouts.main_secciones.sidebar')
         </div>
         <div id="layoutSidenav_content">
-            @include('layouts.bloques.contenido')
+            {{-- @include('layouts.main_secciones.contenido') --}}
+            @include('encuestas.encuesta')
 
-            @include('layouts.bloques.footer')
+            @include('layouts.main_secciones.footer')
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

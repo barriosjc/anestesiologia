@@ -44,6 +44,7 @@ class Empresa extends Model
     {
         return $this->hasMany('App\Models\Encuesta', 'empresas_id', 'id');
     }
+
     
 
 }
