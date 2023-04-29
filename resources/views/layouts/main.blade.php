@@ -22,8 +22,7 @@
             @include('layouts.main_secciones.sidebar')
         </div>
         <div id="layoutSidenav_content">
-            {{-- @include('layouts.main_secciones.contenido') --}}
-            @include('encuestas.encuesta')
+            @include('layouts.main_secciones.contenido')
 
             @include('layouts.main_secciones.footer')
         </div>

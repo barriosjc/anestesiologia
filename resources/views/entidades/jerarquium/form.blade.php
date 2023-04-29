@@ -7,11 +7,10 @@
                 <option value=""> --- Select ---</option>
                 @foreach ($empresas as $data)
                     <option value="{{ $data->id }}"
-                        {{ isset($empresas->id) && $empresas->id == $data->id ? 'selected' : '' }}>
+                        {{ isset($jerarquiums->users_empresas_id) && $jerarquiums->users_empresas_id == $data->id ? 'selected' : '' }}>
                         {{ $data->razon_social }}</option>
                 @endforeach
             </select>
-
         </div>
         <div class="form-group">
             {{ Form::label('Jefe') }}
@@ -19,7 +18,7 @@
                 <option value=""> --- Select ---</option>
                 @foreach ($jefeusers as $data)
                     <option value="{{ $data->id }}"
-                        {{ isset($jefeusers->id) && $jefeusers->id == $data->id ? 'selected' : '' }}>
+                        {{ isset($jerarquiums->jefe_user_id) && $jerarquiums->jefe_user_id== $data->id ? 'selected' : '' }}>
                         {{ $data->name }}</option>
                 @endforeach
             </select>
@@ -30,7 +29,7 @@
                 <option value=""> --- Select ---</option>
                 @foreach ($users as $data)
                     <option value="{{ $data->id }}"
-                        {{ isset($users->id) && $users->id == $data->id ? 'selected' : '' }}>
+                        {{ isset($jerarquiums->user_id) && $jerarquiums->user_id == $data->id ? 'selected' : '' }}>
                         {{ $data->name }}</option>
                 @endforeach
             </select>            

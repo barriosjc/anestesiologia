@@ -16,7 +16,8 @@ class Encuesta extends Model
         ->join('opciones as o', 'o.id', 'eo.opciones_id')
         ->join('periodos as p', 'p.encuestas_id', 'encuestas.id')
         ->where('p.desde', '<=', date('Y-m-d'))
-        ->where('p.hasta', '>=', date('Y-m-d'));
+        ->where('p.hasta', '>=', date('Y-m-d'))
+        ->orderby('eo.orden', 'asc');
 
         return $resu;
     }

@@ -94,9 +94,9 @@ class JerarquiumController extends Controller
      */
     public function edit($id)
     {
-        $jerarquium = Jerarquium::find($id);
+        $jerarquiums = Jerarquium::find($id);
 
-        return view('entidades.jerarquium.edit', compact('jerarquium'));
+        return view('entidades.jerarquium.edit', compact('jerarquiums'));
     }
 
     /**

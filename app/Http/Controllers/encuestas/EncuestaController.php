@@ -5,7 +5,9 @@ namespace App\Http\Controllers\encuestas;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Encuesta;
- 
+use App\Models\Grupal;
+use App\Models\User;
+
 class EncuestaController extends Controller
 {
     /**
@@ -16,8 +18,12 @@ class EncuestaController extends Controller
     public function index()
     {
         $encuesta = Encuesta::v_encuesta_actual()->get();
-var_dump($encuesta);
-        return view('encuestas.encuesta', compact('encuesta'));
+        //traer todos los usuarios de la empresa y excluye al users_id
+        $users = User::all();    
+        //traer todos los grupos de la empresa del usuario
+        $grupal = Grupal::all();
+         
+        return view('encuestas.encuesta', compact('encuesta', 'users', 'grupal'));
     }
        
 }
