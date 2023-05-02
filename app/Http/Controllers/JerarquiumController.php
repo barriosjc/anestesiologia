@@ -63,8 +63,6 @@ class JerarquiumController extends Controller
                 $jerarquium = Jerarquium::create($request->all());
 
         } catch (Throwable $e) {
-
-
             //dd($e->getMessage());
             $msg = "Error reportado: ".$e->getMessage();
             return back()->withErrors(['message' => $msg]);

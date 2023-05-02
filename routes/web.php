@@ -23,9 +23,13 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\GrupalController;
 use App\Http\Controllers\GrupalUserController;
 use App\Http\Controllers\JerarquiumController;
-use App\Http\Controllers\PeriodoController;
-// use App\Http\Controllers\PeriodosMensualController;
+use App\Http\Controllers\PeriodoController; 
+use App\Http\Controllers\OpcionController;
 use App\Http\Controllers\encuestas\EncuestaController;
+
+Route::get("tabla", function(){
+    return view('tables');
+});
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/', function () {
@@ -36,7 +40,11 @@ Route::group(['middleware' => 'auth'], function() {
                     'grupalusers' => grupalUserController::class,
                     'jerarquias' => JerarquiumController::class,
                     'periodos' => PeriodoController::class,
+                    'opcion' => OpcionController::class,
                     ]
     );
-    Route::get('encuesta', [EncuestaController::class, 'index']);
+    Route::get('respuesta', [EncuestaController::class, 'index'])->name('respuesta');
+    Route::post('respuesta/store', [EncuestaController::class, 'store'])->name('respuesta.store');
+    Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
+    Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
 });
