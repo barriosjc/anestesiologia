@@ -28,7 +28,7 @@ use App\Http\Controllers\OpcionController;
 use App\Http\Controllers\encuestas\EncuestaController;
 
 Route::get("tabla", function(){
-    return view('tables');
+    return view('layouts.ejemplo');
 });
 
 Route::group(['middleware' => 'auth'], function() {

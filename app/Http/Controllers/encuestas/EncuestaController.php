@@ -14,6 +14,7 @@ use App\Models\Opcion;
 use App\Models\resultado_grupal;
 use App\Models\resultado_individual;
 use App\Models\empresa;
+use App\Models\encuesta_opcion;
 use App\Models\Periodo;
 use Exception;
 
@@ -48,8 +49,13 @@ class EncuestaController extends Controller
         $opciones = Opcion::all();
         $empresas = empresa::all();
         $periodos = Periodo::all();
+        $encuestas_opciones = encuesta_opcion::all();
+        $encuestas =  $encuesta = Encuesta::v_encuestas()->get();
+        $encuestas_id = null;
+        $empresas_id = null;
 
-        return view('encuestas.create', compact('opciones','empresas','periodos'));
+        return view('encuestas.create', compact('opciones','empresas','periodos', 'encuestas_opciones', 'encuestas_id', 
+                            'empresas_id', 'encuestas'));
     }
 
     /**
@@ -60,7 +66,7 @@ class EncuestaController extends Controller
      */
     public function store(Request $request)
     {
-        $valant= [];
+        // $valant= [];
         $this->validate($request, [
             'observaciones' => 'max:200',
         ]);
@@ -83,9 +89,9 @@ class EncuestaController extends Controller
             $campos = "observaciones, adjunto, users_id, encuestas_id";
             $data = $this->conDatos($request, $campos);
             //  dd($data);
-            if(!isset($request->observaicones)){
-                $valant['observaciones'] = $request->observaicones;
-            }
+            // if(!isset($request->observaicones)){
+            //     $valant['observaciones'] = $request->observaicones;
+            // }
 
             $encuesta_result = new encuesta_resultado();
             $encuesta_result->encuestas_id = $data['encuestas_id'];
@@ -126,7 +132,35 @@ class EncuestaController extends Controller
     }
 
     public function create_store(Request $request){
-        dc($request);
+        $this->validate($request, [
+            'empresas_id' => ['required'],
+            'opcionesxcol' => ['required', 'in:[2,3,4,5]'],
+            'encuesta' =>['required', 'max:50'],
+            'edicion' => ['required', 'max:200'],
+        ]);
+        try {
+            if (empty($request->id)) {
+                $encuesta = new Encuesta();
+            } else {
+                $encuesta = Encuesta::where("id", $request->id);
+            }
+            $encuesta->empresas_id = $request->empresas_id;
+            $encuesta->encuesta = $request->encuesta;
+            $encuesta->edicion = $request->edicion;
+            $encuesta->opcionesxcol = $request->opcionesxcol;
+            $encuesta->habilitada = isset($request->habilitada) ? 1 : 0;
+            $encuesta->save();
+
+        } catch (Throwable $e) {
+           // dd($e->getMessage());
+            $msg = $e->getMessage();
+            return back()
+                    ->withInput($request->input())
+                    ->withErrors(['danger' => $msg]);
+        }
+// dd("va po el back");
+        return back()->withInput($request->input())
+                     ->with(['success' => "Se creo correctamente la cabecera de la encuesta."]);
 
     }
 
