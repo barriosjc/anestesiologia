@@ -45,6 +45,12 @@ class Empresa extends Model
         return $this->hasMany('App\Models\Encuesta', 'empresas_id', 'id');
     }
 
-    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function users()
+    {
+        return $this->hasMany('App\Models\user', 'empresas_id', 'id');
+    }
 
 }

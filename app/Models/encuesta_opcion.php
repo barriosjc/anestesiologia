@@ -60,18 +60,12 @@ class encuesta_opcion extends Model
         return $this->hasMany('App\EncuestasResultado', 'encuestas_opciones_id');
     }
 
-    public static function v_opciones_encuestas() {
+    public static function v_encuestas_opciones() {
         $resu = encuesta_opcion::query()
-        ->select(['eo.encuestas_id', 'encuesta', 'edicion', 'encuestas.habilitada as e_habilitada', 'empresas_id', 
-        'periodos_id', 'opcionesxcol', 'p.descrip_rango', 'p.desde', 'p.hasta',
-        'eo.id as encuestas_opciones_id', 'opciones_id', 'eo.puntos as eo_puntos', 'orden',
-        'descripcion', 'detalle', 'imagen', 'style', 'o.habilitada as o_habilitada', 'o.puntos as o_puntos'])
-        ->join('encuestas_opciones as eo', 'eo.encuestas_id', 'encuestas.id' )
-        ->join('opciones as o', 'o.id', 'eo.opciones_id')
-        ->join('periodos as p', 'p.id', 'periodos_id')
-        ->where('p.desde', '<=', date('Y-m-d'))
-        ->where('p.hasta', '>=', date('Y-m-d'))
-        ->orderby('eo.orden', 'asc');
+        ->select([ 'encuestas_opciones.id', 'encuestas_id', 'orden', 'encuestas_opciones.style', 'encuestas_opciones.puntos',
+        'o.id as opcion_id', 'o.descripcion', 'o.detalle', 'o.imagen', 'o.habilitada'])
+        ->join('opciones as o', 'o.id', 'encuestas_opciones.opciones_id')
+        ->orderby('encuestas_opciones.orden', 'asc');
 // dd("tabla encuesta",$resu);
         return $resu;
     }

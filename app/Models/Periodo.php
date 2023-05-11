@@ -39,6 +39,26 @@ class Periodo extends Model
      */
     protected $fillable = ['descripcion','desde','hasta'];
 
+    
+    public function getDesdeAttribute($value)
+    {
+        $resu = '';
+        if (!empty($value)) {
+            $resu = date('d/m/Y', strtotime($value));
+        }
+
+        return $resu;
+    }
+
+    public function getHastaAttribute($value)
+    {
+        $resu = '';
+        if (!empty($value)) {
+            $resu = date('d/m/Y', strtotime($value));
+        }
+
+        return $resu;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

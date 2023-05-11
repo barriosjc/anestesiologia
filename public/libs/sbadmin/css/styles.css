@@ -11111,6 +11111,11 @@ textarea.form-control-lg {
   border-radius: var(--bs-border-radius-pill) !important;
 }
 
+.rounded-pill-yes-no {
+  border-radius: var(--bs-border-radius-pill) !important;
+  width:35px;
+}
+
 .rounded-top {
   border-top-left-radius: var(--bs-border-radius) !important;
   border-top-right-radius: var(--bs-border-radius) !important;

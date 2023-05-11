@@ -4,7 +4,7 @@
 @section('contenido')
     <link href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" />
 
-    <!-- Main page content-->
+    {{-- Main page content--}}
     <div class="container-fluid px-4">
         <div class="row gx-4">
             <div class="col-lg-12">

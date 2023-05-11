@@ -26,9 +26,13 @@ use App\Http\Controllers\JerarquiumController;
 use App\Http\Controllers\PeriodoController; 
 use App\Http\Controllers\OpcionController;
 use App\Http\Controllers\encuestas\EncuestaController;
+use App\Http\Controllers\encuestas\RespuestaController;
 
 Route::get("tabla", function(){
     return view('layouts.ejemplo');
+});
+Route::get("create_wiz", function(){
+    return view('encuestas.create_wiz');
 });
 
 Route::group(['middleware' => 'auth'], function() {
@@ -43,8 +47,12 @@ Route::group(['middleware' => 'auth'], function() {
                     'opcion' => OpcionController::class,
                     ]
     );
-    Route::get('respuesta', [EncuestaController::class, 'index'])->name('respuesta');
-    Route::post('respuesta/store', [EncuestaController::class, 'store'])->name('respuesta.store');
-    Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
-    Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
+    Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
+    Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
+    Route::group(['middleware' => ['can:creacion de encuestas']], function () {
+        Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
+        Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
+        Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');    
+        Route::post('opcion/store', [EncuestaController::class, 'opcion_store'])->name('opcion.store');
+    });
 });

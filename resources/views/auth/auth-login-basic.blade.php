@@ -11,7 +11,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Login - SB Admin Pro</title>
-    <!-- <link href="css/styles.css" rel="stylesheet" /> -->
+    {{-- <link href="css/styles.css" rel="stylesheet" /> --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.png') }}" />
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
@@ -24,20 +24,20 @@
                 <div class="container-xl px-4">
                     <div class="row justify-content-center">
                         <div class="col-lg-5">
-                            <!-- Basic login form-->
+                            {{-- Basic login form--}}
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header justify-content-center">
                                     <h3 class="fw-light my-4">Login</h3>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Login form-->
-                                    <!-- <form> -->
+                                    {{-- Login form--}}
+                                    {{-- <form> --}}
                                     <form method="POST" action="{{ route('login') }}">
                                         @csrf
-                                        <!-- Form Group (email address)-->
+                                        {{-- Form Group (email address)--}}
                                         <div class="mb-3">
                                             <label class="small mb-1" for="inputEmailAddress">Email</label>
-                                            <!-- <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter email address" /> -->
+                                            {{-- <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter email address" /> --}}
                                             <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="Enter email address" required autocomplete="email" autofocus>
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">
@@ -45,10 +45,10 @@
                                             </span>
                                             @enderror
                                         </div>
-                                        <!-- Form Group (password)-->
+                                        {{-- Form Group (password)--}}
                                         <div class="mb-3">
                                             <label class="small mb-1" for="inputPassword">Password</label>
-                                            <!-- <input class="form-control" id="inputPassword" type="password" placeholder="Enter password" /> -->
+                                            {{-- <input class="form-control" id="inputPassword" type="password" placeholder="Enter password" /> --}}
                                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Enter password" required autocomplete="current-password">
                                             @error('password')
                                             <span class="invalid-feedback" role="alert">
@@ -56,17 +56,17 @@
                                             </span>
                                             @enderror
                                         </div>
-                                        <!-- Form Group (remember password checkbox)-->
+                                        {{-- Form Group (remember password checkbox)--}}
                                         <div class="mb-3">
                                             <div class="form-check">
                                                 <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
                                                 <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
                                             </div>
                                         </div>
-                                        <!-- Form Group (login box)-->
+                                        {{-- Form Group (login box)--}}
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                             <a class="small" href="auth-password-basic.html">Forgot Password?</a>
-                                            <!-- <a class="btn btn-primary" type="submit">Login</a> -->
+                                            {{-- <a class="btn btn-primary" type="submit">Login</a> --}}
                                             <button type="submit" class="btn btn-primary">
                                                 {{ __('Login') }}
                                             </button>
@@ -98,7 +98,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <!-- <script src="js/scripts.js"></script> -->
+    {{-- <script src="js/scripts.js"></script> --}}
 </body>
 
 </html>

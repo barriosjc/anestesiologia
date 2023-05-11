@@ -2,6 +2,7 @@
 
 @section('titulo', $titulo)
 @section('contenido')
+<div class="container-fluid px-4">
     <ul class="navbar navbar-expand-lg navbar-light bg-light">
         <li class="nav-item">
             <h6>Paso 1.</h6>
@@ -10,8 +11,8 @@
     <form method="POST" action="{{ route('respuesta.store') }}"  role="form">
     @csrf
     <input type="hidden" name="users_id" value="{{auth()->id()}}">
-    <input type="hidden" name="encuestas_id" value="{{count($encuesta) ? $encuesta[0]->encuestas_id : null}}">
-    @foreach ($encuesta as $item)
+    <input type="hidden" name="encuestas_id" value="{{$encuestas==null || count($encuestas) ? $encuestas[0]->encuestas_id : null}}">
+    @foreach ($encuestas as $item)
         @if (!($loop->index % $item->opcionesxcol))
             {{$cierra = false}}
             <div class="row">
@@ -96,7 +97,7 @@
             </div>
         </div>
     </form>
-
+</div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const option1 = document.querySelector('#ck_individual');

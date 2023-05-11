@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Model\User;   
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -14,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -24,6 +26,11 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        //si tiene role de super admin tiene permiso a todo
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super-admin');
+        });
 
         //
     }
