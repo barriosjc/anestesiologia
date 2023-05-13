@@ -1,6 +1,6 @@
 <br/>
+<div class="container-fluid">
 <div class="flex-center position-ref full-height">
-  <div class="content">
     <div class="row">
       <div class="col-md-12">
         <div class="card">

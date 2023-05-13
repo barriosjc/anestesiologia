@@ -1,9 +1,9 @@
 @extends('layouts.main')
 
-@section('titulo', "Permisos")
+@section('titulo', "Seguridad")
 @section('contenido')
+<div class="container-fluid">
 <div class="flex-center position-ref full-height">
-  <div class="content">
     <div class="row">
       <div class="col-md-12">
         <div class="card">
