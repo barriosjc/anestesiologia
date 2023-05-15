@@ -55,16 +55,22 @@ protected $paginationTheme = 'bootstrap';
     public function render()
     {
         $titulo = "Alta de una encuesta";
+        $cant_per = null;
+        $cant_opc = null;
         if (Auth()->user()->empresas_id === 0) {
         $empresas = empresa::all();
         $encuestas =  $encuesta = Encuesta::v_encuestas()
                         ->paginate(5, ['*'], '_encuestas');
-        $periodos = Periodo::
-                        where('encuestas_id', $this->encuestas_id_selected)
+        $periodos = Periodo::where('encuestas_id', $this->encuestas_id_selected)
                         ->paginate(5, ['*'], '_periodos');
+        $cant_per = Periodo::where('encuestas_id', $this->encuestas_id_selected)
+                        ->count();
         $encuestas_opciones = encuesta_opcion::v_encuestas_opciones()
                         ->where('encuestas_id', $this->encuestas_id_selected)
                         ->paginate(5, ['*'], '_opciones');
+        $cant_opc =  encuesta_opcion::v_encuestas_opciones()
+                        ->where('encuestas_id', $this->encuestas_id_selected)
+                        ->count();
         $opciones = Opcion::all();
         } else {
             $empresas = empresa::where("id", Auth()->user()->empresas_id)
@@ -87,7 +93,7 @@ protected $paginationTheme = 'bootstrap';
         // $empresas_id = null;
 
         return view('livewire.create-encuesta')->with(compact('titulo', 'empresas', 'encuestas', 'periodos', 
-                                'encuestas_opciones', 'opciones'));
+                                'encuestas_opciones', 'opciones', 'cant_per', 'cant_opc'));
     }
 
     public function itemEncuestas_id($id)
@@ -256,6 +262,7 @@ protected $paginationTheme = 'bootstrap';
             $periodos->descrip_rango = $this->p_descrip_rango;
             $periodos->desde = $this->p_desde;
             $periodos->hasta = $this->p_hasta;
+            $periodos->habilitada = $this->p_habilitada;
             $periodos->save();
         } catch (Throwable $e) {
             // dd($e->getMessage());
@@ -315,5 +322,18 @@ protected $paginationTheme = 'bootstrap';
 
     public function selectTab($tab){
         $this->currentTab = $tab;
+    }
+
+    public function borrar_encuesta($idEncuesta) {
+        $msg = "";
+        try {
+            Encuesta::where("id", $idEncuesta)->delete();
+        
+        } catch (Throwable $e) {
+            // dd($e->getMessage());
+            $msg = $e->getMessage();
+
+        }
+        session()->flash('message', 'Encuesta borrada correctamente. <br/>' . $msg );
     }
 }

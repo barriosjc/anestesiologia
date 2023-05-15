@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+{{-- <!DOCTYPE html>
+<html lang="en"> --}}
 
 <head>
     <meta charset="utf-8" />
@@ -34,4 +34,5 @@
     <script src="{{asset('libs/sbadmin/js/scripts.js')}}"></script>
 </body>
 @livewireScripts
-</html>
+@stack('scriptscreateenc')
+{{-- </html> --}}

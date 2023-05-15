@@ -37,7 +37,7 @@ class Periodo extends Model
      *
      * @var array
      */
-    protected $fillable = ['descripcion','desde','hasta'];
+    protected $fillable = ['descripcion','desde','hasta', 'encuestas_id', 'habilitada'];
 
     
     public function getDesdeAttribute($value)
