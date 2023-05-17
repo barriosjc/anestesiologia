@@ -1,48 +1,12 @@
 <div>
     {{-- hecho para livewire --}}
 
-    {{-- <link href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" /> --}}
-    {{-- Main page content --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
-
     <div class="container-fluid px-4">
         {{-- Wizard card example with navigation --}}
         <div class="card">
             <div class="card-header border-bottom">
-                @if (session()->has('message'))
-                    <div class="alert alert-success">
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                @if (session()->has('error'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>
-                                    {{ $error }}
-                                </li>
-                            @endforeach
-                        </ul>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-                {{-- @error('encuestas_id') <span class="error">{{ $message }}</span> @enderror --}}
-
                 {{-- Wizard navigation --}}
-                <div class="nav nav-pills nav-justified flex-column flex-xl-row nav-wizard" id="cardTab"
-                    role="tablist">
+                <div class="nav nav-pills nav-justified flex-column flex-xl-row nav-wizard" id="cardTab" role="tablist">
                     {{-- Wizard navigation item 1 --}}
                     <a class="nav-item nav-link {{ $currentTab == 1 ? 'active' : '' }}" id="wizard1-tab"
                         wire:click="selectTab(1)" data-bs-toggle="tab" role="tab" aria-controls="wizard1"
@@ -52,7 +16,7 @@
                             <div class="wizard-step-text-name">Encuestas</div>
                             <div class="wizard-step-text-details">ABM y listado </div>
                             <div class="wizard-step-text-details">Empresa:
-                                {{ isset(Auth()->user()->empresas->rason_social) ? Auth()->user()->empresas->rason_social : 'Administrador' }}
+                                {{isset(Auth()->user()->empresas->razon_social) ? Auth()->user()->empresas->razon_social : 'Todas'}}
                             </div>
                         </div>
                     </a>
@@ -64,7 +28,8 @@
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Periodos</div>
                             <div class="wizard-step-text-details">ABM y listado asociado a la encuesta</div>
-                            <div class="wizard-step-text-details">{{empty($cant_per)  ? '' : "cargado: ".$cant_per }}</div>
+                            <div class="wizard-step-text-details">{{ empty($cant_per) ? '' : 'cargado: ' . $cant_per }}
+                            </div>
                         </div>
                     </a>
                     {{-- Wizard navigation item 3 --}}
@@ -75,13 +40,15 @@
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Opciones</div>
                             <div class="wizard-step-text-details">ABM y listado asociada a la encuesta</div>
-                            <div class="wizard-step-text-details">{{empty($cant_opc ) ? '' : "cargado: ".$cant_opc }}</div>
+                            <div class="wizard-step-text-details">{{ empty($cant_opc) ? '' : 'cargado: ' . $cant_opc }}
+                            </div>
                         </div>
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="tab-content" id="cardTabContent">
+                    @include('utiles.alerts')
                     {{-- Wizard tab pane item 1 --}}
                     <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 1 ? 'show active' : '' }}" id="wizard1"
                         role="tabpanel" aria-labelledby="wizard1-tab">
@@ -93,7 +60,6 @@
                                     <li class="list-group-item">
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <input type="button" wire:click="prueba2"/>
                                                 {{-- <input type="hidden" name="empresas_id" value={{ $encuestas_id_selected }}> --}}
                                                 <div class="row">
                                                     <div class="col-lg-12">
@@ -137,16 +103,18 @@
                                                                             </td>
                                                                         @endif
                                                                         <td>
-                                                                            <button  class="btn btn-datatable btn-icon btn-transparent-dark me-2">
+                                                                            <button
+                                                                                class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                                wire:click="editar_encuesta({{$encuesta->id}})">
                                                                                 <i class="fa-regular fa-pen-to-square"></i></button>
-                                                                                    <button type="button"
-                                                                                    wire:click="$emit('deleteencuesta', {{$encuesta->id}})"
-                                                                                    title="Borrar encuesta"
-                                                                                    class="btn btn-datatable btn-icon btn-transparent-dark"><i
-                                                                                        class="fa-regular fa-trash-can"></i></button>
-    
+                                                                            <button type="button"
+                                                                                wire:click="$emit('deleteencuesta', {{ $encuesta->id }})"
+                                                                                title="Borrar encuesta"
+                                                                                class="btn btn-datatable btn-icon btn-transparent-dark"><i
+                                                                                    class="fa-regular fa-trash-can"></i></button>
 
-                                                                               
+
+
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -168,7 +136,7 @@
                                             <div class="col-sm-8">
                                                 <select name="empresas_id" class="form-control" id="empresas_id"
                                                     wire:model="e_empresas_id">
-                                                    <option value=""> --- Select ---</option>
+                                                    <option value=""> --- Select ---</option> 
                                                     @foreach ($empresas as $data)
                                                         <option value="{{ $data->id }}">
                                                             {{ $data->razon_social }}</option>
@@ -328,8 +296,8 @@
                                                 <label for="" class="col-sm-2 col-form-label"></label>
                                                 <div class="col-sm-4">
                                                     <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="checkbox" role="switch"
-                                                            id="habilitada" name="habilitada" checked
+                                                        <input class="form-check-input" type="checkbox"
+                                                            role="switch" id="habilitada" name="habilitada" checked
                                                             wire:model="p_habilitada">
                                                         <label class="form-check-label" for="habilitado">Habilitado
                                                             (No/Si)</label>
@@ -460,14 +428,12 @@
         </div>
     </div>
 
+    @push('scriptscreateenc')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="{{ asset('js/util.js') }}" rel="stylesheet">
 
-{{-- <script src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/datatables.min.js"></script> --}}
-{{-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script> --}}
-@push('scriptscreateenc')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
 
                 window.livewire.on('vermsg', itemId => {
                     Swal.fire({
@@ -475,7 +441,7 @@
                         text: 'Do you want to continue',
                         icon: 'error',
                         confirmButtonText: 'Cool'
-                        });
+                    });
 
                 });
 
@@ -488,31 +454,20 @@
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
                         confirmButtonText: 'Borrar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                @this.call('borrar_encuesta', itemId);
-                                           // success response
-                                responseAlert({
-                                    title: session('message'),
-                                    type: 'success'
-                                });
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_encuesta', itemId);
+                            // success response
+                            $('body, html').animate({
+                                scrollTop: '0px'
+                            }, 300);
+                        } else {
+                            // no se puso nada si cancela
+                        }
 
-                            } else {
-                                responseAlert({
-                                    title: 'Tarea cancelada !',
-                                    type: 'success'
-                                });
-                            }
-                            const tform = document.querySelector('.card'); 
-                            tform.scrollIntoView({ behavior: 'smooth', block: 'start' });   
-                        });
-                     });          
-        });
-    </script>
-@endpush
+                    });
+                });
+            });
+        </script>
+    @endpush
 </div>
-{{-- Swal.fire(
-    'Borrar!',
-    'El dato ha sido borrado',
-    'success'
-    ) --}}
