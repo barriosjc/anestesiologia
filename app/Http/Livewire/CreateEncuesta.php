@@ -46,11 +46,14 @@ protected $paginationTheme = 'bootstrap';
     public $p_descrip_rango = null;
     public $p_desde = null;
     public $p_hasta = null;
+    public $p_habilitada = null;
     //opciones
+    public $opciones_id_modif = null;
     public $o_opciones_id = null;
     public $o_puntos = null;
     public $o_orden = null;
     public $o_style = null;
+    public $o_habilitada= null;
 
     public function render()
     {
@@ -100,28 +103,6 @@ protected $paginationTheme = 'bootstrap';
 
     }
 
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function index()
-    // {
-    //     $titulo = "Alta de una encuesta";
-    //     $opciones = Opcion::all();
-    //     $empresas = empresa::all();
-    //     $periodos = Periodo::all();
-    //     $encuestas_opciones = encuesta_opcion::v_encuestas_opciones()->get();
-    //     //DB::connection()->enableQueryLog();
-    //     $encuestas = Encuesta::v_encuestas()->get();
-    //     //dd( DB::getQueryLog());
-    //     $encuestas_id = null;
-    //     $empresas_id = null;
-
-    //     return view('encuestas.encuesta', compact('encuesta', 'users', 'grupal', 'titulo'));
-    // }
-
     /**
      * Display a listing of the resource.
      *
@@ -150,7 +131,6 @@ protected $paginationTheme = 'bootstrap';
             'encuestas'
         ));
     }
-
     
     public function encuesta_store()
     {
@@ -173,18 +153,16 @@ protected $paginationTheme = 'bootstrap';
             $encuesta->opcionesxcol = $this->e_opcionesxcol;
             $encuesta->habilitada = $this->e_habilitada ? 1 : 0;
             $encuesta->save();
-            $this->encuestas_id_modif = null;
             
-            $this->reset();
+            $this->encuesta_limpiar();
             $this->resetErrorBag();
-            session()->flash('message', "Los de la encuesta se guardaron conrrectamente.");
+            session()->flash('message', "Los datos de la encuesta se guardaron conrrectamente.");
 
         } catch (Throwable $e) {
             // dd($e->getMessage());
             $msg = $e->getMessage();
             session()->flash('error', $msg .'     encuestas se ha podido guardar los datros, error de integridad. Estos datos no se pueden repetir empresa, nombre, ecición');
         }
-
     }
 
     public function editar_encuesta($encuestas_id) {
@@ -198,78 +176,14 @@ protected $paginationTheme = 'bootstrap';
         $this->encuestas_id_modif = $encuestas_id;
     }
 
-    public function periodo_store()
-    {
-        try {
-            if (empty($this->periodos_id_modif)) {
-                $periodos = new periodo();
-            } else {
-                $periodos = periodo::where("id", $this->periodos_id_modif);
-            }
-            $periodos->encuestas_id = $this->encuestas_id_selected;
-            $periodos->descrip_rango = $this->p_descrip_rango;
-            $periodos->desde = $this->p_desde;
-            $periodos->hasta = $this->p_hasta;
-            $periodos->habilitada = $this->p_habilitada;
-            $periodos->save();
-        } catch (Throwable $e) {
-            // dd($e->getMessage());
-            $msg = $e->getMessage();
-            session()->flash('error', 'no se ha podido guardar los datros, error de integridad. no se puede repetir.');
-
-        }
-       // return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
-    }
-
-    public function opcion_store()
-    {
-        $validatedData = $this->validate(
-                ['encuestas_id_selected' => 'required',
-                'o_opciones_id' => 'required',
-                'o_puntos' => ['required','integer', "max:99"],
-                'o_orden' => ['required','integer', "max:99"],
-                'o_style' => ['required', 'max:200]']],
-                ['encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
-                'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.']
-
-            );
-
-        try {
-            if (empty($this->opciones_id_modif)) {
-                $encuestas_opciones = new encuesta_opcion();
-            } else {
-                $encuestas_opciones = encuesta_opcion::where("id", $this->opciones_id_modif);
-            }
-            $encuestas_opciones->encuestas_id = $this->encuestas_id_selected;
-            $encuestas_opciones->opciones_id = $this->o_opciones_id;
-            $encuestas_opciones->puntos = $this->o_puntos;
-            $encuestas_opciones->orden = $this->o_orden;
-            $encuestas_opciones->style = $this->o_style;
-            $encuestas_opciones->save();
-        } catch (Throwable $e) {
-            // dd($e->getMessage());
-            $msg = $e->getMessage();
-            return back()->with(['danger' => $msg]);
-        }
-        return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
-    }
-
-    private function conDatos($request, $campos)
-    {
-        $array = explode(",", $campos);
-        $resu = [];
-        foreach ($array as $campo) {
-            $campo = ltrim($campo);
-            if (isset($request[$campo])) {
-                $resu[$campo] = $request->input($campo);
-            }
-        }
-
-        return $resu;
-    }
-
-    public function selectTab($tab){
-        $this->currentTab = $tab;
+    public function encuesta_limpiar(){
+        $this->reset(['encuestas_id_modif',
+                    'encuestas_id_selected',
+                    'e_empresas_id',
+                    'e_encuesta',
+                    'e_edicion',
+                    'e_opcionesxcol',
+                    'e_habilitada']);
     }
 
     public function borrar_encuesta($idEncuesta) {
@@ -282,6 +196,142 @@ protected $paginationTheme = 'bootstrap';
             $msg = $e->getMessage();
 
         }
-        session()->flash('message', 'Encuesta borrada correctamente.' . $msg );
+        session()->flash('message', 'Encuesta borrada correctamente.' );
     }
+
+    //  -------------------------------------------------------------------------------------------------------------
+    public function periodo_store()
+    {
+        try {
+            if (empty($this->periodos_id_modif)) {
+                $periodos = new periodo();
+            } else {
+                $periodos = periodo::where("id", $this->periodos_id_modif)->first();
+            }
+            $periodos->encuestas_id = $this->encuestas_id_selected;
+            $periodos->descrip_rango = $this->p_descrip_rango;
+            $periodos->desde = $this->p_desde;
+            $periodos->hasta = $this->p_hasta;
+            $periodos->habilitada =  $this->p_habilitada ? 1 : 0;
+            $periodos->save();
+            $this->periodo_limpiar();
+            $this->resetErrorBag();
+            session()->flash('message', "Los datos del periodo se guardaron conrrectamente.");
+
+        } catch (Throwable $e) {
+            // dd($e->getMessage());
+            $msg = $e->getMessage();
+            session()->flash('error', 'no se ha podido guardar los datros, error de integridad. no se puede repetir. '.$msg);
+
+        }
+       // return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
+    }
+
+    public function editar_periodo($periodos_id) {
+
+        $periodo = periodo::where('id', $periodos_id)->first();
+        $this->p_encuestas_id = $periodo->encuestas_id;
+        $this->p_descrip_rango = $periodo->descrip_rango;
+        $this->p_desde = $periodo->desdey;
+        $this->p_hasta = $periodo->hastay;
+        $this->p_habilitada = $periodo->habilitada;
+        $this->periodos_id_modif = $periodos_id;
+
+    }
+
+    public function periodo_limpiar(){
+        $this->reset(['periodos_id_modif',
+                    'p_descrip_rango',
+                    'p_desde',
+                    'p_hasta',
+                    'p_habilitada']);
+    }
+
+    public function borrar_periodo($idPeriodo) {
+        $msg = "";
+        try {
+            Periodo::where("id", $idPeriodo)->delete();
+        
+        } catch (Throwable $e) {
+            // dd($e->getMessage());
+            $msg = $e->getMessage();
+
+        }
+        session()->flash('message', 'Periodo borrado correctamente.'  );
+    }
+
+    //  -------------------------------------------------------------------------------------------------------
+    public function opcion_store()
+    {
+        $validatedData = $this->validate(
+                ['encuestas_id_selected' => 'required',
+                'o_opciones_id' => 'required',
+                'o_puntos' => ['required','integer', "max:99"],
+                'o_orden' => ['required','integer', "max:99"],
+                'o_style' => ['required', 'max:200']],
+                ['encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
+                'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.']
+            );
+
+        try {
+            if (empty($this->opciones_id_modif)) {
+                $encuestas_opciones = new encuesta_opcion();
+            } else {
+                $encuestas_opciones = encuesta_opcion::where("id", $this->opciones_id_modif)->first();
+            }
+            $encuestas_opciones->encuestas_id = $this->encuestas_id_selected;
+            $encuestas_opciones->opciones_id = $this->o_opciones_id;
+            $encuestas_opciones->puntos = $this->o_puntos;
+            $encuestas_opciones->orden = $this->o_orden;
+            $encuestas_opciones->style = $this->o_style;
+            $encuestas_opciones->habilitada =  $this->o_habilitada ? 1 : 0;
+            $encuestas_opciones->save();
+            $this->opcion_limpiar();
+            $this->resetErrorBag();
+            session()->flash('message', "Los datos de la opción se guardaron conrrectamente.");
+
+        } catch (Throwable $e) {
+            // dd($e->getMessage());
+            $msg = $e->getMessage();
+            return back()->with(['danger' => $msg]);
+        }
+        return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
+    }
+
+    public function editar_opcion($opciones_id) {
+        $opcion = encuesta_opcion::where('id', $opciones_id)->first();
+        $this->o_opciones_id = $opcion->opciones_id;
+        $this->o_puntos = $opcion->puntos;
+        $this->o_orden = $opcion->orden;
+        $this->o_style = $opcion->style;
+        $this->o_habilitada = $opcion->habilitada;
+        $this->opciones_id_modif = $opciones_id;
+    }
+
+    public function opcion_limpiar(){
+        $this->reset(['opciones_id_modif',
+                    'o_opciones_id',
+                    'o_puntos',
+                    'o_orden',
+                    'o_style',
+                ]);
+    }
+
+    public function borrar_opcion($idOpcion) {
+        $msg = "";
+        try {
+            Opcion::where("id", $idOpcion)->delete();
+        
+        } catch (Throwable $e) {
+            // dd($e->getMessage());
+            $msg = $e->getMessage();
+
+        }
+        session()->flash('message', 'Opción borrada correctamente.' );
+    }
+
+    public function selectTab($tab){
+        $this->currentTab = $tab;
+    }
+
 }

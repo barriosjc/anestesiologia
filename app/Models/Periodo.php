@@ -59,7 +59,28 @@ class Periodo extends Model
 
         return $resu;
     }
+    
+    public function getDesdeyAttribute($value)
+    {
+        $resu = $this->desde;
+        if (!empty($resu)) {
+            $resu = substr($resu,6,4)."-".substr($resu,3,2)."-".substr($resu,0,2);
+            $resu = date('Y-m-d', strtotime($resu));
+        }
 
+        return $resu;
+    }    
+    
+    public function getHastayAttribute($value)
+    {
+        $resu = $this->hasta;
+        if (!empty($resu)) {
+            $resu = substr($resu,6,4)."-".substr($resu,3,2)."-".substr($resu,0,2);
+            $resu = date('Y-m-d', strtotime($resu));
+        }
+
+        return $resu;
+    }
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

@@ -16,7 +16,7 @@
                             <div class="wizard-step-text-name">Encuestas</div>
                             <div class="wizard-step-text-details">ABM y listado </div>
                             <div class="wizard-step-text-details">Empresa:
-                                {{isset(Auth()->user()->empresas->razon_social) ? Auth()->user()->empresas->razon_social : 'Todas'}}
+                                {{ isset(Auth()->user()->empresas->razon_social) ? Auth()->user()->empresas->razon_social : 'Todas' }}
                             </div>
                         </div>
                     </a>
@@ -105,16 +105,14 @@
                                                                         <td>
                                                                             <button
                                                                                 class="btn btn-datatable btn-icon btn-transparent-dark me-2"
-                                                                                wire:click="editar_encuesta({{$encuesta->id}})">
-                                                                                <i class="fa-regular fa-pen-to-square"></i></button>
+                                                                                wire:click="editar_encuesta({{ $encuesta->id }})">
+                                                                                <i
+                                                                                    class="fa-regular fa-pen-to-square"></i></button>
                                                                             <button type="button"
                                                                                 wire:click="$emit('deleteencuesta', {{ $encuesta->id }})"
                                                                                 title="Borrar encuesta"
                                                                                 class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                                     class="fa-regular fa-trash-can"></i></button>
-
-
-
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -136,7 +134,7 @@
                                             <div class="col-sm-8">
                                                 <select name="empresas_id" class="form-control" id="empresas_id"
                                                     wire:model="e_empresas_id">
-                                                    <option value=""> --- Select ---</option> 
+                                                    <option value=""> --- Select ---</option>
                                                     @foreach ($empresas as $data)
                                                         <option value="{{ $data->id }}">
                                                             {{ $data->razon_social }}</option>
@@ -241,10 +239,13 @@
                                                                 @endif
                                                                 <td>
                                                                     <button
-                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2">
-                                                                        <i
-                                                                            class="fa-regular fa-pen-to-square"></i></button>
-                                                                    <button
+                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                    wire:click="editar_periodo({{ $periodo->id }})">
+                                                                    <i
+                                                                        class="fa-regular fa-pen-to-square"></i></button>
+                                                                        <button type="button"
+                                                                        wire:click="$emit('deleteperiodo', {{ $periodo->id }})"
+                                                                        title="Borrar encuesta"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                             class="fa-regular fa-trash-can"></i></button>
                                                                 </td>
@@ -339,6 +340,7 @@
                                                             <th>Puntos</th>
                                                             <th>Orden</th>
                                                             <th>Style</th>
+                                                            <th>Habilitado</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -349,12 +351,28 @@
                                                                 <td>{{ $opcion->puntos }}</td>
                                                                 <td>{{ $opcion->orden }}</td>
                                                                 <td>{{ $opcion->style }}</td>
+                                                                @if ($opcion->habilitada == 1)
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-primary text-white rounded-pill-yes-no">
+                                                                           SI </div>
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-danger text-white rounded-pill-yes-no">
+                                                                           NO</div>
+                                                                    </td>
+                                                                @endif
                                                                 <td>
                                                                     <button
-                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2">
-                                                                        <i
-                                                                            class="fa-regular fa-pen-to-square"></i></button>
-                                                                    <button
+                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                    wire:click="editar_opcion({{ $opcion->id }})">
+                                                                    <i
+                                                                        class="fa-regular fa-pen-to-square"></i></button>
+                                                                        <button type="button"
+                                                                        wire:click="$emit('deleteopcion', {{ $opcion->id }})"
+                                                                        title="Borrar opcion"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                             class="fa-regular fa-trash-can"></i></button>
                                                                 </td>
@@ -404,8 +422,20 @@
                                             <label for="style" class="col-sm-2 col-form-label">Style</label>
                                             <div class="col-sm-5">
                                                 <input type="text" class="form-control" id="style"
-                                                    name="style" placeholder="Ingrese el Style aplicar a la opción"
+                                                    name="style" placeholder="Ingrese el Style que aplica a la opción"
                                                     wire:model="o_style">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-2 col-form-label"></label>
+                                            <div class="col-sm-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="habilitada" name="habilitada" checked
+                                                        wire:model="o_habilitada">
+                                                    <label class="form-check-label" for="habilitado">Habilitado
+                                                        (No/Si)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </li>
@@ -435,16 +465,6 @@
         <script>
             document.addEventListener("DOMContentLoaded", function(event) {
 
-                window.livewire.on('vermsg', itemId => {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Do you want to continue',
-                        icon: 'error',
-                        confirmButtonText: 'Cool'
-                    });
-
-                });
-
                 window.livewire.on('deleteencuesta', itemId => {
                     Swal.fire({
                         title: 'Confirma borrar el dato?',
@@ -458,9 +478,46 @@
                         if (result.isConfirmed) {
                             @this.call('borrar_encuesta', itemId);
                             // success response
-                            $('body, html').animate({
-                                scrollTop: '0px'
-                            }, 300);
+                        } else {
+                            // no se puso nada si cancela
+                        }
+
+                    });
+                });
+
+                window.livewire.on('deleteperiodo', itemId => {
+                    Swal.fire({
+                        title: 'Confirma borrar el dato?',
+                        text: "Periodo",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Borrar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_periodo', itemId);
+                            // success response
+                        } else {
+                            // no se puso nada si cancela
+                        }
+
+                    });
+                });
+
+                window.livewire.on('deleteopcion', itemId => {
+                    Swal.fire({
+                        title: 'Confirma borrar el dato?',
+                        text: "Opción",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Borrar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_opcion', itemId);
+                            // success response
                         } else {
                             // no se puso nada si cancela
                         }
