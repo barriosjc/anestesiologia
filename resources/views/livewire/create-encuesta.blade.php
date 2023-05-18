@@ -1,47 +1,13 @@
 <div>
     {{-- hecho para livewire --}}
 
-    {{-- <link href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/datatables.min.css" rel="stylesheet" /> --}}
-    {{-- Main page content--}}
     <div class="container-fluid px-4">
-        {{-- Wizard card example with navigation--}}
+        {{-- Wizard card example with navigation --}}
         <div class="card">
             <div class="card-header border-bottom">
-                @if (session()->has('message'))
-                    <div class="alert alert-success">
-                        {{ session('message') }}
-                    </div>
-                @endif
-
-                @if (session()->has('error'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>
-                                    {{ $error }}
-                                </li>
-                            @endforeach
-                        </ul>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-                {{-- @error('encuestas_id') <span class="error">{{ $message }}</span> @enderror --}}
-
-                {{-- Wizard navigation--}}
-                <div class="nav nav-pills nav-justified flex-column flex-xl-row nav-wizard" id="cardTab"
-                    role="tablist">
-                    {{-- Wizard navigation item 1--}}
+                {{-- Wizard navigation --}}
+                <div class="nav nav-pills nav-justified flex-column flex-xl-row nav-wizard" id="cardTab" role="tablist">
+                    {{-- Wizard navigation item 1 --}}
                     <a class="nav-item nav-link {{ $currentTab == 1 ? 'active' : '' }}" id="wizard1-tab"
                         wire:click="selectTab(1)" data-bs-toggle="tab" role="tab" aria-controls="wizard1"
                         aria-selected="true">
@@ -49,10 +15,12 @@
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Encuestas</div>
                             <div class="wizard-step-text-details">ABM y listado </div>
-                            <div class="wizard-step-text-details">Empresa: {{isset(Auth()->user()->empresas->rason_social) ? Auth()->user()->empresas->rason_social : 'Administrador'}}</div>
+                            <div class="wizard-step-text-details">Empresa:
+                                {{ isset(Auth()->user()->empresas->razon_social) ? Auth()->user()->empresas->razon_social : 'Todas' }}
+                            </div>
                         </div>
                     </a>
-                    {{-- Wizard navigation item 2--}}
+                    {{-- Wizard navigation item 2 --}}
                     <a class="nav-item nav-link {{ $currentTab == 2 ? 'active' : '' }}" id="wizard2-tab"
                         wire:click="selectTab(2)" data-bs-toggle="tab" role="tab" aria-controls="wizard2"
                         aria-selected="true">
@@ -60,9 +28,11 @@
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Periodos</div>
                             <div class="wizard-step-text-details">ABM y listado asociado a la encuesta</div>
+                            <div class="wizard-step-text-details">{{ empty($cant_per) ? '' : 'cargado: ' . $cant_per }}
+                            </div>
                         </div>
                     </a>
-                    {{-- Wizard navigation item 3--}}
+                    {{-- Wizard navigation item 3 --}}
                     <a class="nav-item nav-link {{ $currentTab == 3 ? 'active' : '' }}" id="wizard3-tab"
                         wire:click="selectTab(3)" data-bs-toggle="tab" role="tab" aria-controls="wizard3"
                         aria-selected="true">
@@ -70,13 +40,16 @@
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Opciones</div>
                             <div class="wizard-step-text-details">ABM y listado asociada a la encuesta</div>
+                            <div class="wizard-step-text-details">{{ empty($cant_opc) ? '' : 'cargado: ' . $cant_opc }}
+                            </div>
                         </div>
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="tab-content" id="cardTabContent">
-                    {{-- Wizard tab pane item 1--}}
+                    @include('utiles.alerts')
+                    {{-- Wizard tab pane item 1 --}}
                     <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 1 ? 'show active' : '' }}" id="wizard1"
                         role="tabpanel" aria-labelledby="wizard1-tab">
                         <div class="row justify-content-center">
@@ -131,10 +104,13 @@
                                                                         @endif
                                                                         <td>
                                                                             <button
-                                                                                class="btn btn-datatable btn-icon btn-transparent-dark me-2">
+                                                                                class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                                wire:click="editar_encuesta({{ $encuesta->id }})">
                                                                                 <i
                                                                                     class="fa-regular fa-pen-to-square"></i></button>
-                                                                            <button
+                                                                            <button type="button"
+                                                                                wire:click="$emit('deleteencuesta', {{ $encuesta->id }})"
+                                                                                title="Borrar encuesta"
                                                                                 class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                                     class="fa-regular fa-trash-can"></i></button>
                                                                         </td>
@@ -142,7 +118,7 @@
                                                                 @endforeach
                                                             </tbody>
                                                         </table>
-                                                        @if(!empty($encuestas))
+                                                        @if (!empty($encuestas))
                                                             {{ $encuestas->links() }}
                                                         @endif
                                                     </div>
@@ -220,7 +196,7 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Wizard tab pane item 2--}}
+                    {{-- Wizard tab pane item 2 --}}
                     <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 2 ? 'show active' : '' }}"
                         id="wizard2" role="tabpanel" aria-labelledby="wizard2-tab">
                         <div class="row justify-content-center">
@@ -238,6 +214,7 @@
                                                             <th>Rango</th>
                                                             <th>Desde</th>
                                                             <th>Hasta</th>
+                                                            <th>Habilitado</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -247,12 +224,28 @@
                                                                 <td>{{ $periodo->descrip_rango }}</td>
                                                                 <td>{{ $periodo->desde }}</td>
                                                                 <td>{{ $periodo->hasta }}</td>
+                                                                @if ($periodo->habilitada == 1)
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-primary text-white rounded-pill-yes-no">
+                                                                            SI </div>
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-danger text-white rounded-pill-yes-no">
+                                                                            NO</div>
+                                                                    </td>
+                                                                @endif
                                                                 <td>
                                                                     <button
-                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2">
-                                                                        <i
-                                                                            class="fa-regular fa-pen-to-square"></i></button>
-                                                                    <button
+                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                    wire:click="editar_periodo({{ $periodo->id }})">
+                                                                    <i
+                                                                        class="fa-regular fa-pen-to-square"></i></button>
+                                                                        <button type="button"
+                                                                        wire:click="$emit('deleteperiodo', {{ $periodo->id }})"
+                                                                        title="Borrar encuesta"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                             class="fa-regular fa-trash-can"></i></button>
                                                                 </td>
@@ -260,7 +253,7 @@
                                                         @endforeach
                                                     </tbody>
                                                 </table>
-                                                @if(!empty($periodos))
+                                                @if (!empty($periodos))
                                                     {{ $periodos->links() }}
                                                 @endif
                                             </div>
@@ -300,6 +293,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group row">
+                                                <label for="" class="col-sm-2 col-form-label"></label>
+                                                <div class="col-sm-4">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            role="switch" id="habilitada" name="habilitada" checked
+                                                            wire:model="p_habilitada">
+                                                        <label class="form-check-label" for="habilitado">Habilitado
+                                                            (No/Si)</label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </li>
                                 </ul>
@@ -317,7 +322,7 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Wizard tab pane item 3--}}
+                    {{-- Wizard tab pane item 3 --}}
                     <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 3 ? 'show active' : '' }}"
                         id="wizard3" role="tabpanel" aria-labelledby="wizard3-tab">
                         <div class="row justify-content-center">
@@ -335,6 +340,7 @@
                                                             <th>Puntos</th>
                                                             <th>Orden</th>
                                                             <th>Style</th>
+                                                            <th>Habilitado</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -345,12 +351,28 @@
                                                                 <td>{{ $opcion->puntos }}</td>
                                                                 <td>{{ $opcion->orden }}</td>
                                                                 <td>{{ $opcion->style }}</td>
+                                                                @if ($opcion->habilitada == 1)
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-primary text-white rounded-pill-yes-no">
+                                                                           SI </div>
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <div
+                                                                            class="badge bg-danger text-white rounded-pill-yes-no">
+                                                                           NO</div>
+                                                                    </td>
+                                                                @endif
                                                                 <td>
                                                                     <button
-                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2">
-                                                                        <i
-                                                                            class="fa-regular fa-pen-to-square"></i></button>
-                                                                    <button
+                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                    wire:click="editar_opcion({{ $opcion->id }})">
+                                                                    <i
+                                                                        class="fa-regular fa-pen-to-square"></i></button>
+                                                                        <button type="button"
+                                                                        wire:click="$emit('deleteopcion', {{ $opcion->id }})"
+                                                                        title="Borrar opcion"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
                                                                             class="fa-regular fa-trash-can"></i></button>
                                                                 </td>
@@ -358,7 +380,7 @@
                                                         @endforeach
                                                     </tbody>
                                                 </table>
-                                                @if(!empty($encuestas_opciones))
+                                                @if (!empty($encuestas_opciones))
                                                     {{ $encuestas_opciones->links() }}
                                                 @endif
                                             </div>
@@ -400,8 +422,20 @@
                                             <label for="style" class="col-sm-2 col-form-label">Style</label>
                                             <div class="col-sm-5">
                                                 <input type="text" class="form-control" id="style"
-                                                    name="style" placeholder="Ingrese el Style aplicar a la opción"
+                                                    name="style" placeholder="Ingrese el Style que aplica a la opción"
                                                     wire:model="o_style">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-2 col-form-label"></label>
+                                            <div class="col-sm-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="habilitada" name="habilitada" checked
+                                                        wire:model="o_habilitada">
+                                                    <label class="form-check-label" for="habilitado">Habilitado
+                                                        (No/Si)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </li>
@@ -418,103 +452,79 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Wizard tab pane item 4--}}
+                    {{-- Wizard tab pane item 4 --}}
                 </div>
             </div>
         </div>
     </div>
-    {{-- <script src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.4/datatables.min.js"></script> --}}
-    {{-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script> --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
 
-            // $('#tabla_encuestas').DataTable({
-            //     paging: true,
-            //     ordering: false,
-            //     info: false,
-            //     lengthMenu: -1,
-            //     pageLength: 3,
-            // });
+    @push('scriptscreateenc')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link href="{{ asset('js/util.js') }}" rel="stylesheet">
 
-            // $('#tabla_periodos').DataTable({
-            //     paging: true,
-            //     ordering: false,
-            //     info: false,
-            //     lengthMenu: -1,
-            //     pageLength: 3,
-            // });
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
 
-            // $('#tabla_opciones').DataTable({
-            //     paging: true,
-            //     ordering: false,
-            //     info: false,
-            //     lengthMenu: -1,
-            //     pageLength: 3,
-            //     fixedColumns: true,
-            //     autoWidth: false,
-            //     "columns": [{
-            //             "width": "30%"
-            //         },
-            //         null, // automatically calculates
-            //         null, // automatically calculates
-            //         {
-            //             "width": "30%"
-            //         },
-            //         null // remaining width
-            //     ]
-            // });
+                window.livewire.on('deleteencuesta', itemId => {
+                    Swal.fire({
+                        title: 'Confirma borrar el dato?',
+                        text: "Encuesta",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Borrar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_encuesta', itemId);
+                            // success response
+                        } else {
+                            // no se puso nada si cancela
+                        }
 
-            // function deselectAllExcept(selectedInput) {
-            //     // Obtener todos los inputs type="radio" de la tabla
-            //     var inputs = document.querySelectorAll('input[type="radio"]');
+                    });
+                });
 
-            //     // Deseleccionar todos los inputs excepto el seleccionado
-            //     for (var i = 0; i < inputs.length; i++) {
-            //         if (inputs[i] !== selectedInput) {
-            //             inputs[i].checked = false;
-            //         }
-            //     }
-            // }
+                window.livewire.on('deleteperiodo', itemId => {
+                    Swal.fire({
+                        title: 'Confirma borrar el dato?',
+                        text: "Periodo",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Borrar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_periodo', itemId);
+                            // success response
+                        } else {
+                            // no se puso nada si cancela
+                        }
 
-            // //carga los id de encuestas, primera vez
-            // const radioButtons = document.querySelectorAll('input[name=encuestas_id]');
-            // radioButtons.forEach(function(radioButton) {
-            //     radioButton.addEventListener('click', function() {
-            //         document.getElementById('h_encuestas_id').value = this.value;
-            //     });
-            // });
-            // // carga id de encuestas, siguientes paginas
-            // var table = $('#tabla_encuestas').DataTable();
-            // table.on('draw', function() {
-            //     const radioButtons = document.querySelectorAll('input[name=encuestas_id]');
-            //     radioButtons.forEach(function(radioButton) {
-            //         radioButton.addEventListener('click', function() {
-            //             document.getElementById('h_encuestas_id').value = this.value;
-            //         });
-            //     });
+                    });
+                });
 
-            //     table.on( 'preDraw', function () {
-            //         // const radioButtons = document.querySelectorAll('input[name=encuestas_id]');
-            //         // radioButtons.forEach(function(radioButton) {
-            //         //     radioButton.checked = false;
-            //         // });
-            //         $('#tabla_opciones').DataTable({
-            //             fixedColumns: true,
-            //     autoWidth: false,
-            //         "columns": [{
-            //                 "width": "30%"
-            //             },
-            //             null, // automatically calculates
-            //             null, // automatically calculates
-            //             {
-            //                 "width": "30%"
-            //             },
-            //             null // remaining width
-            //         ]
-            //     });
-            //     } );
-            // });
-        });
-    </script>
+                window.livewire.on('deleteopcion', itemId => {
+                    Swal.fire({
+                        title: 'Confirma borrar el dato?',
+                        text: "Opción",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Borrar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            @this.call('borrar_opcion', itemId);
+                            // success response
+                        } else {
+                            // no se puso nada si cancela
+                        }
 
+                    });
+                });
+            });
+        </script>
+    @endpush
 </div>

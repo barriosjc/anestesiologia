@@ -113,4 +113,17 @@ class RespuestaController extends Controller
             ->with('success', 'Se guardó la en encuesta en forma correcta.');
     }
 
+    private function conDatos($request, $campos)
+    {
+        $array = explode(",", $campos);
+        $resu = [];
+        foreach ($array as $campo) {
+            $campo = ltrim($campo);
+            if (isset($request[$campo])) {
+                $resu[$campo] = $request->input($campo);
+            }
+        }
+
+        return $resu;
+    }
 }

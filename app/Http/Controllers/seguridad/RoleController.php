@@ -4,11 +4,10 @@ namespace App\Http\Controllers\seguridad;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 use App\Models\user;
-use Spatie\Permission\Models\Permission;
+use App\Models\Permission;
 use Illuminate\Support\Facades\DB;
-
 
 class RoleController extends Controller
 {
@@ -22,6 +21,8 @@ class RoleController extends Controller
         $keyword = $request->get('search');
         $perPage = 25;
     
+        // $roles = Role::all();
+        // dd($roles);
         if (!empty($keyword)) {
           $roles = Role::where('name', 'LIKE', "%$keyword%")
             ->orWhere('guard_name', 'LIKE', "%$keyword%")

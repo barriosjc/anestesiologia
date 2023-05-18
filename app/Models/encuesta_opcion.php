@@ -63,7 +63,7 @@ class encuesta_opcion extends Model
     public static function v_encuestas_opciones() {
         $resu = encuesta_opcion::query()
         ->select([ 'encuestas_opciones.id', 'encuestas_id', 'orden', 'encuestas_opciones.style', 'encuestas_opciones.puntos',
-        'o.id as opcion_id', 'o.descripcion', 'o.detalle', 'o.imagen', 'o.habilitada'])
+        'o.id as opcion_id', 'o.descripcion', 'o.detalle', 'o.imagen', 'encuestas_opciones.habilitada'])
         ->join('opciones as o', 'o.id', 'encuestas_opciones.opciones_id')
         ->orderby('encuestas_opciones.orden', 'asc');
 // dd("tabla encuesta",$resu);

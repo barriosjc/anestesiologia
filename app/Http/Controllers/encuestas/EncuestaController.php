@@ -6,13 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Models\Encuesta;
-//use App\Models\Grupal;
-//use App\Models\User;
-use App\Models\encuesta_resultado;
-use App\Models\encuestas_resultados_opciones;
 use App\Models\Opcion;
-use App\Models\resultado_grupal;
-use App\Models\resultado_individual;
 use App\Models\empresa;
 use App\Models\encuesta_opcion;
 use App\Models\Periodo;
@@ -22,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class EncuestaController extends Controller
 {
 
+    protected $listeners = ['borrar_encuesta' => 'borrar_encuesta'];
 
     /**
      * Display a listing of the resource.
@@ -75,6 +70,15 @@ class EncuestaController extends Controller
         }
 // dd("va po el back");
         return back()->with(['success' => "Se creo o modificó correctamente la cabecera de la encuesta."]);
+
+    }
+
+    public function borrarencuesta($id) {
+        dd("aca borra encuesta", $id);
+    }
+
+    public function prueba2 () {
+        dd("otro metodo");
 
     }
 
@@ -145,17 +149,4 @@ class EncuestaController extends Controller
 
     }
 
-    private function conDatos($request, $campos)
-    {
-        $array = explode(",", $campos);
-        $resu = [];
-        foreach ($array as $campo) {
-            $campo = ltrim($campo);
-            if (isset($request[$campo])) {
-                $resu[$campo] = $request->input($campo);
-            }
-        }
-
-        return $resu;
-    }
 }
