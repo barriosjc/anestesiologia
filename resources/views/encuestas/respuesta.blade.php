@@ -2,6 +2,17 @@
 
 @section('titulo', $titulo)
 @section('contenido')
+<style>
+     .size-18{
+        width: 20px;
+        height: 20px;
+        stroke: white;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        }
+</style>
 <div class="container-fluid px-4">
     <ul class="navbar navbar-expand-lg navbar-light bg-light">
         <li class="nav-item">
@@ -31,6 +42,7 @@
                     <input type="hidden" name="puntos[{{$item->encuestas_opciones_id}}]" value="{{$item->eo_puntos}}">
                     <input name="opciones[]" type="checkbox" value={{$item->encuestas_opciones_id}}
                             {{in_array($item->encuestas_opciones_id, (old('opciones') !== null ? old('opciones') : array())) ? 'checked' : ''}}>
+                            <i class="size-18 text-muted" data-feather="info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{$item->detalle}}"></i>
                 </div>
             </div>
         </div>
@@ -100,6 +112,10 @@
 </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            //para habilitar los popovers
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            })
             const option1 = document.querySelector('#ck_individual');
             const option2 = document.querySelector('#ck_grupal');
             if(!document.getElementById('ck_individual').checked){

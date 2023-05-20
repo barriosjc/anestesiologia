@@ -84,6 +84,6 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
         Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
         Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');    
-        Route::post('opcion/store', [EncuestaController::class, 'opcion_store'])->name('opcion.store');
+        Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
     });
 });

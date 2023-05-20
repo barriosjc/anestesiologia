@@ -16,7 +16,7 @@
                         <span class="card-title">{{ __('Create') }} Opcione</span>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('opcion.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('opciones.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('opcion.form')
