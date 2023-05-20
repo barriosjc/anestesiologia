@@ -28,13 +28,18 @@ class RespuestaController extends Controller
      */
     public function index()
     {
+        if (Auth()->User()->empresas_id < 1) {
+            abort(403, "No posee acceso para ingresar a Respuesta de encuestas, debe tener una empresa asignada");
+        }
+
         $titulo = "Sin encuesta para este periodo";
-        $encuestas = Encuesta::v_encuesta_actual()->get();
+        $encuestas = Encuesta::v_encuesta_actual(Auth()->user()->empresas_id)
+                                    ->get();
         //traer todos los usuarios de la empresa y excluye al users_id
         $users = User::all();
         //traer todos los grupos de la empresa del usuario
         $grupal = Grupal::all();
-        if(count($encuestas)) $titulo = $encuestas[0]->edicion . " - ". $encuestas[0]->descrip_rango;
+        if(count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - ". $encuestas[0]->edicion . " - ". $encuestas[0]->descrip_rango;
 
         return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo'));
     }

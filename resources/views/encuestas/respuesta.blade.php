@@ -12,6 +12,7 @@
     @csrf
     <input type="hidden" name="users_id" value="{{auth()->id()}}">
     <input type="hidden" name="encuestas_id" value="{{$encuestas==null || count($encuestas) ? $encuestas[0]->encuestas_id : null}}">
+    <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
     @foreach ($encuestas as $item)
         @if (!($loop->index % $item->opcionesxcol))
             {{$cierra = false}}
@@ -100,6 +101,10 @@
 </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            //para habilitar los popovers
+            // $(function () {
+            //     $('[data-toggle="popover"]').popover()
+            // })
             const option1 = document.querySelector('#ck_individual');
             const option2 = document.querySelector('#ck_grupal');
             if(!document.getElementById('ck_individual').checked){
