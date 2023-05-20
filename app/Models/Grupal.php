@@ -46,5 +46,13 @@ class Grupal extends Model
         return $this->hasMany('App\Models\GrupalUser', 'grupal_id', 'id');
     }
     
-
+    public static function v_grupal($empresas_id) {
+      $resu = grupal::query()
+        ->select(['grupal.id', 'descripcion'])
+        ->join('users as u', 'u.grupal_id', 'grupal.id')
+        ->where('u.empresas_id', '=', $empresas_id)
+        ->orderby('descripcion', 'asc');
+    
+        return $resu;
+    }
 }

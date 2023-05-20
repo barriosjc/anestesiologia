@@ -36,9 +36,9 @@ class RespuestaController extends Controller
         $encuestas = Encuesta::v_encuesta_actual(Auth()->user()->empresas_id)
                                     ->get();
         //traer todos los usuarios de la empresa y excluye al users_id
-        $users = User::all();
+        $users = User::where("empresas_id", Auth()->user()->empresas_id);
         //traer todos los grupos de la empresa del usuario
-        $grupal = Grupal::all();
+        $grupal = Grupal::v_grupal(Auth()->user()->empresas_id)->get();
         if(count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - ". $encuestas[0]->edicion . " - ". $encuestas[0]->descrip_rango;
 
         return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo'));
