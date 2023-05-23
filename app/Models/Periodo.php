@@ -37,7 +37,7 @@ class Periodo extends Model
      *
      * @var array
      */
-    protected $fillable = ['descripcion','desde','hasta'];
+    protected $fillable = ['descripcion','desde','hasta', 'encuestas_id', 'habilitada'];
 
     
     public function getDesdeAttribute($value)
@@ -59,7 +59,28 @@ class Periodo extends Model
 
         return $resu;
     }
+    
+    public function getDesdeyAttribute($value)
+    {
+        $resu = $this->desde;
+        if (!empty($resu)) {
+            $resu = substr($resu,6,4)."-".substr($resu,3,2)."-".substr($resu,0,2);
+            $resu = date('Y-m-d', strtotime($resu));
+        }
 
+        return $resu;
+    }    
+    
+    public function getHastayAttribute($value)
+    {
+        $resu = $this->hasta;
+        if (!empty($resu)) {
+            $resu = substr($resu,6,4)."-".substr($resu,3,2)."-".substr($resu,0,2);
+            $resu = date('Y-m-d', strtotime($resu));
+        }
+
+        return $resu;
+    }
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

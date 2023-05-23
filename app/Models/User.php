@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Empresa;
 
 class User extends Authenticatable
 {
@@ -20,9 +21,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
-        'path',
+        'foto',
         'empresas_id',
     ];
 
@@ -50,7 +52,7 @@ class User extends Authenticatable
      */
     public function empresas()
     {
-        return $this->belongsTo('App\Models\empresa',  'empresas_id', 'id');
+        return $this->belongsTo(empresa::class, 'empresas_id');
     }
 
 }

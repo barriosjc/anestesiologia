@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
 
 /**
  * Class Empresa
@@ -34,7 +35,7 @@ class Empresa extends Model
      *
      * @var array
      */
-    protected $fillable = ['razon_rosial','contacto','telefono'];
+    protected $fillable = ['razon_social','contacto','telefono'];
 
 
     /**
@@ -50,7 +51,8 @@ class Empresa extends Model
      */
     public function users()
     {
-        return $this->hasMany('App\Models\user', 'empresas_id', 'id');
+        //id es el id de encuesta
+        return $this->hasMany(user::class, 'id');
     }
 
 }

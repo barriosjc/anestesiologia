@@ -6,13 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Models\Encuesta;
-//use App\Models\Grupal;
-//use App\Models\User;
-use App\Models\encuesta_resultado;
-use App\Models\encuestas_resultados_opciones;
 use App\Models\Opcion;
-use App\Models\resultado_grupal;
-use App\Models\resultado_individual;
 use App\Models\empresa;
 use App\Models\encuesta_opcion;
 use App\Models\Periodo;
@@ -22,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 class EncuestaController extends Controller
 {
 
+    protected $listeners = ['borrar_encuesta' => 'borrar_encuesta'];
 
     /**
      * Display a listing of the resource.
@@ -45,117 +40,113 @@ class EncuestaController extends Controller
                             'empresas_id', 'encuestas'));
     }
 
-    public function create_store(Request $request){
+//     public function create_store(Request $request){
 
-        $this->validate($request, [
-            'empresas_id' => ['required'],
-            'opcionesxcol' => ['required', 'in:[2,3,4,5]'],
-            'encuesta' =>['required', 'max:50'],
-            'edicion' => ['required', 'max:200'],
-        ]);
-        try {
-            if (empty($request->id)) {
-                $encuesta = new Encuesta();
-            } else {
-                $encuesta = Encuesta::where("id", $request->id);
-            }
-            $encuesta->empresas_id = $request->empresas_id;
-            $encuesta->encuesta = $request->encuesta;
-            $encuesta->edicion = $request->edicion;
-            $encuesta->opcionesxcol = $request->opcionesxcol;
-            $encuesta->habilitada = isset($request->habilitada) ? 1 : 0;
-            $encuesta->save();
+//         $this->validate($request, [
+//             'empresas_id' => ['required'],
+//             'opcionesxcol' => ['required', 'in:[2,3,4,5]'],
+//             'encuesta' =>['required', 'max:50'],
+//             'edicion' => ['required', 'max:200'],
+//         ]);
+//         try {
+//             if (empty($request->id)) {
+//                 $encuesta = new Encuesta();
+//             } else {
+//                 $encuesta = Encuesta::where("id", $request->id);
+//             }
+//             $encuesta->empresas_id = $request->empresas_id;
+//             $encuesta->encuesta = $request->encuesta;
+//             $encuesta->edicion = $request->edicion;
+//             $encuesta->opcionesxcol = $request->opcionesxcol;
+//             $encuesta->habilitada = isset($request->habilitada) ? 1 : 0;
+//             $encuesta->save();
 
-        } catch (Throwable $e) {
-           // dd($e->getMessage());
-            $msg = $e->getMessage();
-            return back()
-                    ->withInput($request->input())
-                    ->withErrors(['danger' => $msg]);
-        }
-// dd("va po el back");
-        return back()->with(['success' => "Se creo o modificó correctamente la cabecera de la encuesta."]);
+//         } catch (Throwable $e) {
+//            // dd($e->getMessage());
+//             $msg = $e->getMessage();
+//             return back()
+//                     ->withInput($request->input())
+//                     ->withErrors(['danger' => $msg]);
+//         }
+// // dd("va po el back");
+//         return back()->with(['success' => "Se creo o modificó correctamente la cabecera de la encuesta."]);
 
-    }
+//     }
 
-    public function periodo_store(Request $request)
-    {
-        $this->validate($request, [
-            'h_encuestas_id' => ['required'],
-            'descrip_rango' => ['required'],
-            'desde' =>['required', 'date'],
-            'hasta' => ['required', 'date'],
-        ]);
+//     public function borrarencuesta($id) {
+//         dd("aca borra encuesta", $id);
+//     }
 
-        try {
-            if (empty($request->id)) {
-                $periodos = new periodo();
-            } else {
-                $periodos = periodo::where("id", $request->id);
-            }
-            $periodos->encuestas_id = $request->h_encuestas_id;
-            $periodos->descrip_rango = $request->descrip_rango;
-            $periodos->desde = $request->desde;
-            $periodos->hasta = $request->hasta;
-            $periodos->save();
+//     public function prueba2 () {
+//         dd("otro metodo");
 
-        } catch (Throwable $e) {
-           // dd($e->getMessage());
-            $msg = $e->getMessage();
-            return back()
-                    ->withInput($request->input())
-                    ->withErrors(['danger' => $msg]);
-        }
-        return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
+//     }
 
-    }
+//     public function periodo_store(Request $request)
+//     {
+//         $this->validate($request, [
+//             'h_encuestas_id' => ['required'],
+//             'descrip_rango' => ['required'],
+//             'desde' =>['required', 'date'],
+//             'hasta' => ['required', 'date'],
+//         ]);
 
-    public function opcion_store(Request $request)
-    {
-        // dd($request);
-        $this->validate($request, [
-            'h_encuestas_id' => ['required'],
-            'opciones_id' => ['required'],
-            'puntos' =>['required', 'integer', "max:9999"],
-            'orden' => ['required', 'integer', 'max:99'],
-            'style' => ['required', 'max:200'],
-        ]);
+//         try {
+//             if (empty($request->id)) {
+//                 $periodos = new periodo();
+//             } else {
+//                 $periodos = periodo::where("id", $request->id);
+//             }
+//             $periodos->encuestas_id = $request->h_encuestas_id;
+//             $periodos->descrip_rango = $request->descrip_rango;
+//             $periodos->desde = $request->desde;
+//             $periodos->hasta = $request->hasta;
+//             $periodos->save();
 
-        try {
-            if (empty($request->id)) {
-                $encuestas_opciones = new encuesta_opcion();
-            } else {
-                $encuestas_opciones = encuesta_opcion::where("id", $request->id);
-            }
-            $encuestas_opciones->encuestas_id = $request->h_encuestas_id;
-            $encuestas_opciones->opciones_id = $request->opciones_id;
-            $encuestas_opciones->puntos = $request->puntos;
-            $encuestas_opciones->orden = $request->orden;
-            $encuestas_opciones->style = $request->style;
-            $encuestas_opciones->save();
+//         } catch (Throwable $e) {
+//            // dd($e->getMessage());
+//             $msg = $e->getMessage();
+//             return back()
+//                     ->withInput($request->input())
+//                     ->withErrors(['danger' => $msg]);
+//         }
+//         return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
 
-        } catch (Throwable $e) {
-           // dd($e->getMessage());
-            $msg = $e->getMessage();
-            return back()
-                    ->withInput($request->input())
-                    ->withErrors(['danger' => $msg]);
-        }
-        return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
+//     }
 
-    }
+//     public function opcion_store(Request $request)
+//     {
+//         // dd($request);
+//         $this->validate($request, [
+//             'h_encuestas_id' => ['required'],
+//             'opciones_id' => ['required'],
+//             'puntos' =>['required', 'integer', "max:9999"],
+//             'orden' => ['required', 'integer', 'max:99'],
+//             'style' => ['required', 'max:200'],
+//         ]);
 
-    private function conDatos($request, $campos)
-    {
-        $array = explode(",", $campos);
-        $resu = [];
-        foreach ($array as $campo) {
-            $campo = ltrim($campo);
-            if (isset($request[$campo])) {
-                $resu[$campo] = $request->input($campo);
-            }
-        }
+//         try {
+//             if (empty($request->id)) {
+//                 $encuestas_opciones = new encuesta_opcion();
+//             } else {
+//                 $encuestas_opciones = encuesta_opcion::where("id", $request->id);
+//             }
+//             $encuestas_opciones->encuestas_id = $request->h_encuestas_id;
+//             $encuestas_opciones->opciones_id = $request->opciones_id;
+//             $encuestas_opciones->puntos = $request->puntos;
+//             $encuestas_opciones->orden = $request->orden;
+//             $encuestas_opciones->style = $request->style;
+//             $encuestas_opciones->save();
 
-        return $resu;
-    }
+//         } catch (Throwable $e) {
+//            // dd($e->getMessage());
+//             $msg = $e->getMessage();
+//             return back()
+//                     ->withInput($request->input())
+//                     ->withErrors(['danger' => $msg]);
+//         }
+//         return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
+
+//     }
+
 }

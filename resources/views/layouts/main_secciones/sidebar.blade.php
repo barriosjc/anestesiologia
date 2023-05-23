@@ -123,10 +123,8 @@
                     </a>
                     <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="error-400.html">Permisos</a>
-                            <a class="nav-link" href="error-401.html">Grupos</a>
-                            <a class="nav-link" href="error-403.html">Permisos a grupos</a>
-                            <a class="nav-link" href="error-404-1.html">Permisos a usuarios</a>
+                            <a class="nav-link" href="{{route('permisos.index')}}">Permisos</a>
+                            <a class="nav-link" href="{{route('roles.index')}}">Grupos</a>
                         </nav>
                     </div>
                     {{-- <a class="nav-link" href="pricing.html">Pricing</a>
