@@ -31,6 +31,10 @@ class RespuestaController extends Controller
         if (Auth()->User()->empresas_id < 1) {
             abort(403, "No posee acceso para ingresar a Respuesta de encuestas, debe tener una empresa asignada");
         }
+        //$empresas_id = $request->input('empresas_id');
+        // $grupal = grupal::v_grupal(Auth()->User()->empresas_id)->get();
+        // $response = ['data' => $grupal];
+        // dd($response);
 
         $titulo = "Sin encuesta para este periodo";
         $encuestas = Encuesta::v_encuesta_actual(Auth()->user()->empresas_id)
