@@ -47,12 +47,14 @@ class Grupal extends Model
     }
     
     public static function v_grupal($empresas_id) {
-      $resu = grupal::query()
-        ->select(['grupal.id', 'descripcion'])
-        ->join('users as u', 'u.grupal_id', 'grupal.id')
-        ->where('u.empresas_id', '=', $empresas_id)
-        ->orderby('descripcion', 'asc');
-    
+
+        $resu = grupal_empresa::query()
+            ->where("empresas_id", '=', $empresas_id)
+            ->join('grupal as g', 'g.id', 'grupal_empresas.grupal_id')
+            ->select('g.id', 'g.descripcion');
+
         return $resu;
+
+      
     }
 }

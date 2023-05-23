@@ -1,165 +1,156 @@
 @extends('layouts.main')
 
-@section('titulo', 'Usuarios')
+@section('titulo', 'Perfil de usuario')
 @section('contenido')
-    <div class="container-fluid">
-        <!-- Page Heading -->
-        <h1 class="h3 mb-4 text-gray-800">{{ __('Profile') }}</h1>
-
-        @if ($errors->any())
-            <div class="alert alert-danger border-left-danger" role="alert">
-                <ul class="pl-4 my-2">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
+    {{-- <div id="layoutSidenav_content"> --}}
+    {{-- <main> --}}
+    <!-- Main page content-->
+    <div class="container-xl px-4 mt-4">
+        <!-- Account page navigation-->
+        <nav class="nav nav-borders">
+            <a class="nav-link active ms-0" href="account-profile.html">Profile</a>
+            <a class="nav-link" href="account-billing.html">Billing</a>
+            <a class="nav-link" href="account-security.html">Security</a>
+            <a class="nav-link" href="account-notifications.html">Notifications</a>
+        </nav>
+        <hr class="mt-0 mb-4" />
         <div class="row">
-            <div class="col-lg-4 order-lg-2">
-                <div class="card shadow mb-4">
-                    <div class="card-profile-image mt-4">
-                        @if (empty(Auth::user()->foto))
-                            <img src="/img/usuario.png" class="rounded-circle" alt="user-image" width="200px">
-                        @else
-                            <img src="{{ asset('storage') . str_replace('public', '', Auth::user()->foto) }} "
-                                rounded-circle alt="user-image" width="200px">
-                        @endif
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="text-center">
-                                    <h5 class="font-weight-bold">{{ Auth::user()->fullName }}</h5>
-                                    <p>{{ Auth::user()->name }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <form method="POST" action="{{ route('profile.update.foto') }}" accept-charset="UTF-8"
-                                    class="form-horizontal" enctype="multipart/form-data">
-                                    {{ csrf_field() }}
-                                    <div class="form-group row ">
-                                        <input class="form-control form-control-sm col-9" name="file" type="file"
-                                            id="file" />
-                                        <input type="submit" />
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card-profile-stats">
-                                    <span class="heading">22</span>
-                                    <span class="description">Friends</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card-profile-stats">
-                                    <span class="heading">10</span>
-                                    <span class="description">Photos</span>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card-profile-stats">
-                                    <span class="heading">89</span>
-                                    <span class="description">Comments</span>
-                                </div>
-                            </div>
+            <div class="col-xl-4">
+                <form method="POST" action="{{ route('profile') }}" enctype="multipart/form-data">
+                    @csrf
+                    <!-- Profile picture card-->
+                    <div class="card mb-4 mb-xl-0">
+                        <div class="card-header">Profile Picture</div>
+                        <div class="card-body text-center">
+                            <!-- Profile picture image-->
+                            <img class="img-account-profile rounded-circle mb-2"
+                                src="assets/img/illustrations/profiles/profile-1.png" alt="" />
+                            <!-- Profile picture help block-->
+                            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                            <!-- Profile picture upload button-->
+                            <button class="btn btn-primary" type="button">Upload new image</button>
                         </div>
                     </div>
-                </div>
-
+                </form>
             </div>
-
-            <div class="col-lg-8 order-lg-1">
-
-                <div class="card shadow mb-4">
-
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">{{ __('My Account') }}</h6>
-                    </div>
-
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Detalle de usuario</div>
                     <div class="card-body">
-
-                        <form method="POST" action="{{ route('profile.update') }}" autocomplete="off">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                            <input type="hidden" name="_method" value="PUT">
-                            <div class="pl-lg-4">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="form-group focused">
-                                            <label class="form-control-label" for="name">{{ __('Name') }}<span
-                                                    class="small text-danger">*</span></label>
-                                            <input type="text" id="name" class="form-control" name="name"
-                                                placeholder="Name" value="{{ old('name', Auth::user()->name) }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="form-group focused">
-                                            <label class="form-control-label" for="last_name">{{ __('Last name') }}</label>
-                                            <input type="text" id="last_name" class="form-control" name="last_name"
-                                                placeholder="Last name"
-                                                value="{{ old('last_name', Auth::user()->last_name) }}">
-                                        </div>
-                                    </div>
+                        <form method="POST" action="{{ route('profile') }}" accept-charset="UTF-8">
+                            @csrf
+                            <input type="hidden" name="id" value="{{old('user_id', $user->id)}}" />
+                            <div class="mb-3">
+                                <label class="small mb-1">Empresa</label>
+                                <select name="empresas_id" class="form-control" id="empresas_id">
+                                    <option value=""> --- Select ---</option>
+                                    @foreach ($empresas as $data)
+                                        <option value="{{ $data->id }}" {{old('empresas_id', $user->empresas_id)==$data->id ? 'selected' : ''}}>
+                                            {{ $data->razon_social }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="last_name">Nombre y apellido</label>
+                                    <input class="form-control" id="last_name" name="last_name" type="text"
+                                        placeholder="Ingrese su nombre y apellido" value="{{old('last_name', $user->last_name)}}" />
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label class="form-control-label" for="email">Email<span
-                                                    class="small text-danger">*</span></label>
-                                            <input type="email" id="email" class="form-control" name="email"
-                                                placeholder="example@example.com"
-                                                value="{{ old('email', Auth::user()->email) }}">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="form-group focused">
-                                            <label class="form-control-label" for="current_password">Password
-                                                actual</label>
-                                            <input type="password" id="current_password" class="form-control"
-                                                name="current_password" placeholder="Current password">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group focused">
-                                            <label class="form-control-label" for="new_password">Nueva password</label>
-                                            <input type="password" id="new_password" class="form-control"
-                                                name="new_password" placeholder="New password">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group focused">
-                                            <label class="form-control-label" for="confirm_password">Confirme
-                                                password</label>
-                                            <input type="password" id="confirm_password" class="form-control"
-                                                name="password_confirmation" placeholder="Confirm password">
-                                        </div>
-                                    </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="name">Usuario</label>
+                                    <input class="form-control" id="name" name="name" type="text"
+                                        placeholder="Usuario" value="{{old('name', $user->name)}}" />
                                 </div>
                             </div>
-
-                            <!-- Button -->
-                            <div class="pl-lg-4">
-                                <div class="row">
-                                    <div class="col text-center">
-                                        <button type="submit" class="btn btn-primary">Guardar</button>
-                                    </div>
+                            <!-- Form Row        -->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-sm-6">
+                                    <label for="grupal_id"  class="small mb-1">Area</label>
+                                    <select name="grupal_id" class="form-control" id="grupal_id">
+                                        <option value=""> --- Select ---</option>
+                                    </select>
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="cargo">Cargo</label>
+                                    <input class="form-control" id="cargo" name="cargo" type="text"
+                                        placeholder="cargo del empleado" value="{{old('cargo', $user->cargo)}}" />
                                 </div>
                             </div>
+                            <!-- Form Group (email address)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" for="email">Email address</label>
+                                <input class="form-control" id="email" name="email" type="email"
+                                    placeholder="Ingrese su email" value="{{old('email', $user->email)}}" />
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="telefono">Phone number</label>
+                                    <input class="form-control" id="telefono" name="telefono" type="tel"
+                                        placeholder="Ingrese nro de telefono" value="{{old('telefono', $user->telefono)}}" />
+                                </div>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-12">
+                                    <label class="small mb-1" for="observaciones">Observaciones</label>
+                                    <textarea class="form-control" id="observaciones" name="observaciones" 
+                                        placeholder="Ingrese observaciones" rows="3" value="{{old('observaciones', $user->observaciones)}}"></textarea>
+                                </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-primary" type="submit">Guardar</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {{-- </main> --}}
+    {{-- </div> --}}
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            
+            var grupalSelect = $('#grupal_id');
+            var empresasSelect = $('#empresas_id');
+            empresasSelect.change(function(){
+                var empresasId = $(this).val();
+                grupalSelect.empty();
+                var grupalEnBD = null;
+                @isset($publisher)
+                    grupalEnBD = '{{ $user->grupal_id }}';
+                @endisset
+
+                if (empresasId) {
+                    $.ajax({
+                        url: "{{ route('empresas.grupos') }}",
+                        type: 'GET',
+                        data: { empresas_id: empresasId },
+                        dataType: 'json',
+                        success: function (response) {
+                            grupalSelect.append("<option value=''> --- Select ---</option>");
+                            $.each(response.data, function (key, value) {
+                                grupalSelect.append("<option value='" + value.id + "'>" + value.descripcion + "</option>");
+                            });
+                            grupalSelect.val( grupalEnBD ? grupalEnBD : $("#grupal_id option:first").val() )
+                                .find("option[value=" + grupalEnBD +"]").attr('selected', true)
+                                .trigger('change');
+                        },
+                        error : function(response){
+                            alert(response.messagge);
+                        }
+                    });
+                }
+            });
+        });
+</script>
 @endsection

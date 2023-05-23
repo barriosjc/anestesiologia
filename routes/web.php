@@ -53,8 +53,9 @@ Route::group(['middleware' => 'auth'], function() {
     );
     //perfil de usuario
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
-    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('profile/foto', [ProfileController::class, 'updatefoto'])->name('profile.update.foto');
+    Route::post('profile/foto', [ProfileController::class, 'foto'])->name('profile.foto');
+    Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
+    Route::get('empresas/grupal/combos', [ProfileController::class, 'grupal'])->name('empresas.grupos');
 
     Route::group(['middleware' => ['can:seguridad']], function () {
         Route::resources(['usuario' => UsuarioController::class,
