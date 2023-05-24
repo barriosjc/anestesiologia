@@ -53,7 +53,8 @@ Route::group(['middleware' => 'auth'], function() {
     );
     //perfil de usuario
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
-    Route::post('profile/foto', [ProfileController::class, 'foto'])->name('profile.foto');
+    Route::get('nuevo/profile', [ProfileController::class, 'nuevo'])->name('profile.nuevo');
+    Route::post('profile/foto/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
     Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
     Route::get('empresas/grupal/combos', [ProfileController::class, 'grupal'])->name('empresas.grupos');
 

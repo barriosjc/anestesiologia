@@ -72,7 +72,7 @@
                     <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav">
                             <a class="nav-link" href="account-profile.html">Perfil de usuario</a>
-                            <a class="nav-link" href="account-billing.html">Nuevo usuario</a>
+                            <a class="nav-link" href="{{ route('profile.nuevo') }}">Nuevo usuario</a>
                         </nav>
                     </div>
                     {{-- Nested Sidenav Accordion (Pages -> Authentication) --}}
