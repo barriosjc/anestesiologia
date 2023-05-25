@@ -71,8 +71,10 @@
                     </a>
                     <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="account-profile.html">Perfil de usuario</a>
+                            <a class="nav-link" href="{{ route('profile') }}">Mi perfil</a>
+                            @can('crear nuevos usuarios')
                             <a class="nav-link" href="{{ route('profile.nuevo') }}">Nuevo usuario</a>
+                            @endcan
                         </nav>
                     </div>
                     {{-- Nested Sidenav Accordion (Pages -> Authentication) --}}
@@ -115,6 +117,7 @@
                         </nav>
                     </div>
                     {{-- Nested Sidenav Accordion (Pages -> Error) --}}
+                    @can('seguridad')
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#pagesCollapseError" aria-expanded="false"
                         aria-controls="pagesCollapseError">
@@ -127,6 +130,7 @@
                             <a class="nav-link" href="{{route('roles.index')}}">Grupos</a>
                         </nav>
                     </div>
+                    @endcan
                     {{-- <a class="nav-link" href="pricing.html">Pricing</a>
                                 <a class="nav-link" href="invoice.html">Invoice</a> --}}
                 </nav>

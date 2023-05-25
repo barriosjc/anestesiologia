@@ -32,17 +32,16 @@ use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\UsuarioController;
 
-Route::get("tabla", function(){
-    return view('layouts.ejemplo');
-});
-Route::get("create_wiz", function(){
-    return view('encuestas.create_wiz');
-});
-
+Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/', function () {
         return view('layouts.main');
     });    
+
+    Route::get("create_wiz", function(){
+        return view('encuestas.create_wiz');
+    });
+
     Route::resources( ['empresas' => EmpresaController::class, 
                     'grupals' => GrupalController::class,
                     'grupalusers' => grupalUserController::class,
@@ -53,11 +52,16 @@ Route::group(['middleware' => 'auth'], function() {
     );
     //perfil de usuario
     Route::get('profile', [ProfileController::class, 'index'])->name('profile');
-    Route::get('nuevo/profile', [ProfileController::class, 'nuevo'])->name('profile.nuevo');
-    Route::post('profile/foto/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
-    Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
-    Route::get('empresas/grupal/combos', [ProfileController::class, 'grupal'])->name('empresas.grupos');
+    Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
 
+    Route::get('empresas/grupal/combos', [ProfileController::class, 'grupal'])->name('empresas.grupos');
+    Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
+    Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
+
+    Route::group(['middleware' => ['can:crear nuevos usuarios']], function () {
+       Route::get('nuevo/profile', [ProfileController::class, 'nuevo'])->name('profile.nuevo');
+       Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
+    });
     Route::group(['middleware' => ['can:seguridad']], function () {
         Route::resources(['usuario' => UsuarioController::class,
                             'roles' => RoleController::class,

@@ -8,12 +8,12 @@
         <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="index.html">{{ config('app.name', 'Clap2.0') }}</a>
         {{-- Navbar Search Input--}}
         {{-- * * Note: * * Visible only on and above the lg breakpoint--}}
-        <form class="form-inline me-auto d-none d-lg-block me-3">
-            <div class="input-group input-group-joined input-group-solid">
-                <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
-                <div class="input-group-text"><i data-feather="search"></i></div>
-            </div>
-        </form>
+            <h6 class="dropdown-header d-flex align-items-center">
+                {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
+                @if (!empty(session('empresa')))
+                    <img class="dropdown-user-img" src="{{asset('/img/empresas') ."/". session('empresa')->logo }}" /> 
+                @endif           
+            </h6>
         {{-- Navbar Items--}}
         <ul class="navbar-nav align-items-center ms-auto">
             {{-- Documentation Dropdown--}}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class EmpresaController
@@ -105,5 +106,18 @@ class EmpresaController extends Controller
 
         return redirect()->route('empresas.index')
             ->with('success', 'Empresa deleted successfully');
+    }
+
+    public function entorno($entorno) {
+        $empresa = Empresa::where('uri', $entorno)->first();
+        if ($empresa) {
+            session(['empresa' => $empresa]);
+        }else{
+            session()->forget('empresa');
+            Auth::logout();
+            
+        }
+
+        return redirect()->route('login');
     }
 }

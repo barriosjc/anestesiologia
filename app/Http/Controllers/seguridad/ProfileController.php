@@ -111,4 +111,33 @@ class ProfileController extends Controller
             ->withInput($request->input())
             ->with('success', 'Foto actualizada correctamente.');
     }
+
+    public function password() {
+        $titulo = "Cambio de clave";
+
+        return view('auth.password')->with(compact('titulo'));
+    }
+
+    public function save_password(Request $request) {
+        $validado = $request->validate([
+            'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            'confirmacion_password' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 
+            'same:password_nueva'],
+            'password_actual' => ['required', 'string', 'max:20',
+                function ($attribute, $value, $fail) use ($request) {
+                            $usuario = User::where('id', Auth()->user()->id)->first();
+                            // dd($usuario ,  Hash::make($value))
+                            if (!($usuario && Hash::make($value) != $usuario->password)) {
+                                $fail('La clave actual que ingreso es incorrecta.');
+                            }
+                        }]
+        ]);
+
+        $user = user::where("id", Auth()->user()->id)->first();
+        $user->password = hash::make($validado['password_nueva']);
+        $user->save();
+
+        return back()->with('success', 'Se actualizó la nueva password correctamente.');
+
+    }
 }

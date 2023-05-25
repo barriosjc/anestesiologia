@@ -8,8 +8,8 @@
     <div class="container-xl px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
-            <a class="nav-link active ms-0" href="account-profile.html">Perfil usuario</a>
-            <a class="nav-link" href="account-billing.html">Cambio de password</a>
+            <a class="nav-link active ms-0" href="{{ route('profile') }}">Perfil usuario</a>
+            <a class="nav-link" href="{{ route('profile.password') }}">Cambio de password</a>
             <a class="nav-link" href="account-security.html">Puntos</a>
         </nav>
         <hr class="mt-0 mb-4" />
