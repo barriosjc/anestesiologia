@@ -13,6 +13,7 @@
         fill: none;
         }
 </style>
+
 <div class="container-fluid px-4">
     <ul class="navbar navbar-expand-lg navbar-light bg-light">
         <li class="nav-item">
@@ -39,9 +40,9 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
-                    <input type="hidden" name="puntos[{{$item->encuestas_opciones_id}}]" value="{{$item->eo_puntos}}">
-                    <input name="opciones[]" type="checkbox" value={{$item->encuestas_opciones_id}}
-                            {{in_array($item->encuestas_opciones_id, (old('opciones') !== null ? old('opciones') : array())) ? 'checked' : ''}}>
+                    <input type="hidden" name="puntos[{{$item->opciones_id}}]" value="{{$item->eo_puntos}}">
+                    <input name="opciones[]" type="checkbox" value={{$item->opciones_id}}
+                            {{in_array($item->opciones_id, (old('opciones') !== null ? old('opciones') : array())) ? 'checked' : ''}}>
                             <i class="size-18 text-muted" data-feather="info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{$item->detalle}}"></i>
                 </div>
             </div>
@@ -81,10 +82,10 @@
                 <input type="radio" name="ck_tipo" value="ck_grupal" id="ck_grupal"
                         {{ old('ck_tipo') == 'ck_grupal' ? 'checked' : ''}}>
                 <label>Reconocimiento grupal</label>
-                <select name="grupal_id_reconocido" class="form-control" id="grupal_id_reconocido" >
+                <select name="grupal_id_reconocido" class="form-control selectpicker" id="grupal_id_reconocido" >
                     <option value=""> --- Select ---</option>
                     @foreach ($grupal as $data)
-                        <option value="{{ $data->id }}" {{old('grupal_id_reconocido') == $data->id ? 'selected' : ''}} > {{ $data->descripcion }}</option>
+                        <option value="{{ $data->id }}" {{old('grupal_id_reconocido') == $data->id ? 'selected' : ''}} > {{ $data->useryjefe }}</option>
                     @endforeach
                 </select>
             </div>                    
@@ -112,6 +113,7 @@
 </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
             //para habilitar los popovers
             $(function () {
                 $('[data-toggle="popover"]').popover()
@@ -137,4 +139,5 @@
             });
     }, false);
     </script>
+
 @endsection
