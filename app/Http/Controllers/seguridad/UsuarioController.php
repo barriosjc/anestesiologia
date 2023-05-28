@@ -10,6 +10,7 @@ use App\Models\user;
 use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
@@ -52,7 +53,17 @@ class UsuarioController extends Controller
    */
   public function create()
   {
-    return view('seguridad.usuario.create');
+
+    if (session()->has('empresa')) {
+      $empresas = empresa::where("id", session('empresa')->id)->get();
+    } else {
+      $empresas = empresa::all();
+    }
+    $user = new user();
+    $perfiles = role::all();
+    $perfiles_user = [];
+
+    return view('seguridad.usuario.create')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
   }
 
   /**
@@ -64,22 +75,42 @@ class UsuarioController extends Controller
    */
   public function store(Request $request)
   {
-    $this->validate($request, [
-      'name' => 'required|max:60',
-      'last_name' => 'required|max:60',
-      'password' => 'required',
-      'email' => 'required'
+    $validated = $request->validate([
+      'name' => 'required|string|max:50',
+      'last_name' => 'nullable|string|max:100',
+      'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
+      'empresas_id' => 'required',
+      'cargo' => 'nullable|string|max:45',
+      'observaciones' => 'nullable|max:255',
+      'jefe_user_id' => 'nullable',
+      'es_jefe' => 'nullable',
+      'telefono' => 'nullable',
     ]);
+    $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+    $validated['password'] = Hash::make('12345678');
+    $validated['cambio_password'] = 1;
+    $validated['foto'] = 'fotovacia.jpeg';
 
-    $requestData = $request->all();
-    if ($request->hasFile('avatar')) {
-      $requestData['foto'] = $request->file('foto')->store('fotos');
+    if ($request->id) {
+      $user = user::where('id', $request->id)->first();
+    } else {
+      $user = new user();
     }
-    $requestData['password'] = Hash::make($request->password);
+    foreach ($validated as $key => $value) {
+      $user->$key = $value;
+    }
+    $user->save();
 
-    User::create($requestData);
+    if (isset($request->perfil_id)) {
+      foreach ($request->perfil_id as $key => $value) {
+        $rol = role::find($value);
+        $user->assignRole($rol);
+      }
+    }
 
-    return redirect('usuario')->with('flash_message', 'Usuario agregado con éxito!');
+    return back()
+      ->withInput($request->input())
+      ->with('success', 'Se guardó los datos del usuario de forma correcta.');
   }
 
   /**
@@ -107,7 +138,19 @@ class UsuarioController extends Controller
   {
     $user = User::findOrFail($id);
 
-    return view('seguridad.usuario.edit', compact('user'));
+    if (session()->has('empresa')) {
+      $empresas = empresa::where("id", session('empresa')->id)->get();
+    } else {
+      $empresas = empresa::all();
+    }
+    $perfiles = role::all();
+    // $perfiles_user = $user->roles;
+    $perfiles_user = [];
+    foreach ($user->roles as $key => $value) {
+        $perfiles_user[] += $value->id;
+    }
+
+    return view('seguridad.usuario.edit')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
   }
 
   /**
@@ -120,37 +163,45 @@ class UsuarioController extends Controller
    */
   public function update(Request $request, $id)
   {
-    $this->validate($request, [
-      'name' => 'required|max:50',
-      'last_name' => 'required|max:100',
-      'password' => 'required|max:255',
-      'email' => 'required|max:255'
+    $validated = $request->validate([
+      'name' => 'required|string|max:50',
+      'last_name' => 'nullable|string|max:100',
+      'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
+      'empresas_id' => 'required',
+      'cargo' => 'nullable|string|max:45',
+      'observaciones' => 'nullable|max:255',
+      'jefe_user_id' => 'nullable',
+      'es_jefe' => 'nullable',
+      'telefono' => 'nullable',
     ]);
-
-    $requestData = $request->all();
-    $user = User::findOrFail($id);
-
-    if ($request->hasFile('foto')) {
-      $foto_vieja = $user->foto;
-      if (!empty($foto_vieja) and $foto_vieja <> config('app.avatar-def')) {
-        Storage::delete($foto_vieja);
-      }
-
-      //guarda storage/app/public/fotos
-      $path = Storage::disk('usuarios')->put("", $request->file('foto'));
-      //$path = $request->file('foto')->store('', 'usuarios');
-      //$user->foto = $path;
-      $requestData['foto']= $path;
-      // $user->save();    
+    $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+    $validated['password'] = Hash::make('12345678');
+    $validated['cambio_password'] = 1;
+    if ($request->id) {
+      $user = user::where('id', $request->id)->first();
+    } else {
+      $user = new user();
     }
-    $requestData['password']  = Hash::make($request->password);
+    foreach ($validated as $key => $value) {
+      $user->$key = $value;
+    }
+    $user->save();
 
-    $user->update($requestData);
+    foreach (role::all() as $role) {
+      $user->removeRole($role->name);
+    }
+    if (isset($request->perfil_id)) {
+      foreach ($request->perfil_id as $key => $value) {
+        $rol = role::find($value);
+        $user->assignRole($rol);
+      }
+    }
+    
     $esabm = true;
     $user = User::latest()->paginate(10);
 
     return view('seguridad.usuario.index', compact('user', 'esabm'))
-      ->with('flash_message', 'Usuario actualizado!');
+      ->with('success', 'Usuario actualizado!');
   }
 
   /**

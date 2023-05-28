@@ -40,12 +40,15 @@ class RespuestaController extends Controller
 
         $titulo = "Sin encuesta para este periodo";
         $encuestas = Encuesta::v_encuesta_actual(Auth()->user()->empresas_id)
-                                    ->get();
+            ->get();
         //traer todos los usuarios de la empresa y excluye al users_id
-        $users = User::where("empresas_id", Auth()->user()->empresas_id)->get();
+        $users = User::where("empresas_id", Auth()->user()->empresas_id)
+                        ->where("id", "!=", Auth()->user()->id)
+                        ->get();
         //traer todos los grupos de la empresa del usuario
-        $grupal = DB::select ('select id, useryjefe from v_user_jefes where empresas_id = ' . Auth()->user()->empresas_id);
-        if(count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - ". $encuestas[0]->edicion . " - ". $encuestas[0]->descrip_rango;
+        $grupal = DB::select('select id, useryjefe from v_user_jefes where empresas_id = ' . Auth()->user()->empresas_id
+                                   . " and id != " . Auth()->user()->id);
+        if (count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - " . $encuestas[0]->edicion . " - " . $encuestas[0]->descrip_rango;
 
         return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo'));
     }
@@ -91,18 +94,20 @@ class RespuestaController extends Controller
             $encuesta_result->users_id = $data['users_id'];
             $encuesta_result->observaciones = $data['observaciones'];
             $encuesta_result->save();
-            
+
             //esto luego tiene que estar dentro de un bucle por el select multi
             if ($request->ck_tipo == 'ck_individual') {
                 $resultado = new Resultado_individual();
                 $resultado->encuestas_resultados_id = $encuesta_result->id;
                 $resultado->users_id = $request->user_id_reconocido;
                 $resultado->save();
-            }else{
-                $resultado = new Resultado_grupal();
-                $resultado->encuestas_resultados_id = $encuesta_result->id;
-                $resultado->user_id = $request->grupal_id_reconocido;
-                $resultado->save();
+            } else {
+                foreach ($request->grupal_id_reconocido as $key => $value) {
+                    $resultado = new Resultado_grupal();
+                    $resultado->encuestas_resultados_id = $encuesta_result->id;
+                    $resultado->user_id = $value;
+                    $resultado->save();
+                }
             }
 
             foreach ($request->opciones as $opcion) {
@@ -116,8 +121,8 @@ class RespuestaController extends Controller
             $msg = $e->getMessage();
             //return back()->with(['danger' => $msg, "valant" => $valant]);
             return back()
-                    ->withInput($request->input())
-                    ->withErrors(['danger' => $msg]);
+                ->withInput($request->input())
+                ->withErrors(['danger' => $msg]);
         }
 
         return redirect()->route('respuesta')

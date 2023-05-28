@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\entidades;
 
 use App\Models\Opcion;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 /**
  * Class OpcionController
@@ -20,7 +21,7 @@ class OpcionController extends Controller
     {
         $opciones = Opcion::paginate();
 
-        return view('opcion.index', compact('opciones'))
+        return view('entidades.opcion.index', compact('opciones'))
             ->with('i', (request()->input('page', 1) - 1) * $opciones->perPage());
     }
 
@@ -32,7 +33,8 @@ class OpcionController extends Controller
     public function create()
     {
         $opciones = new Opcion();
-        return view('opcion.create', compact('opciones'));
+        
+        return view('entidades.opcion.create', compact('opciones'));
     }
 
     /**
@@ -61,7 +63,7 @@ class OpcionController extends Controller
     {
         $opciones = Opcion::find($id);
 
-        return view('opcion.show', compact('opciones'));
+        return view('entidades.opcion.show', compact('opciones'));
     }
 
     /**
@@ -74,7 +76,7 @@ class OpcionController extends Controller
     {
         $opciones = Opcion::find($id);
 
-        return view('opcion.edit', compact('opciones'));
+        return view('entidades.opcion.edit', compact('opciones'));
     }
 
     /**

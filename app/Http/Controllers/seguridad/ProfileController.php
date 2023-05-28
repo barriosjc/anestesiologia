@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Models\Grupal;
-use App\Models\grupal_empresa;
 
 class ProfileController extends Controller
 {
@@ -19,32 +17,39 @@ class ProfileController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index($id)
     {
-        if (Auth()->user()->empresas_id === 0) {
+        $user = user::where("id", $id)->first();
+        if ($user->empresas_id === 0) {
             $empresas = empresa::all();
         } else {
-            $empresas = empresa::where("id", Auth()->user()->empresas_id)
-                ->get();
+            $empresas = empresa::where("id", $user->empresas_id)->get();
         }
-        $user = user::find(Auth()->user()->id);
-        $jefes = user::where('es_jefe', 1)->get();
+   
+        $jefes = user::where('es_jefe', 1)
+                    ->where('id', $user->empresas_id)
+                    ->get();
 
-        return view('seguridad.usuario.profile')->with(compact('empresas', 'user', 'jefes'));
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
     }
 
     public function nuevo()
     {
-        $empresas = empresa::all();
+        if (Auth()->user()->empresas_id === 0) {
+            $empresas = empresa::all();
+        } else{
+            $empresas = empresa::where("id", Auth()->user()->empresas_id)->get();
+        }
         $user = new user();
-        $jefes = user::where('es_jefe', 1)->get();
+        $jefes = user::where('es_jefe', 1)
+                    ->where('id', $user->empresas_id)
+                    ->get();
 
-        return view('seguridad.usuario.profile')->with(compact('empresas', 'user', 'jefes'));
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
     }
 
     public function save(request $request)
     {
-
         $validated = $request->validate([
             'name' => 'required|string|max:50',
             'last_name' => 'nullable|string|max:100',
@@ -74,14 +79,16 @@ class ProfileController extends Controller
             ->with('success', 'Se guardó los datos del usuario en forma correcta.');
     }
 
-    public function grupal(Request $request)
+    public function usuarios_jefes(Request $request)
     {
         try {
             $empresas_id = $request->input('empresas_id');
-            $grupal = grupal::v_grupal($empresas_id)->get();
+            $grupal = user::where('empresas_id', $empresas_id)
+                                ->where('es_jefe', 1)->get();
             $response = ['data' => $grupal];
+
         } catch (\Exception $exception) {
-            return response()->json(['message' => 'There was an error retrieving the records'], 500);
+            return response()->json(['message' => 'hay un error al intentar traer los usuarios jefes'], 500);
         }
         return response()->json($response);
     }
@@ -115,7 +122,7 @@ class ProfileController extends Controller
     public function password() {
         $titulo = "Cambio de clave";
 
-        return view('auth.password')->with(compact('titulo'));
+        return view('seguridad.usuario.password')->with(compact('titulo'));
     }
 
     public function save_password(Request $request) {

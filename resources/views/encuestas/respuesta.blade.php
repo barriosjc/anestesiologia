@@ -2,6 +2,12 @@
 
 @section('titulo', $titulo)
 @section('contenido')
+
+<!-- Styles -->
+{{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" /> --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
 <style>
      .size-18{
         width: 20px;
@@ -13,8 +19,9 @@
         fill: none;
         }
 </style>
-
+@include('utiles.alerts')
 <div class="container-fluid px-4">
+
     <ul class="navbar navbar-expand-lg navbar-light bg-light">
         <li class="nav-item">
             <h6>Paso 1.</h6>
@@ -65,7 +72,7 @@
             </ul>
             </div>
         <div class="col-12">
-            <div class="form-group row">
+            <div class="form-group">
                 <input type="radio" name='ck_tipo' value='ck_individual' id='ck_individual'
                             {{ old('ck_tipo') == 'ck_individual' ? 'checked' : ''}}>
                 <label>Reconocimiento individual</label>
@@ -78,12 +85,12 @@
             </div>                    
         </div>
         <div class="col-12">
-            <div class="form-group row">
+            <div class="form-group">
                 <input type="radio" name="ck_tipo" value="ck_grupal" id="ck_grupal"
                         {{ old('ck_tipo') == 'ck_grupal' ? 'checked' : ''}}>
                 <label>Reconocimiento grupal</label>
-                <select name="grupal_id_reconocido" class="form-control selectpicker" id="grupal_id_reconocido" >
-                    <option value=""> --- Select ---</option>
+                <select name="grupal_id_reconocido[]" class="form-control" id="grupal_id_reconocido" multiple >
+                    {{-- <option value=""> --- Select ---</option> --}}
                     @foreach ($grupal as $data)
                         <option value="{{ $data->id }}" {{old('grupal_id_reconocido') == $data->id ? 'selected' : ''}} > {{ $data->useryjefe }}</option>
                     @endforeach
@@ -139,5 +146,19 @@
             });
     }, false);
     </script>
+
+<!-- Scripts -->
+{{-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        $( '#grupal_id_reconocido' ).select2( {
+            theme: 'bootstrap-5'
+        } );
+
+    });
+
+</script>
 
 @endsection

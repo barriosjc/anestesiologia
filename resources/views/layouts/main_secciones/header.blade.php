@@ -161,7 +161,7 @@
                         </div>
                     </h6>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item"  href="{{ route('profile')}}">
+                    <a class="dropdown-item"  href="{{ route('profile', ['id' => Auth()->user()->id]) }}">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Mi perfil
                     </a>

@@ -1,7 +1,6 @@
-@extends('layouts.main')
+@extends('seguridad.usuario.profile')
 
-@section('titulo', $titulo)
-@section('contenido')
+@section('profield')
     <div class="container-xl px-4">
         <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-9">
@@ -44,7 +43,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <p  class="text-danger small">La nueva clave debe tener 8 caracteres mínimo, contener letras mayusculas, minúsculas y numeros.</p>
+                            <p class="text-danger small">La nueva clave debe tener 8 caracteres mínimo, contener letras
+                                mayusculas, minúsculas y numeros.</p>
 
                             <hr class="my-0" />
                             <!-- Form Group (form submission)-->
@@ -62,4 +62,10 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $("a").removeClass("active  ms-0");
+            $("#password").addClass("active  ms-0");
+        });
+    </script>
 @endsection

@@ -1,4 +1,9 @@
-                @if (session()->has('message') || session()->has('error')) 
+                @if (session()->has('success') || session()->has('message') || session()->has('error'))
+                    @if (session()->has('success'))
+                        <div class="alert alert-success ">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     @if (session()->has('message'))
                         <div class="alert alert-success ">
                             {{ session('message') }}
@@ -12,8 +17,8 @@
                     @endif
                     <script>
                         $('.page-header-title').animate({
-                                scrollTop: '0px'
-                            }, 300);
+                            scrollTop: '0px'
+                        }, 300);
                     </script>
                 @endif
                 @if ($errors->any())
