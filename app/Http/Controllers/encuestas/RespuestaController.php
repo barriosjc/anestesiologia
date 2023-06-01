@@ -13,7 +13,7 @@ use App\Models\encuestas_resultados_opciones;
 //use App\Models\Opcion;
 use App\Models\resultado_grupal;
 use App\Models\resultado_individual;
-//use App\Models\empresa;
+//use App\Models\Empresa;
 //use App\Models\encuesta_opcion;
 //use App\Models\Periodo;
 use App\Models\User;
@@ -105,7 +105,7 @@ class RespuestaController extends Controller
                 foreach ($request->grupal_id_reconocido as $key => $value) {
                     $resultado = new Resultado_grupal();
                     $resultado->encuestas_resultados_id = $encuesta_result->id;
-                    $resultado->user_id = $value;
+                    $resultado->users_id = $value;
                     $resultado->save();
                 }
             }

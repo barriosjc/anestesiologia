@@ -31,6 +31,7 @@ use App\Http\Controllers\seguridad\PermisosController;
 use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\UsuarioController;
+use App\Http\Controllers\encuestas\ReconocimientosController;
 use App\Models\User;
 
 // Route::get('/select', function () {
@@ -47,6 +48,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get("create_wiz", function () {
         return view('encuestas.create_wiz');
     });
+
+    Route::get('reconocimientos/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
+    Route::get('reconocimientos/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
 
     Route::resources(
         [

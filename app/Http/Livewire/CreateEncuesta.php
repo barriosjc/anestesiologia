@@ -14,7 +14,7 @@ use App\Models\encuestas_resultados_opciones;
 use App\Models\Opcion;
 use App\Models\resultado_grupal;
 use App\Models\resultado_individual;
-use App\Models\empresa;
+use App\Models\Empresa;
 use App\Models\encuesta_opcion;
 use App\Models\Periodo;
 use Exception;

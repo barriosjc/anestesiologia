@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Throwable;
 use App\Models\Encuesta;
 use App\Models\Opcion;
-use App\Models\empresa;
+use App\Models\Empresa;
 use App\Models\encuesta_opcion;
 use App\Models\Periodo;
 use Exception;

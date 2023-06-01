@@ -60,7 +60,7 @@ class UsuarioController extends Controller
       $empresas = empresa::all();
     }
     $user = new user();
-    $perfiles = role::all();
+    $perfiles = role::v_roles(auth()->user()->empresas_id)->get();
     $perfiles_user = [];
 
     return view('seguridad.usuario.create')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
@@ -143,7 +143,8 @@ class UsuarioController extends Controller
     } else {
       $empresas = empresa::all();
     }
-    $perfiles = role::all();
+    $perfiles = role::v_roles(Auth()->user()->empresas_id)->get();
+
     // $perfiles_user = $user->roles;
     $perfiles_user = [];
     foreach ($user->roles as $key => $value) {
@@ -187,9 +188,13 @@ class UsuarioController extends Controller
     }
     $user->save();
 
-    foreach (role::all() as $role) {
-      $user->removeRole($role->name);
-    }
+    // foreach (role::all() as $role) {
+    //   $user->removeRole($role->name);
+    // }
+    //quita los roles actuales
+    $user->syncRoles([]);
+
+    //asigna los roles marcados
     if (isset($request->perfil_id)) {
       foreach ($request->perfil_id as $key => $value) {
         $rol = role::find($value);
