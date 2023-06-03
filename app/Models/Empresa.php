@@ -10,7 +10,7 @@ use App\Models\User;
  * Class Empresa
  *
  * @property $id
- * @property $razon_rosial
+ * @property $razon_social
  * @property $contacto
  * @property $telefono
  * @property $created_at
@@ -35,7 +35,7 @@ class Empresa extends Model
      *
      * @var array
      */
-    protected $fillable = ['razon_social','contacto','telefono'];
+    protected $fillable = ['razon_social','contacto','telefono','uri','logo'];
 
 
     /**

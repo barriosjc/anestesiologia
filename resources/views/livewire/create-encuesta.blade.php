@@ -1,6 +1,5 @@
 <div>
     {{-- hecho para livewire --}}
-
     <div class="container-fluid px-4">
         {{-- Wizard card example with navigation --}}
         <div class="card">

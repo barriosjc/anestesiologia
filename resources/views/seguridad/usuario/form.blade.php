@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
 <div class="mb-3">
@@ -80,11 +81,10 @@
 <div class="mb-3">
     <label class="small mb-1">Perfil/es</label>
     <select name="perfil_id[]" class="form-control" id="perfil_id" multiple>
-        @foreach ($perfiles as $data)
-            <option value="{{ $data->id }}"
-                {{ in_array($data->id, $perfiles_user) ? 'selected' : '' }}>
+        {{-- @foreach ($perfiles as $data)
+            <option value="{{ $data->id }}" {{ in_array($data->id, $perfiles_user) ? 'selected' : '' }}>
                 {{ $data->name }}</option>
-        @endforeach
+        @endforeach --}}
     </select>
 </div>
 <div class="col-12">
@@ -96,22 +96,24 @@
     $(document).ready(function() {
         var grupalSelect = $('#jefe_user_id');
         var empresasSelect = $('#empresas_id');
+        var rolesSelect = $('#perfil_id');
 
-        if(empresasSelect.val()>0){
-          empresasId = empresasSelect.val();
-          cargaJefes(empresasId);
+        if (empresasSelect.val() > 0) {
+            empresasId = empresasSelect.val();
+            cargaJefes(empresasId);
         }
 
         empresasSelect.change(function() {
-          var empresasId = $(this).val();
-          cargaJefes(empresasId);
+            var empresasId = $(this).val();
+            cargaJefes(empresasId);
+            cargaRoles(empresasId);
         });
 
         function cargaJefes(empresasId) {
 
             grupalSelect.empty();
             // var grupalEnBD = null;
-            var jefeId = {{$user->jefe_user_id ? $user->jefe_user_id : 0}};
+            var jefeId = {{ $user->jefe_user_id ? $user->jefe_user_id : 0 }};
             if (empresasId) {
                 $.ajax({
                     url: "{{ route('empresas.usuarios') }}",
@@ -125,7 +127,34 @@
                         $.each(response.data, function(key, value) {
                             grupalSelect.append("<option value='" + value.id + "'" +
                                 (jefeId !== value.id ? '' : 'selected') +
-                                 ">" + value.last_name + "</option>");
+                                ">" + value.last_name + "</option>");
+                        });
+                    },
+                    error: function(response) {
+                        alert(response.messagge);
+                    }
+                });
+            }
+        }
+
+        function cargaRoles(empresasId) {
+
+            rolesSelect.empty();
+            // var grupalEnBD = null;
+            var roleId = 0 ; //{{ $perfiles_user ? $perfiles_user : null }};
+            if (empresasId) {
+                $.ajax({
+                    url: "{{ route('empresas.roles') }}",
+                    type: 'GET',
+                    data: {
+                        empresas_id: empresasId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        $.each(response.data, function(key, value) {
+                            rolesSelect.append("<option value='" + value.id + "'" +
+                                (roleId !== value.id ? '' : 'selected') +
+                                ">" + value.name + "</option>");
                         });
                     },
                     error: function(response) {
@@ -141,16 +170,15 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 <script>
-    $( document ).ready(function() {
-        $( '#perfil_id' ).select2( {
+    $(document).ready(function() {
+        $('#perfil_id').select2({
             theme: 'bootstrap-5'
-        } );
+        });
 
-        for (let index = 0; index < $.length; index++) {
-          const element = array[index];
-          
-        }
+        // for (let index = 0; index < $.length; index++) {
+        //   const element = array[index];
+
+        // }
 
     });
-
 </script>

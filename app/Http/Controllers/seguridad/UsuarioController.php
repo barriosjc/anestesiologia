@@ -60,7 +60,7 @@ class UsuarioController extends Controller
       $empresas = empresa::all();
     }
     $user = new user();
-    $perfiles = role::v_roles(auth()->user()->empresas_id)->get();
+    $perfiles = role::v_roles_empresas(Auth()->user()->empresas_id)->get();
     $perfiles_user = [];
 
     return view('seguridad.usuario.create')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
@@ -143,7 +143,7 @@ class UsuarioController extends Controller
     } else {
       $empresas = empresa::all();
     }
-    $perfiles = role::v_roles(Auth()->user()->empresas_id)->get();
+    $perfiles = role::v_roles_empresas(Auth()->user()->empresas_id)->get();
 
     // $perfiles_user = $user->roles;
     $perfiles_user = [];

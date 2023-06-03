@@ -31,9 +31,14 @@
                 Mis reconocimientos
             </a>
 
+
             {{-- Sidenav Menu Heading (Core) lo muestra si tiene permiso para crear encuestas --}}
             @can('creacion de encuestas')
                 <div class="sidenav-menu-heading">Core</div>
+                <a class="nav-link" href="{{ route('empresas.index') }}">
+                    <div class="nav-link-icon"><i data-feather="home"></i></div>
+                    ABM de empresas
+                </a>
                 {{-- Sidenav Accordion (Encuestas) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                     data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">

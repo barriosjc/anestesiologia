@@ -71,7 +71,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
 
     Route::group(['middleware' => ['can:crear nuevos usuarios']], function () {
-        //    Route::get('nuevo/profile', [ProfileController::class, 'nuevo'])->name('profile.nuevo');
+        Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::resources([
             'usuario' => UsuarioController::class,
