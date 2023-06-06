@@ -55,7 +55,7 @@ class LoginController extends Controller
         }
         // Modifica la validación para verificar la pertenencia del usuario a una empresa
         if (Auth::attempt($credentials)) {
-            $empresa = Empresa::where('id', session('empresa')->id)->first();
+            $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
             if ($empresa) {
                 session(['empresa' => $empresa]);
             }
