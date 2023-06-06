@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Empresa;
 
 class LoginController extends Controller
 {
@@ -33,6 +36,7 @@ class LoginController extends Controller
         return view('auth.auth-login-basic');
     }
 
+
     /**
      * Create a new controller instance.
      *
@@ -42,4 +46,33 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    protected function attemptLogin(Request $request)
+    {
+        $credentials = $this->credentials($request);
+        if (session()->has('empresa')) {
+            $credentials['empresas_id'] = session('empresa')->id;
+        }
+        // Modifica la validación para verificar la pertenencia del usuario a una empresa
+        if (Auth::attempt($credentials)) {
+            $empresa = Empresa::where('id', session('empresa')->id)->first();
+            if ($empresa) {
+                session(['empresa' => $empresa]);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        // dd('llega a auten', $user);
+        if ($user->empresas_id === 0) {
+            return redirect()->route('empresa.select');
+        } else {
+            return redirect()->route('main');
+        }
+    }
+
 }

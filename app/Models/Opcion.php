@@ -34,6 +34,8 @@ class Opcion extends Model
 		'detalle' => 'required',
 		'imagen' => 'required',
 		'style' => 'required',
+    'habilitada' => 'required',
+    'puntos' => 'required',
     ];
 
     protected $table = 'opciones';

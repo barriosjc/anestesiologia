@@ -34,11 +34,12 @@ class Encuesta extends Model
         return $resu;
     }
     
-    public static function v_encuestas() {
+    public static function v_encuestas($empresa_id) {
         $resu = Encuesta::query()
         ->select(['encuestas.id', 'encuesta', 'edicion', 'encuestas.habilitada', 
                     'opcionesxcol', 'empresas_id', 'razon_social'])
         ->join('empresas as e', 'e.id', 'encuestas.empresas_id')
+        ->where('e.id', $empresa_id)
         ->orderby('encuestas.created_at', 'desc');
 // dd("tabla encuesta",$resu);
         return $resu;

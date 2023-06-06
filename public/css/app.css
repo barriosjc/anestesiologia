@@ -80,6 +80,10 @@
   box-sizing: border-box;
 }
 
+.bg-primary-x {
+  background-color: #ff0000;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;

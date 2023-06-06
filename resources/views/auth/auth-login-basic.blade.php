@@ -26,6 +26,12 @@
                         <div class="col-lg-5">
                             {{-- Basic login form--}}
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <h6 class="dropdown-header d-flex align-items-center">
+                                    {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
+                                    @if (!empty(session('empresa')))
+                                        <img class="dropdown-user-img" src="{{asset('/img/empresas') ."/". session('empresa')->logo }}" /> 
+                                    @endif           
+                                </h6>
                                 <div class="card-header justify-content-center">
                                     <h3 class="fw-light my-4">Login</h3>
                                 </div>

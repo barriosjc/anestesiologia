@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
-use App\Models\Grupal;
-use App\Models\grupal_empresa;
 
 class ProfileController extends Controller
 {
@@ -19,122 +17,134 @@ class ProfileController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index($id)
     {
-        if (Auth()->user()->empresas_id === 0) {
+        $user = user::where("id", $id)->first();
+        if ($user->empresas_id === 0) {
             $empresas = empresa::all();
         } else {
-            $empresas = empresa::where("id", Auth()->user()->empresas_id)
-                            ->get();
+            $empresas = empresa::where("id", $user->empresas_id)->get();
         }
-        $user = new user();
+   
+        $jefes = user::where('es_jefe', 1)
+                    ->where('id', $user->empresas_id)
+                    ->get();
 
-        return view('seguridad.usuario.profile')->with(compact('empresas', 'user'));
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
     }
 
-    public function save(request $request) {
+    public function nuevo()
+    {
+        if (session('empresa')->id === 0) {
+            $empresas = empresa::all();
+        } else{
+            $empresas = empresa::where("id", session('empresa')->id)->get();
+        }
+        $user = new user();
+        $jefes = user::where('es_jefe', 1)
+                    ->where('id', $user->empresas_id)
+                    ->get();
 
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
+    }
+
+    public function save(request $request)
+    {
         $validated = $request->validate([
-            'id' => 'nullable',
             'name' => 'required|string|max:50',
             'last_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
             'empresas_id' => 'required',
-            'grupal_id' => 'required',
             'cargo' => 'nullable|string|max:45',
-            'observaciones' => 'nullable|max:255'
-        ]);  
-        
+            'observaciones' => 'nullable|max:255',
+            'jefe_user_id' => 'nullable',
+            'es_jefe' => 'nullable',
+            'telefono' => 'nullable',
+        ]);
+        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
         $validated['password'] = Hash::make('12345678');
         $validated['cambio_password'] = 1;
-
-        if($request->id) {
-            $user = user::where("id", $request->id)->first();
-        }else {
+        if ($request->id) {
+            $user = user::where('id', $request->id)->first();
+        } else {
             $user = new user();
         }
-        $user->save($validated);
+        foreach ($validated as $key => $value) {
+            $user->$key = $value;
+        }
+        $user->save();
 
-        return redirect()->route('profile')
-        ->with('success', 'Se guardó el usuario en forma correcta.');
-
+        return back()
+            ->withInput($request->input())
+            ->with('success', 'Se guardó los datos del usuario en forma correcta.');
     }
 
-    // public function getGrupal(Request $request)
-    // {  
-    //         $empresas_id = $request->input('empresas_id');
-    //         $grupal = grupal::v_grupal($empresas_id)->get();
-    //         $response = ['data' => $grupal];
-
-    //         return response()->json($response);
-    // }
-
-    public function grupal(Request $request)
-{
-    try {    
+    public function usuarios_jefes(Request $request)
+    {
+        try {
             $empresas_id = $request->input('empresas_id');
-            $grupal = grupal::v_grupal($empresas_id)->get();
+            $grupal = user::where('empresas_id', $empresas_id)
+                                ->where('es_jefe', 1)->get();
             $response = ['data' => $grupal];
 
-    } catch (\Exception $exception) {
-        return response()->json([ 'message' => 'There was an error retrieving the records' ], 500);
+        } catch (\Exception $exception) {
+            return response()->json(['message' => 'hay un error al intentar traer los usuarios jefes'], 500);
+        }
+        return response()->json($response);
     }
-    return response()->json($response);
-}
 
+    public function foto(Request $request)
+    {
+        $request->validate([
+            "id" => 'required',
+            'foto' => 'image'
+        ],[
+            'id.required' => 'Primero debe tener guardado Detalle de usuario para luego poder subir una foto'
+        ]);
 
+        $user = User::findOrFail($request->id);
+        if ($request->hasFile('foto')) {
+            // guarda el archivo dentro de storage/app/fotos
+            $foto_vieja = $user->foto;
+            if (!empty($foto_vieja)) {
+                Storage::delete($foto_vieja);
+            }
+            $path = Storage::disk('usuarios')->put("", $request->file('foto'));
+            $user->foto = $path;
+            $user->save();
+        }
 
-    // public function update(Request $request)
-    // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:50',
-    //         'last_name' => 'nullable|string|max:100',
-    //         'email' => 'required|string|email|max:255|unique:users,email,' . Auth::user()->id,
-    //         'current_password' => 'nullable|required_with:new_password|max:255',
-    //         'new_password' => 'nullable|min:8|max:12|required_with:current_password|max:255',
-    //         'password_confirmation' => 'nullable|min:8|max:12|required_with:new_password|same:new_password|max:255'
-    //     ]);
+        return back()
+            ->withInput($request->input())
+            ->with('success', 'Foto actualizada correctamente.');
+    }
 
-    //     $user = User::findOrFail(Auth::user()->id);
-    //     $user->name = $request->input('name');
-    //     $user->last_name = $request->input('last_name');
-    //     $user->email = $request->input('email');
+    public function password() {
+        $titulo = "Cambio de clave";
 
-    //     if (!is_null($request->input('current_password'))) {
-    //         if (Hash::check($request->input('current_password'), $user->password)) {
-    //             $user->password = Hash::make($request->input('new_password'));
-    //         } else {
-    //             return redirect()->back()->withInput();
-    //         }
-    //     }
+        return view('seguridad.usuario.password')->with(compact('titulo'));
+    }
 
-    //     $user->save();
+    public function save_password(Request $request) {
+        $validado = $request->validate([
+            'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            'confirmacion_password' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 
+            'same:password_nueva'],
+            'password_actual' => ['required', 'string', 'max:20',
+                function ($attribute, $value, $fail) use ($request) {
+                            $usuario = User::where('id', Auth()->user()->id)->first();
+                            // dd($usuario ,  Hash::make($value))
+                            if (!($usuario && Hash::make($value) != $usuario->password)) {
+                                $fail('La clave actual que ingreso es incorrecta.');
+                            }
+                        }]
+        ]);
 
-    //     return redirect()->route('profile');
-    // }
+        $user = user::where("id", Auth()->user()->id)->first();
+        $user->password = hash::make($validado['password_nueva']);
+        $user->save();
 
-    // public function updatefoto(Request $rq){
-    //     $rq->validate([
-    //         'foto' => 'image'
-    //     ]);
+        return back()->with('success', 'Se actualizó la nueva password correctamente.');
 
-    //     $user = User::findOrFail(Auth::user()->id);        
-    //     if ($rq->hasFile('file')){
-    //         // guarda el archivo dentro de storage/app/fotos
-    //         $foto_vieja = $user->foto;
-    //         if(!empty($foto_vieja)){
-    //             Storage::delete($foto_vieja);
-    //         }
-    //         $path = Storage::disk('usuarios')->put("", $rq->file('file'));
-    //         // juan foto save
-    //         //$path = $rq->file('file')->storeAs("","mifoto.jpg", "usuarios");
-    //         //dd($path);
-    //         //guarda storage/app/fotos
-    //         $user->foto = $path;
-    //         $user->save();
-
-    //     }
-
-    //     return redirect()->route('profile');
-    // }
+    }
 }

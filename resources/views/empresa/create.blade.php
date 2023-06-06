@@ -1,30 +1,29 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('template_title')
-    {{ __('Create') }} Empresa
-@endsection
+@section('titulo', 'Empresas')
+@section('contenido')
+    <div class="container-fluid">
+        <div class="flex-center position-ref full-height">
+            <div class="row">
+                <div class="col-md-12">
+                    @include('utiles.alerts')
+                    <div class="card card-default">
+                        <div class="card-header">
+                            <a href="{{ route('empresas.index') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                            <span class="card-title">{{ __('Create') }} Empresa</span>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('empresas.store') }}" role="form"
+                                enctype="multipart/form-data">
+                                @csrf
 
-@section('content')
-    <section class="content container-fluid">
-        <div class="row">
-            <div class="col-md-12">
+                                @include('empresa.form')
 
-                @includeif('partials.errors')
-
-                <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Empresa</span>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('empresas.store') }}"  role="form" enctype="multipart/form-data">
-                            @csrf
-
-                            @include('empresa.form')
-
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 @endsection
