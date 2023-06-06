@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('titulo', 'Usuarios')
+@section('titulo', 'Opiciones')
 @section('contenido')
     <div class="container-fluid">
         <div class="row">
@@ -68,23 +68,31 @@
                                                 </td>
                                             @endif
                                             <td>{{ $opcion->puntos }}</td>
-                                            <td>
-                                                <div class="float-right">
-                                                    <a class="btn btn-sm btn-primary "
-                                                        href="{{ route('opcion.show', $opcion->id) }}"><i
-                                                            class="fa fa-fw fa-eye"></i></a>
-                                                    <a class="btn btn-sm btn-success"
-                                                        href="{{ route('opcion.edit', $opcion->id) }}"><i
-                                                            class="fa fa-fw fa-edit"></i></a>
-                                                    <form action="{{ route('opcion.destroy', $opcion->id) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"><i
-                                                                class="fa fa-fw fa-trash"></i></button>
-                                                    </form>
+                                            <td style="width: 150px;">
+                                                <div style="overflow: hidden;">
+                                                    <div style="float: left;">
+                                                        <a class="btn btn-sm btn-primary" href="{{ route('opcion.show', $opcion->id) }}">
+                                                            <i class="fa fa-fw fa-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div style="float: left;">
+                                                        <a class="btn btn-sm btn-success" href="{{ route('opcion.edit', $opcion->id) }}">
+                                                            <i class="fa fa-fw fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div style="float: left;">
+                                                        <form action="{{ route('opcion.destroy', $opcion->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fa fa-fw fa-trash" onclick="return confirm('Confirma eliminar?')"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                    <div style="clear: both;"></div>
                                                 </div>
                                             </td>
+                                            
                                         </tr>
                                     @endforeach
                                 </tbody>

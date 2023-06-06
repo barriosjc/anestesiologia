@@ -30,27 +30,29 @@ class RespuestaController extends Controller
      */
     public function index()
     {
-        if (Auth()->User()->empresas_id < 1) {
+        if (session('empresa')->id < 1) {
             abort(403, "No posee acceso para ingresar a Respuesta de encuestas, debe tener una empresa asignada");
         }
         //$empresas_id = $request->input('empresas_id');
-        // $grupal = grupal::v_grupal(Auth()->User()->empresas_id)->get();
+        // $grupal = grupal::v_grupal(session('empresa')->id)->get();
         // $response = ['data' => $grupal];
         // dd($response);
 
         $titulo = "Sin encuesta para este periodo";
-        $encuestas = Encuesta::v_encuesta_actual(Auth()->user()->empresas_id)
+        $encuestas = Encuesta::v_encuesta_actual(session('empresa')->id)
             ->get();
         //traer todos los usuarios de la empresa y excluye al users_id
-        $users = User::where("empresas_id", Auth()->user()->empresas_id)
+        $users = User::where("empresas_id", session('empresa')->id)
                         ->where("id", "!=", Auth()->user()->id)
                         ->get();
         //traer todos los grupos de la empresa del usuario
-        $grupal = DB::select('select id, useryjefe from v_user_jefes where empresas_id = ' . Auth()->user()->empresas_id
+        $grupal = DB::select('select id, useryjefe from v_user_jefes where empresas_id = ' . session('empresa')->id
                                    . " and id != " . Auth()->user()->id);
         if (count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - " . $encuestas[0]->edicion . " - " . $encuestas[0]->descrip_rango;
 
-        return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo'));
+        $styles = "background-color: #ff00cc !important;";
+
+        return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo', 'styles'));
     }
 
 

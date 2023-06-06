@@ -47,10 +47,6 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    //     public function loggedOut()
-    //     {
-    //         session()->forget('empresa');
-    //     }
     protected function attemptLogin(Request $request)
     {
         $credentials = $this->credentials($request);
@@ -59,13 +55,24 @@ class LoginController extends Controller
         }
         // Modifica la validación para verificar la pertenencia del usuario a una empresa
         if (Auth::attempt($credentials)) {
-            $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
+            $empresa = Empresa::where('id', session('empresa')->id)->first();
             if ($empresa) {
                 session(['empresa' => $empresa]);
-                return true;
             }
+            return true;
         }
-        
+
         return false;
     }
+
+    protected function authenticated(Request $request, $user)
+    {
+        // dd('llega a auten', $user);
+        if ($user->empresas_id === 0) {
+            return redirect()->route('empresa.select');
+        } else {
+            return redirect()->route('main');
+        }
+    }
+
 }

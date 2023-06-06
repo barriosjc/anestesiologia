@@ -60,9 +60,9 @@ protected $paginationTheme = 'bootstrap';
         $titulo = "Alta de una encuesta";
         $cant_per = null;
         $cant_opc = null;
-        if (Auth()->user()->empresas_id === 0) {
-        $empresas = empresa::all();
-        $encuestas = Encuesta::v_encuestas()
+        if (session('empresa')->id === 0) {
+        $empresas = empresa::where('id', session('empresa')->id)->get();
+        $encuestas = Encuesta::v_encuestas(session('empresa')->id)
                         ->paginate(5, ['*'], '_encuestas');
         $periodos = Periodo::where('encuestas_id', $this->encuestas_id_selected)
                         ->paginate(5, ['*'], '_periodos');
@@ -76,10 +76,9 @@ protected $paginationTheme = 'bootstrap';
                         ->count();
         $opciones = Opcion::all();
         } else {
-            $empresas = empresa::where("id", Auth()->user()->empresas_id)
+            $empresas = empresa::where("id", session('empresa')->id)
                             ->get();
-            $encuestas =  $encuesta = Encuesta::v_encuestas()
-                            ->where("empresas_id", Auth()->user()->empresas_id)
+            $encuestas =  $encuesta = Encuesta::v_encuestas(session('empresa')->id)
                             ->paginate(5, ['*'], '_encuestas');
             $periodos = Periodo::
                             where('encuestas_id', $this->encuestas_id_selected)
@@ -111,12 +110,12 @@ protected $paginationTheme = 'bootstrap';
     public function create()
     {
         $titulo = "Alta de una encuesta";
-        $opciones = Opcion::all();
-        $empresas = empresa::all();
-        $periodos = Periodo::all();
-        $encuestas_opciones = encuesta_opcion::v_encuestas_opciones()->get();
+        $opciones = []; //Opcion::all();
+        $empresas = empresa::where('id', session('empresa')->id)->get();
+        $periodos = []; //Periodo::all();
+        $encuestas_opciones = []; //encuesta_opcion::v_encuestas_opciones()->get();
         //DB::connection()->enableQueryLog();
-        $encuestas = Encuesta::v_encuestas()->get();
+        $encuestas = Encuesta::v_encuestas(session('empresa')->id)->get();
         //dd( DB::getQueryLog());
         $encuestas_id = null;
         $empresas_id = null;

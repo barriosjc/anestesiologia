@@ -22,7 +22,7 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        $empresas = Empresa::paginate();
+        $empresas = Empresa::simplepaginate();
         $perfiles = role::all();
 
         return view('empresa.index', compact('empresas', 'perfiles'))
@@ -178,5 +178,26 @@ class EmpresaController extends Controller
         }
 
         return redirect()->route('login');
+    }
+
+    public function select() {
+        $empresas = Empresa::all();
+
+        return view('empresa.select', compact('empresas'));
+    }
+
+    public function set(Request $request) {
+        $validated = $request->validate([
+            'empresas_id' => 'required',
+
+        ], [
+            "empresas_id.required" => "Debe seleccionar una empresa para continuar trabajando con el sistema.",
+        ]);
+
+        Auth::user()->empresas_id = $validated['empresas_id'];
+        $empresa = Empresa::where('id', $validated['empresas_id'])->first();
+        session(['empresa' => $empresa]);
+
+        return redirect()->route('main');
     }
 }

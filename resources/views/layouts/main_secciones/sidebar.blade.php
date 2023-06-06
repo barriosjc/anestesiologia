@@ -20,25 +20,41 @@
             </a>
             {{-- Sidenav Heading (Addons) --}}
             <div class="sidenav-menu-heading">Encuestas</div>
+            {{-- Sidenav Link (Empresa) --}}
+            @role('super-admin')
+            <a class="nav-link" href="{{ route('empresa.select') }}">
+                <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
+                Seleccionar empresa
+            </a>
+            @endrole
             {{-- Sidenav Link (Charts) --}}
-            <a class="nav-link" href="{{route("respuesta")}}">
+            <a class="nav-link" href="{{ route('respuesta') }}">
                 <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
                 Responder o cargar
             </a>
-            {{-- Sidenav Link (Tables) --}}
-            <a class="nav-link" href="tables.html">
-                <div class="nav-link-icon"><i data-feather="filter"></i></div>
+            {{-- Sidenav Accordion (Reconocimientos) --}}
+            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
+                <div class="nav-link-icon"><i data-feather="award"></i></div>
                 Mis reconocimientos
+                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-
+            <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
+                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados') }}">Reconocimientos realizados</a>
+                    <a class="nav-link" href="{{ route('reconocimientos.recibidos') }}">Reconocimientos recibidos</a>
+                </nav>
+            </div>
 
             {{-- Sidenav Menu Heading (Core) lo muestra si tiene permiso para crear encuestas --}}
-            @can('creacion de encuestas')
+            @role('super-admin')
                 <div class="sidenav-menu-heading">Core</div>
                 <a class="nav-link" href="{{ route('empresas.index') }}">
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     ABM de empresas
                 </a>
+            @endrole
+            @can('creacion de encuestas')
                 {{-- Sidenav Accordion (Encuestas) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                     data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
@@ -65,11 +81,8 @@
             <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
                     {{-- Nested Sidenav Accordion (Pages -> Account) --}}
-                    @can('crear nuevos usuarios')
-                        <a class="nav-link" href="{{route('usuario.create')}}">
-                            <div class="nav-link-icon">
-                            Alta de usuario
-                        </a>  
+                    @can('abm usuarios')
+                        <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
                     @endcan
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#pagesCollapseAccount" aria-expanded="false"
@@ -79,8 +92,11 @@
                     </a>
                     <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="{{ route('profile', ['id' => Auth()->user()->id]) }}">Mi perfil</a> 
-                            <a class="nav-link" href="{{ route('profile.password', ['id' => Auth()->user()->id]) }}">Cambio de clave</a>
+                            <a class="nav-link" href="{{ route('profile', ['id' => Auth()->user()->id]) }}">Mi
+                                perfil</a>
+                            <a class="nav-link"
+                                href="{{ route('profile.password', ['id' => Auth()->user()->id]) }}">Cambio de
+                                clave</a>
                             {{-- @can('crear nuevos usuarios')
                             <a class="nav-link" href="{{ route('profile.nuevo') }}">Nuevo usuario</a>
                             @endcan --}}
@@ -124,21 +140,21 @@
                         </nav>
                     </div> --}}
                     {{-- Nested Sidenav Accordion (Pages -> Error) --}}
-   
+
                     @can('seguridad')
-                    <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
-                        data-bs-target="#pagesCollapseError" aria-expanded="false"
-                        aria-controls="pagesCollapseError">
-                        Administración de accesos
-                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
-                        <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="{{route('usuario.index')}}">Usuarios</a>                            
-                            <a class="nav-link" href="{{route('permisos.index')}}">Permisos</a>
-                            <a class="nav-link" href="{{route('roles.index')}}">Grupos</a>
-                        </nav>
-                    </div>
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                            data-bs-target="#pagesCollapseError" aria-expanded="false"
+                            aria-controls="pagesCollapseError">
+                            Administración de accesos
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
+                            <nav class="sidenav-menu-nested nav">
+                                {{-- <a class="nav-link" href="{{route('usuario.index')}}">Usuarios</a>                             --}}
+                                <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
+                                <a class="nav-link" href="{{ route('roles.index') }}">Grupos</a>
+                            </nav>
+                        </div>
                     @endcan
                     {{-- <a class="nav-link" href="pricing.html">Pricing</a>
                                 <a class="nav-link" href="invoice.html">Invoice</a> --}}
@@ -324,11 +340,11 @@
             </div>
         </div>
     </div> --}}
-    {{-- Sidenav Footer --}}
-    <div class="sidenav-footer">
-        <div class="sidenav-footer-content">
-            <div class="sidenav-footer-subtitle">Usuario :</div>
-            <div class="sidenav-footer-title">{{ auth()->user()->name }}</div>
-        </div>
-    </div>
+            {{-- Sidenav Footer --}}
+            <div class="sidenav-footer">
+                <div class="sidenav-footer-content">
+                    <div class="sidenav-footer-subtitle">Usuario :</div>
+                    <div class="sidenav-footer-title">{{ auth()->user()->name }}</div>
+                </div>
+            </div>
 </nav>

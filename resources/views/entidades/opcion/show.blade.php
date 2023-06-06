@@ -1,13 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('template_title')
-    {{ $opciones->name ?? "__('Show') Opciones" }}
-@endsection
-
-@section('content')
-    <section class="content container-fluid">
+@section('titulo', 'Opiciones')
+@section('contenido')
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
@@ -19,7 +16,7 @@
                     </div>
 
                     <div class="card-body">
-                        
+
                         <div class="form-group">
                             <strong>Descripcion:</strong>
                             {{ $opciones->descripcion }}
@@ -57,5 +54,5 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 @endsection

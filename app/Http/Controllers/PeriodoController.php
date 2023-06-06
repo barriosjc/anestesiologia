@@ -18,7 +18,7 @@ class PeriodoController extends Controller
      */
     public function index()
     {
-        $periodos = Periodo::paginate();
+        $periodos = Periodo::simplepaginate();
 
         return view('periodo.index', compact('periodos'))
             ->with('i', (request()->input('page', 1) - 1) * $periodos->perPage());

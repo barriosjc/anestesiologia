@@ -11,8 +11,8 @@
             <h6 class="dropdown-header d-flex align-items-center">
                 {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
                 @if (!empty(session('empresa')))
-                    <img class="dropdown-user-img" src="{{asset('/img/empresas') ."/". session('empresa')->logo }}" /> 
-                @endif           
+                    <img style="height:51px;width:110px" class="dropdown-user-img" src="{{asset('/img/empresas') ."/". session('empresa')->logo }}" /> 
+                @endif        
             </h6>
         {{-- Navbar Items--}}
         <ul class="navbar-nav align-items-center ms-auto">

@@ -10,7 +10,10 @@ class ReconocimientosController extends Controller
 {
     public function recibidos(){
 
-        view('encuestas.recibidos');
+        $recibidos = DB::select('select * from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id);
+        $titulo = 'Reconocimientos recibidos';
+        
+        return view('encuestas.recibidos', compact('recibidos', 'titulo'));
     }
 
     public function realizados(){

@@ -18,7 +18,7 @@ class GrupalController extends Controller
      */
     public function index()
     {
-        $grupals = Grupal::paginate();
+        $grupals = Grupal::simplepaginate();
 
         return view('grupal.index', compact('grupals'))
             ->with('i', (request()->input('page', 1) - 1) * $grupals->perPage());

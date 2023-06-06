@@ -35,10 +35,10 @@ class ProfileController extends Controller
 
     public function nuevo()
     {
-        if (Auth()->user()->empresas_id === 0) {
+        if (session('empresa')->id === 0) {
             $empresas = empresa::all();
         } else{
-            $empresas = empresa::where("id", Auth()->user()->empresas_id)->get();
+            $empresas = empresa::where("id", session('empresa')->id)->get();
         }
         $user = new user();
         $jefes = user::where('es_jefe', 1)

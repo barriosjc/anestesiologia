@@ -6,7 +6,7 @@
 <div class="mb-3">
     <label class="small mb-1">Empresa</label>
     <select name="empresas_id" class="form-control" id="empresas_id">
-        <option value=""> --- Select ---</option>
+        {{-- <option value=""> --- Select ---</option> --}}
         @foreach ($empresas as $data)
             <option value="{{ $data->id }}"
                 {{ old('empresas_id', $user->empresas_id) == $data->id ? 'selected' : '' }}>
@@ -101,17 +101,13 @@
         if (empresasSelect.val() > 0) {
             empresasId = empresasSelect.val();
             cargaJefes(empresasId);
-        }
-
-        empresasSelect.change(function() {
-            var empresasId = $(this).val();
-            cargaJefes(empresasId);
             cargaRoles(empresasId);
-        });
+        }
 
         function cargaJefes(empresasId) {
 
             grupalSelect.empty();
+        
             // var grupalEnBD = null;
             var jefeId = {{ $user->jefe_user_id ? $user->jefe_user_id : 0 }};
             if (empresasId) {
@@ -141,7 +137,9 @@
 
             rolesSelect.empty();
             // var grupalEnBD = null;
-            var roleId = 0 ; //{{ $perfiles_user ? $perfiles_user : null }};
+            console.log({{$perfiles_user}});
+            const lroles = '{{$perfiles_user}}';
+
             if (empresasId) {
                 $.ajax({
                     url: "{{ route('empresas.roles') }}",
@@ -153,7 +151,7 @@
                     success: function(response) {
                         $.each(response.data, function(key, value) {
                             rolesSelect.append("<option value='" + value.id + "'" +
-                                (roleId !== value.id ? '' : 'selected') +
+                                (lroles.includes(value.id) ? 'selected' : '') +
                                 ">" + value.name + "</option>");
                         });
                     },

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\entidades;
 use App\Models\Opcion;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class OpcionController
@@ -19,7 +20,7 @@ class OpcionController extends Controller
      */
     public function index()
     {
-        $opciones = Opcion::paginate();
+        $opciones = Opcion::simplepaginate(5);
 
         return view('entidades.opcion.index', compact('opciones'))
             ->with('i', (request()->input('page', 1) - 1) * $opciones->perPage());
@@ -33,7 +34,7 @@ class OpcionController extends Controller
     public function create()
     {
         $opciones = new Opcion();
-        
+
         return view('entidades.opcion.create', compact('opciones'));
     }
 
@@ -86,11 +87,16 @@ class OpcionController extends Controller
      * @param  Opcion $opciones
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Opcion $opciones)
+    public function update(Request $request, $id)
     {
-        request()->validate(Opcion::$rules);
-
-        $opciones->update($request->all());
+        
+        $validate = request()->validate(Opcion::$rules);
+        $opciones = Opcion::where("id", $id)->first();
+        //   dd($opciones);
+        foreach ($validate as $key => $value) {
+            $opciones->$key = $value;
+        }
+        $opciones->save();
 
         return redirect()->route('opcion.index')
             ->with('success', 'Opcion updated successfully');

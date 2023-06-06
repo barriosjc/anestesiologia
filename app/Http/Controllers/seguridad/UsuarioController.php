@@ -23,10 +23,11 @@ class UsuarioController extends Controller
   public function index(Request $request)
   {
     $keyword = $request->get('search');
-    $perPage = 10;
+    $perPage = 5;
 
     if (!empty($keyword)) {
-      $user = User::where('name', 'LIKE', "%$keyword%")
+      $user = User::where('empresas_id',session('empresa')->id)
+        ->where('name', 'LIKE', "%$keyword%")
         ->orWhere('last_name', 'LIKE', "%$keyword%")
         ->orWhere('email_verified_at', 'LIKE', "%$keyword%")
         // ->orWhere('tipo', 'LIKE', "%$keyword%")
@@ -36,9 +37,10 @@ class UsuarioController extends Controller
         // ->orWhere('telefono', 'LIKE', "%$keyword%")
         // ->orWhere('observacion', 'LIKE', "%$keyword%")
         ->orderby("last_name")
-        ->latest()->paginate($perPage);
+        ->latest()->simplepaginate($perPage);
     } else {
-      $user = User::latest()->paginate($perPage);
+      $user = User::where('empresas_id', session('empresa')->id)
+                ->simplepaginate($perPage);
     }
 
     $esabm = true;
@@ -60,8 +62,8 @@ class UsuarioController extends Controller
       $empresas = empresa::all();
     }
     $user = new user();
-    $perfiles = role::v_roles_empresas(Auth()->user()->empresas_id)->get();
-    $perfiles_user = [];
+    $perfiles = role::v_roles_empresas(session('empresa')->id)->get();
+    $perfiles_user = '';
 
     return view('seguridad.usuario.create')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
   }
@@ -86,10 +88,15 @@ class UsuarioController extends Controller
       'es_jefe' => 'nullable',
       'telefono' => 'nullable',
     ]);
+
     $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
     $validated['password'] = Hash::make('12345678');
     $validated['cambio_password'] = 1;
     $validated['foto'] = 'fotovacia.jpeg';
+
+    $request->validate([
+      'perfil_id' => 'required'
+    ]);
 
     if ($request->id) {
       $user = user::where('id', $request->id)->first();
@@ -138,19 +145,15 @@ class UsuarioController extends Controller
   {
     $user = User::findOrFail($id);
 
-    if (session()->has('empresa')) {
-      $empresas = empresa::where("id", session('empresa')->id)->get();
-    } else {
-      $empresas = empresa::all();
-    }
-    $perfiles = role::v_roles_empresas(Auth()->user()->empresas_id)->get();
+    $empresas = empresa::where("id", session('empresa')->id)->get();
+    $perfiles = role::v_roles_empresas( session('empresa')->id )->get();
 
     // $perfiles_user = $user->roles;
-    $perfiles_user = [];
+    $perfiles_user = '';
     foreach ($user->roles as $key => $value) {
-        $perfiles_user[] += $value->id;
+        $perfiles_user .= $value->id . ",";
     }
-
+    
     return view('seguridad.usuario.edit')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
   }
 
@@ -178,6 +181,11 @@ class UsuarioController extends Controller
     $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
     $validated['password'] = Hash::make('12345678');
     $validated['cambio_password'] = 1;
+    
+    $request->validate([
+      'perfil_id' => 'required'
+    ]);
+
     if ($request->id) {
       $user = user::where('id', $request->id)->first();
     } else {
@@ -188,9 +196,6 @@ class UsuarioController extends Controller
     }
     $user->save();
 
-    // foreach (role::all() as $role) {
-    //   $user->removeRole($role->name);
-    // }
     //quita los roles actuales
     $user->syncRoles([]);
 
@@ -203,10 +208,8 @@ class UsuarioController extends Controller
     }
     
     $esabm = true;
-    $user = User::latest()->paginate(10);
-
-    return view('seguridad.usuario.index', compact('user', 'esabm'))
-      ->with('success', 'Usuario actualizado!');
+    return redirect()->route('usuario.index')
+    ->with('success', 'Se actualizaron los datos del usuario en forma correcta.');
   }
 
   /**
@@ -238,7 +241,7 @@ class UsuarioController extends Controller
         break;
     }
 
-    $roles = $user->Roles()->paginate(25);
+    $roles = $user->Roles()->simplepaginate(5);
     $roless = DB::table('roles')
       ->select(
         'id',
@@ -248,7 +251,7 @@ class UsuarioController extends Controller
         'updated_at'
       )
       ->whereNotIn('id', DB::table('model_has_roles')->select('role_id')->where('model_id', '=', $usuid))
-      ->paginate(25);
+      ->simplepaginate(5);
     $esabm = false;
     $padre = "usuarios";
     $titulo = 'asignados al usuario  ->   ' . strtoupper($user->name);
@@ -273,7 +276,7 @@ class UsuarioController extends Controller
         break;
     }
 
-    $permisos = $user->permissions()->paginate(25);
+    $permisos = $user->permissions()->simplepaginate(5);
     $permisoss = DB::table('permissions')
       ->select(
         'id',
@@ -283,7 +286,7 @@ class UsuarioController extends Controller
         'updated_at'
       )
       ->whereNotIn('id', DB::table('model_has_permissions')->select('permission_id')->where('model_id', '=', $usuid))
-      ->paginate(25);
+      ->simplepaginate(5);
     $esabm = false;
 
     $titulo = 'asignados al uzuario  ->   ' . strtoupper($user->name);

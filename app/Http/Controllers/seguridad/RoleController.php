@@ -19,16 +19,16 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $keyword = $request->get('search');
-        $perPage = 25;
+        $perPage = 5;
     
         // $roles = Role::all();
         // dd($roles);
         if (!empty($keyword)) {
           $roles = Role::where('name', 'LIKE', "%$keyword%")
             ->orWhere('guard_name', 'LIKE', "%$keyword%")
-            ->latest()->paginate($perPage);
+            ->latest()->simplepaginate($perPage);
         } else {
-          $roles = Role::orderBy('id','DESC')->latest()->paginate($perPage);
+          $roles = Role::orderBy('id','DESC')->latest()->simplepaginate($perPage);
         }
         $esabm = true;
 
@@ -133,13 +133,13 @@ class RoleController extends Controller
                 break;
         }
 
-        $user = $rol->users()->paginate(5);
+        $user = $rol->users()->simplepaginate(5);
         $users = DB::table('users')                 
             ->select( 'id', 'name', 'last_name', 'email',
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
             ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
-            ->paginate(25);
+            ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);
@@ -165,12 +165,12 @@ class RoleController extends Controller
                 break;
         }
 
-        $permisos = $rol->permissions()->paginate(5);
+        $permisos = $rol->permissions()->simplepaginate(5);
         $permisoss = DB::table('permissions')                 
             ->select('id', 'name', 'guard_name', 
             'created_at', 'updated_at')
             ->whereNotIn('id', DB::table('role_has_permissions')->select('permission_id')->where('role_id', '=', $rolid))
-            ->paginate(25);
+            ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);

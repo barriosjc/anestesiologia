@@ -37,6 +37,19 @@
                                     </div>
                                 </form>
                             @endif
+                            @if (session('empresa')->id > 0 )
+                            <div class="mb-3">
+                                <label class="small mb-1">Empresa</label>
+                                <select name="empresas_id" class="form-control" id="empresas_id">
+                                    <option value=""> --- Select ---</option>
+                                    @foreach ($empresas as $data)
+                                        <option value="{{ $data->id }}"
+                                            {{ old('empresas_id', $user->empresas_id) == $data->id ? 'selected' : '' }}>
+                                            {{ $data->razon_social }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endif
                             <br />
                             <br />
                             <div class="table-responsive">
@@ -123,7 +136,8 @@
                                                                     title="Quitar permiso asignados al rol"><button
                                                                         class="btn btn-danger btn-sm"><i
                                                                             class="fa fa-minus text-white"
-                                                                            aria-hidden="true"></i></button></a>
+                                                                            aria-hidden="true"
+                                                                            onclick="return confirm('Confirma eliminar?')"></i></button></a>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -132,7 +146,8 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <div class="pagination-wrapper"> {!! $user->appends(['search' => Request::get('search')])->render() !!} </div>
+                                {{-- <div class="pagination-wrapper"> {!! $user->appends(['search' => Request::get('search')])->render() !!} </div> --}}
+                                {{ $user->links() }}
                             </div>
                         </div>
                     </div>

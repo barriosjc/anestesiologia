@@ -37,7 +37,7 @@
             <div class="row">
         @endif
         <div class="col-lg-6 col-xl-3 mb-4">
-            <div class="card bg-primary text-white h-100">
+            <div  style="{{$item->style}}" class="card text-white h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="me-3">

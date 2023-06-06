@@ -1,16 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('template_title')
-    {{ __('Update') }} Opciones
-@endsection
-
-@section('content')
-    <section class="content container-fluid">
-        <div class="">
-            <div class="col-md-12">
-
-                @includeif('partials.errors')
-
+@section('titulo', 'Opiciones')
+@section('contenido')
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @include('utiles.alerts')
                 <div class="card card-default">
                     <div class="card-header">
                         <span class="card-title">{{ __('Update') }} Opciones</span>
@@ -27,5 +22,5 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 @endsection

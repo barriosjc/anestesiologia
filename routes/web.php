@@ -34,16 +34,22 @@ use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\encuestas\ReconocimientosController;
 use App\Models\User;
 
-// Route::get('/select', function () {
-//     $users = user::all();
-//     return view('layouts.select')->with(['usuarios' => $users]);
-// }); 
+Route::get('/tables', function () {
+
+    return view('tables');
+}); 
+
 
 Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');
+Route::group(['middleware' => ['role:super-admin']], function () {
+    Route::get('empresa/select}', [EmpresaController::class, 'select'])->name('empresa.select');
+    Route::post('empresa/set}', [EmpresaController::class, 'set'])->name('empresa.set');
+});
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         return view('layouts.main');
-    });
+    })->name('main');
 
     Route::get("create_wiz", function () {
         return view('encuestas.create_wiz');
@@ -52,9 +58,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('reconocimientos/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
     Route::get('reconocimientos/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
 
+    Route::group(['middleware' => ['can:abm empresas']], function () {
+         Route::resources(['empresas' => EmpresaController::class,]);
+    });
+
     Route::resources(
         [
-            'empresas' => EmpresaController::class,
             'grupals' => GrupalController::class,
             'grupalusers' => grupalUserController::class,
             'jerarquias' => JerarquiumController::class,
@@ -70,7 +79,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
 
-    Route::group(['middleware' => ['can:crear nuevos usuarios']], function () {
+    Route::group(['middleware' => ['can:abm usuarios']], function () {
         Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::resources([
@@ -82,7 +91,6 @@ Route::group(['middleware' => 'auth'], function () {
             'roles' => RoleController::class,
             'permisos' => permisosController::class,
         ]);
-
         Route::get('usuario/{id}/roles/{rolid}/{tarea}', [UsuarioController::class, 'roles']);
         Route::get('usuario/{id}/roles', [UsuarioController::class, 'roles'])->name('usuarios.grupos');
         Route::get('usuario/{id}/permisos/{perid}/{tarea}', [UsuarioController::class, 'permisos']);
