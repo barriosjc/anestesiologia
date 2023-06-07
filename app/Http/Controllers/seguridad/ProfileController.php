@@ -142,6 +142,7 @@ class ProfileController extends Controller
 
         $user = user::where("id", Auth()->user()->id)->first();
         $user->password = hash::make($validado['password_nueva']);
+        $user->cambio_password = 0;
         $user->save();
 
         return back()->with('success', 'Se actualizó la nueva password correctamente.');

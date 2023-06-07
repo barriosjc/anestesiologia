@@ -70,9 +70,14 @@ class LoginController extends Controller
         // dd('llega a auten', $user);
         if ($user->empresas_id === 0) {
             return redirect()->route('empresa.select');
-        } else {
-            return redirect()->route('main');
         }
+
+        if ($user->cambio_password === 1) {
+            return redirect()->route('profile.password');
+        }
+
+        return redirect()->route('main');
+
     }
 
 }

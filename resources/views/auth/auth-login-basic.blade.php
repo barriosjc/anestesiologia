@@ -63,15 +63,15 @@
                                             @enderror
                                         </div>
                                         {{-- Form Group (remember password checkbox)--}}
-                                        <div class="mb-3">
+                                        {{-- <div class="mb-3">
                                             <div class="form-check">
                                                 <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
                                                 <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         {{-- Form Group (login box)--}}
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a class="small" href="auth-password-basic.html">Forgot Password?</a>
+                                            <a class="small" href="auth-password-basic.html">Olvido su password?</a>
                                             {{-- <a class="btn btn-primary" type="submit">Login</a> --}}
                                             <button type="submit" class="btn btn-primary">
                                                 {{ __('Login') }}
@@ -79,9 +79,9 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="card-footer text-center">
+                                {{-- <div class="card-footer text-center">
                                     <div class="small"><a href="auth-register-basic.html">Need an account? Sign up!</a></div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
             <footer class="footer-admin mt-auto footer-dark">
                 <div class="container-xl px-4">
                     <div class="row">
-                        <div class="col-md-6 small">Copyright &copy; Your Website 2021</div>
+                        <div class="col-md-6 small">Copyright &copy; Webmedia 2023</div>
                         <div class="col-md-6 text-md-end small">
                             <a href="#!">Privacy Policy</a>
                             &middot;
