@@ -18,7 +18,7 @@ class GrupalUserController extends Controller
      */
     public function index()
     {
-        $grupalUsers = GrupalUser::paginate();
+        $grupalUsers = GrupalUser::simplepaginate();
 
         return view('grupaluser.index', compact('grupalUsers'))
             ->with('i', (request()->input('page', 1) - 1) * $grupalUsers->perPage());

@@ -19,14 +19,14 @@ class PermisosController extends Controller
     public function index(Request $request)
     {
         $keyword = $request->get('search');
-        $perPage = 25;
+        $perPage = 5;
     
         if (!empty($keyword)) {
           $permisos = Permission::where('name', 'LIKE', "%$keyword%")
             ->orWhere('guard_name', 'LIKE', "%$keyword%")
-            ->latest()->paginate($perPage);
+            ->latest()->simplepaginate($perPage);
         } else {
-          $permisos = Permission::orderBy('id','DESC')->latest()->paginate($perPage);
+          $permisos = Permission::orderBy('id','DESC')->latest()->simplepaginate($perPage);
         }
         $esabm = true;
 
@@ -125,13 +125,13 @@ class PermisosController extends Controller
                 break;
         }
 
-        $user = $per->users()->paginate(25);
+        $user = $per->users()->simplepaginate(5);
         $users = DB::table('users')                 
             ->select( 'id', 'name', 'last_name', 'email',
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
             ->whereNotIn('id', DB::table('model_has_permissions')->select('model_id')->where('permission_id', '=', $perid))
-            ->paginate(25);
+            ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);
@@ -157,12 +157,12 @@ class PermisosController extends Controller
                 break;
         }
 
-    $roles = $per->Roles()->paginate(25);
+    $roles = $per->Roles()->simplepaginate(5);
     $roless = DB::table('roles')                 
     ->select( 'id', 'name', 'guard_name', 
                 'created_at', 'updated_at')
     ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
-    ->paginate(25);
+    ->simplepaginate(5);
     $esabm = false;
     $padre = "permisos";
     $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);

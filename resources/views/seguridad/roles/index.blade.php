@@ -105,7 +105,8 @@
                                                                     title="Quitar el permiso asignados al rol"><button
                                                                         class="btn btn-danger btn-sm"><i
                                                                             class="fa fa-minus text-white"
-                                                                            aria-hidden="true"></i></button></a>
+                                                                            aria-hidden="true"
+                                                                            onclick="return confirm('Confirma eliminar?')"></i></button></a>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -114,6 +115,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                                {{ $roles->links() }}
                                 {{-- <div class="pagination-wrapper"> {{ $roles->appends(Request::all())->render() }} </div> --}}
                                 {{-- <div class="pagination-wrapper"> {!! $roles->appends(['search' => Request::get('search')])->render() !!} </div> --}}
                             </div>

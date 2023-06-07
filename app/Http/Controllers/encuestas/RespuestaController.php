@@ -10,14 +10,16 @@ use Exception;
 use App\Models\Encuesta;
 use App\Models\encuesta_resultado;
 use App\Models\encuestas_resultados_opciones;
-use App\Models\Opcion;
+//use App\Models\Opcion;
 use App\Models\resultado_grupal;
 use App\Models\resultado_individual;
-use App\Models\empresa;
-use App\Models\encuesta_opcion;
-use App\Models\Periodo;
+//use App\Models\Empresa;
+//use App\Models\encuesta_opcion;
+//use App\Models\Periodo;
 use App\Models\User;
-use App\Models\Grupal;
+//use App\Models\Grupal;
+use Illuminate\Support\Facades\DB;
+
 
 class RespuestaController extends Controller
 {
@@ -28,15 +30,29 @@ class RespuestaController extends Controller
      */
     public function index()
     {
-        $titulo = "Sin encuesta para este periodo";
-        $encuestas = Encuesta::v_encuesta_actual()->get();
-        //traer todos los usuarios de la empresa y excluye al users_id
-        $users = User::all();
-        //traer todos los grupos de la empresa del usuario
-        $grupal = Grupal::all();
-        if(count($encuestas)) $titulo = $encuestas[0]->edicion . " - ". $encuestas[0]->descrip_rango;
+        if (session('empresa')->id < 1) {
+            abort(403, "No posee acceso para ingresar a Respuesta de encuestas, debe tener una empresa asignada");
+        }
+        //$empresas_id = $request->input('empresas_id');
+        // $grupal = grupal::v_grupal(session('empresa')->id)->get();
+        // $response = ['data' => $grupal];
+        // dd($response);
 
-        return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo'));
+        $titulo = "Sin encuesta para este periodo";
+        $encuestas = Encuesta::v_encuesta_actual(session('empresa')->id)
+            ->get();
+        //traer todos los usuarios de la empresa y excluye al users_id
+        $users = User::where("empresas_id", session('empresa')->id)
+                        ->where("id", "!=", Auth()->user()->id)
+                        ->get();
+        //traer todos los grupos de la empresa del usuario
+        $grupal = DB::select('select id, useryjefe from v_user_jefes where empresas_id = ' . session('empresa')->id
+                                   . " and id != " . Auth()->user()->id);
+        if (count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - " . $encuestas[0]->edicion . " - " . $encuestas[0]->descrip_rango;
+
+        $styles = "background-color: #ff00cc !important;";
+
+        return view('encuestas.respuesta', compact('encuestas', 'users', 'grupal', 'titulo', 'styles'));
     }
 
 
@@ -81,32 +97,34 @@ class RespuestaController extends Controller
             $encuesta_result->observaciones = $data['observaciones'];
             $encuesta_result->save();
 
+            //esto luego tiene que estar dentro de un bucle por el select multi
+            if ($request->ck_tipo == 'ck_individual') {
+                $resultado = new Resultado_individual();
+                $resultado->encuestas_resultados_id = $encuesta_result->id;
+                $resultado->users_id = $request->user_id_reconocido;
+                $resultado->save();
+            } else {
+                foreach ($request->grupal_id_reconocido as $key => $value) {
+                    $resultado = new Resultado_grupal();
+                    $resultado->encuestas_resultados_id = $encuesta_result->id;
+                    $resultado->users_id = $value;
+                    $resultado->save();
+                }
+            }
+
             foreach ($request->opciones as $opcion) {
                 $enc_res_opciones = new encuestas_resultados_opciones();
                 $enc_res_opciones->opciones_id = $opcion;
+                $enc_res_opciones->puntos = $request->puntos[$opcion];
                 $enc_res_opciones->encuestas_resultados_id = $encuesta_result->id;
                 $enc_res_opciones->save();
-
-                if ($request->ck_tipo == 'ck_individual') {
-                    $resultado = new Resultado_individual();
-                    $resultado->encuestas_resultados_opciones_id = $enc_res_opciones->id;
-                    $resultado->users_id = $request->user_id_reconocido;
-                    $resultado->puntos = $request->puntos[$opcion];
-                    $resultado->save();
-                }else{
-                    $resultado = new Resultado_grupal();
-                    $resultado->encuestas_resultados_opciones_id = $enc_res_opciones->id;
-                    $resultado->grupal_id = $request->user_id_reconocido;
-                    $resultado->puntos = $request->puntos[$opcion];
-                    $resultado->save();
-                }
             }
         } catch (Throwable $e) {
             $msg = $e->getMessage();
             //return back()->with(['danger' => $msg, "valant" => $valant]);
             return back()
-                    ->withInput($request->input())
-                    ->withErrors(['danger' => $msg]);
+                ->withInput($request->input())
+                ->withErrors(['danger' => $msg]);
         }
 
         return redirect()->route('respuesta')

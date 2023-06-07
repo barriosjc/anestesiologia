@@ -6,6 +6,7 @@
         <div class="flex-center position-ref full-height">
             <div class="row">
                 <div class="col-md-12">
+                    @include('utiles.alerts')
                     <div class="card">
                         <div class="card-header">Editar Usuario #{{ $user->id }}</div>
                         <div class="card-body">
@@ -13,15 +14,6 @@
                                         class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                             <br />
                             <br />
-
-                            @if ($errors->any())
-                                <ul class="alert alert-danger">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-
                             <form method="POST" action="{{ url('/usuario/' . $user->id) }}" accept-charset="UTF-8"
                                 class="form-horizontal" enctype="multipart/form-data">
                                 {{ method_field('PATCH') }}

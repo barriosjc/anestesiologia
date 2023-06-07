@@ -20,20 +20,41 @@
             </a>
             {{-- Sidenav Heading (Addons) --}}
             <div class="sidenav-menu-heading">Encuestas</div>
+            {{-- Sidenav Link (Empresa) --}}
+            @role('super-admin')
+            <a class="nav-link" href="{{ route('empresa.select') }}">
+                <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
+                Seleccionar empresa
+            </a>
+            @endrole
             {{-- Sidenav Link (Charts) --}}
-            <a class="nav-link" href="{{route("respuesta")}}">
+            <a class="nav-link" href="{{ route('respuesta') }}">
                 <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
                 Responder o cargar
             </a>
-            {{-- Sidenav Link (Tables) --}}
-            <a class="nav-link" href="tables.html">
-                <div class="nav-link-icon"><i data-feather="filter"></i></div>
+            {{-- Sidenav Accordion (Reconocimientos) --}}
+            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
+                <div class="nav-link-icon"><i data-feather="award"></i></div>
                 Mis reconocimientos
+                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
+            <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
+                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados') }}">Reconocimientos realizados</a>
+                    <a class="nav-link" href="{{ route('reconocimientos.recibidos') }}">Reconocimientos recibidos</a>
+                </nav>
+            </div>
 
             {{-- Sidenav Menu Heading (Core) lo muestra si tiene permiso para crear encuestas --}}
-            @can('creacion de encuestas')
+            @role('super-admin')
                 <div class="sidenav-menu-heading">Core</div>
+                <a class="nav-link" href="{{ route('empresas.index') }}">
+                    <div class="nav-link-icon"><i data-feather="home"></i></div>
+                    ABM de empresas
+                </a>
+            @endrole
+            @can('creacion de encuestas')
                 {{-- Sidenav Accordion (Encuestas) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                     data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
@@ -43,10 +64,7 @@
                 </a>
                 <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="#">
-                            Opciones
-                            {{-- <span class="badge bg-primary-soft text-primary ms-auto">Updated</span> --}}
-                        </a>
+                        <a class="nav-link" href="{{ route('opcion.index') }}">Opciones</a>
                         <a class="nav-link" href="{{ route('encuesta.create') }}">Crear encuesta</a>
                     </nav>
                 </div>
@@ -63,16 +81,25 @@
             <div class="collapse" id="collapsePages" data-bs-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
                     {{-- Nested Sidenav Accordion (Pages -> Account) --}}
+                    @can('abm usuarios')
+                        <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
+                    @endcan
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#pagesCollapseAccount" aria-expanded="false"
                         aria-controls="pagesCollapseAccount">
-                        Usuarios
+                        Mis datos
                         <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
                     <div class="collapse" id="pagesCollapseAccount" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="account-profile.html">Perfil de usuario</a>
-                            <a class="nav-link" href="account-billing.html">Nuevo usuario</a>
+                            <a class="nav-link" href="{{ route('profile', ['id' => Auth()->user()->id]) }}">Mi
+                                perfil</a>
+                            <a class="nav-link"
+                                href="{{ route('profile.password', ['id' => Auth()->user()->id]) }}">Cambio de
+                                clave</a>
+                            {{-- @can('crear nuevos usuarios')
+                            <a class="nav-link" href="{{ route('profile.nuevo') }}">Nuevo usuario</a>
+                            @endcan --}}
                         </nav>
                     </div>
                     {{-- Nested Sidenav Accordion (Pages -> Authentication) --}}
@@ -80,9 +107,8 @@
                                     Authentication
                                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a> --}}
-                    <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#accordionSidenavPagesMenu">
+                    {{-- <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#accordionSidenavPagesMenu">
                         <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesAuth">
-                            {{-- Nested Sidenav Accordion (Pages -> Authentication -> Basic) --}}
                             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                                 data-bs-target="#pagesCollapseAuthBasic" aria-expanded="false"
                                 aria-controls="pagesCollapseAuthBasic">
@@ -97,7 +123,6 @@
                                     <a class="nav-link" href="auth-password-basic.html">Forgot Password</a>
                                 </nav>
                             </div>
-                            {{-- Nested Sidenav Accordion (Pages -> Authentication -> Social) --}}
                             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                                 data-bs-target="#pagesCollapseAuthSocial" aria-expanded="false"
                                 aria-controls="pagesCollapseAuthSocial">
@@ -113,26 +138,30 @@
                                 </nav>
                             </div>
                         </nav>
-                    </div>
+                    </div> --}}
                     {{-- Nested Sidenav Accordion (Pages -> Error) --}}
-                    <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
-                        data-bs-target="#pagesCollapseError" aria-expanded="false"
-                        aria-controls="pagesCollapseError">
-                        Administración de accesos
-                        <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
-                        <nav class="sidenav-menu-nested nav">
-                            <a class="nav-link" href="{{route('permisos.index')}}">Permisos</a>
-                            <a class="nav-link" href="{{route('roles.index')}}">Grupos</a>
-                        </nav>
-                    </div>
+
+                    @can('seguridad')
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                            data-bs-target="#pagesCollapseError" aria-expanded="false"
+                            aria-controls="pagesCollapseError">
+                            Administración de accesos
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
+                            <nav class="sidenav-menu-nested nav">
+                                {{-- <a class="nav-link" href="{{route('usuario.index')}}">Usuarios</a>                             --}}
+                                <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
+                                <a class="nav-link" href="{{ route('roles.index') }}">Grupos</a>
+                            </nav>
+                        </div>
+                    @endcan
                     {{-- <a class="nav-link" href="pricing.html">Pricing</a>
                                 <a class="nav-link" href="invoice.html">Invoice</a> --}}
                 </nav>
             </div>
             {{-- Sidenav Accordion (Applications) --}}
-            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+            {{-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                 data-bs-target="#collapseApps" aria-expanded="false" aria-controls="collapseApps">
                 <div class="nav-link-icon"><i data-feather="globe"></i></div>
                 Applications
@@ -140,7 +169,6 @@
             </a>
             <div class="collapse" id="collapseApps" data-bs-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavAppsMenu">
-                    {{-- Nested Sidenav Accordion (Apps -> Knowledge Base) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#appsCollapseKnowledgeBase" aria-expanded="false"
                         aria-controls="appsCollapseKnowledgeBase">
@@ -155,7 +183,6 @@
                             <a class="nav-link" href="knowledge-base-article.html">Article</a>
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Apps -> User Management) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#appsCollapseUserManagement" aria-expanded="false"
                         aria-controls="appsCollapseUserManagement">
@@ -171,7 +198,6 @@
                             <a class="nav-link" href="user-management-org-details.html">Organization Details</a>
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Apps -> Posts Management) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#appsCollapsePostsManagement" aria-expanded="false"
                         aria-controls="appsCollapsePostsManagement">
@@ -189,7 +215,6 @@
                     </div>
                 </nav>
             </div>
-            {{-- Sidenav Accordion (Flows) --}}
             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                 data-bs-target="#collapseFlows" aria-expanded="false" aria-controls="collapseFlows">
                 <div class="nav-link-icon"><i data-feather="repeat"></i></div>
@@ -202,9 +227,7 @@
                     <a class="nav-link" href="wizard.html">Wizard</a>
                 </nav>
             </div>
-            {{-- Sidenav Heading (UI Toolkit) --}}
             <div class="sidenav-menu-heading">UI Toolkit</div>
-            {{-- Sidenav Accordion (Layout) --}}
             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                 data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                 <div class="nav-link-icon"><i data-feather="layout"></i></div>
@@ -213,7 +236,6 @@
             </a>
             <div class="collapse" id="collapseLayouts" data-bs-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavLayout">
-                    {{-- Nested Sidenav Accordion (Layout -> Navigation) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#collapseLayoutSidenavVariations" aria-expanded="false"
                         aria-controls="collapseLayoutSidenavVariations">
@@ -228,7 +250,6 @@
                             <a class="nav-link" href="layout-rtl.html">RTL Layout</a>
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Layout -> Container Options) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#collapseLayoutContainers" aria-expanded="false"
                         aria-controls="collapseLayoutContainers">
@@ -241,7 +262,6 @@
                             <a class="nav-link" href="layout-fluid.html">Fluid Layout</a>
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Layout -> Page Headers) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#collapseLayoutsPageHeaders" aria-expanded="false"
                         aria-controls="collapseLayoutsPageHeaders">
@@ -257,7 +277,6 @@
                             <a class="nav-link" href="header-light.html">Light</a>
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Layout -> Starter Layouts) --}}
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#collapseLayoutsStarterTemplates" aria-expanded="false"
                         aria-controls="collapseLayoutsStarterTemplates">
@@ -273,7 +292,6 @@
                     </div>
                 </nav>
             </div>
-            {{-- Sidenav Accordion (Components) --}}
             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                 data-bs-target="#collapseComponents" aria-expanded="false" aria-controls="collapseComponents">
                 <div class="nav-link-icon"><i data-feather="package"></i></div>
@@ -304,7 +322,6 @@
                     <a class="nav-link" href="tooltips.html">Tooltips</a>
                 </nav>
             </div>
-            {{-- Sidenav Accordion (Utilities) --}}
             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                 data-bs-target="#collapseUtilities" aria-expanded="false" aria-controls="collapseUtilities">
                 <div class="nav-link-icon"><i data-feather="tool"></i></div>
@@ -322,12 +339,12 @@
                 </nav>
             </div>
         </div>
-    </div>
-    {{-- Sidenav Footer --}}
-    <div class="sidenav-footer">
-        <div class="sidenav-footer-content">
-            <div class="sidenav-footer-subtitle">Usuario :</div>
-            <div class="sidenav-footer-title">{{ auth()->user()->name }}</div>
-        </div>
-    </div>
+    </div> --}}
+            {{-- Sidenav Footer --}}
+            <div class="sidenav-footer">
+                <div class="sidenav-footer-content">
+                    <div class="sidenav-footer-subtitle">Usuario :</div>
+                    <div class="sidenav-footer-title">{{ auth()->user()->name }}</div>
+                </div>
+            </div>
 </nav>

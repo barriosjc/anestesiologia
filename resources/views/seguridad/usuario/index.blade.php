@@ -47,7 +47,7 @@
                                             <th>Nombre</th>
                                             <th>Nombre Completo</th>
                                             <th>Avatar</th>
-                                            <th>Usu Verificado</th>
+                                            <th>Es jefe</th>
                                             <th>Mail</th>
                                             <th>
                                                 <div class="float-right">
@@ -64,7 +64,17 @@
                                                 <td>{{ $item->last_name }}</td>
                                                 <td><img src="{{ Storage::disk('usuarios')->url($item->foto) }}"
                                                         class="rounded-circle" width="45px" alt=""> </td>
-                                                <td>{{ $item->email_verified_at }}</td>
+                                                @if ($item->es_jefe == 1)
+                                                    <td>
+                                                        <div class="badge bg-primary text-white rounded-pill-yes-no">
+                                                            SI </div>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <div class="badge bg-danger text-white rounded-pill-yes-no">
+                                                            NO</div>
+                                                    </td>
+                                                @endif
                                                 <td>{{ $item->email }}</td>
                                                 @if ($esabm)
                                                     <td>
@@ -113,7 +123,8 @@
                                                                     title="Quitar permiso asignados al rol"><button
                                                                         class="btn btn-danger btn-sm"><i
                                                                             class="fa fa-minus text-white"
-                                                                            aria-hidden="true"></i></button></a>
+                                                                            aria-hidden="true"
+                                                                            onclick="return confirm('Confirma eliminar?')"></i></button></a>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -122,7 +133,8 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <div class="pagination-wrapper"> {!! $user->appends(['search' => Request::get('search')])->render() !!} </div>
+                                {{-- <div class="pagination-wrapper"> {!! $user->appends(['search' => Request::get('search')])->render() !!} </div> --}}
+                                {{ $user->links() }}
                             </div>
                         </div>
                     </div>

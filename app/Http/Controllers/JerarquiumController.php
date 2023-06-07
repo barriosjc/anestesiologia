@@ -23,7 +23,7 @@ class JerarquiumController extends Controller
      */
     public function index()
     {
-        $jerarquiums = Jerarquium::paginate();
+        $jerarquiums = Jerarquium::simplepaginate();
         $users = User::all();
         $jefeusers = User::all();
         $empresas = Empresa::all();
