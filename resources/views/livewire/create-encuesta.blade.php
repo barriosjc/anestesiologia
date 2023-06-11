@@ -47,7 +47,6 @@
             </div>
             <div class="card-body">
                 <div class="tab-content" id="cardTabContent">
-                    @include('utiles.alerts')
                     {{-- Wizard tab pane item 1 --}}
                     <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 1 ? 'show active' : '' }}" id="wizard1"
                         role="tabpanel" aria-labelledby="wizard1-tab">

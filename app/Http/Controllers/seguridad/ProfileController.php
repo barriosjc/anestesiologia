@@ -4,11 +4,13 @@ namespace App\Http\Controllers\seguridad;
 
 use App\Models\user;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
+use App\Models\reconocimiento;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -30,7 +32,11 @@ class ProfileController extends Controller
                     ->where('id', $user->empresas_id)
                     ->get();
 
-        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
+        $reconocimientos = reconocimiento::where('users_id', Auth()->user()->id)->get();
+
+        $recibidos = DB::select('select ifnull(sum(puntos), 0) as total from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id)[0]->total;
+
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos'));
     }
 
     public function nuevo()
@@ -61,14 +67,15 @@ class ProfileController extends Controller
             'es_jefe' => 'nullable',
             'telefono' => 'nullable',
         ]);
-        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
-        $validated['password'] = Hash::make('12345678');
-        $validated['cambio_password'] = 1;
         if ($request->id) {
             $user = user::where('id', $request->id)->first();
         } else {
             $user = new user();
+            $validated['password'] = Hash::make('12345678');
+            $validated['cambio_password'] = 1;
         }
+        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+
         foreach ($validated as $key => $value) {
             $user->$key = $value;
         }
@@ -147,5 +154,29 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Se actualizó la nueva password correctamente.');
 
+    }
+
+    public function readonly($id) {
+
+        $user = user::where("id", $id)->first();
+        if ($user->empresas_id === 0) {
+            $empresas = empresa::all();
+        } else {
+            $empresas = empresa::where("id", $user->empresas_id)->get();
+        }
+   
+        $jefes = user::where('es_jefe', 1)
+                    ->where('id', $user->empresas_id)
+                    ->get();
+
+        $reconocimientos = reconocimiento::where('users_id', Auth()->user()->id)->get();
+
+        $recibidos = DB::select('select ifnull(sum(puntos), 0) as total from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id)[0]->total;
+
+    //    return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos'));
+    
+        $readonly = true;
+
+        return view('seguridad.usuario.perfil_readonly')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos', 'readonly'));
     }
 }

@@ -26,7 +26,8 @@ class IngresoInicialMiddleware
         }
 
         if (Auth()->user()->cambio_password === 1) {
-            return redirect()->route('profile.password');
+            return redirect()->route('profile.password')
+                ->with('noticia', 'Atención!!! debe cambiar la clave, ingresando una nueva que cumpla los criterios de seguridad.');
         }
 
         return $next($request);

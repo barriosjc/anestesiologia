@@ -19,7 +19,6 @@
         fill: none;
         }
 </style>
-@include('utiles.alerts')
 <div class="container-fluid px-4">
 
     <ul class="navbar navbar-expand-lg navbar-light bg-light">

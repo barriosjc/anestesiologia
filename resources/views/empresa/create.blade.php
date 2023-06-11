@@ -6,7 +6,6 @@
         <div class="flex-center position-ref full-height">
             <div class="row">
                 <div class="col-md-12">
-                    @include('utiles.alerts')
                     <div class="card card-default">
                         <div class="card-header">
                             <a href="{{ route('empresas.index') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
