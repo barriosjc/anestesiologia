@@ -11,8 +11,7 @@
                         <div class="small text-muted mb-2">{{ Auth()->user()->last_name }}</div>
                     </div>
 
-                    <div class="card-body p-5">
-                        <hr class="my-0" />
+                    <div class="card-body p-3">
                         <form method="POST" action="{{ route('profile.password.save') }}" role="form">
                             @csrf
                             <!-- Form Row-->

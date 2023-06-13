@@ -34,15 +34,28 @@
             </a>
             {{-- Sidenav Accordion (Reconocimientos) --}}
             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
-                data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
+                data-bs-target="#collapseReconocimientos" aria-expanded="false" aria-controls="collapseReconocimientos">
                 <div class="nav-link-icon"><i data-feather="award"></i></div>
                 Mis reconocimientos
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
+            <div class="collapse" id="collapseReconocimientos" data-bs-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                    <a class="nav-link" href="{{ route('reconocimientos.realizados') }}">Reconocimientos realizados</a>
-                    <a class="nav-link" href="{{ route('reconocimientos.recibidos') }}">Reconocimientos recibidos</a>
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados', 'user') }}">Reconocimientos realizados</a>
+                    <a class="nav-link" href="{{ route('reconocimientos.recibidos', 'user') }}">Reconocimientos recibidos</a>
+                </nav>
+            </div>
+            
+            {{-- Sidenav Accordion (Reconocimientos) --}}
+            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
+                <div class="nav-link-icon"><i data-feather="award"></i></div>
+                Informes (rrhh)
+                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapseDashboards" data-bs-parent="#DasboardSidenav">
+                <nav class="sidenav-menu-nested nav accordion" id="DasboardSidenavPages">
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados', 'todos') }}">Reconocimientos</a>
                 </nav>
             </div>
 
@@ -54,6 +67,12 @@
                     ABM de empresas
                 </a>
             @endrole
+            @role('super-admin')
+            <a class="nav-link" href="{{ route('reconocimientos.index') }}">
+                <div class="nav-link-icon"><i data-feather="home"></i></div>
+                ABM reconocimientos
+            </a>
+        @endrole
             @can('creacion de encuestas')
                 {{-- Sidenav Accordion (Encuestas) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"

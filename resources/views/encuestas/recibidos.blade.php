@@ -10,23 +10,24 @@
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
-                            <th>Encuesta</th>
                             <th>Fecha</th>
                             <th>Puntos</th>
                             <th>Observaciones</th>
                             <th>Opciones</th>
-                            <th>Recibidos</th>
+                            <th>Otorgado por</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($recibidos as $item)
                             <tr>
-                                <td></td>
                                 <td>{{ $item->fecha_ingreso }}</td>
                                 <td>{{ $item->puntos }}</td>
                                 <td>{{ $item->observaciones }}</td>
                                 <td>{{ $item->opciones_concat }}</td>
-                                <td>{{ $item->last_name }}</td>
+                                <td>
+                                    <a href="{{ route('profile.readonly', $item->users_id_voto) }}"
+                                    title="Ir al perfil del usuario">{{ $item->last_name }}</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

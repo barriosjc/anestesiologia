@@ -32,7 +32,7 @@ use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\encuestas\ReconocimientosController;
-use App\Models\User;
+use App\Http\Controllers\varios\AsignarReconocimientosController;
 
 Route::get('/tables', function () {
 
@@ -60,8 +60,9 @@ Route::group(['middleware' => 'auth'], function () {
             return view('encuestas.create_wiz');
         });
 
-        Route::get('reconocimientos/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
-        Route::get('reconocimientos/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
+        Route::get('reconocimientos/{id}/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
+        Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
+        Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
 
         Route::group(['middleware' => ['can:abm empresas']], function () {
             Route::resources(['empresas' => EmpresaController::class,]);
@@ -79,10 +80,11 @@ Route::group(['middleware' => 'auth'], function () {
         //perfil de usuario
         Route::get('profile/{id}/editar', [ProfileController::class, 'index'])->name('profile');
         Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
+        Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
+        Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
 
         Route::group(['middleware' => ['can:abm usuarios']], function () {
             Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
-            Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
             Route::resources([
                 'usuario' => UsuarioController::class,
             ]);
@@ -116,5 +118,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');
             Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
         });
+        Route::group(['middleware' => ['can:reconocimientos']], function () {
+            Route::get('reconocimientos', [AsignarReconocimientosController::class, 'index'])->name('reconocimientos.index');
+            Route::post('reconocimientos', [AsignarReconocimientosController::class, 'save'])->name('reconocimientos.save');
+            Route::delete('reconocimientos/delete/{id}',  [AsignarReconocimientosController::class, 'destroy'])->name('reconocimientos.delete');
+            Route::get('reconocimientos/show', [AsignarReconocimientosController::class, 'ver'])->name('reconocimientos.show');
+        });
+
     });
 });
