@@ -57,7 +57,9 @@ class EmpresaController extends Controller
             'telefono' => 'nullable|string|max:45',
             'uri' => 'required|string|max:45',
             'logo' => 'required|string|max:45',
-            'perfil_id' => 'required'
+            'perfil_id' => 'required',
+            'email_contacto' => 'required|email|max:100',
+            'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
             "perfil_id.required" => "Debe seleccionar al menos un perfil, los perfiles que seleccione se van a poder seleccionar a los usuarios",
@@ -129,7 +131,9 @@ class EmpresaController extends Controller
             'telefono' => 'nullable|string|max:45',
             'uri' => 'required|string|max:45',
             'logo' => 'required|string|max:45',
-            'perfil_id' => 'required'
+            'perfil_id' => 'required',
+            'email_contacto' => 'required|email|max:100',
+            'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
             "perfil_id.required" => "Debe seleccionar al menos un perfil, los perfiles que seleccione se van a poder seleccionar a los usuarios",
@@ -140,6 +144,8 @@ class EmpresaController extends Controller
         $empresa->telefono = $request->telefono;
         $empresa->uri = $request->uri;
         $empresa->logo = $request->logo;
+        $empresa->email_contacto = $request->email_contacto;
+        $empresa->email_nombre = $request->email_nombre;
         $empresa->save();
 
         DB::delete("delete from roles_empresas where empresas_id = ?", array($empresa->id));    

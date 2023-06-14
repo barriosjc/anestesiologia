@@ -34,6 +34,20 @@
                     value="{{ old('logo', $empresa->logo) }}" />
             </div>
         </div>
+        <div class="row">
+            <div class="col-6">
+                <label class="small mb-1" for="email_contacto">email malining</label>
+                <input class="form-control" id="email_contacto" name="email_contacto" type="email_contacto"
+                    placeholder="Ingrese el email del from para el envio de emails"
+                    value="{{ old('email_contacto', $empresa->email_contacto) }}" />
+            </div>
+            <div class="col-6">
+                <label class="small mb-1" for="email_nombre">nombre mailing</label>
+                <input class="form-control" id="email_nombre" name="email_nombre" type="email_nombre"
+                    placeholder="Ingrese el nombre del from que se usará para el envio de emils"
+                    value="{{ old('email_nombre', $empresa->email_nombre) }}" />
+            </div>
+        </div>
         <div class="mb-3">
             <label class="small mb-1">Perfil/es</label>
             <select name="perfil_id[]" class="form-control" id="perfil_id" multiple>

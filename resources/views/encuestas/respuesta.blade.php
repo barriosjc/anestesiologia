@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
-                    <input type="hidden" name="puntos[{{$item->opciones_id}}]" value="{{$item->eo_puntos}}">
+                    <input type="hidden" name="puntos[{{$item->opciones_id}}]" value="{{$item->eo_puntos}},{{$item->descripcion}}">
                     <input name="opciones[]" type="checkbox" value={{$item->opciones_id}}
                             {{in_array($item->opciones_id, (old('opciones') !== null ? old('opciones') : array())) ? 'checked' : ''}}>
                             <i class="size-18 text-muted" data-feather="info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{$item->detalle}}"></i>

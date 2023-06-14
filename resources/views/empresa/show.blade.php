@@ -37,6 +37,14 @@
                                 {{ $empresa->logo }}
                             </div>
                             <div class="form-group">
+                                <strong>email de mailing:</strong>
+                                {{ $empresa->email_contacto }}
+                            </div>
+                            <div class="form-group">
+                                <strong>nombre de contacto mailing:</strong>
+                                {{ $empresa->email_nombre }}
+                            </div>
+                            <div class="form-group">
                                 <strong>Perfiles:</strong>
                                 @php($sepa = "")
                                 @foreach($roles_empresas as $roles)
