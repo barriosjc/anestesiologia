@@ -19,7 +19,8 @@ use App\Models\resultado_individual;
 use App\Models\User;
 //use App\Models\Grupal;
 use Illuminate\Support\Facades\DB;
-
+use App\mail\reconocimientoMailable;
+use Illuminate\Support\Facades\Mail;
 
 class RespuestaController extends Controller
 {
@@ -43,11 +44,11 @@ class RespuestaController extends Controller
             ->get();
         //traer todos los usuarios de la empresa y excluye al users_id
         $users = User::where("empresas_id", session('empresa')->id)
-                        ->where("id", "!=", Auth()->user()->id)
-                        ->get();
+            ->where("id", "!=", Auth()->user()->id)
+            ->get();
         //traer todos los grupos de la empresa del usuario
         $grupal = DB::select('select id, useryjefe from v_user_jefes where empresas_id = ' . session('empresa')->id
-                                   . " and id != " . Auth()->user()->id);
+            . " and id != " . Auth()->user()->id);
         if (count($encuestas)) $titulo = $encuestas[0]->razon_social  . " - " . $encuestas[0]->edicion . " - " . $encuestas[0]->descrip_rango;
 
         $styles = "background-color: #ff00cc !important;";
@@ -84,6 +85,7 @@ class RespuestaController extends Controller
                 throw new Exception("Si selecciona valorar a un grupo o sector, debe seleccionar a un grupo de la lista. (Paso 2)");
             }
 
+            $param = [];
             $campos = "observaciones, adjunto, users_id, encuestas_id";
             $data = $this->conDatos($request, $campos);
             //  dd($data);
@@ -96,28 +98,59 @@ class RespuestaController extends Controller
             $encuesta_result->users_id = $data['users_id'];
             $encuesta_result->observaciones = $data['observaciones'];
             $encuesta_result->save();
+            $param['observaciones'] = $data['observaciones'];
 
             //esto luego tiene que estar dentro de un bucle por el select multi
+            $votados = [];
             if ($request->ck_tipo == 'ck_individual') {
                 $resultado = new Resultado_individual();
                 $resultado->encuestas_resultados_id = $encuesta_result->id;
                 $resultado->users_id = $request->user_id_reconocido;
                 $resultado->save();
+                $votados[] = $request->user_id_reconocido;
             } else {
                 foreach ($request->grupal_id_reconocido as $key => $value) {
                     $resultado = new Resultado_grupal();
                     $resultado->encuestas_resultados_id = $encuesta_result->id;
                     $resultado->users_id = $value;
                     $resultado->save();
+                    $votados[] = $value;
                 }
             }
 
-            foreach ($request->opciones as $opcion) {
+            $sepa = "";
+            $opciones = "";
+            $puntos = 0;
+            foreach ($request->opciones as $index => $opcion) {
                 $enc_res_opciones = new encuestas_resultados_opciones();
                 $enc_res_opciones->opciones_id = $opcion;
-                $enc_res_opciones->puntos = $request->puntos[$opcion];
+                $enc_res_opciones->puntos = $valores = explode(',', $request->puntos[$opcion])[0];
                 $enc_res_opciones->encuestas_resultados_id = $encuesta_result->id;
                 $enc_res_opciones->save();
+
+                $opciones .= $sepa . explode(',', $request->puntos[$opcion])[1];
+                if ($index == (count($request->opciones) - 2)) {
+                    $sepa = ' y ';
+                } else {
+                    $sepa = ", ";
+                }
+                $puntos += $enc_res_opciones->puntos;
+            }
+            $param['opciones'] = $opciones;
+            $param['puntos'] = $puntos;
+
+            foreach ($votados as $value) {
+                $users = user::where('id', $value)->first();
+                $param['last_name'] = $users->last_name;
+                $correo = new reconocimientoMailable($param);
+                $empresa = session('empresa');
+
+                Mail::send([], [], function ($message)  use ($users, $correo, $empresa) {
+                    $message->to($users->email, $users->last_name)
+                        ->from($empresa->email_contacto, $empresa->email_nombre)
+                        ->subject('Te han realizado un reconocimiento en portal Clap!')
+                        ->setBody($correo->render(), 'text/html');
+                });
             }
         } catch (Throwable $e) {
             $msg = $e->getMessage();
