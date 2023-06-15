@@ -4,11 +4,15 @@ namespace App\Http\Controllers\seguridad;
 
 use App\Models\user;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Empresa;
+use App\Models\reconocimiento;
+use Illuminate\Support\Facades\DB;
+use App\mail\registerMailable;
+use Illuminate\Support\Facades\Mail;
 
 class ProfileController extends Controller
 {
@@ -25,25 +29,29 @@ class ProfileController extends Controller
         } else {
             $empresas = empresa::where("id", $user->empresas_id)->get();
         }
-   
-        $jefes = user::where('es_jefe', 1)
-                    ->where('id', $user->empresas_id)
-                    ->get();
 
-        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
+        $jefes = user::where('es_jefe', 1)
+            ->where('id', $user->empresas_id)
+            ->get();
+
+        $reconocimientos = reconocimiento::where('users_id', Auth()->user()->id)->get();
+
+        $recibidos = DB::select('select ifnull(sum(puntos), 0) as total from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id)[0]->total;
+
+        return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos'));
     }
 
     public function nuevo()
     {
         if (session('empresa')->id === 0) {
             $empresas = empresa::all();
-        } else{
+        } else {
             $empresas = empresa::where("id", session('empresa')->id)->get();
         }
         $user = new user();
         $jefes = user::where('es_jefe', 1)
-                    ->where('id', $user->empresas_id)
-                    ->get();
+            ->where('id', $user->empresas_id)
+            ->get();
 
         return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes'));
     }
@@ -61,19 +69,32 @@ class ProfileController extends Controller
             'es_jefe' => 'nullable',
             'telefono' => 'nullable',
         ]);
-        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
-        $validated['password'] = Hash::make('12345678');
-        $validated['cambio_password'] = 1;
+        $es_nuevo = true;
         if ($request->id) {
             $user = user::where('id', $request->id)->first();
+            $es_nuevo = false;
         } else {
             $user = new user();
+            $validated['password'] = Hash::make('12345678');
+            $validated['cambio_password'] = 1;
         }
+        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+
         foreach ($validated as $key => $value) {
             $user->$key = $value;
         }
         $user->save();
-
+        if ($es_nuevo) {
+            $correo = new registerMailable($user);
+            $empresa = session('empresa');
+            Mail::send([], [], function ($message)  use ($request, $correo, $empresa) {
+                $message->to($request->email, $request->last_name)
+                    ->from($empresa->email_contacto, $empresa->email_nombre)
+                    ->subject('Registro de usuario para ingreso a portal Clap!')
+                    ->setBody($correo->render(), 'text/html');
+            });
+        }
+        
         return back()
             ->withInput($request->input())
             ->with('success', 'Se guardó los datos del usuario en forma correcta.');
@@ -84,9 +105,8 @@ class ProfileController extends Controller
         try {
             $empresas_id = $request->input('empresas_id');
             $grupal = user::where('empresas_id', $empresas_id)
-                                ->where('es_jefe', 1)->get();
+                ->where('es_jefe', 1)->get();
             $response = ['data' => $grupal];
-
         } catch (\Exception $exception) {
             return response()->json(['message' => 'hay un error al intentar traer los usuarios jefes'], 500);
         }
@@ -98,7 +118,7 @@ class ProfileController extends Controller
         $request->validate([
             "id" => 'required',
             'foto' => 'image'
-        ],[
+        ], [
             'id.required' => 'Primero debe tener guardado Detalle de usuario para luego poder subir una foto'
         ]);
 
@@ -119,32 +139,63 @@ class ProfileController extends Controller
             ->with('success', 'Foto actualizada correctamente.');
     }
 
-    public function password() {
+    public function password()
+    {
         $titulo = "Cambio de clave";
 
         return view('seguridad.usuario.password')->with(compact('titulo'));
     }
 
-    public function save_password(Request $request) {
+    public function save_password(Request $request)
+    {
         $validado = $request->validate([
             'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
-            'confirmacion_password' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', 
-            'same:password_nueva'],
-            'password_actual' => ['required', 'string', 'max:20',
+            'confirmacion_password' => [
+                'required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'same:password_nueva'
+            ],
+            'password_actual' => [
+                'required', 'string', 'max:20',
                 function ($attribute, $value, $fail) use ($request) {
-                            $usuario = User::where('id', Auth()->user()->id)->first();
-                            // dd($usuario ,  Hash::make($value))
-                            if (!($usuario && Hash::make($value) != $usuario->password)) {
-                                $fail('La clave actual que ingreso es incorrecta.');
-                            }
-                        }]
+                    $usuario = User::where('id', Auth()->user()->id)->first();
+                    // dd($usuario ,  Hash::make($value))
+                    if (!($usuario && Hash::make($value) != $usuario->password)) {
+                        $fail('La clave actual que ingreso es incorrecta.');
+                    }
+                }
+            ]
         ]);
 
         $user = user::where("id", Auth()->user()->id)->first();
         $user->password = hash::make($validado['password_nueva']);
+        $user->cambio_password = 0;
         $user->save();
 
         return back()->with('success', 'Se actualizó la nueva password correctamente.');
+    }
 
+    public function readonly($id)
+    {
+
+        $user = user::where("id", $id)->first();
+        if ($user->empresas_id === 0) {
+            $empresas = empresa::all();
+        } else {
+            $empresas = empresa::where("id", $user->empresas_id)->get();
+        }
+
+        $jefes = user::where('es_jefe', 1)
+            ->where('id', $user->empresas_id)
+            ->get();
+
+        $reconocimientos = reconocimiento::where('users_id', Auth()->user()->id)->get();
+
+        $recibidos = DB::select('select ifnull(sum(puntos), 0) as total from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id)[0]->total;
+
+        //    return view('seguridad.usuario.perfil')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos'));
+
+        $readonly = true;
+
+        return view('seguridad.usuario.perfil_readonly')->with(compact('empresas', 'user', 'jefes', 'reconocimientos', 'recibidos', 'readonly'));
     }
 }

@@ -5,7 +5,6 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                @include('utiles.alerts')
                 <div class="card card-default">
                     <div class="card-header">
                         <span class="card-title">{{ __('Nueva') }} Opción</span>

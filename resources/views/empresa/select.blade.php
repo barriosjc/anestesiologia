@@ -7,7 +7,6 @@
         <div class="flex-center position-ref full-height">
             <div class="row">
                 <div class="col-md-12">
-                    @include('utiles.alerts')
                     <div class="card card-default">
                         <div class="card-header">
                             <span class="card-title">{{ __('Seleccione') }} Empresa</span>
