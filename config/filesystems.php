@@ -52,10 +52,18 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
+
         'usuarios' => [
             'driver' => 'local',
             'root' => storage_path('app/public/usuarios'),
             'url' => '/storage/usuarios/',
+            'visibility' => 'public',
+        ],
+        
+        'empresas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/empresas'),
+            'url' => '/storage/empresas/',
             'visibility' => 'public',
         ],
     ],

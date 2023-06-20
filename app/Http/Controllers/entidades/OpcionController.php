@@ -6,6 +6,8 @@ use App\Models\Opcion;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\FilesystemAdapter;
 
 /**
  * Class OpcionController
@@ -20,7 +22,7 @@ class OpcionController extends Controller
      */
     public function index()
     {
-        $opciones = Opcion::simplepaginate(5);
+        $opciones = Opcion::where("empresas_id", session('empresa')->id)->simplepaginate(5);
 
         return view('entidades.opcion.index', compact('opciones'))
             ->with('i', (request()->input('page', 1) - 1) * $opciones->perPage());
@@ -44,12 +46,27 @@ class OpcionController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        request()->validate(Opcion::$rules);
+        //dd($request);
+        $validate = request()->validate(Opcion::$rules);
+        $opciones = new Opcion;
+        foreach ($validate as $key => $value) {
+            $opciones->$key = $value;
+        }
+        $opciones->habilitada = $opciones->habilitada ? 1 : 0;
+        $opciones->empresas_id = session('empresa')->id;
+        $empresa = session('empresa')->uri;
+         //dd( Storage::disk('empresas'));
+        $originalName = $request->file('imagen')->getClientOriginalName();
+        $path = "$empresa/opciones/".$originalName;
+        Storage::disk('empresas')->put($path, $request->file('imagen')->get());
 
-        $opciones = Opcion::create($request->all());
+        $opciones->imagen = $path;
 
+        $opciones->save();
+        
         return redirect()->route('opcion.index')
             ->with('success', 'Opcion created successfully.');
     }
@@ -96,6 +113,14 @@ class OpcionController extends Controller
         foreach ($validate as $key => $value) {
             $opciones->$key = $value;
         }
+        $opciones->empresas_id = session('empresa')->id;
+        $empresa = session('empresa')->uri;
+         //dd( Storage::disk('empresas'));
+        $originalName = $request->file('imagen')->getClientOriginalName();
+        $path = "$empresa/opciones/".$originalName;
+        Storage::disk('empresas')->put($path, $request->file('imagen')->get());
+
+        $opciones->imagen = $path;
         $opciones->save();
 
         return redirect()->route('opcion.index')

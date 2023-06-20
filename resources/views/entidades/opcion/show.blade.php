@@ -8,11 +8,10 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Opcione</span>
+                            <span class="card-title">{{ __('Ver') }} Opciones</span>
                         </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary" href="{{ route('opcion.index') }}"> {{ __('Back') }}</a>
-                        </div>
+                        <a href="{{ URL::previous() }}" title="Volver"><button class="btn btn-warning btn-sm"><i
+                            class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     </div>
 
                     <div class="card-body">
@@ -41,15 +40,6 @@
                             <strong>Puntos:</strong>
                             {{ $opciones->puntos }}
                         </div>
-                        <div class="form-group">
-                            <strong>Puntos Min:</strong>
-                            {{ $opciones->puntos_min }}
-                        </div>
-                        <div class="form-group">
-                            <strong>Puntos Max:</strong>
-                            {{ $opciones->puntos_max }}
-                        </div>
-
                     </div>
                 </div>
             </div>

@@ -1,4 +1,20 @@
 <div>
+    @if (session()->has('success'))
+        <div class="alert alert-success ">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session()->has('message'))
+        <div class="alert alert-success ">
+            {{ session('message') }}
+        </div>
+    @endif
+    @if (session()->has('error'))
+        <div class="alert alert-danger ">
+            {{ session('error') }}
+        </div>
+    @endif
+@dump(session('error'), session('message'));
     {{-- hecho para livewire --}}
     <div class="container-fluid px-4">
         {{-- Wizard card example with navigation --}}
@@ -237,11 +253,11 @@
                                                                 @endif
                                                                 <td>
                                                                     <button
-                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
-                                                                    wire:click="editar_periodo({{ $periodo->id }})">
-                                                                    <i
-                                                                        class="fa-regular fa-pen-to-square"></i></button>
-                                                                        <button type="button"
+                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                        wire:click="editar_periodo({{ $periodo->id }})">
+                                                                        <i
+                                                                            class="fa-regular fa-pen-to-square"></i></button>
+                                                                    <button type="button"
                                                                         wire:click="$emit('deleteperiodo', {{ $periodo->id }})"
                                                                         title="Borrar encuesta"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
@@ -335,9 +351,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Opción</th>
-                                                            <th>Puntos</th>
                                                             <th>Orden</th>
-                                                            <th>Style</th>
                                                             <th>Habilitado</th>
                                                             <th>Acciones</th>
                                                         </tr>
@@ -346,29 +360,27 @@
                                                         @foreach ($encuestas_opciones as $opcion)
                                                             <tr>
                                                                 <td>{{ $opcion->descripcion }}</td>
-                                                                <td>{{ $opcion->puntos }}</td>
                                                                 <td>{{ $opcion->orden }}</td>
-                                                                <td>{{ $opcion->style }}</td>
                                                                 @if ($opcion->habilitada == 1)
                                                                     <td>
                                                                         <div
                                                                             class="badge bg-primary text-white rounded-pill-yes-no">
-                                                                           SI </div>
+                                                                            SI </div>
                                                                     </td>
                                                                 @else
                                                                     <td>
                                                                         <div
                                                                             class="badge bg-danger text-white rounded-pill-yes-no">
-                                                                           NO</div>
+                                                                            NO</div>
                                                                     </td>
                                                                 @endif
                                                                 <td>
                                                                     <button
-                                                                    class="btn btn-datatable btn-icon btn-transparent-dark me-2"
-                                                                    wire:click="editar_opcion({{ $opcion->id }})">
-                                                                    <i
-                                                                        class="fa-regular fa-pen-to-square"></i></button>
-                                                                        <button type="button"
+                                                                        class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                                                        wire:click="editar_opcion({{ $opcion->id }})">
+                                                                        <i
+                                                                            class="fa-regular fa-pen-to-square"></i></button>
+                                                                    <button type="button"
                                                                         wire:click="$emit('deleteopcion', {{ $opcion->id }})"
                                                                         title="Borrar opcion"
                                                                         class="btn btn-datatable btn-icon btn-transparent-dark"><i
@@ -401,27 +413,11 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="puntos" class="col-sm-2 col-form-label">Puntos</label>
-                                            <div class="col-sm-2">
-                                                <input type="number" min="1" max="9999"
-                                                    class="form-control" id="puntos" name="puntos"
-                                                    placeholder="puntos" wire:model="o_puntos">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
                                             <label for="orden" class="col-sm-2 col-form-label">Orden</label>
                                             <div class="col-sm-2">
                                                 <input type="number" min="1" max="{{ count($opciones) }}"
                                                     class="form-control" id="orden" name="orden"
                                                     placeholder="orden" wire:model="o_orden">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="style" class="col-sm-2 col-form-label">Style</label>
-                                            <div class="col-sm-5">
-                                                <input type="text" class="form-control" id="style"
-                                                    name="style" placeholder="Ingrese el Style que aplica a la opción"
-                                                    wire:model="o_style">
                                             </div>
                                         </div>
                                         <div class="form-group row">

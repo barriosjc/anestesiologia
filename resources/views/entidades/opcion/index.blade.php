@@ -62,31 +62,24 @@
                                                 </td>
                                             @endif
                                             <td>{{ $opcion->puntos }}</td>
-                                            <td style="width: 150px;">
-                                                <div style="overflow: hidden;">
-                                                    <div style="float: left;">
-                                                        <a class="btn btn-sm btn-primary" href="{{ route('opcion.show', $opcion->id) }}">
-                                                            <i class="fa fa-fw fa-eye"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div style="float: left;">
-                                                        <a class="btn btn-sm btn-success" href="{{ route('opcion.edit', $opcion->id) }}">
-                                                            <i class="fa fa-fw fa-edit"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div style="float: left;">
-                                                        <form action="{{ route('opcion.destroy', $opcion->id) }}" method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                                <i class="fa fa-fw fa-trash" onclick="return confirm('Confirma eliminar?')"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    <div style="clear: both;"></div>
-                                                </div>
+                                            <td style="width: 180px;">
+                                                <form action="{{ route('opcion.destroy', $opcion->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a class="btn btn-sm btn-primary"
+                                                        href="{{ route('opcion.show', $opcion->id) }}">
+                                                        <i class="fa fa-fw fa-eye"></i>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-success"
+                                                        href="{{ route('opcion.edit', $opcion->id) }}">
+                                                        <i class="fa fa-fw fa-edit"></i>
+                                                    </a>
+                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                        onclick="return confirm('Confirma eliminar?')">
+                                                        <i class="fa fa-fw fa-trash"></i>
+                                                    </button>
+                                                </form>
                                             </td>
-                                            
                                         </tr>
                                     @endforeach
                                 </tbody>

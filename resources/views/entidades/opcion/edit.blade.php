@@ -8,6 +8,8 @@
                 <div class="card card-default">
                     <div class="card-header">
                         <span class="card-title">{{ __('Update') }} Opciones</span>
+                        <a href="{{ URL::previous() }}" title="Volver"><button class="btn btn-warning btn-sm"><i
+                            class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('opcion.update', $opciones->id) }}"  role="form" enctype="multipart/form-data">

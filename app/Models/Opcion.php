@@ -15,8 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $style
  * @property $habilitada
  * @property $puntos
- * @property $puntos_min
- * @property $puntos_max
+ * @property $empresas_id
  * @property $created_at
  * @property $updated_at
  * @property $deleted_at
@@ -46,7 +45,7 @@ class Opcion extends Model
      *
      * @var array
      */
-    protected $fillable = ['descripcion','detalle','imagen','style','habilitada','puntos','puntos_min','puntos_max'];
+    protected $fillable = ['empresas_id','descripcion','detalle','imagen','style','habilitada','puntos','puntos_min','puntos_max'];
 
 
     /**

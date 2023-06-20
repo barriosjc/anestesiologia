@@ -19,6 +19,7 @@ use App\Models\encuesta_opcion;
 use App\Models\Periodo;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CreateEncuesta extends Component
 {
@@ -50,9 +51,7 @@ protected $paginationTheme = 'bootstrap';
     //opciones
     public $opciones_id_modif = null;
     public $o_opciones_id = null;
-    public $o_puntos = null;
     public $o_orden = null;
-    public $o_style = null;
     public $o_habilitada= null;
 
     public function render()
@@ -74,7 +73,7 @@ protected $paginationTheme = 'bootstrap';
         $cant_opc =  encuesta_opcion::v_encuestas_opciones()
                         ->where('encuestas_id', $this->encuestas_id_selected)
                         ->count();
-        $opciones = Opcion::all();
+        $opciones = Opcion::where("empresas_id", session('empresa')->id)->get();
         } else {
             $empresas = empresa::where("id", session('empresa')->id)
                             ->get();
@@ -86,7 +85,7 @@ protected $paginationTheme = 'bootstrap';
             $encuestas_opciones = encuesta_opcion::v_encuestas_opciones()
                             ->where('encuestas_id', $this->encuestas_id_selected)
                             ->paginate(5, ['*'], '_opciones');
-            $opciones = Opcion::all();
+            $opciones = Opcion::where("empresas_id", session('empresa')->id)->get();
         }
 
         //DB::connection()->enableQueryLog();
@@ -133,12 +132,10 @@ protected $paginationTheme = 'bootstrap';
     
     public function encuesta_store()
     {
-        $validatedData = $this->validate([
-            'e_empresas_id' => 'required',
-            'e_encuesta' => ['required', "max:50"],
-            'e_edicion' => ['required', "max:200"],
-            'e_opcionesxcol' => ['required', 'integer','max:5]']],
-        );
+        $validatedData = Validator::make(
+            ['e_opcionesxcol' => $this->e_opcionesxcol],
+            ['e_opcionesxcol' => ['required', 'integer','max:5]']]
+        )->validate();
 
         try {
             if (empty($this->encuestas_id_modif)) {
@@ -146,6 +143,7 @@ protected $paginationTheme = 'bootstrap';
             } else {
                 $encuesta = Encuesta::where("id", $this->encuestas_id_modif)->first();
             }
+            dd('llego aca');
             $encuesta->empresas_id = $this->e_empresas_id;
             $encuesta->encuesta = $this->e_encuesta;
             $encuesta->edicion = $this->e_edicion;
@@ -202,11 +200,16 @@ protected $paginationTheme = 'bootstrap';
     public function periodo_store()
     {
         try {
+            
             if (empty($this->periodos_id_modif)) {
                 $periodos = new periodo();
             } else {
                 $periodos = periodo::where("id", $this->periodos_id_modif)->first();
             }
+            if (!$this->validarPeriodo()) {
+                // session()->flash('message', "Los datos del periodo se guardaron conrrectamente  444.");   
+                echo 0/2;
+            }else {
             $periodos->encuestas_id = $this->encuestas_id_selected;
             $periodos->descrip_rango = $this->p_descrip_rango;
             $periodos->desde = $this->p_desde;
@@ -215,6 +218,7 @@ protected $paginationTheme = 'bootstrap';
             $periodos->save();
             $this->periodo_limpiar();
             $this->resetErrorBag();
+            }
             session()->flash('message', "Los datos del periodo se guardaron conrrectamente.");
 
         } catch (Throwable $e) {
@@ -222,7 +226,10 @@ protected $paginationTheme = 'bootstrap';
             $msg = $e->getMessage();
             session()->flash('error', 'no se ha podido guardar los datros, error de integridad. no se puede repetir. '.$msg);
 
-        }
+        } catch (\Exception $e) {
+            $this->addError('error', 'msg de error');
+            //session()->flash('error', 'msg de error');
+       }
        // return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
     }
 
@@ -263,13 +270,15 @@ protected $paginationTheme = 'bootstrap';
     public function opcion_store()
     {
         $validatedData = $this->validate(
-                ['encuestas_id_selected' => 'required',
-                'o_opciones_id' => 'required',
-                'o_puntos' => ['required','integer', "max:99"],
-                'o_orden' => ['required','integer', "max:99"],
-                'o_style' => ['required', 'max:200']],
-                ['encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
-                'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.']
+                [
+                    'encuestas_id_selected' => 'required',
+                    'o_opciones_id' => 'required',
+                    'o_orden' => ['required','integer', "max:99"]
+                ],
+                [
+                    'encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
+                    'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.'
+                ]
             );
 
         try {
@@ -280,9 +289,7 @@ protected $paginationTheme = 'bootstrap';
             }
             $encuestas_opciones->encuestas_id = $this->encuestas_id_selected;
             $encuestas_opciones->opciones_id = $this->o_opciones_id;
-            $encuestas_opciones->puntos = $this->o_puntos;
             $encuestas_opciones->orden = $this->o_orden;
-            $encuestas_opciones->style = $this->o_style;
             $encuestas_opciones->habilitada =  $this->o_habilitada ? 1 : 0;
             $encuestas_opciones->save();
             $this->opcion_limpiar();
@@ -300,9 +307,7 @@ protected $paginationTheme = 'bootstrap';
     public function editar_opcion($opciones_id) {
         $opcion = encuesta_opcion::where('id', $opciones_id)->first();
         $this->o_opciones_id = $opcion->opciones_id;
-        $this->o_puntos = $opcion->puntos;
         $this->o_orden = $opcion->orden;
-        $this->o_style = $opcion->style;
         $this->o_habilitada = $opcion->habilitada;
         $this->opciones_id_modif = $opciones_id;
     }
@@ -310,9 +315,7 @@ protected $paginationTheme = 'bootstrap';
     public function opcion_limpiar(){
         $this->reset(['opciones_id_modif',
                     'o_opciones_id',
-                    'o_puntos',
                     'o_orden',
-                    'o_style',
                 ]);
     }
 
@@ -331,6 +334,32 @@ protected $paginationTheme = 'bootstrap';
 
     public function selectTab($tab){
         $this->currentTab = $tab;
+    }
+
+    public function validarPeriodo(){
+        $resu = false;
+        //  dd("select * from periodos 
+        // where encuestas_id = ". $this->encuestas_id_selected 
+        // ." and  ('" . $this->p_desde ."' >= desde " 
+        // ." and  '" . $this->p_desde . "' <= hasta) "
+        // ." or "
+        // ." ('" . $this->p_hasta ."' >= desde " 
+        // ." and  '" . $this->p_hasta . "' <= hasta) "
+        // . "and habilitada = 1");
+        $datos = DB::select("select * from periodos 
+                                where encuestas_id = ". $this->encuestas_id_selected 
+                                    ." and (('" . $this->p_desde ."' >= desde " 
+                                    ." and  '" . $this->p_desde . "' <= hasta) "
+                                    ." or "
+                                    ." ('" . $this->p_hasta ."' >= desde " 
+                                    ." and  '" . $this->p_hasta . "' <= hasta)) "
+                                    . "and habilitada = 1");
+// dd($datos);
+        if (empty($datos)) {
+            $resu = true;
+        }
+
+        return $resu;
     }
 
 }
