@@ -19,7 +19,7 @@
       <tr>
         <td align="left" style="padding-left:25px; padding-right:25px;">
           <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 1.5; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;">
-            <strong>{{$params['last_name']}}</strong> te envió un reconocimiento por el motivo/s <strong>{{$params['opciones']}}</strong>
+            <strong>{{$params['name_reconocido']}}</strong> fue reconocido por <strong>{{$params['name_voto']}}</strong> por el motivo <strong>{{$params['opciones']}}</strong>
           </p>
           <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 1.5; color: #02733e; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;">
             <strong>Justificación:</strong> {{$params['observaciones']}}

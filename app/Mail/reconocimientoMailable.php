@@ -30,6 +30,10 @@ class reconocimientoMailable extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.reconocimiento');
+        if (isset($this->params['name_voto'])) {
+            return $this->view('emails.reconocimiento_jefe');
+        }else{
+            return $this->view('emails.reconocimiento');
+        }
     }
 }

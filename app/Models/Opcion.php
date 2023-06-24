@@ -45,7 +45,7 @@ class Opcion extends Model
      *
      * @var array
      */
-    protected $fillable = ['empresas_id','descripcion','detalle','imagen','style','habilitada','puntos','puntos_min','puntos_max'];
+    protected $fillable = ['empresas_id','descripcion','detalle','imagen','style','habilitada','puntos'];
 
 
     /**

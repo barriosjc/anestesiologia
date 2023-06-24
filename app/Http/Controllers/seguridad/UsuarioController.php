@@ -30,12 +30,8 @@ class UsuarioController extends Controller
         ->where('name', 'LIKE', "%$keyword%")
         ->orWhere('last_name', 'LIKE', "%$keyword%")
         ->orWhere('email_verified_at', 'LIKE', "%$keyword%")
-        // ->orWhere('tipo', 'LIKE', "%$keyword%")
-        // ->orWhere('direccion', 'LIKE', "%$keyword%")
-        // ->orWhere('localidad', 'LIKE', "%$keyword%")
+        ->orWhere('area', 'LIKE', "%$keyword%")
         ->orWhere('email', 'LIKE', "%$keyword%")
-        // ->orWhere('telefono', 'LIKE', "%$keyword%")
-        // ->orWhere('observacion', 'LIKE', "%$keyword%")
         ->orderby("last_name")
         ->latest()->simplepaginate($perPage);
     } else {
@@ -87,6 +83,7 @@ class UsuarioController extends Controller
       'jefe_user_id' => 'nullable',
       'es_jefe' => 'nullable',
       'telefono' => 'nullable',
+      'area' => 'nullable',
     ]);
 
     $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
@@ -177,6 +174,7 @@ class UsuarioController extends Controller
       'jefe_user_id' => 'nullable',
       'es_jefe' => 'nullable',
       'telefono' => 'nullable',
+      'area' => 'nullable'
     ]);
     $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
     $validated['password'] = Hash::make('12345678');

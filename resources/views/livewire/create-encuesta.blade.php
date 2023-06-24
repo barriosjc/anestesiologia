@@ -1,20 +1,7 @@
 <div>
-    @if (session()->has('success'))
-        <div class="alert alert-success ">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session()->has('message'))
-        <div class="alert alert-success ">
-            {{ session('message') }}
-        </div>
-    @endif
-    @if (session()->has('error'))
-        <div class="alert alert-danger ">
-            {{ session('error') }}
-        </div>
-    @endif
-@dump(session('error'), session('message'));
+    {{-- si hace falta se deberia quitar y enviar el msg fuera el componete y mostrarlo donde esta actualmente --}}
+    @include('utiles.alerts')
+
     {{-- hecho para livewire --}}
     <div class="container-fluid px-4">
         {{-- Wizard card example with navigation --}}

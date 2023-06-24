@@ -31,6 +31,7 @@ class User extends Authenticatable
         'jefe_user_id',
         'telefono',
         'observaciones',
+        'area'
     ];
 
     /**
@@ -59,5 +60,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(empresa::class, 'empresas_id');
     }
-
+   
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function jefes()
+    {
+        return $this->belongsTo(user::class, 'jefe_user_id');
+    }
 }

@@ -16,7 +16,7 @@
                             @endif
                             <th>Fecha</th>
                             <th>Puntos</th>
-                            <th>Observaciones</th>
+                            <th>Justificación</th>
                             <th>Opciones</th>
                             <th>Reconocidos</th>
                         </tr>

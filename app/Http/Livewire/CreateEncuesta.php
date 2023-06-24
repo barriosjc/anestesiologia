@@ -7,19 +7,13 @@ use Livewire\WithPagination;
 
 use Throwable;
 use App\Models\Encuesta;
-use App\Models\Grupal;
-use App\Models\User;
-use App\Models\encuesta_resultado;
-use App\Models\encuestas_resultados_opciones;
 use App\Models\Opcion;
-use App\Models\resultado_grupal;
-use App\Models\resultado_individual;
 use App\Models\Empresa;
 use App\Models\encuesta_opcion;
 use App\Models\Periodo;
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class CreateEncuesta extends Component
 {
@@ -132,10 +126,13 @@ protected $paginationTheme = 'bootstrap';
     
     public function encuesta_store()
     {
-        $validatedData = Validator::make(
-            ['e_opcionesxcol' => $this->e_opcionesxcol],
-            ['e_opcionesxcol' => ['required', 'integer','max:5]']]
-        )->validate();
+        $validatedData = $this->validate([
+            'e_empresas_id' => 'required',
+            'e_encuesta' => ['required', "max:50"],
+            'e_edicion' => ['required', "max:200"],
+            'e_opcionesxcol' => ['required', 'integer','max:5]']],
+            ['e_opcionesxcol.required' => 'Cantidad de opciones por columna es obligatorio.']
+        );
 
         try {
             if (empty($this->encuestas_id_modif)) {
@@ -143,7 +140,6 @@ protected $paginationTheme = 'bootstrap';
             } else {
                 $encuesta = Encuesta::where("id", $this->encuestas_id_modif)->first();
             }
-            dd('llego aca');
             $encuesta->empresas_id = $this->e_empresas_id;
             $encuesta->encuesta = $this->e_encuesta;
             $encuesta->edicion = $this->e_edicion;
@@ -199,6 +195,15 @@ protected $paginationTheme = 'bootstrap';
     //  -------------------------------------------------------------------------------------------------------------
     public function periodo_store()
     {
+        $validatedData = $this->validate([
+            'encuestas_id_selected' => 'required',
+            'p_descrip_rango' => ['required', "max:50"],
+            'p_desde' => ['required', "date"],
+            'p_hasta' => ['required', "date", "after:p_desde"],
+        ],
+            ['p_descrip_rango.required' => 'Descripción del periodo es obligatorio.']
+        );
+
         try {
             
             if (empty($this->periodos_id_modif)) {
@@ -207,27 +212,29 @@ protected $paginationTheme = 'bootstrap';
                 $periodos = periodo::where("id", $this->periodos_id_modif)->first();
             }
             if (!$this->validarPeriodo()) {
-                // session()->flash('message', "Los datos del periodo se guardaron conrrectamente  444.");   
-                echo 0/2;
-            }else {
-            $periodos->encuestas_id = $this->encuestas_id_selected;
+                throw new Exception('El nuevo periodo a querer ingresar se solapa con periodo activo ingresado anteriormente, no es posible ingresar este nuevo periodo.', 1000);
+            }
+          $periodos->encuestas_id = $this->encuestas_id_selected;
             $periodos->descrip_rango = $this->p_descrip_rango;
             $periodos->desde = $this->p_desde;
             $periodos->hasta = $this->p_hasta;
             $periodos->habilitada =  $this->p_habilitada ? 1 : 0;
+
             $periodos->save();
             $this->periodo_limpiar();
             $this->resetErrorBag();
-            }
             session()->flash('message', "Los datos del periodo se guardaron conrrectamente.");
 
         } catch (Throwable $e) {
             // dd($e->getMessage());
             $msg = $e->getMessage();
-            session()->flash('error', 'no se ha podido guardar los datros, error de integridad. no se puede repetir. '.$msg);
+            if ($e->getCode() != 1000) {
+                $msg = "no se ha podido guardar los datros, error de integridad. no se puede repetir. " . $msg;
+            }
+            session()->flash('error', $msg);
 
         } catch (\Exception $e) {
-            $this->addError('error', 'msg de error');
+            $this->addError('error', 'msg de error desconocido.');
             //session()->flash('error', 'msg de error');
        }
        // return back()->with(['success' => "Se creo o modificó correctamente un periodo de la encuesta."]);
@@ -272,12 +279,20 @@ protected $paginationTheme = 'bootstrap';
         $validatedData = $this->validate(
                 [
                     'encuestas_id_selected' => 'required',
-                    'o_opciones_id' => 'required',
-                    'o_orden' => ['required','integer', "max:99"]
+                    'o_orden' => ['required','integer', "max:99"],
+                    'o_opciones_id' => [
+                        'required',
+                        Rule::unique('encuestas_opciones', 'opciones_id')->where(function ($query) {
+                            return $query->where('encuestas_id', $this->encuestas_id_selected)
+                                            ->where('id', '!=', $this->opciones_id_modif)
+                                            ->where('created_at', null);
+                        })
+                    ],
                 ],
                 [
                     'encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
-                    'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.'
+                    'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.',
+                    'o_opciones_id.unique' => 'La opcion ya fue ingresada anteriormente, no es posible ingresar 2 veces la misma opcion'
                 ]
             );
 
@@ -294,12 +309,11 @@ protected $paginationTheme = 'bootstrap';
             $encuestas_opciones->save();
             $this->opcion_limpiar();
             $this->resetErrorBag();
-            session()->flash('message', "Los datos de la opción se guardaron conrrectamente.");
 
         } catch (Throwable $e) {
             // dd($e->getMessage());
             $msg = $e->getMessage();
-            return back()->with(['danger' => $msg]);
+            return back()->with(['error' => $msg]);
         }
         return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
     }
@@ -316,17 +330,19 @@ protected $paginationTheme = 'bootstrap';
         $this->reset(['opciones_id_modif',
                     'o_opciones_id',
                     'o_orden',
+                    'o_habilitada'
                 ]);
     }
 
     public function borrar_opcion($idOpcion) {
         $msg = "";
         try {
-            Opcion::where("id", $idOpcion)->delete();
+            encuesta_opcion::where("id", $idOpcion)->delete();
         
         } catch (Throwable $e) {
             // dd($e->getMessage());
             $msg = $e->getMessage();
+            session()->flash('error', $msg );        
 
         }
         session()->flash('message', 'Opción borrada correctamente.' );
@@ -338,14 +354,6 @@ protected $paginationTheme = 'bootstrap';
 
     public function validarPeriodo(){
         $resu = false;
-        //  dd("select * from periodos 
-        // where encuestas_id = ". $this->encuestas_id_selected 
-        // ." and  ('" . $this->p_desde ."' >= desde " 
-        // ." and  '" . $this->p_desde . "' <= hasta) "
-        // ." or "
-        // ." ('" . $this->p_hasta ."' >= desde " 
-        // ." and  '" . $this->p_hasta . "' <= hasta) "
-        // . "and habilitada = 1");
         $datos = DB::select("select * from periodos 
                                 where encuestas_id = ". $this->encuestas_id_selected 
                                     ." and (('" . $this->p_desde ."' >= desde " 
@@ -353,9 +361,12 @@ protected $paginationTheme = 'bootstrap';
                                     ." or "
                                     ." ('" . $this->p_hasta ."' >= desde " 
                                     ." and  '" . $this->p_hasta . "' <= hasta)) "
-                                    . "and habilitada = 1");
-// dd($datos);
+                                    ." and habilitada = 1"
+                                    ." and deleted_at is null");
+
         if (empty($datos)) {
+            $resu = true;
+        } elseif ( $datos[0]->id  === $this->periodos_id_modif) {
             $resu = true;
         }
 

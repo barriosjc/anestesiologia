@@ -49,6 +49,7 @@
                                             <th>Avatar</th>
                                             <th>Es jefe</th>
                                             <th>Mail</th>
+                                            <th>Area</th>
                                             <th>
                                                 <div class="float-right">
                                                     Opciones
@@ -76,6 +77,7 @@
                                                     </td>
                                                 @endif
                                                 <td>{{ $item->email }}</td>
+                                                <td>{{ $item->area }}</td>
                                                 @if ($esabm)
                                                     <td>
                                                         <div class="float-right">

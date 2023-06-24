@@ -17,8 +17,8 @@ class Encuesta extends Model
         $resu = Encuesta::query()
         ->select(['eo.encuestas_id', 'encuesta', 'edicion', 'encuestas.habilitada as e_habilitada', 'encuestas.empresas_id', 
         'opcionesxcol', 'p.descrip_rango', 'p.desde', 'p.hasta', 'e.razon_social',
-        'eo.id as encuestas_opciones_id', 'opciones_id', 'eo.puntos as eo_puntos', 'eo.orden',
-        'descripcion', 'detalle', 'imagen', 'eo.style', 'o.habilitada as o_habilitada', 'o.puntos as o_puntos'])
+        'eo.id as encuestas_opciones_id', 'opciones_id', 'o.puntos as o_puntos', 'eo.orden',
+        'descripcion', 'detalle', 'imagen', 'o.style', 'o.habilitada as o_habilitada', 'o.puntos as o_puntos'])
         ->join('encuestas_opciones as eo', 'eo.encuestas_id', 'encuestas.id' )
         ->join('opciones as o', 'o.id', 'eo.opciones_id')
         ->join('periodos as p', 'p.encuestas_id', 'encuestas.id')
@@ -29,6 +29,9 @@ class Encuesta extends Model
         ->where('eo.habilitada', '=', 1)
         ->where('encuestas.habilitada', '=', 1)
         ->where('e.id', '=' , $empresas_id)
+        ->whereNull('p.deleted_at')
+        ->whereNull('o.deleted_at')
+        ->whereNull('eo.deleted_at')
         ->orderby('eo.orden', 'asc');
 // dd("tabla encuesta",$resu);
         return $resu;

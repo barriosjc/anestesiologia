@@ -26,7 +26,7 @@
                 <div class="card-header text-white bg-primary">
                     <div class="row">
                         <div class="col">
-                            Logros obtenidos
+                            Puntos obtenidos
                         </div>
                         <div class="col">
                             <h3><span class="badge bg-info text-dark">{{ $recibidos }}</span></h3>
@@ -100,13 +100,19 @@
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <label class="small mb-1" for="telefono">Phone number</label>
                                 <input class="form-control" id="telefono" name="telefono" type="tel"
                                     placeholder="Ingrese nro de telefono"
                                     value="{{ old('telefono', $user->telefono) }}" />
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="area">Area</label>
+                                <input class="form-control" id="area" name="area" type="text"
+                                    placeholder="Ingrese nro de area"
+                                    value="{{ old('area', $user->area) }}" />
+                            </div>
+                            <div class="col-md-3">
                                 <label for="es_jefe" class="small mb-1">Es jefe</label>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" role="switch" id="es_jefe"

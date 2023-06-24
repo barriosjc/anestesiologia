@@ -121,24 +121,26 @@ class RespuestaController extends Controller
             $sepa = "";
             $opciones = "";
             $puntos = 0;
+
             foreach ($request->opciones as $index => $opcion) {
                 $enc_res_opciones = new encuestas_resultados_opciones();
                 $enc_res_opciones->opciones_id = $opcion;
-                $enc_res_opciones->puntos = $valores = explode(',', $request->puntos[$opcion])[0];
+                $enc_res_opciones->puntos = explode(',', $request->puntos[$opcion])[0];
                 $enc_res_opciones->encuestas_resultados_id = $encuesta_result->id;
                 $enc_res_opciones->save();
-
                 $opciones .= $sepa . explode(',', $request->puntos[$opcion])[1];
                 if ($index == (count($request->opciones) - 2)) {
                     $sepa = ' y ';
                 } else {
                     $sepa = ", ";
                 }
-                $puntos += $enc_res_opciones->puntos;
+                $puntos += strval($enc_res_opciones->puntos);
             }
+
             $param['opciones'] = $opciones;
             $param['puntos'] = $puntos;
 
+            //envio de email a usuario/s y jefes
             foreach ($votados as $value) {
                 $users = user::where('id', $value)->first();
                 $param['last_name'] = $users->last_name;
@@ -151,7 +153,22 @@ class RespuestaController extends Controller
                         ->subject('Te han realizado un reconocimiento en portal Clap!')
                         ->setBody($correo->render(), 'text/html');
                 });
+
+                if ($users->jefe_user_id) {
+                    $jefe = user::where('id', $users->jefe_user_id)->first();
+                    $param['name_reconocido'] = $users->last_name;
+                    $param['name_voto'] = Auth()->user()->last_name;
+                    $correo = new reconocimientoMailable($param);
+
+                    Mail::send([], [], function ($message)  use ($jefe, $correo, $empresa) {
+                        $message->to($jefe->email, $jefe->last_name)
+                            ->from($empresa->email_contacto, $empresa->email_nombre)
+                            ->subject('Han realizado un reconocimiento en portal Clap!')
+                            ->setBody($correo->render(), 'text/html');
+                    });
+                }
             }
+
         } catch (Throwable $e) {
             $msg = $e->getMessage();
             //return back()->with(['danger' => $msg, "valant" => $valant]);

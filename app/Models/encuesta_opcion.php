@@ -34,7 +34,7 @@ class encuesta_opcion extends Model
     /**
      * @var array
      */
-    protected $fillable = ['opciones_id', 'encuestas_id', 'puntos', 'puntos_min', 'puntos_max', 'orden', 'style','created_at', 'updated_at', 'deleted_at'];
+    protected $fillable = ['opciones_id', 'encuestas_id', 'orden', 'created_at', 'updated_at', 'deleted_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -62,7 +62,7 @@ class encuesta_opcion extends Model
 
     public static function v_encuestas_opciones() {
         $resu = encuesta_opcion::query()
-        ->select([ 'encuestas_opciones.id', 'encuestas_id', 'orden', 'encuestas_opciones.style', 'encuestas_opciones.puntos',
+        ->select([ 'encuestas_opciones.id', 'encuestas_id', 'orden', 'o.style', 'o.puntos',
         'o.id as opcion_id', 'o.descripcion', 'o.detalle', 'o.imagen', 'encuestas_opciones.habilitada'])
         ->join('opciones as o', 'o.id', 'encuestas_opciones.opciones_id')
         ->orderby('encuestas_opciones.orden', 'asc');

@@ -42,11 +42,11 @@
                         <div class="me-3">
                             <div class="text-lg fw-bold">{{$item->descripcion}}</div>
                         </div>
-                        <img src="{{asset('libs/sbadmin/assets/img/encuestas') ."/". $item->imagen}}" width="100px" height="100px"/>
+                        <img src="{{ Storage::disk('empresas')->url($item->imagen)}}" width="100px" height="100px"/>
                     </div>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between small">
-                    <input type="hidden" name="puntos[{{$item->opciones_id}}]" value="{{$item->eo_puntos}},{{$item->descripcion}}">
+                    <input type="hidden" name="puntos[{{$item->opciones_id}}]" value="{{$item->o_puntos}},{{$item->descripcion}}">
                     <input name="opciones[]" type="checkbox" value={{$item->opciones_id}}
                             {{in_array($item->opciones_id, (old('opciones') !== null ? old('opciones') : array())) ? 'checked' : ''}}>
                             <i class="size-18 text-muted" data-feather="info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{$item->detalle}}"></i>

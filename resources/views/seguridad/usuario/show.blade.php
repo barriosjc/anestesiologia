@@ -54,6 +54,10 @@
                                             <th> eMail </th>
                                             <td> {{ $user->email }} </td>
                                         </tr>
+                                        <tr>
+                                            <th> area </th>
+                                            <td> {{ $user->area }} </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
