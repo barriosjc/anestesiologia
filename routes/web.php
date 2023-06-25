@@ -88,6 +88,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resources([
                 'usuario' => UsuarioController::class,
             ]);
+            Route::get('usuarios/importar/ver', [UsuarioController::class, 'importar'])->name('usuarios.importar.ver');
+            Route::get('usuarios/exportar', [UsuarioController::class, 'exportar'])->name('usuarios.exportar');
+            Route::get('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
         });
         Route::group(['middleware' => ['can:seguridad']], function () {
             Route::resources([

@@ -18748,7 +18748,7 @@ body {
   color: #fff;
 }
 .page-header.page-header-dark .page-header-title .page-header-icon {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 1);
 }
 .page-header.page-header-dark .page-header-subtitle {
   color: rgba(255, 255, 255, 0.5);
@@ -19626,4 +19626,10 @@ pre[class*=language-] {
 
 .token.variable {
   color: #ff6666;
+}
+
+.background-header-01 {
+	background-image: url("../../../img/background-header-01.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
 }

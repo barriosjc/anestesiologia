@@ -10,16 +10,23 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Illuminate\Support\Collection;
 // use App\Models\Encuesta;
 
-class ReconocimientosRealizadosExport implements FromCollection, WithHeadings, WithStyles
+class UsuariosExport implements FromCollection, WithHeadings, WithStyles
 {
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        $resu = DB::select('select  enc_desc, last_name, observaciones, puntos, fecha_ingreso, opciones_concat, votados_concat 
-                        from v_reconocimientos_realizados 
-                        where empresas_id = ' . session('empresa')->id);
+        $resu = DB::select('select u.id, u.last_name, g.descripcion, u.area, null as country, 
+                                u2.last_name as jefe_last_name, null as fec_nac, null as sede, u.email, 
+                                u.telefono, null as dni, r.name as perfil 
+                        from users as u 
+                            left outer join  grupal as g on u.grupal_id = g.id
+                            left outer join users as u2 on u2.id = u.jefe_user_id
+                            left outer join model_has_roles as mhr on u.id = mhr.model_id
+                            left outer join roles as r on r.id = mhr.role_id 
+                        where u.empresas_id = ' . session('empresa')->id
+                            . ' and u.deleted_at is null');
         $coleccion = collection::make($resu);
 
         return $coleccion;
@@ -29,12 +36,13 @@ class ReconocimientosRealizadosExport implements FromCollection, WithHeadings, W
     public function headings(): array
     {
         // Agregar los nombres de las columnas aquí
-        return ['encuesta', 'voto', 'motivo', 'puntos', 'fecha', 'opciones', 'votados'];
+        return ['Employee ID', 'Legal Name', 'Job Title', 'Functional organization', 'Work Country', 
+                'Manager Name', 'Date of Birth', 'Sede', 'job-mail address', 'Phone Number', 'DNI', 'perfil'];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:G1')->applyFromArray([
+        $sheet->getStyle('A1:L1')->applyFromArray([
             'font' => [
                 'bold' => true,
             ],

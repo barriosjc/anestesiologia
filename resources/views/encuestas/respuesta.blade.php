@@ -20,6 +20,20 @@
         }
 </style>
 <div class="container-fluid px-4">
+<header class="page-header page-header-dark pb-10 background-header-01">
+                        <div class="container-xl px-4">
+                            <div class="page-header-content pt-4">
+                                <div class="row align-items-center justify-content-between">
+                                    <div class="col-auto mt-4">
+                                        <h1 class="page-header-title">
+                                            <div class="page-header-icon"><i data-feather="star"></i></div>
+                                            ¡Emite un reconocimiento!
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
 
     <ul class="navbar navbar-expand-lg navbar-light bg-light">
         <li class="nav-item">
@@ -111,7 +125,7 @@
             <textarea class="form-control" name="observaciones" rows='4'>{{ old('observaciones') }}</textarea>
         </div>
         <div class="col-12">
-            <div class="box-footer mt20">
+            <div class="box-footer mt20" style="margin-top: 10px;">
                 <button type="submit" class="btn btn-primary">{{ __('Enviar') }}</button>
             </div>
         </div>

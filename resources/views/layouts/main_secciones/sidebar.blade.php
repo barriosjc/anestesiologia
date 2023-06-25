@@ -101,7 +101,8 @@
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesMenu">
                     {{-- Nested Sidenav Accordion (Pages -> Account) --}}
                     @can('abm usuarios')
-                        <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
+                    <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
+                    <a class="nav-link" href="{{ route('usuarios.importar.ver') }}">Importar usuarios</a>
                     @endcan
                     <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                         data-bs-target="#pagesCollapseAccount" aria-expanded="false"
@@ -121,45 +122,6 @@
                             @endcan --}}
                         </nav>
                     </div>
-                    {{-- Nested Sidenav Accordion (Pages -> Authentication) --}}
-                    {{-- <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                    Authentication
-                                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a> --}}
-                    {{-- <div class="collapse" id="pagesCollapseAuth" data-bs-parent="#accordionSidenavPagesMenu">
-                        <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPagesAuth">
-                            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
-                                data-bs-target="#pagesCollapseAuthBasic" aria-expanded="false"
-                                aria-controls="pagesCollapseAuthBasic">
-                                Basic
-                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuthBasic"
-                                data-bs-parent="#accordionSidenavPagesAuth">
-                                <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" href="auth-login-basic.html">Login</a>
-                                    <a class="nav-link" href="auth-register-basic.html">Register</a>
-                                    <a class="nav-link" href="auth-password-basic.html">Forgot Password</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
-                                data-bs-target="#pagesCollapseAuthSocial" aria-expanded="false"
-                                aria-controls="pagesCollapseAuthSocial">
-                                Social
-                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuthSocial"
-                                data-bs-parent="#accordionSidenavPagesAuth">
-                                <nav class="sidenav-menu-nested nav">
-                                    <a class="nav-link" href="auth-login-social.html">Login</a>
-                                    <a class="nav-link" href="auth-register-social.html">Register</a>
-                                    <a class="nav-link" href="auth-password-social.html">Forgot Password</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div> --}}
-                    {{-- Nested Sidenav Accordion (Pages -> Error) --}}
-
                     @can('seguridad')
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                             data-bs-target="#pagesCollapseError" aria-expanded="false"

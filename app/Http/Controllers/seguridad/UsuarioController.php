@@ -12,6 +12,8 @@ use App\Models\Permission;
 use Illuminate\Http\Request;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
+use App\Exports\UsuariosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UsuarioController extends Controller
 {
@@ -291,5 +293,18 @@ class UsuarioController extends Controller
     $padre = "usuarios";
 
     return view('seguridad.permisos.index',  compact('padre', 'usuid', 'permisos', 'permisoss', 'esabm', 'titulo'));
+  }
+
+  public function importar(){
+
+    return view('seguridad.usuario.importar');
+  }
+
+  public function exportar(){
+    return Excel::download(new UsuariosExport, 'users.xlsx');    
+  }
+
+  public function subir_datos(){
+
   }
 }
