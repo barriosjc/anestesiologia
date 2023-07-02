@@ -19,7 +19,7 @@ use App\Models\resultado_individual;
 use App\Models\User;
 //use App\Models\Grupal;
 use Illuminate\Support\Facades\DB;
-use App\mail\reconocimientoMailable;
+use App\Mail\reconocimientoMailable;
 use Illuminate\Support\Facades\Mail;
 
 class RespuestaController extends Controller

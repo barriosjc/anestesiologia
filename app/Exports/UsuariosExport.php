@@ -19,7 +19,7 @@ class UsuariosExport implements FromCollection, WithHeadings, WithStyles
     {
         $resu = DB::select('select u.id, u.last_name, g.descripcion, u.area, null as country, 
                                 u2.last_name as jefe_last_name, null as fec_nac, null as sede, u.email, 
-                                u.telefono, null as dni, r.name as perfil 
+                                u.telefono, u.es_jefe, null as dni, u2.email email_jefe, r.name as perfil 
                         from users as u 
                             left outer join  grupal as g on u.grupal_id = g.id
                             left outer join users as u2 on u2.id = u.jefe_user_id
@@ -37,12 +37,12 @@ class UsuariosExport implements FromCollection, WithHeadings, WithStyles
     {
         // Agregar los nombres de las columnas aquí
         return ['Employee ID', 'Legal Name', 'Job Title', 'Functional organization', 'Work Country', 
-                'Manager Name', 'Date of Birth', 'Sede', 'job-mail address', 'Phone Number', 'DNI', 'perfil'];
+                'Manager Name', 'Date of Birth', 'Sede', 'job-mail address', 'Phone Number', 'Is boss', 'DNI', 'Boss email', 'perfil'];
     }
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:L1')->applyFromArray([
+        $sheet->getStyle('A1:N1')->applyFromArray([
             'font' => [
                 'bold' => true,
             ],

@@ -14,7 +14,7 @@
                                     <a href="{{ url('/usuario') }}" title="Volver"><button class="btn btn-warning btn-sm"><i
                                                 class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
                                 @else
-                                    <a href="{{ url('/permisos') }}" title="Volver"><button
+                                    <a href="{{ url()->previous() }}" title="Volver"><button
                                             class="btn btn-warning btn-sm"><i class="fa fa-arrow-left"
                                                 aria-hidden="true"></i> Volver</button></a>
                                 @endif

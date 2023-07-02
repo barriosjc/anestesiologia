@@ -14,9 +14,13 @@
                         <img class="img-account-profile rounded-circle mb-2"
                             src="{{ Storage::disk('usuarios')->url($user->foto) }}" alt="" />
                         <!-- Profile picture help block-->
-                        <div class="small font-italic text-muted mb-4">JPG or PNG no mayor a 5 MB</div>
+                        {{-- <div class="small font-italic text-muted mb-4">JPG or PNG no mayor a 5 MB</div> --}}
+                        <div class="col mb-4">
+                            <h3><span class="badge bg-primary text-white">{{ $recibidos }} puntos obtenidos</span></h3>
+                        </div>
                         <!-- Profile picture upload button-->
-                        <input type="file" name="foto" id="foto" class="form-control">
+                        <input type="file" name="foto" id="foto" class="form-control" 
+                                data-bs-toggle="tooltip" data-bs-placement="right" title="JPG or PNG no mayor a 5 MB">
                         <button class="btn btn-primary" type="=submit">Guardar</button>
                     </div>
                 </div>
@@ -26,10 +30,7 @@
                 <div class="card-header text-white bg-primary">
                     <div class="row">
                         <div class="col">
-                            Puntos obtenidos
-                        </div>
-                        <div class="col">
-                            <h3><span class="badge bg-info text-dark">{{ $recibidos }}</span></h3>
+                            Insignias obtenidas
                         </div>
                     </div>
                 </div>
@@ -38,6 +39,9 @@
                         <li class="list-group-item"><i class="fa-regular fa-star-half-stroke"></i> {{ $data->motivo }}
                         </li>
                     @endforeach
+                    @if ($reconocimientos->count()=== 0)
+                        <li class="list-group-item"> No posee insignias hasta el momento</li>
+                    @endif
                 </ul>
             </div>
         </div>

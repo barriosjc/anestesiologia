@@ -24,11 +24,11 @@
                                 <li>El email no se puede ser vacio y no se puede repetir</li>
                             </ul>
                             <h3 class="mt-5">3 . Cargar nueva plantilla de empleados</h3>
-                            <form method="GET" action="#" accept-charset="UTF-8">
+                            <form method="POST" action="{{route('usuarios.importar.subir')}}" accept-charset="UTF-8"  enctype="multipart/form-data">
                                 {{ csrf_field() }}
                                 <div class="col-md-6">
                                     <div class="input-group">
-                                        <input type="file" name="foto" id="foto" class="form-control"
+                                        <input type="file" name="usuarios" id="usuarios" class="form-control"
                                             aria-describedby="btncarga">
                                         <button class="nput-group-text btn btn-primary" type="=submit"
                                             id="btncarga">Importar

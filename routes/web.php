@@ -33,6 +33,7 @@ use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\encuestas\ReconocimientosController;
 use App\Http\Controllers\varios\AsignarReconocimientosController;
+use App\Http\Controllers\varios\DashboardController;
 
 Route::get('/tables', function () {
 
@@ -68,6 +69,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resources(['empresas' => EmpresaController::class,]);
         });
 
+        Route::group(['middleware' => ['can:informes']], function () {
+            Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
+        });
+
         Route::resources(
             [
                 'grupals' => GrupalController::class,
@@ -90,7 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
             Route::get('usuarios/importar/ver', [UsuarioController::class, 'importar'])->name('usuarios.importar.ver');
             Route::get('usuarios/exportar', [UsuarioController::class, 'exportar'])->name('usuarios.exportar');
-            Route::get('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
+            Route::post('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
         });
         Route::group(['middleware' => ['can:seguridad']], function () {
             Route::resources([

@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Empresa;
 use App\Models\reconocimiento;
 use Illuminate\Support\Facades\DB;
-use App\mail\registerMailable;
+use App\Mail\registerMailable;
 use Illuminate\Support\Facades\Mail;
 
 class ProfileController extends Controller
@@ -149,10 +149,10 @@ class ProfileController extends Controller
     public function save_password(Request $request)
     {
         $validado = $request->validate([
-            'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
+            'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                                'different:password_actual'],
             'confirmacion_password' => [
-                'required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
-                'same:password_nueva'
+                'required', 'string', 'min:8', 'max:20', 'same:password_nueva'
             ],
             'password_actual' => [
                 'required', 'string', 'max:20',

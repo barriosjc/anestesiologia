@@ -18615,7 +18615,7 @@ body {
   align-items: center;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  height: 5rem;
+  height: 4rem;
 }
 .sidenav .sidenav-footer .sidenav-footer-content {
   font-size: 0.9rem;
@@ -19629,7 +19629,9 @@ pre[class*=language-] {
 }
 
 .background-header-01 {
-	background-image: url("../../../img/background-header-01.jpg");
+	/* background-image: url("{{asset('img/background-header-01.jpg')}}"); */
 	background-size: cover;
 	background-repeat: no-repeat;
 }
+
+/* background-image: url("../../../img/background-header-01.jpg"); */
