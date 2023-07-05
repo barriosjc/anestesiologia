@@ -37,8 +37,7 @@
 
             var data = JSON.parse(data)
             var label = JSON.parse(label)
-            console.log(label);
-            console.log(data);
+
             // Area Chart Example
             var ctx = document.getElementById("myAreaChart");
             var myLineChart = new Chart(ctx, {

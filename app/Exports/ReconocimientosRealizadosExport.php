@@ -12,16 +12,22 @@ use Illuminate\Support\Collection;
 
 class ReconocimientosRealizadosExport implements FromCollection, WithHeadings, WithStyles
 {
+
     /**
     * @return \Illuminate\Support\Collection
     */
     public function collection()
     {
-        $resu = DB::select('select  enc_desc, last_name, observaciones, puntos, fecha_ingreso, opciones_concat, votados_concat 
-                        from v_reconocimientos_realizados 
-                        where empresas_id = ' . session('empresa')->id);
-        $coleccion = collection::make($resu);
+        if (empty(session('query_reconocimientos'))) {
+            $coleccion = collect();
+        } else {
+            $query = session('query_reconocimientos');
+            $campos = 'enc_desc, last_name, observaciones, puntos, fecha_ingreso, opciones_concat, votados_concat';
+            $query = str_replace('*', $campos, $query);
 
+            $resu = DB::select($query);
+            $coleccion = collection::make($resu);
+        }
         return $coleccion;
         //return encuesta::all();
     }

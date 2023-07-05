@@ -35,8 +35,12 @@
 
     var data = JSON.parse(data)
     var label = JSON.parse(label)
-    console.log(label);
-    console.log(data);
+
+    const colores = [];
+    for (let i = 0; i < label.length; i++) {
+    const color = `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 0.7)`;
+    colores.push(color);
+    }
 
     // Bar Chart Example
     var ctx = document.getElementById("myBarChart");
@@ -46,7 +50,7 @@
             labels: label,
             datasets: [{
                 label: "Revenue",
-                backgroundColor: "rgba(0, 97, 242, 1)",
+                backgroundColor: colores,
                 hoverBackgroundColor: "rgba(0, 97, 242, 0.9)",
                 borderColor: "#4e73df",
                 data: data,

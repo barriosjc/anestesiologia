@@ -93,7 +93,6 @@
         </div>
     </div>
 
-    <i class="fa-solid fa-medal"></i>
     {{-- Sidenav Footer --}}
     <div class="sidenav-footer">
         <div class="sidenav-footer-content">

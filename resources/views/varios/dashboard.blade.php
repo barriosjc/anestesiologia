@@ -28,83 +28,78 @@
         <!-- Main page content-->
 
         <!-- Example Colored Cards for Dashboard Demo-->
-        {{-- <div class="row">
-                <div class="col-lg-6 col-xl-3 mb-4">
-                    <div class="card bg-primary text-white h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="me-3">
-                                    <div class="text-white-75 small">Earnings (Monthly)</div>
-                                    <div class="text-lg fw-bold">$40,000</div>
-                                </div>
-                                <i class="feather-xl text-white-50" data-feather="calendar"></i>
+        <div class="row">
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Usuarios activos</div>
+                                <div class="text-lg fw-bold">123</div>
                             </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="#!">View Report</a>
-                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                            <i class="feather-xl text-white-50" data-feather="user"></i>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-xl-3 mb-4">
-                    <div class="card bg-warning text-white h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="me-3">
-                                    <div class="text-white-75 small">Earnings (Annual)</div>
-                                    <div class="text-lg fw-bold">$215,000</div>
-                                </div>
-                                <i class="feather-xl text-white-50" data-feather="dollar-sign"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="#!">View Report</a>
-                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                        </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-xl-3 mb-4">
-                    <div class="card bg-success text-white h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="me-3">
-                                    <div class="text-white-75 small">Task Completion</div>
-                                    <div class="text-lg fw-bold">24</div>
-                                </div>
-                                <i class="feather-xl text-white-50" data-feather="check-square"></i>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Reconocimientos realizados</div>
+                                <div class="text-lg fw-bold">265</div>
                             </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="#!">View Tasks</a>
-                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                            <i class="feather-xl text-white-50" data-feather="award"></i>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 col-xl-3 mb-4">
-                    <div class="card bg-danger text-white h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="me-3">
-                                    <div class="text-white-75 small">Pending Requests</div>
-                                    <div class="text-lg fw-bold">17</div>
-                                </div>
-                                <i class="feather-xl text-white-50" data-feather="message-circle"></i>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="#!">View Requests</a>
-                            <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                        </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
-            </div> --}}
+            </div>
+            <div class="col-lg-6 col-xl-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="flex ">
+                            <div class="input-group  input-group-sm mb-3">
+                                <div class="input-group-text">
+                                    <input class="form-check-input mt-0" type="radio" value=""
+                                        aria-label="Checkbox for following text input" checked>
+                                </div>
+                                <input type="text" class="form-control" value='Encuesta actual'
+                                    aria-label="Text input with checkbox">
+                            </div>
+
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-text">
+                                    <input class="form-check-input mt-0" type="radio" value=""
+                                        aria-label="Radio button for following text input">
+                                </div>
+                                <input type="date" class="form-control"aria-label="Text input with radio button">
+                                <input type="date" class="form-control" aria-label="Text input with radio button">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="stretched-link" href="#!">Refresh</a>
+                        {{-- <div><i class="fas fa-angle-right"></i></div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Example Charts for Dashboard Demo-->
         <div class="row">
             <div class="col-xl-6 mb-4">
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
                         Cantidad de participantes
-                        <div class="dropdown no-caret">
+                        {{-- <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample"
                                 type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
                                     class="text-gray-500" data-feather="more-vertical"></i></button>
@@ -114,10 +109,10 @@
                                 <a class="dropdown-item" href="#!">&Uacute;ltimos 6 meses</a>
                                 <a class="dropdown-item" href="#!">&Uacute;ltimos 3 meses</a>
                                 <a class="dropdown-item" href="#!">Encuesta actual</a>
-                                {{-- <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">Custom Range</a> --}}
+                                <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#!">Custom Range</a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="card-body">
                         <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas>
@@ -129,7 +124,7 @@
                 <div class="card card-header-actions h-100">
                     <div class="card-header">
                         Ranking de valores
-                        <div class="dropdown no-caret">
+                        {{-- <div class="dropdown no-caret">
                             <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample"
                                 type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
                                     class="text-gray-500" data-feather="more-vertical"></i></button>
@@ -139,10 +134,10 @@
                                 <a class="dropdown-item" href="#!">&Uacute;ltimos 6 meses</a>
                                 <a class="dropdown-item" href="#!">&Uacute;ltimos 3 meses</a>
                                 <a class="dropdown-item" href="#!">Encuesta actual</a>
-                                {{-- <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#!">Custom Range</a> --}}
+                                <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#!">Custom Range</a>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="card-body">
                         <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
@@ -157,36 +152,24 @@
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Age</th>
-                            <th>Start date</th>
-                            <th>Salary</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>Nombre</th>
+                            <th>Cargo</th>
+                            <th>Area</th>
+                            <th>Reconocimientos</th>
+                            <th>Puntos</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>Tiger Nixon</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>61</td>
-                            <td>2011/04/25</td>
-                            <td>$320,800</td>
-                            <td>
-                                <div class="badge bg-primary text-white rounded-pill">Full-time</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i
-                                        class="fa-solid fa-ellipsis-vertical"></i></button>
-                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i
-                                        class="fa-regular fa-trash-can"></i></button>
-                            </td>
-                        </tr>
-                        </tr>
+                        @foreach ($valores as $item)
+                            <tr>
+                                <td>{{ $item->last_name }}</td>
+                                <td>{{ $item->cargo }}</td>
+                                <td>{{ $item->area }}</td>
+                                <td>{{ $item->cant }}</td>
+                                <td>{{ $item->puntos }}</td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -194,8 +177,10 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="{{ asset('js/dashboard/chart-area.js') }}" data-data="{{ $data }}" data-label="{{ $label }}"></script>
-    <script src="{{ asset('js/dashboard/chart-bar.js') }}" opciones-data="{{ $opciones_data }}" opciones-label="{{ $opciones_label }}"></script>
+    <script src="{{ asset('js/dashboard/chart-area.js') }}" data-data="{{ $data }}"
+        data-label="{{ $label }}"></script>
+    <script src="{{ asset('js/dashboard/chart-bar.js') }}" opciones-data="{{ $opciones_data }}"
+        opciones-label="{{ $opciones_label }}"></script>
 
     {{-- <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -326,5 +311,5 @@
 
             console.log(myLineChart)
         });
-    </script>--}}
-@endsection 
+    </script> --}}
+@endsection
