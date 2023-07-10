@@ -48,7 +48,7 @@
                             <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
                             <div class="mb-3">
                                 <label class="small mb-1 text-info">Empresa</label>
-                                <p class="small mb-1">{{$user->empresas->razon_social}}</p>
+                                <p class="small mb-1">{{$user->empresas->razon_social??''}}</p>
 
                             </div>
                             <!-- Form Row-->
@@ -69,25 +69,25 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="small mb-1 text-info">Cargo</label>
-                                    <p class="small mb-1" for="last_name">{{$user->cargo}}</p>  
+                                    <p class="small mb-1" for="last_name">{{$user->cargo??''}}</p>  
                                 </div>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1 text-info" for="telefono">Phone number</label>
-                                    <p class="small mb-1" for="last_name">{{$user->telefono}}</p>  
+                                    <p class="small mb-1" for="last_name">{{$user->telefono??''}}</p>  
                                 </div>
                                 <div class="col-md-6">
                                     <label class="small mb-1 text-info">Jefe</label>
-                                    <p class="small mb-1" for="last_name">{{$user->jefes->last_name}}</p>           
+                                    <p class="small mb-1" for="last_name">{{$user->jefes->last_name??''}}</p>           
                                 </div>
                             </div>
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="small mb-1 text-info" for="telefono">Area</label>
-                                    <p class="small mb-1" for="last_name">{{$user->area}}</p>  
+                                    <p class="small mb-1" for="last_name">{{$user->area??''}}</p>  
                                 </div>
 
                             </div>
@@ -96,7 +96,7 @@
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-12">
                                     <label class="small mb-1 text-info" for="observaciones">Observaciones</label>
-                                    <p class="small mb-1" for="last_name">{{$user->observaciones}}</p> 
+                                    <p class="small mb-1" for="last_name">{{$user->observaciones??''}}</p> 
                                 </div>
                             </div>
                         </form>

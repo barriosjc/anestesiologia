@@ -5,60 +5,83 @@
 <div class="box box-info padding-1">
     <div class="box-body">
 
-        <div class="form-group">
+        <div class="form-group mb-2">
             {{ Form::label('razon_social') }}
-            {{ Form::text('razon_social', $empresa->razon_social, ['class' => 'form-control' . ($errors->has('razon_social') ? ' is-invalid' : ''), 'placeholder' => 'Razón Social']) }}
-            {!! $errors->first('razon_social', '<div class="invalid-feedback">:message</div>') !!}
+            {{ Form::text('razon_social', $empresa->razon_social, ['class' => 'form-control', 'placeholder' => 'Razón Social']) }}
         </div>
-        <div class="form-group">
+        <div class="form-group mb-2">
             {{ Form::label('contacto') }}
-            {{ Form::text('contacto', $empresa->contacto, ['class' => 'form-control' . ($errors->has('contacto') ? ' is-invalid' : ''), 'placeholder' => 'Contacto']) }}
-            {!! $errors->first('contacto', '<div class="invalid-feedback">:message</div>') !!}
+            {{ Form::text('contacto', $empresa->contacto, ['class' => 'form-control', 'placeholder' => 'Contacto']) }}
         </div>
-        <div class="form-group">
+        <div class="form-group mb-2" >
             {{ Form::label('telefono') }}
-            {{ Form::text('telefono', $empresa->telefono, ['class' => 'form-control' . ($errors->has('telefono') ? ' is-invalid' : ''), 'placeholder' => 'Teléfono']) }}
-            {!! $errors->first('telefono', '<div class="invalid-feedback">:message</div>') !!}
+            {{ Form::text('telefono', $empresa->telefono, ['class' => 'form-control', 'placeholder' => 'Teléfono']) }}
         </div>
-        <div class="row">
+        <div class="row  mb-2">
             <div class="col-6">
                 <label class="small mb-1" for="uri">Prefijo</label>
                 <input class="form-control" id="uri" name="uri" type="uri"
                     placeholder="Ingrese el prefijo web para ingresar al portal"
                     value="{{ old('uri', $empresa->uri) }}" />
             </div>
-            <div class="col-6">
-                <label class="small mb-1" for="logo">Logo</label>
-                <input class="form-control" id="logo" name="logo" type="logo"
-                    placeholder="Ingrese el nombre del archivo logo de la empresa"
-                    value="{{ old('logo', $empresa->logo) }}" />
-            </div>
         </div>
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-6">
-                <label class="small mb-1" for="email_contacto">email malining</label>
+                <label class="small mb-1" for="email_contacto">Email malining</label>
                 <input class="form-control" id="email_contacto" name="email_contacto" type="email_contacto"
                     placeholder="Ingrese el email del from para el envio de emails"
                     value="{{ old('email_contacto', $empresa->email_contacto) }}" />
             </div>
             <div class="col-6">
-                <label class="small mb-1" for="email_nombre">nombre mailing</label>
+                <label class="small mb-1" for="email_nombre">Nombre mailing</label>
                 <input class="form-control" id="email_nombre" name="email_nombre" type="email_nombre"
                     placeholder="Ingrese el nombre del from que se usará para el envio de emils"
                     value="{{ old('email_nombre', $empresa->email_nombre) }}" />
             </div>
         </div>
-        <div class="mb-3">
-            <label class="small mb-1">Perfil/es</label>
-            <select name="perfil_id[]" class="form-control" id="perfil_id" multiple>
-                @foreach ($perfiles as $data)
-                    <option value="{{ $data->id }}" {{ in_array($data->id, $roles_empresas) ? 'selected' : '' }}>
-                        {{ $data->name }}</option>
-                @endforeach
-            </select>
+        <div class="row  mb-2">
+            <div class="col-6">
+                <label for="formFile" class="small mb-1">Background Login</label>
+                <input class="form-control" type="file" name="login" id="login">
+                @if($empresa->login)
+                    <p class="small mb-1">Valor actual: {{ $empresa->login }}</p>
+                @else
+                    <p class="small mb-1">No se ha cargado ningún archivo.</p>
+                @endif              
+            </div>
+            <div class="col-6">
+                <label for="formFile" class="small mb-1">Header emitir reconocimiento</label>
+                <input class="form-control" type="file" name="emitir_reconocimiento" id="emitir_reconocimiento">
+                @if($empresa->emitir_reconocimiento)
+                    <p class="small mb-1">Valor actual: {{ $empresa->emitir_reconocimiento }}</p>
+                @else
+                    <p class="small mb-1">No se ha cargado ningún archivo.</p>
+                @endif
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-6">
+                <label for="formFile" class="small mb-1">Header listado reconocimientos</label>
+                <input class="form-control" type="file" name="listado_reconocimientos" id="listado_reconocimientos">
+                @if($empresa->listado_reconocimientos)
+                    <p class="small mb-1">Valor actual: {{ $empresa->listado_reconocimientos }}</p>
+                @else
+                    <p class="small mb-1">No se ha cargado ningún archivo.</p>
+                @endif
+            </div>
+
+            <div class="col-6">
+                <label for="formFile" class="small mb-1">Logo empresa</label>
+                <input class="form-control" type="file" name="logo" id="logo">
+                @if($empresa->logo)
+                    <p class="small mb-1">Valor actual: {{ $empresa->logo }}</p>
+                @else
+                    <p class="small mb-1">No se ha cargado ningún archivo.</p>
+                @endif
+            </div>
         </div>
     </div>
-    <div class="box-footer mt20">
+    <div class="box-footer">
         <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
     </div>
 </div>

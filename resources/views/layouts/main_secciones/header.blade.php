@@ -8,7 +8,8 @@
         <h6 class="dropdown-header d-flex align-items-center">
                 {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
                 @if (!empty(session('empresa')))
-                    <img style="height:51px;width:110px" class="dropdown-user-img" src="{{asset('/img/empresas') ."/". session('empresa')->logo }}" /> 
+                    <img style="height:51px;width:110px" class="dropdown-user-img" 
+                        src="{{ asset(Storage::disk("empresas")->url(session('empresa')->logo)) }}"  /> 
                 @endif        
             </h6>
         {{-- Navbar Search Input--}}

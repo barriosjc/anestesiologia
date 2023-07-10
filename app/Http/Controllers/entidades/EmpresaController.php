@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 /**
  * Class EmpresaController
@@ -56,28 +58,54 @@ class EmpresaController extends Controller
             'contacto' => 'nullable|string|max:200',
             'telefono' => 'nullable|string|max:45',
             'uri' => 'required|string|max:45',
-            'logo' => 'required|string|max:45',
-            'perfil_id' => 'required',
+            'logo' => 'required',
+            'login' => 'required',
+            'listado_reconocimientos' => 'required',
+            'emitir_reconocimiento' => 'required',            
             'email_contacto' => 'required|email|max:100',
             'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
-            "perfil_id.required" => "Debe seleccionar al menos un perfil, los perfiles que seleccione se van a poder seleccionar a los usuarios",
         ]);
 
-        request()->validate(Empresa::$rules);
-
-        $empresa = Empresa::create($request->all());
-
-        if (isset($request->perfil_id)) {
-            foreach ($request->perfil_id as $key => $value) {
-                DB::table('roles_empresas')
-                    ->insert([
-                        'roles_id' => $value,
-                        'empresas_id' => $empresa->id
-                    ]);;
-            }
+        $empresa = new Empresa();
+        foreach ($validated as $key => $value) {
+            $empresa->$key = $value;
         }
+
+        //$opciones->empresas_id = session('empresa')->id;
+        $originalName = $request->file('logo')->getClientOriginalName();
+        $path = $empresa['uri'] . "/imagenes/" . $originalName;
+        Storage::disk('empresas')->put($path, $request->file('logo')->get());
+        $empresa->logo = $path;
+
+        $originalName = $request->file('login')->getClientOriginalName();
+        $path = $empresa['uri'] . "/imagenes/" . $originalName;
+        Storage::disk('empresas')->put($path, $request->file('login')->get());
+        $empresa->login = $path;
+
+        $originalName = $request->file('listado_reconocimientos')->getClientOriginalName();
+        $path = $empresa['uri'] . "/imagenes/" . $originalName;
+        Storage::disk('empresas')->put($path, $request->file('listado_reconocimientos')->get());
+        $empresa->listado_reconocimientos = $path;
+
+        $originalName = $request->file('emitir_reconocimiento')->getClientOriginalName();
+        $path = $empresa['uri'] . "/imagenes/" . $originalName;
+        Storage::disk('empresas')->put($path, $request->file('emitir_reconocimiento')->get());
+        $empresa->emitir_reconocimiento = $path;
+
+        $empresa->save();
+
+        // if (isset($request->perfil_id)) {
+        //     foreach ($request->perfil_id as $key => $value) {
+        //         DB::table('roles_empresas')
+        //             ->insert([
+        //                 'roles_id' => $value,
+        //                 'empresas_id' => $empresa->id
+        //             ]);;
+        //     }
+        // }
+
 
         return redirect()->route('empresas.index')
             ->with('success', 'Empresa created successfully.');
@@ -130,31 +158,59 @@ class EmpresaController extends Controller
             'contacto' => 'nullable|string|max:200',
             'telefono' => 'nullable|string|max:45',
             'uri' => 'required|string|max:45',
-            'logo' => 'required|string|max:45',
-            'perfil_id' => 'required',
+            'logo' => Rule::requiredIf(empty($empresa->logo)), 
+            'login' => Rule::requiredIf(empty($empresa->login)), 
+            'listado_reconocimientos' => Rule::requiredIf(empty($empresa->listado_reconocimientos)), 
+            'emitir_reconocimiento' =>  Rule::requiredIf(empty($empresa->emitir_reconocimiento)),   
             'email_contacto' => 'required|email|max:100',
             'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
-            "perfil_id.required" => "Debe seleccionar al menos un perfil, los perfiles que seleccione se van a poder seleccionar a los usuarios",
         ]);
 
         $empresa->razon_social = $request->razon_social;
         $empresa->contacto = $request->contacto;
         $empresa->telefono = $request->telefono;
         $empresa->uri = $request->uri;
-        $empresa->logo = $request->logo;
+        // $empresa->logo = $request->logo;
         $empresa->email_contacto = $request->email_contacto;
         $empresa->email_nombre = $request->email_nombre;
+
+        if ($request->hasFile('logo')) {
+            $originalName = $request->file('logo')->getClientOriginalName();
+            $path = $empresa['uri'] . "/imagenes/" . $originalName;
+            Storage::disk('empresas')->put($path, $request->file('logo')->get());
+            $empresa->logo = $path;
+        }
+
+        if ($request->hasFile('login')) {
+            $originalName = $request->file('login')->getClientOriginalName();
+            $path = $empresa['uri'] . "/imagenes/" . $originalName;
+            Storage::disk('empresas')->put($path, $request->file('login')->get());
+            $empresa->login = $path;
+        }
+
+        if ($request->hasFile('listado_reconocimientos')) {
+           $originalName = $request->file('listado_reconocimientos')->getClientOriginalName();
+            $path = $empresa['uri'] . "/imagenes/" . $originalName;
+            Storage::disk('empresas')->put($path, $request->file('listado_reconocimientos')->get());
+            $empresa->listado_reconocimientos = $path;
+        }
+        if ($request->hasFile('emitir_reconocimiento')) {
+            $originalName = $request->file('emitir_reconocimiento')->getClientOriginalName();
+            $path = $empresa['uri'] . "/imagenes/" . $originalName;
+            Storage::disk('empresas')->put($path, $request->file('emitir_reconocimiento')->get());
+            $empresa->emitir_reconocimiento = $path;
+        }
         $empresa->save();
 
-        DB::delete("delete from roles_empresas where empresas_id = ?", array($empresa->id));    
-        //asigna los roles marcados
-        if (isset($request->perfil_id)) {
-            foreach ($request->perfil_id as $key => $value) {
-                DB::insert('insert into roles_empresas (roles_id, empresas_id) values (?, ?)', array($value, $empresa->id));
-            }
-        }
+        // DB::delete("delete from roles_empresas where empresas_id = ?", array($empresa->id));    
+        // //asigna los roles marcados
+        // if (isset($request->perfil_id)) {
+        //     foreach ($request->perfil_id as $key => $value) {
+        //         DB::insert('insert into roles_empresas (roles_id, empresas_id) values (?, ?)', array($value, $empresa->id));
+        //     }
+        // }
 
         return redirect()->route('empresas.index')
             ->with('success', 'Empresa updated successfully');

@@ -116,7 +116,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <div class="pagination-wrapper"> {!! $permisos->appends(['search' => Request::get('search')])->render() !!} </div>
+                                {{-- <div class="pagination-wrapper"> {!! $permisos->appends(['search' => Request::get('search')])->render() !!} </div> --}}
                             </div>
                         </div>
                     </div>

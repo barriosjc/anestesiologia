@@ -19,7 +19,7 @@
                                         <div class="float-right">
                                             <a href="{{ route('empresas.create') }}"
                                                 class="btn btn-primary btn-sm float-right" data-placement="left">
-                                                {{ __('Create New') }}
+                                                {{ __('Crear nueva') }}
                                             </a>
                                         </div>
                                     </div>
@@ -51,7 +51,7 @@
                                                         <td>{{ $empresa->contacto }}</td>
                                                         <td>{{ $empresa->telefono }}</td>
                                                         <td>{{ $empresa->uri }}</td>
-                                                        <td><img src="{{ asset('/img/empresas') . '/' . $empresa->logo }}"
+                                                        <td><img src="{{asset(Storage::disk('empresas')->url($empresa->logo??'')) }}"
                                                                 width="45px" alt=""> </td>
                                                         <td>
                                                             <div class="float-right">

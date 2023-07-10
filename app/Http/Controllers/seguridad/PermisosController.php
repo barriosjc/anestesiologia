@@ -20,13 +20,16 @@ class PermisosController extends Controller
     {
         $keyword = $request->get('search');
         $perPage = 5;
-    
         if (!empty($keyword)) {
           $permisos = Permission::where('name', 'LIKE', "%$keyword%")
             ->orWhere('guard_name', 'LIKE', "%$keyword%")
-            ->latest()->simplepaginate($perPage);
+            ->orderby('name', 'asc')
+            ->get();
+            // ->latest()->simplepaginate($perPage);
         } else {
-          $permisos = Permission::orderBy('id','DESC')->latest()->simplepaginate($perPage);
+          $permisos = Permission::orderBy('id','DESC')
+          ->orderby('name', 'asc')
+          ->get();   //latest()->simplepaginate($perPage);
         }
         $esabm = true;
 

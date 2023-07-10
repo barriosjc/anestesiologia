@@ -51,6 +51,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');
     Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
+    
+    Route::group(['middleware' => ['can:ABM de empresas']], function () {
+        Route::resources(['empresas' => EmpresaController::class,]);
+    });
 
     Route::middleware('IngresoInicialMiddleware')->group(function () {
         Route::get('/', function () {
@@ -65,11 +69,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
         Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
 
-        Route::group(['middleware' => ['can:abm empresas']], function () {
-            Route::resources(['empresas' => EmpresaController::class,]);
-        });
-
-        Route::group(['middleware' => ['can:informes']], function () {
+        Route::group(['middleware' => ['can:Dashboard']], function () {
             Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
         });
 
@@ -97,7 +97,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('usuarios/exportar', [UsuarioController::class, 'exportar'])->name('usuarios.exportar');
             Route::post('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
         });
-        Route::group(['middleware' => ['can:seguridad']], function () {
+        //Route::group(['middleware' => ['can:seguridad']], function () {
             Route::resources([
                 'roles' => RoleController::class,
                 'permisos' => permisosController::class,
@@ -116,17 +116,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/usuarios', [permisosController::class, 'usuarios'])->name('permisos.usuarios');
             Route::get('permisos/{id}/roles/{rolid}/{tarea}', [permisosController::class, 'roles']);
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
-        });
+        //});
 
         Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
         Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
-        Route::group(['middleware' => ['can:creacion de encuestas']], function () {
+        Route::group(['middleware' => ['can:Crear encuesta']], function () {
             Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
             Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
             Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');
             Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
         });
-        Route::group(['middleware' => ['can:reconocimientos']], function () {
+        // son los reconocimientos que carga rrhh, texto
+        Route::group(['middleware' => ['can:Reconocimientos']], function () {
             Route::get('reconocimientos', [AsignarReconocimientosController::class, 'index'])->name('reconocimientos.index');
             Route::post('reconocimientos', [AsignarReconocimientosController::class, 'save'])->name('reconocimientos.save');
             Route::delete('reconocimientos/delete/{id}',  [AsignarReconocimientosController::class, 'destroy'])->name('reconocimientos.delete');

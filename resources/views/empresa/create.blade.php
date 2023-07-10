@@ -9,7 +9,7 @@
                     <div class="card card-default">
                         <div class="card-header">
                             <a href="{{ route('empresas.index') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                            <span class="card-title">{{ __('Create') }} Empresa</span>
+                            <span class="card-title">ABM de Empresas</span>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('empresas.store') }}" role="form"

@@ -10,7 +10,7 @@
                     <div class="card-header">
                         <a href="{{ route('empresas.index') }}" title="Volver"><button class="btn btn-warning btn-sm"><i
                                     class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                        <span class="card-title">{{ __('Update') }} Empresa</span>
+                        <span class="card-title">Modificar Empresa</span>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('empresas.update', $empresa->id) }}" role="form"

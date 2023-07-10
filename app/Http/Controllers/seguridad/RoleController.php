@@ -57,8 +57,16 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255|unique:roles,name',
-            'guard_name' => 'required|max:255'
+            'name' => ['required','max:255',
+        function ($attribute, $value, $fail) use ($request) {
+// var_dump($attribute, $value, $request->input('guard_name'));die;
+            $existingRecord = Role::where($attribute, $value)
+                ->where('guard_name', $request->input('guard_name'))
+                ->first();
+            if ($existingRecord) {
+                $fail("El Nombre y el Guard name ya están en uso.");
+            }
+        }],
         ]);
 
         $role = Role::create(['name' => $request->input('name'),
@@ -96,7 +104,7 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|max:255|unique:roles,name,'. $id,
+            'name' => 'required|max:255',
             'guard_name' => 'required|max:255',
         ]);
 
@@ -133,12 +141,21 @@ class RoleController extends Controller
                 break;
         }
 
-        $user = $rol->users()->simplepaginate(5);
+        $user = DB::table('users')
+                ->select( 'users.id', 'users.name', 'last_name', 'email',
+                'email_verified_at', 'password', 'remember_token',
+                'foto', 'users.created_at', 'users.updated_at', 'users.deleted_at')
+                ->join('model_has_roles as mr', 'mr.model_id', 'users.id')
+                ->where('mr.role_id', '=', $rol->id)
+                ->where('users.empresas_id', '=', session('empresa')->id)
+                ->simplepaginate(5);
+//        $user = $rol->users()->simplepaginate(5);
         $users = DB::table('users')                 
             ->select( 'id', 'name', 'last_name', 'email',
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
-            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
+            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid)
+            ->where('users.empresas_id', '=', session('empresa')->id))
             ->simplepaginate(5);
         $esabm = false;
 

@@ -201,7 +201,8 @@ protected $paginationTheme = 'bootstrap';
             'p_desde' => ['required', "date"],
             'p_hasta' => ['required', "date", "after:p_desde"],
         ],
-            ['p_descrip_rango.required' => 'Descripción del periodo es obligatorio.']
+            ['p_descrip_rango.required' => 'Descripción del periodo es obligatorio.',
+            'encuestas_id_selected.required' => 'Para guardar un periodo nuevo, primero debe seleccionar una encuesta del Paso 1']
         );
 
         try {
@@ -290,7 +291,7 @@ protected $paginationTheme = 'bootstrap';
                     ],
                 ],
                 [
-                    'encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta para poder cargar opciones.',
+                    'encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta del Paso 1 para poder cargar opciones.',
                     'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.',
                     'o_opciones_id.unique' => 'La opcion ya fue ingresada anteriormente, no es posible ingresar 2 veces la misma opcion'
                 ]
