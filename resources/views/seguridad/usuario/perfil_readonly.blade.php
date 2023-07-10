@@ -95,7 +95,7 @@
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (phone number)-->
                                 <div class="col-md-12">
-                                    <label class="small mb-1 text-info" for="observaciones">Observaciones</label>
+                                    <label class="small mb-1 text-info" for="observaciones">Presentación</label>
                                     <p class="small mb-1" for="last_name">{{$user->observaciones??''}}</p> 
                                 </div>
                             </div>

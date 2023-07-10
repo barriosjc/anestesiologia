@@ -57,16 +57,8 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => ['required','max:255',
-        function ($attribute, $value, $fail) use ($request) {
-// var_dump($attribute, $value, $request->input('guard_name'));die;
-            $existingRecord = Role::where($attribute, $value)
-                ->where('guard_name', $request->input('guard_name'))
-                ->first();
-            if ($existingRecord) {
-                $fail("El Nombre y el Guard name ya están en uso.");
-            }
-        }],
+            'name' => 'required|max:255|unique:roles,name',
+            'guard_name' => 'required|max:255'
         ]);
 
         $role = Role::create(['name' => $request->input('name'),
@@ -104,7 +96,7 @@ class RoleController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|max:255',
+            'name' => 'required|max:255|unique:roles,name,'. $id,
             'guard_name' => 'required|max:255',
         ]);
 

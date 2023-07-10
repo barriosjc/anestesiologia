@@ -1,0 +1,7 @@
+.disabled-link {
+    pointer-events: none;
+    color: gray;
+    background-color: #d6d2d2 !important;
+    text-decoration: none;
+    cursor: not-allowed;
+  }

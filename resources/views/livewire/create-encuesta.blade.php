@@ -23,7 +23,7 @@
                         </div>
                     </a>
                     {{-- Wizard navigation item 2 --}}
-                    <a class="nav-item nav-link {{ $currentTab == 2 ? 'active' : '' }}" id="wizard2-tab"
+                    <a class="{{ empty($encuestas_id_selected) ? 'disabled-link' : '' }} nav-item nav-link {{ $currentTab == 2 ? 'active' : '' }}" id="wizard2-tab"
                         wire:click="selectTab(2)" data-bs-toggle="tab" role="tab" aria-controls="wizard2"
                         aria-selected="true">
                         <div class="wizard-step-icon">2</div>
@@ -35,7 +35,7 @@
                         </div>
                     </a>
                     {{-- Wizard navigation item 3 --}}
-                    <a class="nav-item nav-link {{ $currentTab == 3 ? 'active' : '' }}" id="wizard3-tab"
+                    <a class="{{ empty($encuestas_id_selected) ? 'disabled-link' : '' }} nav-item nav-link {{ $currentTab == 3 ? 'active' : '' }}" id="wizard3-tab"
                         wire:click="selectTab(3)" data-bs-toggle="tab" role="tab" aria-controls="wizard3"
                         aria-selected="true">
                         <div class="wizard-step-icon">3</div>
@@ -190,15 +190,17 @@
                                 </ul>
                                 <hr class="my-4" />
                                 <div class="d-flex justify-content-between">
-                                    <button class="btn btn-light disabled" type="button" disabled>Previous</button>
-                                    <button class="btn btn-primary" type="button"
-                                        wire:click="selectTab(2)">Next</button>
+                                    @if ( !empty($encuestas_id_selected) )
+                                        <button class="btn btn-light disabled" type="button" disabled>Previous</button>
+                                        <button class="btn btn-primary" type="button"
+                                            wire:click="selectTab(2)">Next</button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
                     {{-- Wizard tab pane item 2 --}}
-                    <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 2 ? 'show active' : '' }}"
+                    <div class="tab-pane py-5 py-xl-3 fade {{ $currentTab == 2 ? 'show active' : '' }} "
                         id="wizard2" role="tabpanel" aria-labelledby="wizard2-tab">
                         <div class="row justify-content-center">
                             <div class="col-xxl-8 col-xl-10">

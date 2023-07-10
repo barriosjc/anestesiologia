@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\varios;
 
 use App\Http\Controllers\Controller;
+use App\Models\encuesta_resultado;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\user;
 
 class DashboardController extends Controller
 {
@@ -87,7 +89,19 @@ class DashboardController extends Controller
                                     AND en.habilitada = 1
                                 group by u2.email");    
         
+        $cant_usu = user::where("empresas_id", session('empresa')->id)->count();
+        $cant_recon = DB::select("SELECT COUNT(*) AS cantidad 
+                                FROM encuestas_resultados as er
+                                INNER JOIN encuestas as en ON en.id = er.encuestas_id 
+                                INNER JOIN periodos as p ON p.encuestas_id = en.id
+                                INNER JOIN empresas as e ON e.id = en.empresas_id
+                                                and e.id = " . session('empresa')->id . 
+                                "  WHERE p.desde <= DATE_FORMAT(CURDATE(), '%Y-%m-%d')
+                                    AND p.hasta >= DATE_FORMAT(CURDATE(), '%Y-%m-%d')
+                                    AND p.habilitada = 1
+                                    AND en.habilitada = 1");
+        $cant_recon = $cant_recon[0]->cantidad;
 
-        return view('varios.dashboard', compact('data', 'label', 'opciones_label', 'opciones_data', 'valores'));
+        return view('varios.dashboard', compact('data', 'label', 'opciones_label', 'opciones_data', 'valores','cant_usu', 'cant_recon'));
     }
 }

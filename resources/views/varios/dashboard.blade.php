@@ -29,40 +29,6 @@
 
         <!-- Example Colored Cards for Dashboard Demo-->
         <div class="row">
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Usuarios activos</div>
-                                <div class="text-lg fw-bold">123</div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="user"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xl-3 mb-4">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="me-3">
-                                <div class="text-white-75 small">Reconocimientos realizados</div>
-                                <div class="text-lg fw-bold">265</div>
-                            </div>
-                            <i class="feather-xl text-white-50" data-feather="award"></i>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                        <a class="text-white stretched-link" href="#!">View Report</a>
-                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
-                </div>
-            </div>
             <div class="col-lg-6 col-xl-6 mb-4">
                 <div class="card">
                     <div class="card-body">
@@ -89,6 +55,40 @@
                     <div class="card-footer d-flex align-items-center justify-content-between small">
                         <a class="stretched-link" href="#!">Refresh</a>
                         {{-- <div><i class="fas fa-angle-right"></i></div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-primary text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Usuarios activos</div>
+                                <div class="text-lg fw-bold">{{$cant_usu}}</div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="user"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xl-3 mb-4">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="me-3">
+                                <div class="text-white-75 small">Reconocimientos realizados</div>
+                                <div class="text-lg fw-bold">{{$cant_recon}}</div>
+                            </div>
+                            <i class="feather-xl text-white-50" data-feather="award"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                        <a class="text-white stretched-link" href="#!">View Report</a>
+                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
             </div>
