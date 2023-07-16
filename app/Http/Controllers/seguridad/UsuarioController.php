@@ -229,7 +229,6 @@ class UsuarioController extends Controller
 
     public function roles(int $usuid, int $rolid = null, string $tarea = '')
     {
-
         $rol = role::find($rolid);
         $user = user::find($usuid);
         switch ($tarea) {

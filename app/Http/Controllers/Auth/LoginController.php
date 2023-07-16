@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Artisan;
+use Spatie\Permission\PermissionServiceProvider;
 
 class LoginController extends Controller
 {
@@ -58,7 +62,22 @@ class LoginController extends Controller
             $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
             if ($empresa) {
                 session(['empresa' => $empresa]);
+                //var_dump(Auth::getDefaultDriver(), Auth::getDefaultGuardName());
+                Auth::setDefaultDriver($empresa->uri);
+                //PermissionServiceProvider::setDefaultAuthGuard($empresa->uri);
+                Cache::flush();
+                Artisan::call('config:clear');  
+                Artisan::call('cache:clear');  
+                //Artisan::call('config:cache');  
+            
+                Auth::shouldUse($empresa->uri);          
+                //dd(Auth::getDefaultDriver());
+            }else {
+                $empresa = new Empresa;
+                $empresa->uri = 'web';
+                session(['empresa' => $empresa]);
             }
+
             return true;
         }
 

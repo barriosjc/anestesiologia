@@ -23,7 +23,7 @@
                                     <th>Motivo</th>
                                     <th>
                                         <div class="float-right">
-                                            Opciones
+                                            Valores
                                         </div>
                                     </th>
                                 </tr>

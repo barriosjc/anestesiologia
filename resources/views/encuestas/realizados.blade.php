@@ -48,9 +48,9 @@
                                 <th>voto</th>
                             @endif
                             <th>Fecha</th>
-                            <th>Puntos</th>
+                            {{-- <th>Puntos</th> --}}
                             <th>Justificación</th>
-                            <th>Opciones</th>
+                            <th>Valores</th>
                             <th>Reconocidos</th>
                         </tr>
                     </thead>
@@ -69,7 +69,7 @@
                                         title="Ir al perfil del usuario">{{ $item->last_name }}</a></td>
                                 @endif
                                 <td>{{ $item->fecha_ingreso }}</td>
-                                <td>{{ $item->puntos }}</td>
+                                {{-- <td>{{ $item->puntos }}</td> --}}
                                 <td>{{ $item->observaciones }}</td>
                                 <td>{{ $item->opciones_concat }}</td>
                                 @php($sepa = '')

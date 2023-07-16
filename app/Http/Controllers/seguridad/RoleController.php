@@ -24,11 +24,18 @@ class RoleController extends Controller
         // $roles = Role::all();
         // dd($roles);
         if (!empty($keyword)) {
-          $roles = Role::where('name', 'LIKE', "%$keyword%")
-            ->orWhere('guard_name', 'LIKE', "%$keyword%")
-            ->latest()->simplepaginate($perPage);
+          $roles = Role::where(function ($query) use ($keyword) {
+                        $query->where('name', 'LIKE', "%$keyword%")
+                            ->orWhere('guard_name', 'LIKE', "%$keyword%");
+                            })
+                    ->where("guard_name", session('empresa')->uri)
+                    ->orderBy('name', 'asc')
+                    ->get();
         } else {
-          $roles = Role::orderBy('id','DESC')->latest()->simplepaginate($perPage);
+          $roles = Role::orderBy('name','asc')
+                    ->where("guard_name", session('empresa')->uri)
+                    ->get();
+                        // ->simplepaginate($perPage);
         }
         $esabm = true;
 
@@ -57,8 +64,8 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255|unique:roles,name',
-            'guard_name' => 'required|max:255'
+            'name' => 'required|max:255',
+            'guard_name' => 'required|max:50'
         ]);
 
         $role = Role::create(['name' => $request->input('name'),
@@ -135,7 +142,7 @@ class RoleController extends Controller
 
         $user = DB::table('users')
                 ->select( 'users.id', 'users.name', 'last_name', 'email',
-                'email_verified_at', 'password', 'remember_token',
+                'email_verified_at', 'password', 'remember_token', 'es_jefe', 'area',
                 'foto', 'users.created_at', 'users.updated_at', 'users.deleted_at')
                 ->join('model_has_roles as mr', 'mr.model_id', 'users.id')
                 ->where('mr.role_id', '=', $rol->id)
@@ -143,14 +150,13 @@ class RoleController extends Controller
                 ->simplepaginate(5);
 //        $user = $rol->users()->simplepaginate(5);
         $users = DB::table('users')                 
-            ->select( 'id', 'name', 'last_name', 'email',
+            ->select( 'id', 'name', 'last_name', 'email', 'es_jefe', 'area',
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
-            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid)
-            ->where('users.empresas_id', '=', session('empresa')->id))
+            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
+            ->where('users.empresas_id', '=', session('empresa')->id)            
             ->simplepaginate(5);
         $esabm = false;
-
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);
         $padre = "roles";
         // $rolid = $roles->id;
@@ -179,6 +185,7 @@ class RoleController extends Controller
             ->select('id', 'name', 'guard_name', 
             'created_at', 'updated_at')
             ->whereNotIn('id', DB::table('role_has_permissions')->select('permission_id')->where('role_id', '=', $rolid))
+            ->where('guard_name', session("empresa")->uri)
             ->simplepaginate(5);
         $esabm = false;
 

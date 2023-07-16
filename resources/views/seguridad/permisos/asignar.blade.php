@@ -16,7 +16,7 @@
                                         <th>Fecha Alta</th>
                                         <th>
                                             <div class="float-right">
-                                                Opciones
+                                                Agregar
                                             </div>
                                         </th>
                                     </tr>

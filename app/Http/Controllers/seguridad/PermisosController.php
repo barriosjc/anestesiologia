@@ -21,13 +21,18 @@ class PermisosController extends Controller
         $keyword = $request->get('search');
         $perPage = 5;
         if (!empty($keyword)) {
-          $permisos = Permission::where('name', 'LIKE', "%$keyword%")
-            ->orWhere('guard_name', 'LIKE', "%$keyword%")
-            ->orderby('name', 'asc')
+            $permisos = Permission::where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', "%$keyword%")
+                    ->orWhere('guard_name', 'LIKE', "%$keyword%")
+                ->get();
+            })
+            ->where("guard_name", session('empresa')->uri)
+            ->orderBy('name', 'asc')
             ->get();
             // ->latest()->simplepaginate($perPage);
         } else {
-          $permisos = Permission::orderBy('id','DESC')
+          $permisos = Permission::where("guard_name", session('empresa')->uri)
+          ->orderBy('id','DESC')
           ->orderby('name', 'asc')
           ->get();   //latest()->simplepaginate($perPage);
         }
@@ -134,6 +139,7 @@ class PermisosController extends Controller
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
             ->whereNotIn('id', DB::table('model_has_permissions')->select('model_id')->where('permission_id', '=', $perid))
+            ->where('empresas_id', session('empresa')->id)
             ->simplepaginate(5);
         $esabm = false;
 
@@ -165,6 +171,7 @@ class PermisosController extends Controller
     ->select( 'id', 'name', 'guard_name', 
                 'created_at', 'updated_at')
     ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
+    ->where('guard_name', session('empresa')->uri)
     ->simplepaginate(5);
     $esabm = false;
     $padre = "permisos";

@@ -26,7 +26,6 @@ class ReconocimientosController extends Controller
     }
 
     public function realizados($tipo){
-
         $periodo_id = null;
         if(isset($_GET['periodo_id'])) {
             $periodo_id = $_GET['periodo_id'];  
@@ -39,7 +38,6 @@ class ReconocimientosController extends Controller
                             AND p.hasta >= DATE_FORMAT(CURDATE(), '%Y-%m-%d')
                             AND p.habilitada = 1
                             AND en.habilitada = 1"); 
-
             if (empty($data)) {
                 $periodo_id = 0 ;     //no hay periodo activo
             } else {

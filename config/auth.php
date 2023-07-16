@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'clorox' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'unilever' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'capea' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

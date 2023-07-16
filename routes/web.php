@@ -40,19 +40,25 @@ Route::get('/tables', function () {
     return view('tables');
 });
 
+Route::get('/guard', function () {
+
+    session('empresa')->uri = 'web';
+
+});
 
 Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::group(['middleware' => ['role:super-admin']], function () {
-        Route::get('empresa/select}', [EmpresaController::class, 'select'])->name('empresa.select');
-        Route::post('empresa/set}', [EmpresaController::class, 'set'])->name('empresa.set');
-    });
     Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');
     Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
     
-    Route::group(['middleware' => ['can:ABM de empresas']], function () {
+    Route::group(['middleware' => ['role:super-admin']], function () {
+        Route::get('empresa/select', [EmpresaController::class, 'select'])->name('empresa.select');
+        Route::post('empresa/set', [EmpresaController::class, 'set'])->name('empresa.set');
+    });
+
+    Route::group(['middleware' => ['role:super-admin']], function () {
         Route::resources(['empresas' => EmpresaController::class,]);
     });
 
@@ -68,7 +74,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('reconocimientos/{id}/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
         Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
         Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
-
+        
+        // if (isset($_SESSION['empresa'])) {
+        //     $uri = $_SESSION['empresa']->uri;
+        // }else {
+        //     $uri = 'web';
+        // }
+        // Route::group(['middleware' => ['can:Dashboard|guard_name:'.$uri]], function () {
         Route::group(['middleware' => ['can:Dashboard']], function () {
             Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
         });
@@ -88,7 +100,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
 
-        Route::group(['middleware' => ['can:abm usuarios']], function () {
+        Route::group(['middleware' => ['can:ABM Usuarios']], function () {
             Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
             Route::resources([
                 'usuario' => UsuarioController::class,

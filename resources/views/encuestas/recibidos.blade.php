@@ -13,7 +13,7 @@
                             <th>Fecha</th>
                             <th>Puntos</th>
                             <th>Justificación</th>
-                            <th>Opciones</th>
+                            <th>Valores</th>
                             <th>Otorgado por</th>
                         </tr>
                     </thead>

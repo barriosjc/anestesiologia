@@ -10,7 +10,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Opciones') }}
+                                {{ __('Valores') }}
                             </span>
 
                             <div class="float-right">
@@ -36,7 +36,7 @@
                                         <th>Puntos</th>
                                         <th>
                                             <div class="float-right">
-                                                Opciones
+                                                Valores
                                             </div>
                                         </th>
                                     </tr>

@@ -15,11 +15,8 @@
                         aria-selected="true">
                         <div class="wizard-step-icon">1</div>
                         <div class="wizard-step-text">
-                            <div class="wizard-step-text-name">Encuestas</div>
+                            <div class="wizard-step-text-name">Votaciones</div>
                             <div class="wizard-step-text-details">ABM y listado </div>
-                            <div class="wizard-step-text-details">Empresa:
-                                {{ isset(Auth()->user()->empresas->razon_social) ? Auth()->user()->empresas->razon_social : 'Todas' }}
-                            </div>
                         </div>
                     </a>
                     {{-- Wizard navigation item 2 --}}
@@ -40,7 +37,7 @@
                         aria-selected="true">
                         <div class="wizard-step-icon">3</div>
                         <div class="wizard-step-text">
-                            <div class="wizard-step-text-name">Opciones</div>
+                            <div class="wizard-step-text-name">Valores</div>
                             <div class="wizard-step-text-details">ABM y listado asociada a la encuesta</div>
                             <div class="wizard-step-text-details">{{ empty($cant_opc) ? '' : 'cargado: ' . $cant_opc }}
                             </div>
@@ -55,7 +52,7 @@
                         role="tabpanel" aria-labelledby="wizard1-tab">
                         <div class="row justify-content-center">
                             <div class="col-xxl-8 col-xl-10">
-                                <h3 class="text-primary">Step 1 - Encuestas</h3>
+                                <h3 class="text-primary">Step 1 - Votaciones (Debe seleccionar una votación para que se habiliten los pasos 2 y 3)</h3>
                                 {{-- <h5 class="card-title mb-4"></h5> --}}
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
@@ -158,7 +155,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label for="encuestaesxcol" class="col-sm-2 col-form-label">Opciones por
+                                            <label for="encuestaesxcol" class="col-sm-2 col-form-label">Cant. Valores por
                                                 columna</label>
                                             <div class="col-sm-2">
                                                 <input type="number" min="2" max="5"

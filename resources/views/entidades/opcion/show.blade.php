@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Ver') }} Opciones</span>
+                            <span class="card-title">{{ __('Ver') }} Valores</span>
                         </div>
                         <a href="{{ URL::previous() }}" title="Volver"><button class="btn btn-warning btn-sm"><i
                             class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>

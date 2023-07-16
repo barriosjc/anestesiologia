@@ -16,9 +16,10 @@ class IngresoInicialMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+
         if (session()->has('empresa')) {
             $empresaId = session('empresa')->id;
-            if ($empresaId === 0) {
+            if (empty($empresaId)) {
                 return redirect()->route('empresa.select');
             }
         }else{    

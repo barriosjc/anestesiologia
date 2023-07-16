@@ -48,7 +48,7 @@
                                             <th>Fecha Alta</th>
                                             <th>
                                                 <div class="float-right">
-                                                    Opciones
+                                                    Valores
                                                 </div>
                                             </th>
                                         </tr>
@@ -115,7 +115,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                {{ $roles->links() }}
+                                {{-- {{ $roles->links() }} --}}
                                 {{-- <div class="pagination-wrapper"> {{ $roles->appends(Request::all())->render() }} </div> --}}
                                 {{-- <div class="pagination-wrapper"> {!! $roles->appends(['search' => Request::get('search')])->render() !!} </div> --}}
                             </div>
