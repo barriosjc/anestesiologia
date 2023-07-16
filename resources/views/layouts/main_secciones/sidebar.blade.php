@@ -46,7 +46,7 @@
             @endif
             {{-- Sidenav Accordion (Reconocimientos) --}}
 
-            @if (Auth()->user()->validar('Logros', $guard) ||
+            @if (Auth()->user()->validar('Asignar insignias', $guard) ||
                     Auth()->user()->validar('Dashboard', $guard) ||
                     Auth()->user()->validar('Dashboard', $guard) ||
                     $super)
@@ -62,8 +62,8 @@
                             <a class="nav-link"
                                 href="{{ route('reconocimientos.realizados', 'todos') }}">Reconocimientos</a>
                         @endif
-                        @if (Auth()->user()->validar('Logros', $guard) || $super)
-                            <a class="nav-link" href="{{ route('reconocimientos.index') }}">Logros</a>
+                        @if (Auth()->user()->validar('Asignar insignias', $guard) || $super)
+                            <a class="nav-link" href="{{ route('reconocimientos.index') }}">Asignar insignias</a>
                         @endif
                         @if (Auth()->user()->validar('Dashboard', $guard) || $super)
                             <a class="nav-link" href="{{ route('dashboard.show') }}">Dashboard</a>
@@ -116,7 +116,7 @@
             @if (Auth()->user()->validar('Listado de reconocimientos', $guard) ||
                     Auth()->user()->validar('Reconocimientos realizados', $guard) ||
                     Auth()->user()->validar('Reconocimientos recibidos', $guard) ||
-                    Auth()->user()->validar('Asignar insignias', $guard) ||
+                    Auth()->user()->validar('Emitir Reconocimiento', $guard) ||
                     $super)
                 <div class="sidenav-menu-heading">USUARIOS</div>
                 {{-- Sidenav Link (Charts) --}}
@@ -126,7 +126,7 @@
                         Listado de reconocimientos
                     </a>
                 @endif
-                @if (Auth()->user()->validar('Asignar insignias', $guard) || $super)
+                @if (Auth()->user()->validar('Emitir Reconocimiento', $guard) || $super)
                     <a class="nav-link" href="{{ route('respuesta') }}">
                         <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
                         Emitir Reconocimiento
