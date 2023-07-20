@@ -26,7 +26,7 @@
                         <div class="wizard-step-icon">2</div>
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Periodos</div>
-                            <div class="wizard-step-text-details">ABM y listado asociado a la encuesta</div>
+                            <div class="wizard-step-text-details">ABM y listado asociado a la valoración seleccionada</div>
                             <div class="wizard-step-text-details">{{ empty($cant_per) ? '' : 'cargado: ' . $cant_per }}
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                         <div class="wizard-step-icon">3</div>
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Valores</div>
-                            <div class="wizard-step-text-details">ABM y listado asociada a la encuesta</div>
+                            <div class="wizard-step-text-details">ABM y listado asociada a la valoración seleccionada</div>
                             <div class="wizard-step-text-details">{{ empty($cant_opc) ? '' : 'cargado: ' . $cant_opc }}
                             </div>
                         </div>
