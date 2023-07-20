@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class PermisosController extends Controller
 {
-   /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -24,21 +24,21 @@ class PermisosController extends Controller
             $permisos = Permission::where(function ($query) use ($keyword) {
                 $query->where('name', 'LIKE', "%$keyword%")
                     ->orWhere('guard_name', 'LIKE', "%$keyword%")
-                ->get();
+                    ->get();
             })
-            ->where("guard_name", session('empresa')->uri)
-            ->orderBy('name', 'asc')
-            ->get();
+                ->where("guard_name", session('empresa')->uri)
+                ->orderBy('name', 'asc')
+                ->get();
             // ->latest()->simplepaginate($perPage);
         } else {
-          $permisos = Permission::where("guard_name", session('empresa')->uri)
-          ->orderBy('id','DESC')
-          ->orderby('name', 'asc')
-          ->get();   //latest()->simplepaginate($perPage);
+            $permisos = Permission::where("guard_name", session('empresa')->uri)
+                ->orderBy('id', 'DESC')
+                ->orderby('name', 'asc')
+                ->get();   //latest()->simplepaginate($perPage);
         }
         $esabm = true;
 
-        return view('seguridad.permisos.index',compact('permisos','esabm'))
+        return view('seguridad.permisos.index', compact('permisos', 'esabm'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -68,33 +68,35 @@ class PermisosController extends Controller
             'guard_name' => 'required|max:255'
         ]);
 
-        $permisos = Permission::create(['name' => $request->input('name'),
-                                'guard_name' => $request->input('guard_name')]);
+        $permisos = Permission::create([
+            'name' => $request->input('name'),
+            'guard_name' => $request->input('guard_name')
+        ]);
         //$permisos->syncPermissions($request->input('permission'));
         $esabm = true;
 
-        return redirect()->route('permisos.index',compact('esabm'))
-                        ->with('flash_message','Permiso creado correctamente');
+        return redirect()->route('permisos.index', compact('esabm'))
+            ->with('flash_message', 'Permiso creado correctamente');
     }
 
     public function show($id)
     {
         $permisos = Permission::findOrfail($id);
 
-        return view('seguridad.permisos.show',compact('permisos'));
+        return view('seguridad.permisos.show', compact('permisos'));
     }
 
     public function edit($id)
     {
         $permisos = Permission::findOrFail($id);
 
-        return view('seguridad.permisos.edit',compact('permisos'));
+        return view('seguridad.permisos.edit', compact('permisos'));
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|max:255|unique:permissions,name,'. $id,
+            'name' => 'required|max:255|unique:permissions,name,' . $id,
             'guard_name' => 'required|max:255',
         ]);
 
@@ -105,20 +107,21 @@ class PermisosController extends Controller
         $esabm = true;
         //$permisos->syncPermissions($request->input('permission'));
 
-        return redirect()->route('permisos.index',compact('esabm'))
-                        ->with('flash_message','Permiso modificado correctamente');
+        return redirect()->route('permisos.index', compact('esabm'))
+            ->with('flash_message', 'Permiso modificado correctamente');
     }
 
     public function destroy($id)
     {
-       // DB::table("roles")->where('id',$id)->delete();
+        // DB::table("roles")->where('id',$id)->delete();
         Permission::find($id)->delete();
 
         return redirect()->route('permisos.index')
-                        ->with('flash_message','Permiso borrado correctamente');
+            ->with('flash_message', 'Permiso borrado correctamente');
     }
 
-    public function usuarios(int $perid, int $usuid = null, string $tarea = ''){
+    public function usuarios(int $perid, int $usuid = null, string $tarea = '')
+    {
 
         $per = permission::find($perid);
         $user = user::find($usuid);
@@ -134,10 +137,20 @@ class PermisosController extends Controller
         }
 
         $user = $per->users()->simplepaginate(5);
-        $users = DB::table('users')                 
-            ->select( 'id', 'name', 'last_name', 'email',
-                        'email_verified_at', 'password', 'remember_token',
-                        'foto', 'created_at', 'updated_at', 'deleted_at')
+        $users = DB::table('users')
+            ->select(
+                'id',
+                'name',
+                'last_name',
+                'email',
+                'email_verified_at',
+                'password',
+                'remember_token',
+                'foto',
+                'created_at',
+                'updated_at',
+                'deleted_at'
+            )
             ->whereNotIn('id', DB::table('model_has_permissions')->select('model_id')->where('permission_id', '=', $perid))
             ->where('empresas_id', session('empresa')->id)
             ->simplepaginate(5);
@@ -147,13 +160,13 @@ class PermisosController extends Controller
         $padre = "permisos";
         // $rolid = $roles->id;
 
-        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo'));   
-
+        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo'));
     }
 
-    public function roles(int $perid, int $rolid = null, string $tarea = ''){
+    public function roles(int $perid, int $rolid = null, string $tarea = '')
+    {
 
-        $per = permission::find($perid);        
+        $per = permission::find($perid);
         $rol = role::find($rolid);
         switch ($tarea) {
             case 'asignar':
@@ -166,20 +179,22 @@ class PermisosController extends Controller
                 break;
         }
 
-    $roles = $per->Roles()->simplepaginate(5);
-    $roless = DB::table('roles')                 
-    ->select( 'id', 'name', 'guard_name', 
-                'created_at', 'updated_at')
-    ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
-    ->where('guard_name', session('empresa')->uri)
-    ->simplepaginate(5);
-    $esabm = false;
-    $padre = "permisos";
-    $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);
+        $roles = $per->Roles()->simplepaginate(5);
+        $roless = DB::table('roles')
+            ->select(
+                'id',
+                'name',
+                'guard_name',
+                'created_at',
+                'updated_at'
+            )
+            ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
+            ->where('guard_name', session('empresa')->uri)
+            ->simplepaginate(5);
+        $esabm = false;
+        $padre = "permisos";
+        $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);
 
-    return view('seguridad.roles.index',compact('padre', 'perid', 'roles', 'roless', 'esabm', 'titulo'));
- 
+        return view('seguridad.roles.index', compact('padre', 'perid', 'roles', 'roless', 'esabm', 'titulo'));
     }
-
-    
 }

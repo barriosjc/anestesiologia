@@ -49,7 +49,11 @@
                                             <th>Fecha Alta</th>
                                             <th>
                                                 <div class="float-right">
-                                                    Quitar
+                                                    @if ($esabm)
+                                                        Quitar
+                                                    @else
+                                                        Opciones
+                                                    @endif
                                                 </div>
                                             </th>
                                         </tr>
@@ -116,7 +120,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <div class="pagination-wrapper"> {!! $permisos->appends(['search' => Request::get('search')])->render() !!} </div>
+                                {{-- <div class="pagination-wrapper"> {!! $permisos->appends(['search' => Request::get('search')])->render() !!} </div> --}}
                             </div>
                         </div>
                     </div>

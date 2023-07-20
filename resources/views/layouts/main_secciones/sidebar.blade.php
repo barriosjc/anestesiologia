@@ -46,8 +46,8 @@
             @endif
             {{-- Sidenav Accordion (Reconocimientos) --}}
 
-            @if (Auth()->user()->validar('Asignar insignias', $guard) ||
-                    Auth()->user()->validar('Dashboard', $guard) ||
+            @if (Auth()->user()->validar('Reconocimientos', $guard) ||
+                    Auth()->user()->validar('Asignar insignias', $guard) ||
                     Auth()->user()->validar('Dashboard', $guard) ||
                     $super)
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"

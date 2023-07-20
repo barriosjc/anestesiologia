@@ -63,11 +63,11 @@ class LoginController extends Controller
             if ($empresa) {
                 session(['empresa' => $empresa]);
                 //var_dump(Auth::getDefaultDriver(), Auth::getDefaultGuardName());
-                Auth::setDefaultDriver($empresa->uri);
+//                Auth::setDefaultDriver($empresa->uri);
                 //PermissionServiceProvider::setDefaultAuthGuard($empresa->uri);
-                Cache::flush();
-                Artisan::call('config:clear');  
-                Artisan::call('cache:clear');  
+//                Cache::flush();
+ //               Artisan::call('config:clear');  
+ //               Artisan::call('cache:clear');  
                 //Artisan::call('config:cache');  
             
                 Auth::shouldUse($empresa->uri);          

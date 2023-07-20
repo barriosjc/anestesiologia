@@ -81,9 +81,11 @@ Route::group(['middleware' => 'auth'], function () {
         //     $uri = 'web';
         // }
         // Route::group(['middleware' => ['can:Dashboard|guard_name:'.$uri]], function () {
-        Route::group(['middleware' => ['can:Dashboard']], function () {
+        //Route::group(['middleware' => ['can:Dashboard']], function () {
             Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
-        });
+            Route::get('dashboard/cambio', [DashboardController::class, 'cambio'])->name('dashboard.cambio');
+
+            // });
 
         Route::resources(
             [

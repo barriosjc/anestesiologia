@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="col-md-12">
+  <div class="col-md-12 mt-3 ml-3">
     <div class="form-group">
       <button class="btn btn-primary" type="submit" value=""><?php echo ($formMode === 'edit' ? 'Modificar' : 'Crear'); ?></button>
     </div>
