@@ -5,7 +5,8 @@ namespace App\Http\Controllers\seguridad;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
-use App\Models\Permission;
+// use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 use App\Models\user;
 use Illuminate\Support\Facades\DB;
 

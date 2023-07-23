@@ -19,7 +19,7 @@
         </script>
     </head>
 
-    <body class="bg-primary">
+    <body class="bg-primary"  style="background-image: url({{ asset(Storage::disk('empresas')->url(session('empresa')->login ?? '')) }}); background-size: cover; background-repeat: no-repeat;">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
@@ -33,7 +33,7 @@
                                         {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
                                         @if (!empty(session('empresa')))
                                             <img class="dropdown-user-img"
-                                                src="{{ asset('/img/empresas') . '/' . session('empresa')->logo }}" />
+                                                src="{{ asset(Storage::disk('empresas')->url(session('empresa')->logo ?? '')) }}" />
                                         @endif
                                     </h6>
                                     <div class="card-header justify-content-center">
@@ -81,7 +81,7 @@
                                         </div> --}}
                                             {{-- Form Group (login box) --}}
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="auth-password-basic.html">Olvido su password?</a>
+                                                <a class="small" href="{{route('login.restablecer')}}">Olvido su password?</a>
                                                 {{-- <a class="btn btn-primary" type="submit">Login</a> --}}
                                                 <button type="submit" class="btn btn-primary">
                                                     {{ __('Login') }}
@@ -99,7 +99,7 @@
                 </main>
             </div>
             <div id="layoutAuthentication_footer">
-                <footer class="footer-admin mt-auto footer-dark">
+                {{-- <footer class="footer-admin mt-auto footer-dark">
                     <div class="container-xl px-4">
                         <div class="row">
                             <div class="col-md-6 small">Copyright &copy; Webmedia 2023</div>
@@ -110,7 +110,7 @@
                             </div>
                         </div>
                     </div>
-                </footer>
+                </footer> --}}
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>

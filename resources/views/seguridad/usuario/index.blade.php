@@ -7,23 +7,31 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">Usuarios {{ isset($titulo) ? $titulo : '' }}</div>
-                        <div class="card-body">
+                        <div class="card-header">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span id="card_title"> 
+                                Usuarios {{ isset($titulo) ? $titulo : '' }}
+                            </span>    
+                            @if ($esabm != false)
+                                <a href="{{ url('/usuario/create') }}" class="btn btn-primary btn-sm float-right"
+                                    title="Agregar nuevo Usuario">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar nuevo
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="card-body">
                             @if ($esabm === false)
                                 @if ($padre === 'roles')
-                                    <a href="{{ url('/roles') }}" title="Volver"><button class="btn btn-warning btn-sm"><i
-                                                class="fas fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                                    <a href="{{ url('/roles') }}" title="Volver"><button
+                                            class="btn btn-warning btn-sm mb-2"><i class="fas fa-arrow-left"
+                                                aria-hidden="true"></i> Volver</button></a>
                                 @else
                                     <a href="{{ url('/permisos') }}" title="Volver"><button
                                             class="btn btn-warning btn-sm"><i class="fas fa-arrow-left"
                                                 aria-hidden="true"></i> Volver</button></a>
                                 @endif
                             @else
-                                <a href="{{ url('/usuario/create') }}" class="btn btn-success btn-sm"
-                                    title="Agregar nuevo Usuario">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Agregar nuevo
-                                </a>
-
                                 <form method="GET" action="{{ url('/usuario') }}" accept-charset="UTF-8"
                                     class="form-inline my-2 my-lg-0 float-right" role="search">
                                     <div class="input-group">
@@ -81,34 +89,38 @@
                                                 @if ($esabm)
                                                     <td>
                                                         <div class="float-right">
-                                                            <a href="{{ url('/usuario/' . $item->id . '/roles') }}"><button
-                                                                    class="btn btn-success btn-sm" data-toggle="tooltip"
-                                                                    title="Roles asignados al usuario"><i
-                                                                        class="fa fa-users"
-                                                                        aria-hidden="true"></i></button></a>
-                                                            <a href="{{ url('/usuario/' . $item->id . '/permisos') }}"
-                                                                title="Permisos asignados al usuario "><button
-                                                                    class="btn btn-success btn-sm"><i class="fa fa-key"
-                                                                        aria-hidden="true"></i></button></a>
-                                                            <a href="{{ url('/usuario/' . $item->id) }}"
-                                                                title="View Usuario"><button class="btn btn-info btn-sm"><i
-                                                                        class="fa fa-fw fa-eye"
-                                                                        aria-hidden="true"></i></button></a>
-                                                            <a href="{{ url('/usuario/' . $item->id . '/edit') }}"
-                                                                title="Edit Usuario"><button
-                                                                    class="btn btn-primary btn-sm"><i
-                                                                        class="far fa-edit"></i></button></a>
+                                                            <div class="btn-group btn-group-sm" role="group"
+                                                                aria-label="Basic example">
+                                                                <a href="{{ url('/usuario/' . $item->id . '/roles') }}"><button
+                                                                        class="btn btn-warning btn-sm" data-toggle="tooltip"
+                                                                        title="Roles asignados al usuario"><i
+                                                                            class="fa fa-users"
+                                                                            aria-hidden="true"></i></button></a>
+                                                                <a href="{{ url('/usuario/' . $item->id . '/permisos') }}"
+                                                                    title="Permisos asignados al usuario "><button
+                                                                        class="btn btn-success btn-sm"><i class="fa fa-key"
+                                                                            aria-hidden="true"></i></button></a>
+                                                                <a href="{{ url('/usuario/' . $item->id) }}"
+                                                                    title="View Usuario"><button
+                                                                        class="btn btn-info btn-sm"><i
+                                                                            class="fa fa-fw fa-eye"
+                                                                            aria-hidden="true"></i></button></a>
+                                                                <a href="{{ url('/usuario/' . $item->id . '/edit') }}"
+                                                                    title="Edit Usuario"><button
+                                                                        class="btn btn-primary btn-sm"><i
+                                                                            class="far fa-edit"></i></button></a>
 
-                                                            <form method="POST"
-                                                                action="{{ url('/usuario' . '/' . $item->id) }}"
-                                                                accept-charset="UTF-8" style="display:inline">
-                                                                {{ method_field('DELETE') }}
-                                                                {{ csrf_field() }}
-                                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                                    title="Delete Usuario"
-                                                                    onclick="return confirm('Confirma eliminar?')"><i
-                                                                        class="far fa-trash-alt text-white"></i></button>
-                                                            </form>
+                                                                <form method="POST"
+                                                                    action="{{ url('/usuario' . '/' . $item->id) }}"
+                                                                    accept-charset="UTF-8" style="display:inline">
+                                                                    {{ method_field('DELETE') }}
+                                                                    {{ csrf_field() }}
+                                                                    <button type="submit" class="btn btn-danger btn-sm"
+                                                                        title="Delete Usuario"
+                                                                        onclick="return confirm('Confirma eliminar?')"><i
+                                                                            class="far fa-trash-alt text-white"></i></button>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 @else

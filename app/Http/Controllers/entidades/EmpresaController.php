@@ -57,7 +57,7 @@ class EmpresaController extends Controller
             'razon_social' => 'required|string|max:200',
             'contacto' => 'nullable|string|max:200',
             'telefono' => 'nullable|string|max:45',
-            'uri' => 'required|string|max:45',
+            'uri' => 'required|regex:/^[a-zA-Z0-9-]+$/|max:45',
             'logo' => 'required',
             'login' => 'required',
             'listado_reconocimientos' => 'required',
@@ -66,6 +66,7 @@ class EmpresaController extends Controller
             'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
+            'uri.regex' => 'El atributo Prefijo solo puede contener texto, números o guiones.',
         ]);
 
         $empresa = new Empresa();
@@ -96,15 +97,11 @@ class EmpresaController extends Controller
 
         $empresa->save();
 
-        // if (isset($request->perfil_id)) {
-        //     foreach ($request->perfil_id as $key => $value) {
-        //         DB::table('roles_empresas')
-        //             ->insert([
-        //                 'roles_id' => $value,
-        //                 'empresas_id' => $empresa->id
-        //             ]);;
-        //     }
-        // }
+        DB::insert("insert into PERMISSIONS (name, guard_name)
+                        (select name, '".$validated['uri']."' from PERMISSIONS 
+                                    where guard_name = 'web' )
+                    ");
+        
 
 
         return redirect()->route('empresas.index')
@@ -157,7 +154,7 @@ class EmpresaController extends Controller
             'razon_social' => 'required|string|max:200',
             'contacto' => 'nullable|string|max:200',
             'telefono' => 'nullable|string|max:45',
-            'uri' => 'required|string|max:45',
+            'uri' => 'required|regex:/^[a-zA-Z0-9-]+$/|max:45',
             'logo' => Rule::requiredIf(empty($empresa->logo)), 
             'login' => Rule::requiredIf(empty($empresa->login)), 
             'listado_reconocimientos' => Rule::requiredIf(empty($empresa->listado_reconocimientos)), 
@@ -166,8 +163,9 @@ class EmpresaController extends Controller
             'email_nombre' => 'required|max:100',
         ], [
             "uri.required" => 'El prefijo es obligatrio, es el dato que se indica cuando se ejecuta dominio con empresa  (www.ejemplo.com/portal/prefijo)',
+            'uri.regex' => 'El atributo Prefijo solo puede contener texto, números o guiones.',
         ]);
-
+        $uri_anterior = $empresa->uri;
         $empresa->razon_social = $request->razon_social;
         $empresa->contacto = $request->contacto;
         $empresa->telefono = $request->telefono;
@@ -204,13 +202,11 @@ class EmpresaController extends Controller
         }
         $empresa->save();
 
-        // DB::delete("delete from roles_empresas where empresas_id = ?", array($empresa->id));    
-        // //asigna los roles marcados
-        // if (isset($request->perfil_id)) {
-        //     foreach ($request->perfil_id as $key => $value) {
-        //         DB::insert('insert into roles_empresas (roles_id, empresas_id) values (?, ?)', array($value, $empresa->id));
-        //     }
-        // }
+        DB::delete("delete from PERMISSIONS where guard_name= '".$uri_anterior."'");
+        DB::insert("insert into PERMISSIONS (name, guard_name)
+                        (select name, '".$validated['uri']."' from PERMISSIONS 
+                                    where guard_name = 'web' )
+                    ");
 
         return redirect()->route('empresas.index')
             ->with('success', 'Empresa updated successfully');

@@ -3,28 +3,44 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
+use App\Mail\resetpasswordMaillable;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Empresa;
+use App\Models\user;
 
 class ResetPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset requests
-    | and uses a simple trait to include this behavior. You're free to
-    | explore this trait and override any methods you wish to tweak.
-    |
-    */
 
-    use ResetsPasswords;
+    public function  restablecer()
+    {
+        return view('auth.passwords.email');
+    }
 
-    /**
-     * Where to redirect users after resetting their password.
-     *
-     * @var string
-     */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    public function email(Request $request)
+    {
+        $validated = $request->validate(
+            [
+                'email' => 'required|string|max:200',
+            ]
+        );
+
+        $user = user::where('email', $request->email)->first();
+
+        if (!empty($user)) {
+            $mensaje = "string para crear clave.";
+            $hash = hash('md5', $mensaje); // Puedes usar otros algoritmos además de md5
+            $clave = substr($hash, 0, 12);
+            $empresa = empresa::where("id", $user->empresas_id)->first();
+            $correo = new resetpasswordMaillable($user, $clave);
+            Mail::send([], [], function ($message)  use ($request, $correo, $empresa) {
+                $message->to($request->email, $request->last_name)
+                    ->from($empresa->email_contacto, $empresa->email_nombre)
+                    ->subject('Cambio de clave para ingreso a portal Clap!')
+                    ->setBody($correo->render(), 'text/html');
+            });
+        }
+
+        return back()->with(['status' => 'Se le ha enviado un email a '.$validated['email'].' con su nueva clave.']);
+    }
 }

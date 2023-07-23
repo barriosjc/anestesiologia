@@ -9,8 +9,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Empresa;
-use App\Models\Permission;
+// use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 use Auth;
+// use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class User extends Authenticatable
 {
@@ -82,7 +84,8 @@ class User extends Authenticatable
 
         $resu = false;
         if ($existe) {
-            $resu = Auth()->user()->hasPermissionTo($permiso, $guard);
+            // $resu = Auth()->user()->hasPermissionTo($permiso, $guard);
+            // $resu = Auth()->user()->can($permiso);
         }
 
         return $resu;

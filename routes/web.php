@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/main', function () {
-//     return view('layouts.main');
-// });
-
 Auth::routes();
 
 use App\Http\Controllers\entidades\EmpresaController;
@@ -34,6 +30,7 @@ use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\encuestas\ReconocimientosController;
 use App\Http\Controllers\varios\AsignarReconocimientosController;
 use App\Http\Controllers\varios\DashboardController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/tables', function () {
 
@@ -47,6 +44,9 @@ Route::get('/guard', function () {
 });
 
 Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');
+Route::get('login/restablecer', [ResetPasswordController::class, 'restablecer'])->name('login.restablecer');
+Route::post('login/email', [ResetPasswordController::class, 'email'])->name('login.email');
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');

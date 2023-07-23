@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
-class Permission extends SpatiePermission
+class permisos extends SpatiePermission
 {
 
     public function getCreatedAtAttribute($value)
