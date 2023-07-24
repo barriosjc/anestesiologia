@@ -31,7 +31,14 @@ class ResetPasswordController extends Controller
             $mensaje = "string para crear clave.";
             $hash = hash('md5', $mensaje); // Puedes usar otros algoritmos además de md5
             $clave = substr($hash, 0, 12);
+            $hash = hash('md5', $clave); 
+            
             $empresa = empresa::where("id", $user->empresas_id)->first();
+
+            $user->password = $hash;
+            $user->cambio_password = 1;
+            $user->save();
+
             $correo = new resetpasswordMaillable($user, $clave);
             Mail::send([], [], function ($message)  use ($request, $correo, $empresa) {
                 $message->to($request->email, $request->last_name)

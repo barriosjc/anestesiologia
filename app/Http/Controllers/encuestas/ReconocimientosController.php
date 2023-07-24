@@ -15,7 +15,7 @@ class ReconocimientosController extends Controller
     public function recibidos($tipo){
 
         if ($tipo === 'user') {
-            $recibidos = select * from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id);
+            $recibidos = DB::select('select * from v_reconocimientos_recibidos where id_recibido = ' . Auth()->user()->id);
             $titulo = 'Reconocimientos recibidos';
         } else {
             $recibidos = DB::select('select * from v_reconocimientos_recibidos where empresas_id = ' . session('empresa')->id) ;

@@ -47,7 +47,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="pagination-wrapper"> {!! $permisoss->appends(['search' => Request::get('search')])->render() !!} </div>
+                            {{-- <div class="pagination-wrapper"> {!! $permisoss->appends(['search' => Request::get('search')])->render() !!} </div> --}}
                         </div>
                     </div>
                 </div>

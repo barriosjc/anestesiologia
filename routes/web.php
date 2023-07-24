@@ -63,6 +63,11 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::middleware('IngresoInicialMiddleware')->group(function () {
+        $guard = 'web';
+        if (session('empresa') != null) {
+            $guard = session('empresa')->uri;
+        }
+
         Route::get('/', function () {
             return view('layouts.main');
         })->name('main');
@@ -75,11 +80,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
         Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
         
-        // if (isset($_SESSION['empresa'])) {
-        //     $uri = $_SESSION['empresa']->uri;
-        // }else {
-        //     $uri = 'web';
-        // }
+
         // Route::group(['middleware' => ['can:Dashboard|guard_name:'.$uri]], function () {
         //Route::group(['middleware' => ['can:Dashboard']], function () {
             Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
@@ -101,8 +102,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
-
-        Route::group(['middleware' => ['can:ABM Usuarios']], function () {
+        // Route::group(['middleware' => ['can:ABM Usuarios']], function () use ($guard) {
+            // if (Auth()->user()->hasPermissionTo('ABM Usuarios', $guard)) {
+            //     dd("valido ok", $guard);
+            // }
             Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
             Route::resources([
                 'usuario' => UsuarioController::class,
@@ -110,7 +113,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('usuarios/importar/ver', [UsuarioController::class, 'importar'])->name('usuarios.importar.ver');
             Route::get('usuarios/exportar', [UsuarioController::class, 'exportar'])->name('usuarios.exportar');
             Route::post('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
-        });
+        // });
         //Route::group(['middleware' => ['can:seguridad']], function () {
             Route::resources([
                 'roles' => RoleController::class,
@@ -134,19 +137,19 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
         Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
-        Route::group(['middleware' => ['can:Crear encuesta']], function () {
+        // Route::group(['middleware' => ['can:Crear encuesta']], function () {
             Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
             Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
             Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');
             Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
-        });
+        // });
         // son los reconocimientos que carga rrhh, texto
-        Route::group(['middleware' => ['can:Reconocimientos']], function () {
+        // Route::group(['middleware' => ['can:Reconocimientos']], function () {
             Route::get('reconocimientos', [AsignarReconocimientosController::class, 'index'])->name('reconocimientos.index');
             Route::post('reconocimientos', [AsignarReconocimientosController::class, 'save'])->name('reconocimientos.save');
             Route::delete('reconocimientos/delete/{id}',  [AsignarReconocimientosController::class, 'destroy'])->name('reconocimientos.delete');
             Route::get('reconocimientos/show', [AsignarReconocimientosController::class, 'ver'])->name('reconocimientos.show');
-        });
+        // });
 
     });
 });

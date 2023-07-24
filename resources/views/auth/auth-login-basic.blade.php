@@ -24,7 +24,6 @@
             <div id="layoutAuthentication_content">
                 <main>
                     <div class="container-xl px-4">
-
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 {{-- Basic login form --}}

@@ -242,7 +242,10 @@ class UsuarioController extends Controller
                 break;
         }
 
-        $roles = $user->Roles()->simplepaginate(5);
+        $roles = $user->Roles()
+                        ->where('guard_name', session('empresa')->uri)
+                        ->get();
+        //->simplepaginate(5);
         $roless = DB::table('roles')
             ->select(
                 'id',
@@ -252,7 +255,9 @@ class UsuarioController extends Controller
                 'updated_at'
             )
             ->whereNotIn('id', DB::table('model_has_roles')->select('role_id')->where('model_id', '=', $usuid))
-            ->simplepaginate(5);
+            ->where('guard_name', session('empresa')->uri)
+            ->get();
+            //->simplepaginate(5);
         $esabm = false;
         $padre = "usuarios";
         $titulo = 'asignados al usuario  ->   ' . strtoupper($user->name);
@@ -277,7 +282,10 @@ class UsuarioController extends Controller
                 break;
         }
 
-        $permisos = $user->permissions()->simplepaginate(5);
+        $permisos = $user->permissions()
+                            ->where('guard_name', session('empresa')->uri)
+                            ->get();
+        //->simplepaginate(5);
         $permisoss = DB::table('permissions')
             ->select(
                 'id',
@@ -287,7 +295,9 @@ class UsuarioController extends Controller
                 'updated_at'
             )
             ->whereNotIn('id', DB::table('model_has_permissions')->select('permission_id')->where('model_id', '=', $usuid))
-            ->simplepaginate(5);
+            ->where('guard_name', session('empresa')->uri)
+            ->get();
+            // ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al uzuario  ->   ' . strtoupper($user->name);
