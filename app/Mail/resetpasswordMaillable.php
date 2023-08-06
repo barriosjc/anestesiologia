@@ -13,16 +13,18 @@ class resetpasswordMaillable extends Mailable
 
     public $user = null;
     public $clave = null;
+    public $empresa = null;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $clave)
+    public function __construct($user, $clave, $empresa)
     {
         $this->user = $user;
         $this->clave = $clave;
+        $this->empresa = $empresa;
     }
 
     /**
@@ -32,6 +34,6 @@ class resetpasswordMaillable extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.register');
+        return $this->view('emails.resetpassword');
     }
 }

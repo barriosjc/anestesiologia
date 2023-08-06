@@ -67,7 +67,7 @@ class RespuestaController extends Controller
     {
         // $valant= [];
         $this->validate($request, [
-            'observaciones' => 'max:200',
+            'observaciones' => 'max:2000',
         ]);
 
         try {
@@ -142,15 +142,14 @@ class RespuestaController extends Controller
 
             //envio de email a usuario/s y jefes
             foreach ($votados as $value) {
-                $users = user::where('id', $value)->first();
+                $users_reco = user::where('id', $value)->first();
+                $users = Auth()->user();
                 $param['last_name'] = $users->last_name;
-                $correo = new reconocimientoMailable($param);
                 $empresa = session('empresa');
-
-                Mail::send([], [], function ($message)  use ($users, $correo, $empresa) {
-                    $message->to($users->email, $users->last_name)
-                        ->from($empresa->email_contacto, $empresa->email_nombre)
-                        ->subject('Te han realizado un reconocimiento en portal Clap!')
+                $correo = new reconocimientoMailable($param, $empresa);
+                Mail::send([], [], function ($message)  use ($users_reco, $correo, $empresa) {
+                    $message->to($users_reco->email, $users_reco->last_name)
+                        ->subject('Te han realizado un reconocimiento en portal '.$empresa->Razon_social.' !')
                         ->setBody($correo->render(), 'text/html');
                 });
 
@@ -158,12 +157,11 @@ class RespuestaController extends Controller
                     $jefe = user::where('id', $users->jefe_user_id)->first();
                     $param['name_reconocido'] = $users->last_name;
                     $param['name_voto'] = Auth()->user()->last_name;
-                    $correo = new reconocimientoMailable($param);
+                    $correo = new reconocimientoMailable($param, $empresa);
 
                     Mail::send([], [], function ($message)  use ($jefe, $correo, $empresa) {
                         $message->to($jefe->email, $jefe->last_name)
-                            ->from($empresa->email_contacto, $empresa->email_nombre)
-                            ->subject('Han realizado un reconocimiento en portal Clap!')
+                            ->subject('Han realizado un reconocimiento en portal '.$empresa->Razon_social.' !')
                             ->setBody($correo->render(), 'text/html');
                     });
                 }
@@ -178,7 +176,7 @@ class RespuestaController extends Controller
         }
 
         return redirect()->route('respuesta')
-            ->with('success', 'Se guardó la en encuesta en forma correcta.');
+            ->with('success', '¡Tu reconocimiento fue enviado!. Muchas gracias por participar.');
     }
 
     private function conDatos($request, $campos)

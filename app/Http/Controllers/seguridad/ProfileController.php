@@ -64,10 +64,11 @@ class ProfileController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
             'empresas_id' => 'required',
             'cargo' => 'nullable|string|max:45',
-            'observaciones' => 'nullable|max:255',
+            'observaciones' => 'nullable|max:1000',
             'jefe_user_id' => 'nullable',
             'es_jefe' => 'nullable',
             'telefono' => 'nullable',
+            'area' => 'nullable'
         ]);
         $es_nuevo = true;
         if ($request->id) {
@@ -89,7 +90,6 @@ class ProfileController extends Controller
             $empresa = session('empresa');
             Mail::send([], [], function ($message)  use ($request, $correo, $empresa) {
                 $message->to($request->email, $request->last_name)
-                    ->from($empresa->email_contacto, $empresa->email_nombre)
                     ->subject('Registro de usuario para ingreso a portal Clap!')
                     ->setBody($correo->render(), 'text/html');
             });

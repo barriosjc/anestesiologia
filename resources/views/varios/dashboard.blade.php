@@ -56,7 +56,7 @@
                                             {{$option == 'actual' ? 'checked' : ''}}
                                             aria-label="Checkbox for following text input" name="radio-group">
                                     </div>
-                                    <input type="text" class="form-control" value='Encuesta actual'
+                                    <input type="text" class="form-control" value='Votación actual'
                                         aria-label="Text input with checkbox">
                                 </div>
 
@@ -92,10 +92,10 @@
                             <i class="feather-xl text-white-50" data-feather="user"></i>
                         </div>
                     </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                    {{-- <div class="card-footer d-flex align-items-center justify-content-between small">
                         <a class="text-white stretched-link" href="#!">View Report</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="col-lg-6 col-xl-3 mb-4">
@@ -109,10 +109,10 @@
                             <i class="feather-xl text-white-50" data-feather="award"></i>
                         </div>
                     </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between small">
+                    {{-- <div class="card-footer d-flex align-items-center justify-content-between small">
                         <a class="text-white stretched-link" href="#!">View Report</a>
                         <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

@@ -4,9 +4,13 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Spatie\Permission\Traits\HasRoles;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class IngresoInicialMiddleware
 {
+    use HasRoles;
     /**
      * Handle an incoming request.
      *

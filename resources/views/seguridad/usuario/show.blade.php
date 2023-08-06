@@ -34,11 +34,11 @@
                                             <td>{{ $user->id }}</td>
                                         </tr>
                                         <tr>
-                                            <th> Nombre </th>
+                                            <th> Usuario </th>
                                             <td> {{ $user->name }} </td>
                                         </tr>
                                         <tr>
-                                            <th> Nombre Completo </th>
+                                            <th> Nombre y apellido </th>
                                             <td> {{ $user->last_name }} </td>
                                         </tr>
                                         <tr>

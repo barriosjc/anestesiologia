@@ -116,7 +116,7 @@ class RoleController extends Controller
         //$role->syncPermissions($request->input('permission'));
 
         return redirect()->route('roles.index',compact('esabm'))
-                        ->with('flash_message','Role updated successfully');
+                        ->with('flash_message','Role actualizada correctamente');
     }
 
     public function destroy($id)
@@ -202,6 +202,7 @@ class RoleController extends Controller
     {
         try {
             $empresa_id = $request->input('empresas_id');
+            //id de emp no se usa pero por ahora no lo quito
             $roles = Role::v_roles_empresas($empresa_id)->get();
             $response = ['data' => $roles];
 

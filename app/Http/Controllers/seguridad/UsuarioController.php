@@ -16,6 +16,8 @@ use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
 use App\Exports\UsuariosExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\registerMailable;
+use Illuminate\Support\Facades\Mail;
 
 class UsuarioController extends Controller
 {
@@ -45,7 +47,8 @@ class UsuarioController extends Controller
 
         $esabm = true;
 
-        return view('seguridad.usuario.index', compact('user', 'esabm'));
+        return view('seguridad.usuario.index', compact('user', 'esabm'))
+                    ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     /**
@@ -115,6 +118,13 @@ class UsuarioController extends Controller
                 $user->assignRole($rol);
             }
         }
+        
+        $correo = new registerMailable($user, session('empresa'));
+        Mail::send([], [], function ($message)  use ($request, $correo) {
+            $message->to($request->email, $request->last_name)
+                ->subject('Registro de usuario para ingreso al portal de reconocimientos !')
+                ->setBody($correo->render(), 'text/html');
+        });
 
         return back()
             ->withInput($request->input())
@@ -328,12 +338,12 @@ class UsuarioController extends Controller
                         continue;
                     }
                     $grupal_id = null;
-                    if (!empty($row[2])) {
-                        $grupal_id = grupal::where('descripcion', $row[2])->first()->id;
+                    if (!empty($row[3])) {
+                        $grupal_id = grupal::where('descripcion', $row[3])->first()->id;
                     }
                     $jefe_user_id = null;
-                    if (!empty($row[12])) {
-                        $jefe_user_id = user::where('email', $row[12])->first()->id;
+                    if (!empty($row[13])) {
+                        $jefe_user_id = user::where('email', $row[13])->first()->id;
                     }
                     $user = user::where('id',  $row[0])->first();
                     if (empty($user)) {
@@ -344,15 +354,25 @@ class UsuarioController extends Controller
                         DB::delete('delete from model_has_roles
                         where model_id = ' . $row[0]);
                     }
+                    $user->id = $row[0];
                     $user->last_name = $row[1];
-                    $user->email = $row[8];
+                    $user->name = $row[2];
+                    $user->email = $row[9];
                     $user->grupal_id = $grupal_id;
                     $user->jefe_user_id = $jefe_user_id;
-                    $user->telefono = $row[9];
-                    $user->es_jefe = empty($row[10]) ? 1 : 0;
+                    $user->telefono = $row[10];
+                    $user->es_jefe = empty($row[11]) ? 1 : 0;
+                    $user->foto = 'fotovacia.jpeg';
+                    $user->area = $row[4];
+                    $user->cargo = $row[3]; 
                     $user->save();
+                    
                     // model_has_role
-                    $user->assignRole($row[13]);
+                    $role = Role::where('guard_name', session('empresa')->uri)
+                                    ->where('name', $row[14])
+                                    ->first();
+                    $user->assignRole($role);
+                    //$user->assignRole();
                     
                 }
                 return back()

@@ -121,7 +121,7 @@ class PermisosController extends Controller
             ->with('flash_message', 'Permiso borrado correctamente');
     }
 
-    public function usuarios(int $perid, int $usuid = null, string $tarea = '')
+    public function usuarios(Request $request, int $perid, int $usuid = null, string $tarea = '')
     {
 
         $per = permission::find($perid);
@@ -161,7 +161,8 @@ class PermisosController extends Controller
         $padre = "permisos";
         // $rolid = $roles->id;
 
-        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo'));
+        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo'))
+        ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function roles(int $perid, int $rolid = null, string $tarea = '')

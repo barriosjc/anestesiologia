@@ -17,7 +17,7 @@ class UsuariosExport implements FromCollection, WithHeadings, WithStyles
     */
     public function collection()
     {
-        $resu = DB::select('select u.id, u.last_name, g.descripcion, u.area, null as country, 
+        $resu = DB::select('select u.id, u.last_name, u.name, g.descripcion, u.area, null as country, 
                                 u2.last_name as jefe_last_name, null as fec_nac, null as sede, u.email, 
                                 u.telefono, u.es_jefe, null as dni, u2.email email_jefe, r.name as perfil 
                         from users as u 
@@ -36,8 +36,8 @@ class UsuariosExport implements FromCollection, WithHeadings, WithStyles
     public function headings(): array
     {
         // Agregar los nombres de las columnas aquí
-        return ['Employee ID', 'Legal Name', 'Job Title', 'Functional organization', 'Work Country', 
-                'Manager Name', 'Date of Birth', 'Sede', 'job-mail address', 'Phone Number', 'Is boss', 'DNI', 'Boss email', 'perfil'];
+        return ['Employee ID', 'Nombre y apellido','Usuario', 'Cargo', 'Area', 'Work Country', 
+                'Nombre jefe', 'Fecha de nac.', 'Sede', 'email', 'Telefono', 'Es jefe', 'DNI', 'email jefe', 'Perfil'];
     }
 
     public function styles(Worksheet $sheet)

@@ -113,6 +113,7 @@ class OpcionController extends Controller
         foreach ($validate as $key => $value) {
             $opciones->$key = $value;
         }
+        $opciones->habilitada = $request->habilitada ? 1 : 0;
         $opciones->empresas_id = session('empresa')->id;
         $empresa = session('empresa')->uri;
          //dd( Storage::disk('empresas'));
@@ -124,7 +125,7 @@ class OpcionController extends Controller
         $opciones->save();
 
         return redirect()->route('opcion.index')
-            ->with('success', 'Opcion updated successfully');
+            ->with('success', 'Opcion actualizada correctamente');
     }
 
     /**

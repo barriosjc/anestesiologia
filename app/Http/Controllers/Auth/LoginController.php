@@ -8,10 +8,13 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Empresa;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Permission\PermissionServiceProvider;
+use App\Models\User;
+// use Illuminate\Support\Facades\Session;
+// use Illuminate\Support\Facades\Cache;
+// use Illuminate\Support\Facades\Artisan;
+// use Spatie\Permission\PermissionServiceProvider;
+// use Spatie\Permission\Contracts\Permission;
+// use Spatie\Permission\Contracts\Role;
 
 class LoginController extends Controller
 {
@@ -61,15 +64,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
             if ($empresa) {
-                session(['empresa' => $empresa]);
-                //var_dump(Auth::getDefaultDriver(), Auth::getDefaultGuardName());
-//                Auth::setDefaultDriver($empresa->uri);
-                //PermissionServiceProvider::setDefaultAuthGuard($empresa->uri);
-//                Cache::flush();
- //               Artisan::call('config:clear');  
- //               Artisan::call('cache:clear');  
-                //Artisan::call('config:cache');  
-            
+                session(['empresa' => $empresa]);    
                 Auth::shouldUse($empresa->uri);          
                 //dd(Auth::getDefaultDriver());
             }else {
@@ -95,8 +90,30 @@ class LoginController extends Controller
         //     return redirect()->route('profile.password');
         // }
 
+
         return redirect()->route('main');
 
     }
+
+    /**
+     * Get the post login redirect path based on user attributes.
+     *
+     * @return string
+     */
+    // protected function redirectTo()
+    // {
+    //     // dd(Auth());
+    //     // $id = Auth()->user()->id;
+    //     // $user = user::where("id", $id)->first();
+
+    //     // $tiene = $user->hasRole('usuario', session('empresa')->uri);
+    //     // dd($tiene);
+    //     // if ($tiene){
+    //     //     return route('respuesta');
+    //     // }
+
+    //     return route('main');
+
+    // }
 
 }

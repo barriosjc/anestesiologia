@@ -46,7 +46,7 @@
     </div>
 </div>
 <div class="mb-3">
-    <label class="small mb-1" for="email">Email address</label>
+    <label class="small mb-1" for="email">Email </label>
     <input class="form-control" id="email" name="email" type="email" placeholder="Ingrese su email"
         value="{{ old('email', $user->email) }}" />
 </div>
@@ -54,7 +54,7 @@
 <div class="row gx-3 mb-3">
     <!-- Form Group (phone number)-->
     <div class="col-md-5">
-        <label class="small mb-1" for="telefono">Phone number</label>
+        <label class="small mb-1" for="telefono">Telefono</label>
         <input class="form-control" id="telefono" name="telefono" type="tel" placeholder="Ingrese nro de telefono"
             value="{{ old('telefono', $user->telefono) }}" />
     </div>
@@ -77,8 +77,8 @@
 <div class="row gx-3 mb-3">
     <!-- Form Group (phone number)-->
     <div class="col-md-12">
-        <label class="small mb-1" for="observaciones">Observaciones</label>
-        <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese observaciones"
+        <label class="small mb-1" for="observaciones">Presentación</label>
+        <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese presentación"
             rows="3">{{ old('observaciones', $user->observaciones) }}</textarea>
     </div>
 </div>
@@ -142,7 +142,7 @@
 
             rolesSelect.empty();
             // var grupalEnBD = null;
-            console.log({{$perfiles_user}});
+            //console.log(empresasId);
             const lroles = '{{$perfiles_user}}';
 
             if (empresasId) {

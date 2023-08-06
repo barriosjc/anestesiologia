@@ -91,7 +91,7 @@ class PeriodoController extends Controller
         $periodo->update($request->all());
 
         return redirect()->route('periodos.index')
-            ->with('success', 'Periodo updated successfully');
+            ->with('success', 'Periodo actualizada correctamente');
     }
 
     /**

@@ -111,7 +111,7 @@ class JerarquiumController extends Controller
         $jerarquium->update($request->all());
 
         return redirect()->route('jerarquias.index')
-            ->with('success', 'Jerarquium updated successfully');
+            ->with('success', 'Jerarquium actualizada correctamente');
     }
 
     /**

@@ -4,9 +4,11 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card mt-5">
-                <div class="card-header">{{ __('Restablecier Password') }}</div>
-
+            <div class="card mt-5">                            
+                <div class="card-header">
+                    <a href="{{ route('login') }}"><button class="btn btn-warning btn-sm px-3 py-2"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver al login </button></a>
+                    {{ __('Restablecier Password') }}
+                </div>
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">

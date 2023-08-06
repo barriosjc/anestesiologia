@@ -91,7 +91,7 @@ class GrupalController extends Controller
         $grupal->update($request->all());
 
         return redirect()->route('grupals.index')
-            ->with('success', 'Grupal updated successfully');
+            ->with('success', 'Grupal actualizada correctamente');
     }
 
     /**

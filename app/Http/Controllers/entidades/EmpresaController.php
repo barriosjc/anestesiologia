@@ -97,8 +97,8 @@ class EmpresaController extends Controller
 
         $empresa->save();
 
-        DB::insert("insert into PERMISSIONS (name, guard_name)
-                        (select name, '".$validated['uri']."' from PERMISSIONS 
+        DB::insert("insert into permissions (name, guard_name)
+                        (select name, '".$validated['uri']."' from permissions 
                                     where guard_name = 'web' )
                     ");
         
@@ -202,14 +202,14 @@ class EmpresaController extends Controller
         }
         $empresa->save();
 
-        DB::delete("delete from PERMISSIONS where guard_name= '".$uri_anterior."'");
-        DB::insert("insert into PERMISSIONS (name, guard_name)
-                        (select name, '".$validated['uri']."' from PERMISSIONS 
+        DB::delete("delete from permissions where guard_name= '".$uri_anterior."'");
+        DB::insert("insert into permissions (name, guard_name)
+                        (select name, '".$validated['uri']."' from permissions 
                                     where guard_name = 'web' )
                     ");
 
         return redirect()->route('empresas.index')
-            ->with('success', 'Empresa updated successfully');
+            ->with('success', 'Empresa actualizada correctamente');
     }
 
     /**

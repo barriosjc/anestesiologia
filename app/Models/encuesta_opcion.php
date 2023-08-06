@@ -65,8 +65,9 @@ class encuesta_opcion extends Model
         ->select([ 'encuestas_opciones.id', 'encuestas_id', 'orden', 'o.style', 'o.puntos',
         'o.id as opcion_id', 'o.descripcion', 'o.detalle', 'o.imagen', 'encuestas_opciones.habilitada'])
         ->join('opciones as o', 'o.id', 'encuestas_opciones.opciones_id')
+        ->where('empresas_id', session('empresa')->id)
         ->orderby('encuestas_opciones.orden', 'asc');
-// dd("tabla encuesta",$resu);
+
         return $resu;
     }
 }

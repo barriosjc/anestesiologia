@@ -27,6 +27,7 @@
                         <div class="col-md-6">
                             <div class="input-group input-group-sm">
                                 <select name="periodo_id" class="form-control" id="periodo_id" {{ $tipo == 'periodo' ? 'disabled' : ''}}>
+                                    <option value = 0>   --- No hay un periodo actual ACTIVO --- </option>
                                     @foreach ($periodos as $data)
                                         <option value="{{ $data->id }}" {{$periodo_id == $data->id ? 'selected' : ''}}>{{ $data->descripcion }}</option>
                                     @endforeach
@@ -43,7 +44,7 @@
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
-                            <th>Encuesta</th>
+                            <th>Votación</th>
                             @if ($tipo == 'todos' || $tipo == 'periodo')
                                 <th>voto</th>
                             @endif

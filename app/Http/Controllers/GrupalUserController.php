@@ -91,7 +91,7 @@ class GrupalUserController extends Controller
         $grupalUser->update($request->all());
 
         return redirect()->route('grupalusers.index')
-            ->with('success', 'GrupalUser updated successfully');
+            ->with('success', 'GrupalUser actualizada correctamente');
     }
 
     /**

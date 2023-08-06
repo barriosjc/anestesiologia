@@ -12,15 +12,17 @@ class reconocimientoMailable extends Mailable
     use Queueable, SerializesModels;
 
     public $params = null;
+    public $empresa = null;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($param)
+    public function __construct($param, $empresa)
     {
         $this->params = $param;
+        $this->empresa = $empresa;
     }
 
     /**

@@ -41,6 +41,8 @@ Route::get('/guard', function () {
 
     session('empresa')->uri = 'web';
 
+    return redirect()->route('login');
+
 });
 
 Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');

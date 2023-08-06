@@ -11,8 +11,8 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Nombre</th>
-                                        <th>Nombre Completo</th>
+                                        <th>Usuario</th>
+                                        <th>Nombre y apellido</th>
                                         <th>Usu Verificado</th>
                                         <th>Mail</th>
                                         <th>

@@ -26,7 +26,7 @@
                         <div class="wizard-step-icon">2</div>
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Periodos</div>
-                            <div class="wizard-step-text-details">ABM y listado asociado a la valoración seleccionada</div>
+                            <div class="wizard-step-text-details">ABM y listado asociado a la votación seleccionada</div>
                             <div class="wizard-step-text-details">{{ empty($cant_per) ? '' : 'cargado: ' . $cant_per }}
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                         <div class="wizard-step-icon">3</div>
                         <div class="wizard-step-text">
                             <div class="wizard-step-text-name">Valores</div>
-                            <div class="wizard-step-text-details">ABM y listado asociada a la valoración seleccionada</div>
+                            <div class="wizard-step-text-details">ABM y listado asociada a la votación seleccionada</div>
                             <div class="wizard-step-text-details">{{ empty($cant_opc) ? '' : 'cargado: ' . $cant_opc }}
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                                         </div>
                                     </li>
                                     <li class="list-group-item">
-                                        <h4>Cargue los datos de la encuesta</h4>
+                                        <h4>Cargue los datos de la votación</h4>
                                         <div class="form-group row">
                                             <label for="user_id_reconocido"
                                                 class="col-sm-2 col-form-label">Empresa</label>
@@ -144,7 +144,7 @@
                                             <label for="encuesta" class="col-sm-2 col-form-label">Nombre</label>
                                             <div class="col-sm-4">
                                                 <input type="text" class="form-control" id="encuesta"
-                                                    name='encuesta' placeholder="encuesta" wire:model="e_encuesta">
+                                                    name='encuesta' placeholder="nombre de la votación" wire:model="e_encuesta">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -201,7 +201,7 @@
                         id="wizard2" role="tabpanel" aria-labelledby="wizard2-tab">
                         <div class="row justify-content-center">
                             <div class="col-xxl-8 col-xl-10">
-                                <h3 class="text-primary">Step 2 - Periodos</h3>
+                                <h3 class="text-primary">Step 2 - Periodos de una votación</h3>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         {{-- <input type="hidden" name="encuestas_id" value={{ $encuestas_id }}> --}}
@@ -327,7 +327,7 @@
                         id="wizard3" role="tabpanel" aria-labelledby="wizard3-tab">
                         <div class="row justify-content-center">
                             <div class="col-xxl-8 col-xl-10">
-                                <h3 class="text-primary">Step 3 - ABM de opciones para una encuesta</h3>
+                                <h3 class="text-primary">Step 3 - ABM de opciones para una votación</h3>
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <div class="row">
@@ -448,7 +448,7 @@
                 window.livewire.on('deleteencuesta', itemId => {
                     Swal.fire({
                         title: 'Confirma borrar el dato?',
-                        text: "Encuesta",
+                        text: "Votación",
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',

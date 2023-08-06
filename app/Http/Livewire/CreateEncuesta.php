@@ -149,12 +149,12 @@ protected $paginationTheme = 'bootstrap';
             
             $this->encuesta_limpiar();
             $this->resetErrorBag();
-            session()->flash('message', "Los datos de la encuesta se guardaron conrrectamente.");
+            session()->flash('message', "Los datos de la votación se guardaron conrrectamente.");
 
         } catch (Throwable $e) {
             // dd($e->getMessage());
             $msg = $e->getMessage();
-            session()->flash('error', $msg .'     encuestas se ha podido guardar los datros, error de integridad. Estos datos no se pueden repetir empresa, nombre, ecición');
+            session()->flash('error', $msg .'     votación se ha podido guardar los datros, error de integridad. Estos datos no se pueden repetir empresa, nombre, ecición');
         }
     }
 
@@ -189,7 +189,7 @@ protected $paginationTheme = 'bootstrap';
             $msg = $e->getMessage();
 
         }
-        session()->flash('message', 'Encuesta borrada correctamente.' );
+        session()->flash('message', 'Votación borrada correctamente.' );
     }
 
     //  -------------------------------------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ protected $paginationTheme = 'bootstrap';
             'p_hasta' => ['required', "date", "after:p_desde"],
         ],
             ['p_descrip_rango.required' => 'Descripción del periodo es obligatorio.',
-            'encuestas_id_selected.required' => 'Para guardar un periodo nuevo, primero debe seleccionar una encuesta del Paso 1']
+            'encuestas_id_selected.required' => 'Para guardar un periodo nuevo, primero debe seleccionar una votación del Paso 1']
         );
 
         try {
@@ -291,7 +291,7 @@ protected $paginationTheme = 'bootstrap';
                     ],
                 ],
                 [
-                    'encuestas_id_selected.required' => 'Debe haber seleccionado una encuesta del Paso 1 para poder cargar opciones.',
+                    'encuestas_id_selected.required' => 'Debe haber seleccionado una votación del Paso 1 para poder cargar opciones.',
                     'o_opciones_id.required' => 'Es obligatorio seleccionar una opción de la lista.',
                     'o_opciones_id.unique' => 'La opcion ya fue ingresada anteriormente, no es posible ingresar 2 veces la misma opcion'
                 ]
@@ -316,7 +316,7 @@ protected $paginationTheme = 'bootstrap';
             $msg = $e->getMessage();
             return back()->with(['error' => $msg]);
         }
-        return back()->with(['success' => "Se creo o modificó correctamente una opción para la encuesta."]);
+        return back()->with(['success' => "Se creo o modificó correctamente una opción para la votación."]);
     }
 
     public function editar_opcion($opciones_id) {
