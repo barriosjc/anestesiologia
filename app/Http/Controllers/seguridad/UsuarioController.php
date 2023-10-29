@@ -339,11 +339,17 @@ class UsuarioController extends Controller
                     }
                     $grupal_id = null;
                     if (!empty($row[3])) {
-                        $grupal_id = grupal::where('descripcion', $row[3])->first()->id;
+                        $grupal =  grupal::where('descripcion', $row[3])->first();
+                        if ($grupal) {
+                            $grupal_id = $grupal->id;
+                        }
                     }
                     $jefe_user_id = null;
                     if (!empty($row[13])) {
-                        $jefe_user_id = user::where('email', $row[13])->first()->id;
+                        $usuario = user::where('email', $row[13])->first();
+                        if($usuario) {
+                            $jefe_user_id = $usuario->id;
+                        }
                     }
                     $user = user::where('id',  $row[0])->first();
                     if (empty($user)) {
@@ -361,7 +367,7 @@ class UsuarioController extends Controller
                     $user->grupal_id = $grupal_id;
                     $user->jefe_user_id = $jefe_user_id;
                     $user->telefono = $row[10];
-                    $user->es_jefe = empty($row[11]) ? 1 : 0;
+                    $user->es_jefe = empty($row[11]) ? 0 : 1;
                     $user->foto = 'fotovacia.jpeg';
                     $user->area = $row[4];
                     $user->cargo = $row[3]; 

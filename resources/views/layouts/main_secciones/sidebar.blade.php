@@ -60,7 +60,7 @@
                     <nav class="sidenav-menu-nested nav accordion" id="DasboardSidenavPages">
                         @if (Auth()->user()->hasPermissionTo('Reconocimientos', $guard) || $super)
                             <a class="nav-link"
-                                href="{{ route('reconocimientos.realizados', 'todos') }}">Reconocimientos</a>
+                                href="{{ route('reconocimientos.realizados', ['todos','Reconocimientos']) }}">Reconocimientos</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('Asignar insignias', $guard) || $super)
                             <a class="nav-link" href="{{ route('reconocimientos.index') }}">Asignar insignias</a>
@@ -86,6 +86,7 @@
                             <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('Importar usuarios', $guard) || $super)
+                            <a class="nav-link" href="{{ route('grupals.index') }}">Cargos</a>                        
                             <a class="nav-link" href="{{ route('usuarios.importar.ver') }}">Importar usuarios</a>
                         @endif
                     </nav>
@@ -121,7 +122,7 @@
                 <div class="sidenav-menu-heading">USUARIOS</div>
                 {{-- Sidenav Link (Charts) --}}
                 @if (Auth()->user()->hasPermissionTo('Listado de reconocimientos', $guard) || $super)
-                    <a class="nav-link" href="{{ route('reconocimientos.realizados', 'periodo') }}">
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados', ['periodo', 'Listado de reconocimientos']) }}">
                         <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
                         Listado de reconocimientos
                     </a>
@@ -133,7 +134,7 @@
                     </a>
                 @endif
                 @if (Auth()->user()->hasPermissionTo('Reconocimientos realizados', $guard) || $super)
-                    <a class="nav-link" href="{{ route('reconocimientos.realizados', 'user') }}">
+                    <a class="nav-link" href="{{ route('reconocimientos.realizados', ['user', 'Reconocimientos realizados']) }}">
                         <div class="nav-link-icon"><i class="fa-solid fa-medal"></i></div>Reconocimientos
                         realizados
                     </a>

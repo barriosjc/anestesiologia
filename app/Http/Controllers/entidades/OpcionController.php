@@ -4,6 +4,7 @@ namespace App\Http\Controllers\entidades;
 
 use App\Models\Opcion;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -50,11 +51,20 @@ class OpcionController extends Controller
     public function store(Request $request)
     {
         //dd($request);
-        $validate = request()->validate(Opcion::$rules);
+        $validate = $request->validate( [
+            'descripcion' => 'required',
+            'detalle' => 'required',
+            'imagen' => 'required',             
+            'style' => 'required',
+        'habilitada' => 'required',
+        'puntos' => 'required',
+        ]);
+
         $opciones = new Opcion;
         foreach ($validate as $key => $value) {
             $opciones->$key = $value;
         }
+
         $opciones->habilitada = $opciones->habilitada ? 1 : 0;
         $opciones->empresas_id = session('empresa')->id;
         $empresa = session('empresa')->uri;
@@ -104,11 +114,19 @@ class OpcionController extends Controller
      * @param  Opcion $opciones
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        
-        $validate = request()->validate(Opcion::$rules);
-        $opciones = Opcion::where("id", $id)->first();
+    public function update(Request $request, $opcion)
+    {      
+        $opciones = opcion::where("id", $opcion)->first();  
+        $validate = $request->validate( [
+            'descripcion' => 'required',
+            'detalle' => 'required',
+            'imagen' => Rule::requiredIf(empty($opciones->imagen)),             
+            'style' => 'required',
+            'habilitada' => 'required',
+            'puntos' => 'required',
+        ]);
+
+        // $opciones = Opcion::where("id", $opcion->id)->first();
         //   dd($opciones);
         foreach ($validate as $key => $value) {
             $opciones->$key = $value;
@@ -116,12 +134,13 @@ class OpcionController extends Controller
         $opciones->habilitada = $request->habilitada ? 1 : 0;
         $opciones->empresas_id = session('empresa')->id;
         $empresa = session('empresa')->uri;
-         //dd( Storage::disk('empresas'));
-        $originalName = $request->file('imagen')->getClientOriginalName();
-        $path = "$empresa/opciones/".$originalName;
-        Storage::disk('empresas')->put($path, $request->file('imagen')->get());
 
-        $opciones->imagen = $path;
+        if($request->hasFile('imagen')){
+            $originalName = $request->file('imagen')->getClientOriginalName();
+            $path = "$empresa/opciones/".$originalName;
+            Storage::disk('empresas')->put($path, $request->file('imagen')->get());
+            $opciones->imagen = $path;
+        }
         $opciones->save();
 
         return redirect()->route('opcion.index')

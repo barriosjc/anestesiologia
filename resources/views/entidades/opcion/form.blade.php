@@ -34,6 +34,11 @@
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Imagen de la opción</label>
                         <input class="form-control" name="imagen" type="file" id="file_opcion" value="{{$opciones->imagen}}">
+                        @if($opciones->imagen)
+                            <p class="small mb-1">Valor actual: {{ $opciones->imagen }}</p>
+                        @else
+                            <p class="small mb-1">No se ha cargado ningún archivo.</p>
+                        @endif  
                         <h6 class="f-color">"Subir imagen en formato PNG con transparencia. Tamaño: 512 x 152px"<h6>
                     </div>
                 </div>

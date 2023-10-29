@@ -39,8 +39,9 @@ class PermisosController extends Controller
         }
         $esabm = true;
 
-        return view('seguridad.permisos.index', compact('permisos', 'esabm'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('seguridad.permisos.index', compact('permisos', 'esabm'));
+
+            // ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
 
@@ -154,15 +155,16 @@ class PermisosController extends Controller
             )
             ->whereNotIn('id', DB::table('model_has_permissions')->select('model_id')->where('permission_id', '=', $perid))
             ->where('empresas_id', session('empresa')->id)
-            ->simplepaginate(5);
+            ->get();
+            // ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);
         $padre = "permisos";
         // $rolid = $roles->id;
 
-        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo'))
-        ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('seguridad.usuario.index',  compact('padre', 'perid', 'user', 'users', 'esabm', 'titulo')) ;
+        // ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function roles(int $perid, int $rolid = null, string $tarea = '')
@@ -181,7 +183,9 @@ class PermisosController extends Controller
                 break;
         }
 
-        $roles = $per->Roles()->simplepaginate(5);
+        $roles = $per->Roles()
+                    ->get();
+        // ->simplepaginate(5);
         $roless = DB::table('roles')
             ->select(
                 'id',
@@ -192,7 +196,8 @@ class PermisosController extends Controller
             )
             ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
             ->where('guard_name', session('empresa')->uri)
-            ->simplepaginate(5);
+            ->get();
+            // ->simplepaginate(5);
         $esabm = false;
         $padre = "permisos";
         $titulo = 'asignados al permiso  ->   ' . strtoupper($per->name);

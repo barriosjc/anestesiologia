@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 use App\Http\Controllers\entidades\EmpresaController;
-use App\Http\Controllers\GrupalController;
+use App\Http\Controllers\entidades\GrupalController;
 use App\Http\Controllers\GrupalUserController;
 use App\Http\Controllers\JerarquiumController;
 use App\Http\Controllers\PeriodoController;
@@ -78,7 +78,7 @@ Route::group(['middleware' => 'auth'], function () {
             return view('encuestas.create_wiz');
         });
 
-        Route::get('reconocimientos/{id}/realizados', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
+        Route::get('reconocimientos/{id}/realizados/{titulo}', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
         Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
         Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
         
@@ -137,21 +137,19 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
         //});
 
-        Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
-        Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
-        // Route::group(['middleware' => ['can:Crear encuesta']], function () {
+            Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
+            Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
+
             Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
             Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
             Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');
             Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
-        // });
-        // son los reconocimientos que carga rrhh, texto
-        // Route::group(['middleware' => ['can:Reconocimientos']], function () {
+
             Route::get('reconocimientos', [AsignarReconocimientosController::class, 'index'])->name('reconocimientos.index');
             Route::post('reconocimientos', [AsignarReconocimientosController::class, 'save'])->name('reconocimientos.save');
             Route::delete('reconocimientos/delete/{id}',  [AsignarReconocimientosController::class, 'destroy'])->name('reconocimientos.delete');
             Route::get('reconocimientos/show', [AsignarReconocimientosController::class, 'ver'])->name('reconocimientos.show');
-        // });
+
 
     });
 });

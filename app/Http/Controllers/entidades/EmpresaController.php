@@ -102,8 +102,6 @@ class EmpresaController extends Controller
                                     where guard_name = 'web' )
                     ");
         
-
-
         return redirect()->route('empresas.index')
             ->with('success', 'Empresa created successfully.');
     }

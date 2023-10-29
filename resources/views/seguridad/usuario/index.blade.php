@@ -52,7 +52,7 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Nombre</th>
+                                            <th>Usuario</th>
                                             <th>Nombre Completo</th>
                                             <th>Avatar</th>
                                             <th>Es jefe</th>

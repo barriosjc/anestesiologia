@@ -1,10 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.main')
 
-@section('template_title')
-    {{ $grupal->name ?? "{{ __('Show') Grupal" }}
-@endsection
-
-@section('content')
+@section('titulo', 'Cargos')
+@section('contenido')
     <section class="content container-fluid">
         <div class="row">
             <div class="col-md-12">

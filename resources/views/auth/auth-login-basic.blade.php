@@ -19,7 +19,8 @@
         </script>
     </head>
 
-    <body class="bg-primary"  style="background-image: url({{ asset(Storage::disk('empresas')->url(session('empresa')->login ?? '')) }}); background-size: cover; background-repeat: no-repeat;">
+    <body class="bg-primary"
+        style="background-image: url({{ asset(Storage::disk('empresas')->url(session('empresa')->login ?? '')) }}); background-size: cover; background-repeat: no-repeat;">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
@@ -28,16 +29,24 @@
                             <div class="col-lg-5">
                                 {{-- Basic login form --}}
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <h6 class="dropdown-header d-flex align-items-center">
-                                        {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
-                                        @if (!empty(session('empresa')))
-                                            <img class="dropdown-user-img"
-                                                src="{{ asset(Storage::disk('empresas')->url(session('empresa')->logo ?? '')) }}" />
-                                        @endif
-                                    </h6>
                                     <div class="card-header justify-content-center">
-                                        <h3 class="fw-light my-4">Login</h3>
+                                        <div class="row">
+                                            <div class="col-lg-6 text-start">
+                                                <h3 class="fw-light my-4">Login</h3>
+                                                <h5 class="fw-light my-4">¡Te damos la bienvenida!</h5>
+                                            </div>
+                                            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                                                @if (empty(session('empresa')))
+                                                <img class="dropdown-user-img"
+                                                        src="{{ asset(Storage::disk('empresas')->url('/web/imagenes/logo-clap-header.png')) }}" />
+                                                @else
+                                                    <img class="dropdown-user-img"
+                                                        src="{{ asset(Storage::disk('empresas')->url(session('empresa')->logo ?? '')) }}" />
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                     <div class="card-body">
                                         {{-- Login form --}}
                                         {{-- <form> --}}
@@ -71,16 +80,10 @@
                                                     </span>
                                                 @enderror
                                             </div>
-                                            {{-- Form Group (remember password checkbox) --}}
-                                            {{-- <div class="mb-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" id="rememberPasswordCheck" type="checkbox" value="" />
-                                                <label class="form-check-label" for="rememberPasswordCheck">Remember password</label>
-                                            </div>
-                                        </div> --}}
                                             {{-- Form Group (login box) --}}
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="{{route('login.restablecer')}}">Olvido su password?</a>
+                                                <a class="small" href="{{ route('login.restablecer') }}">Olvido su
+                                                    password?</a>
                                                 {{-- <a class="btn btn-primary" type="submit">Login</a> --}}
                                                 <button type="submit" class="btn btn-primary">
                                                     {{ __('Login') }}
@@ -112,7 +115,8 @@
                 </footer> --}}
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
+        </script>
         {{-- <script src="js/scripts.js"></script> --}}
     </body>
 

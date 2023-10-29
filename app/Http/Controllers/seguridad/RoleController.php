@@ -148,15 +148,17 @@ class RoleController extends Controller
                 ->join('model_has_roles as mr', 'mr.model_id', 'users.id')
                 ->where('mr.role_id', '=', $rol->id)
                 ->where('users.empresas_id', '=', session('empresa')->id)
-                ->simplepaginate(5);
+                ->get();
+                // ->simplepaginate(5);
 //        $user = $rol->users()->simplepaginate(5);
         $users = DB::table('users')                 
             ->select( 'id', 'name', 'last_name', 'email', 'es_jefe', 'area',
                         'email_verified_at', 'password', 'remember_token',
                         'foto', 'created_at', 'updated_at', 'deleted_at')
             ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
-            ->where('users.empresas_id', '=', session('empresa')->id)            
-            ->simplepaginate(5);
+            ->where('users.empresas_id', '=', session('empresa')->id)  
+            ->get();          
+            // ->simplepaginate(5);
         $esabm = false;
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);
         $padre = "roles";
@@ -181,13 +183,16 @@ class RoleController extends Controller
                 break;
         }
 
-        $permisos = $rol->permissions()->simplepaginate(5);
+        $permisos = $rol->permissions()
+                            ->get();
+        // ->simplepaginate(5);
         $permisoss = DB::table('permissions')                 
             ->select('id', 'name', 'guard_name', 
             'created_at', 'updated_at')
             ->whereNotIn('id', DB::table('role_has_permissions')->select('permission_id')->where('role_id', '=', $rolid))
             ->where('guard_name', session("empresa")->uri)
-            ->simplepaginate(5);
+            ->get();
+            // ->simplepaginate(5);
         $esabm = false;
 
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);

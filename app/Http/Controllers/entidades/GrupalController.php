@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\entidades;
 
 use App\Models\Grupal;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 /**
  * Class GrupalController
- * @package App\Http\Controllers
+ * @package App\Http\Controllers\entidades
  */
 class GrupalController extends Controller
 {
@@ -20,7 +21,7 @@ class GrupalController extends Controller
     {
         $grupals = Grupal::simplepaginate();
 
-        return view('grupal.index', compact('grupals'))
+        return view('entidades.grupal.index', compact('grupals'))
             ->with('i', (request()->input('page', 1) - 1) * $grupals->perPage());
     }
 
@@ -32,7 +33,7 @@ class GrupalController extends Controller
     public function create()
     {
         $grupal = new Grupal();
-        return view('grupal.create', compact('grupal'));
+        return view('entidades.grupal.create', compact('grupal'));
     }
 
     /**
@@ -61,7 +62,7 @@ class GrupalController extends Controller
     {
         $grupal = Grupal::find($id);
 
-        return view('grupal.show', compact('grupal'));
+        return view('entidades.grupal.show', compact('grupal'));
     }
 
     /**
@@ -74,7 +75,7 @@ class GrupalController extends Controller
     {
         $grupal = Grupal::find($id);
 
-        return view('grupal.edit', compact('grupal'));
+        return view('entidades.grupal.edit', compact('grupal'));
     }
 
     /**

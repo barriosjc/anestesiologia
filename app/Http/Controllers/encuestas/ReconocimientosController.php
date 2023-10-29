@@ -25,10 +25,10 @@ class ReconocimientosController extends Controller
         return view('encuestas.recibidos', compact('recibidos', 'titulo', 'tipo'));
     }
 
-    public function realizados($tipo){
+    public function realizados($tipo, $titulo = ''){
         $periodo_id = null;
         $realizados = [];
-        $titulo = null;
+        // $titulo = null;
         if(isset($_GET['periodo_id'])) {
             $sql = "select p.id, p.desde, p.hasta from periodos p 
                           WHERE p.id = " .$_GET['periodo_id'] ;
@@ -53,14 +53,15 @@ class ReconocimientosController extends Controller
             $desde = $data[0]->desde;
             $hasta = $data[0]->hasta;
         }  
-        
+       
+        // dd($periodo_id, $tipo);
         if ($periodo_id) {
             if ($tipo === 'user') {
                 $query = 'select * from v_reconocimientos_realizados where users_id = ' . Auth()->user()->id 
                             . " and fecha_ing >= '" . $desde ."' and fecha_ing <= '" . $hasta ."'"
-                            . " and periodos_id = " . $periodo_id;
+                            . " and periodos_id = " . $periodo_id 
+                            . " order by fecha_ingreso desc";
                 $realizados = DB::select($query);
-                $titulo = 'Reconocimientos realizados';
             } else {
                 $filtro = " empresas_id = " . session('empresa')->id;
                 $filtro = $filtro . " and fecha_ing >= '" . $desde ."' and fecha_ing <= '" . $hasta ."'";
@@ -69,7 +70,6 @@ class ReconocimientosController extends Controller
                             . ' order by fecha_ingreso desc';
 
                 $realizados = DB::select($query) ;
-                $titulo = 'Reconocimientos';
             }
             // dd($query);
             session(['query_reconocimientos' => $query]);  

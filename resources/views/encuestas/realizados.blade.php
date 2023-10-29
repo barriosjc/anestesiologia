@@ -20,9 +20,9 @@
         </div>
     </header>
         <div class="card mb-4">
-            <div class="card-header">{{$tipo == 'todos' ? 'Realizados' : 'Listado de reconocimientos'}}</div>
+            <div class="card-header">{{$titulo}}</div>
             <div class="card-body">
-                <form method="GET" action="{{ route('reconocimientos.realizados', 'todos') }}" role="form">
+                <form method="GET" action="{{ route('reconocimientos.realizados', ['todos','Listado de reconocimientos']) }}" role="form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="input-group input-group-sm">

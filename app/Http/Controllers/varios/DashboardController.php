@@ -127,6 +127,7 @@ class DashboardController extends Controller
                                     left outer join users u3 on u3.id = u2.jefe_user_id
                                     left outer join grupal g on g.id = u2.grupal_id
                                     INNER JOIN encuestas as en ON en.id = er.encuestas_id 
+                                                and en.deleted_at is null
                                     INNER JOIN empresas as e ON e.id = en.empresas_id 
                                             and e.id = " . session('empresa')->id .
                                  "  INNER JOIN (select sum(puntos) puntos, encuestas_resultados_id
@@ -135,7 +136,8 @@ class DashboardController extends Controller
                                     WHERE DATE_FORMAT('" . $desde . "', '%Y-%m-%d') <= DATE_FORMAT(er.created_at, '%Y-%m-%d')
                                             AND DATE_FORMAT('" . $hasta . "', '%Y-%m-%d') >= DATE_FORMAT(er.created_at, '%Y-%m-%d')
                                     AND en.habilitada = 1
-                                group by u2.email");
+                                group by u2.email
+                                order by puntos desc, cant desc");
 
         $cant_usu = user::where("empresas_id", session('empresa')->id)->count();
         $cant_recon = DB::select("SELECT COUNT(*) AS cantidad 
