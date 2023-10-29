@@ -54,7 +54,7 @@ class Periodo extends Model
     {
         $resu = '';
         if (!empty($value)) {
-            $resu = date('m/d/Y', strtotime($value));
+            $resu = date('d/m/Y', strtotime($value));
         }
 
         return $resu;
