@@ -21,14 +21,14 @@ class IngresoInicialMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if (session()->has('empresa')) {
-            $empresaId = session('empresa')->id;
-            if (empty($empresaId)) {
-                return redirect()->route('empresa.select');
-            }
-        }else{    
-            return redirect()->route('empresa.select');
-        }
+        // if (session()->has('empresa')) {
+        //     $empresaId = session('empresa')->id;
+        //     if (empty($empresaId)) {
+        //         return redirect()->route('empresa.select');
+        //     }
+        // }else{    
+        //     return redirect()->route('empresa.select');
+        // }
 
         if (Auth()->user()->cambio_password === 1) {
             return redirect()->route('profile.password')

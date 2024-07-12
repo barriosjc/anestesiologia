@@ -7,11 +7,9 @@
         {{-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px--}}
         <h6 class="dropdown-header d-flex align-items-center">
                 {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
-                @if (session('empresa') !== null && isset(session('empresa')->logo))
-                    <img style="height:51px;width:110px" class="dropdown-user-img" 
-                        src="{{ asset(Storage::disk("empresas")->url(session('empresa')->logo)) }}"  /> 
-                @endif        
-            </h6>
+            <img style="height:51px;width:110px" class="dropdown-user-img" 
+                src="{{ asset("img\logo_grande.jpg") }}"  /> 
+        </h6>
         {{-- Navbar Search Input--}}
         {{-- * * Note: * * Visible only on and above the lg breakpoint--}}
            
@@ -20,7 +18,7 @@
             {{-- Documentation Dropdown--}}
             <li class="nav-item dropdown no-caret d-none d-md-block me-3">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownDocs" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="fw-500">Documentación</div>
+                    <div class="fw-500">Ayuda</div>
                     <i class="fas fa-chevron-right dropdown-arrow"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end py-0 me-sm-n15 me-lg-0 o-hidden animated--fade-in-up" aria-labelledby="navbarDropdownDocs">

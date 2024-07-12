@@ -3,18 +3,6 @@
     href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
-<div class="mb-3">
-    <label class="small mb-1">Empresa</label>
-    <select name="empresas_id" class="form-control" id="empresas_id">
-        {{-- <option value=""> --- Select ---</option> --}}
-        @foreach ($empresas as $data)
-            <option value="{{ $data->id }}"
-                {{ old('empresas_id', $user->empresas_id) == $data->id ? 'selected' : '' }}>
-                {{ $data->razon_social }}</option>
-        @endforeach
-    </select>
-</div>
-<!-- Form Row-->
 <div class="row gx-3 mb-3">
     <div class="col-md-6">
         <label class="small mb-1" for="last_name">Nombre y apellido</label>
@@ -27,24 +15,6 @@
             value="{{ old('name', $user->name) }}" />
     </div>
 </div>
-<div class="row gx-3 mb-3">
-    <div class="col-sm-6">
-        <label for="jefe_user_id" class="small mb-1">Jefe</label>
-        <select name="jefe_user_id" class="form-control" id="jefe_user_id">
-            {{-- <option value=""> --- Select ---</option>
-                     @foreach ($jefes as $data)
-                        <option value="{{ $data->id }}"
-                            {{ old('jefe_user_id', $user->jefe_user_id) == $data->id ? 'selected' : '' }}>
-                            {{ $data->last_name }}</option>
-                    @endforeach --}}
-        </select>
-    </div>
-    <div class="col-md-6">
-        <label class="small mb-1" for="cargo">Cargo</label>
-        <input class="form-control" id="cargo" name="cargo" type="text" placeholder="cargo del empleado"
-            value="{{ old('cargo', $user->cargo) }}" />
-    </div>
-</div>
 <div class="mb-3">
     <label class="small mb-1" for="email">Email </label>
     <input class="form-control" id="email" name="email" type="email" placeholder="Ingrese su email"
@@ -53,33 +23,15 @@
 <!-- Form Row-->
 <div class="row gx-3 mb-3">
     <!-- Form Group (phone number)-->
-    <div class="col-md-5">
-        <label class="small mb-1" for="telefono">Telefono</label>
-        <input class="form-control" id="telefono" name="telefono" type="tel" placeholder="Ingrese nro de telefono"
-            value="{{ old('telefono', $user->telefono) }}" />
-    </div>
-    <div class="col-md-4">
-        <label class="small mb-1" for="telefono">Area</label>
-        <input class="form-control" id="area" name="area" type="text" placeholder="Ingrese area en el cual trabaja"
-            value="{{ old('area', $user->area) }}" />
-    </div>
+
     <div class="col-md-3">
-        <label for="es_jefe" class="small mb-1">Es jefe</label>
+        <label for="activo" class="small mb-1">Activo</label>
         <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="es_jefe" name="es_jefe"
-                {{ $user->es_jefe > 0 ? 'checked' : '' }}>
-            <label class="form-check-label" for="es_jefe">
+            <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo"
+                {{ $user->activo > 0 ? 'checked' : '' }}>
+            <label class="form-check-label" for="activo">
                 (No/Si)</label>
         </div>
-    </div>
-</div>
-<!-- Form Row-->
-<div class="row gx-3 mb-3">
-    <!-- Form Group (phone number)-->
-    <div class="col-md-12">
-        <label class="small mb-1" for="observaciones">Presentación</label>
-        <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese presentación"
-            rows="3">{{ old('observaciones', $user->observaciones) }}</textarea>
     </div>
 </div>
 
@@ -92,6 +44,16 @@
         @endforeach --}}
     </select>
 </div>
+{{-- <div class="mb-3">
+    <label class="small mb-1">profesionales</label>
+    <select name="profesional_id[]" class="form-control" id="profesional_id" multiple>
+        @foreach ($perfiles as $data)
+            <option value="{{ $data->id }}" {{ in_array($data->id, $perfiles_user) ? 'selected' : '' }}>
+                {{ $data->name }}</option>
+        @endforeach 
+    </select>
+</div> --}}
+
 <div class="col-12">
     <!-- Save changes button-->
     <button class="btn btn-primary" type="submit">Guardar</button>
@@ -99,78 +61,32 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var grupalSelect = $('#jefe_user_id');
-        var empresasSelect = $('#empresas_id');
         var rolesSelect = $('#perfil_id');
+        rolesSelect.empty();
 
-        if (empresasSelect.val() > 0) {
-            empresasId = empresasSelect.val();
-            cargaJefes(empresasId);
-            cargaRoles(empresasId);
-        }
-
-        function cargaJefes(empresasId) {
-
-            grupalSelect.empty();
+        const lroles = '{{$perfiles_user}}';
+        $.ajax({
+            url: "{{ route('roles.json') }}",
+            type: 'GET',
+            data: null,
+            dataType: 'json',
+            success: function(response) {
+                $.each(response.data, function(key, value) {
+                    rolesSelect.append("<option value='" + value.id + "'" +
+                        (lroles.includes(value.id) ? 'selected' : '') +
+                        ">" + value.name + "</option>");
+                });
+            },
+            error: function(response) {
+                alert(response.messagge);
+            }
+        });
         
-            // var grupalEnBD = null;
-            var jefeId = {{ $user->jefe_user_id ? $user->jefe_user_id : 0 }};
-            if (empresasId) {
-                $.ajax({
-                    url: "{{ route('empresas.usuarios') }}",
-                    type: 'GET',
-                    data: {
-                        empresas_id: empresasId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        grupalSelect.append("<option value=''> --- Select ---</option>");
-                        $.each(response.data, function(key, value) {
-                            grupalSelect.append("<option value='" + value.id + "'" +
-                                (jefeId !== value.id ? '' : 'selected') +
-                                ">" + value.last_name + "</option>");
-                        });
-                    },
-                    error: function(response) {
-                        alert(response.messagge);
-                    }
-                });
-            }
-        }
-
-        function cargaRoles(empresasId) {
-
-            rolesSelect.empty();
-            // var grupalEnBD = null;
-            //console.log(empresasId);
-            const lroles = '{{$perfiles_user}}';
-
-            if (empresasId) {
-                $.ajax({
-                    url: "{{ route('empresas.roles') }}",
-                    type: 'GET',
-                    data: {
-                        empresas_id: empresasId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        $.each(response.data, function(key, value) {
-                            rolesSelect.append("<option value='" + value.id + "'" +
-                                (lroles.includes(value.id) ? 'selected' : '') +
-                                ">" + value.name + "</option>");
-                        });
-                    },
-                    error: function(response) {
-                        alert(response.messagge);
-                    }
-                });
-            }
-        }
-
         $("a").removeClass("active  ms-0");
         $("#perfil").addClass("active  ms-0");
     });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 <script>
     $(document).ready(function() {

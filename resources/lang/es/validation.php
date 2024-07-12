@@ -182,5 +182,7 @@ return [
         'title'                 => 'título',
         'username'              => 'usuario',
         'year'                  => 'año',
+        'fec_nacimiento'        => 'fecha de nacimiento',
+        'fec_prestacion'        => 'fecha de prestacion',
     ],
 ];

@@ -55,9 +55,8 @@
                                             <th>Usuario</th>
                                             <th>Nombre Completo</th>
                                             <th>Avatar</th>
-                                            <th>Es jefe</th>
+                                            <th>Activo</th>
                                             <th>Mail</th>
-                                            <th>Area</th>
                                             <th>
                                                 <div class="float-right">
                                                     Valores
@@ -73,7 +72,7 @@
                                                 <td>{{ $item->last_name }}</td>
                                                 <td><img src="{{ Storage::disk('usuarios')->url($item->foto) }}"
                                                         class="rounded-circle" width="45px" alt=""> </td>
-                                                @if ($item->es_jefe == 1)
+                                                @if ($item->activo == 1)
                                                     <td>
                                                         <div class="badge bg-primary text-white rounded-pill-yes-no">
                                                             SI </div>
@@ -85,7 +84,6 @@
                                                     </td>
                                                 @endif
                                                 <td>{{ $item->email }}</td>
-                                                <td>{{ $item->area }}</td>
                                                 @if ($esabm)
                                                     <td>
                                                         <div class="float-right">

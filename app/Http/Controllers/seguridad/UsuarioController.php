@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\user;
 use App\Models\Role;
 use App\Models\Grupal;
-// use App\Models\Permission;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
-use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
 use App\Exports\UsuariosExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -32,17 +30,13 @@ class UsuarioController extends Controller
         $perPage = 5;
 
         if (!empty($keyword)) {
-            $user = User::where('empresas_id', session('empresa')->id)
-                ->where('name', 'LIKE', "%$keyword%")
+            $user = User::where('name', 'LIKE', "%$keyword%")
                 ->orWhere('last_name', 'LIKE', "%$keyword%")
-                ->orWhere('email_verified_at', 'LIKE', "%$keyword%")
-                ->orWhere('area', 'LIKE', "%$keyword%")
                 ->orWhere('email', 'LIKE', "%$keyword%")
                 ->orderby("last_name")
                 ->latest()->simplepaginate($perPage);
         } else {
-            $user = User::where('empresas_id', session('empresa')->id)
-                ->simplepaginate($perPage);
+            $user = User::simplepaginate($perPage);
         }
 
         $esabm = true;
@@ -58,17 +52,11 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-
-        if (session()->has('empresa')) {
-            $empresas = empresa::where("id", session('empresa')->id)->get();
-        } else {
-            $empresas = empresa::all();
-        }
         $user = new user();
-        $perfiles = role::v_roles_empresas(session('empresa')->id)->get();
+        $perfiles = role::get();
         $perfiles_user = '';
 
-        return view('seguridad.usuario.create')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
+        return view('seguridad.usuario.create')->with(compact('user', 'perfiles', 'perfiles_user'));
     }
 
     /**
@@ -84,16 +72,9 @@ class UsuarioController extends Controller
             'name' => 'required|string|max:50',
             'last_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
-            'empresas_id' => 'required',
-            'cargo' => 'nullable|string|max:45',
-            'observaciones' => 'nullable|max:1000',
-            'jefe_user_id' => 'nullable',
-            'es_jefe' => 'nullable',
-            'telefono' => 'nullable',
-            'area' => 'nullable',
         ]);
 
-        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+        $validated['activo'] = isset($validated['activo']) ? 1 : 0;
         $validated['password'] = Hash::make('12345678');
         $validated['cambio_password'] = 1;
         $validated['foto'] = 'fotovacia.jpeg';
@@ -119,7 +100,7 @@ class UsuarioController extends Controller
             }
         }
         
-        $correo = new registerMailable($user, session('empresa'));
+        $correo = new registerMailable($user);
         Mail::send([], [], function ($message)  use ($request, $correo) {
             $message->to($request->email, $request->last_name)
                 ->subject('Registro de usuario para ingreso al portal de reconocimientos !')
@@ -156,8 +137,7 @@ class UsuarioController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $empresas = empresa::where("id", session('empresa')->id)->get();
-        $perfiles = role::v_roles_empresas(session('empresa')->id)->get();
+        $perfiles = role::v_roles_empresas()->get();
 
         // $perfiles_user = $user->roles;
         $perfiles_user = '';
@@ -165,7 +145,7 @@ class UsuarioController extends Controller
             $perfiles_user .= $value->id . ",";
         }
 
-        return view('seguridad.usuario.edit')->with(compact('empresas', 'user', 'perfiles', 'perfiles_user'));
+        return view('seguridad.usuario.edit')->with(compact('user', 'perfiles', 'perfiles_user'));
     }
 
     /**
@@ -182,15 +162,8 @@ class UsuarioController extends Controller
             'name' => 'required|string|max:50',
             'last_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
-            'empresas_id' => 'required',
-            'cargo' => 'nullable|string|max:45',
-            'observaciones' => 'nullable|max:1000',
-            'jefe_user_id' => 'nullable',
-            'es_jefe' => 'nullable',
-            'telefono' => 'nullable',
-            'area' => 'nullable'
         ]);
-        $validated['es_jefe'] = isset($validated['es_jefe']) ? 1 : 0;
+        $validated['activo'] = isset($validated['activo']) ? 1 : 0;
         $validated['password'] = Hash::make('12345678');
         $validated['cambio_password'] = 1;
 
@@ -253,7 +226,6 @@ class UsuarioController extends Controller
         }
 
         $roles = $user->Roles()
-                        ->where('guard_name', session('empresa')->uri)
                         ->get();
         //->simplepaginate(5);
         $roless = DB::table('roles')
@@ -265,7 +237,6 @@ class UsuarioController extends Controller
                 'updated_at'
             )
             ->whereNotIn('id', DB::table('model_has_roles')->select('role_id')->where('model_id', '=', $usuid))
-            ->where('guard_name', session('empresa')->uri)
             ->get();
             //->simplepaginate(5);
         $esabm = false;
@@ -293,7 +264,6 @@ class UsuarioController extends Controller
         }
 
         $permisos = $user->permissions()
-                            ->where('guard_name', session('empresa')->uri)
                             ->get();
         //->simplepaginate(5);
         $permisoss = DB::table('permissions')
@@ -305,7 +275,6 @@ class UsuarioController extends Controller
                 'updated_at'
             )
             ->whereNotIn('id', DB::table('model_has_permissions')->select('permission_id')->where('model_id', '=', $usuid))
-            ->where('guard_name', session('empresa')->uri)
             ->get();
             // ->simplepaginate(5);
         $esabm = false;
@@ -354,7 +323,6 @@ class UsuarioController extends Controller
                     $user = user::where('id',  $row[0])->first();
                     if (empty($user)) {
                         $user = new user;
-                        $user->empresas_id = session('empresa')->id;
                         $user->password =  Hash::make('12345678');
                     }else {
                         DB::delete('delete from model_has_roles
@@ -364,18 +332,11 @@ class UsuarioController extends Controller
                     $user->last_name = $row[1];
                     $user->name = $row[2];
                     $user->email = $row[9];
-                    $user->grupal_id = $grupal_id;
-                    $user->jefe_user_id = $jefe_user_id;
-                    $user->telefono = $row[10];
-                    $user->es_jefe = empty($row[11]) ? 0 : 1;
                     $user->foto = 'fotovacia.jpeg';
-                    $user->area = $row[4];
-                    $user->cargo = $row[3]; 
                     $user->save();
                     
                     // model_has_role
-                    $role = Role::where('guard_name', session('empresa')->uri)
-                                    ->where('name', $row[14])
+                    $role = Role::where('name', $row[14])
                                     ->first();
                     $user->assignRole($role);
                     //$user->assignRole();

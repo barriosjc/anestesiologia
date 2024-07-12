@@ -57,21 +57,21 @@ class LoginController extends Controller
     protected function attemptLogin(Request $request)
     {
         $credentials = $this->credentials($request);
-        if (session()->has('empresa')) {
-            $credentials['empresas_id'] = session('empresa')->id;
-        }
+        // if (session()->has('empresa')) {
+        //     $credentials['empresas_id'] = session('empresa')->id;
+        // }
         // Modifica la validación para verificar la pertenencia del usuario a una empresa
         if (Auth::attempt($credentials)) {
-            $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
-            if ($empresa) {
-                session(['empresa' => $empresa]);    
-                Auth::shouldUse($empresa->uri);          
-                //dd(Auth::getDefaultDriver());
-            }else {
-                $empresa = new Empresa;
-                $empresa->uri = 'web';
-                session(['empresa' => $empresa]);
-            }
+            // $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
+            // if ($empresa) {
+            //     session(['empresa' => $empresa]);    
+            //     Auth::shouldUse($empresa->uri);          
+            //     //dd(Auth::getDefaultDriver());
+            // }else {
+            //     $empresa = new Empresa;
+            //     $empresa->uri = 'web';
+            //     session(['empresa' => $empresa]);
+            // }
 
             return true;
         }

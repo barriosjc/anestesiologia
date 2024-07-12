@@ -53,17 +53,6 @@
                     <form method="POST" action="{{ route('profile.save') }}" accept-charset="UTF-8">
                         @csrf
                         <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
-                        <div class="mb-3">
-                            <label class="small mb-1">Empresa</label>
-                            <select name="empresas_id" class="form-control" id="empresas_id" {{$readonly ? 'disabled' : ''}}>
-                                <option value=""> --- Select ---</option>
-                                @foreach ($empresas as $data)
-                                    <option value="{{ $data->id }}"
-                                        {{ old('empresas_id', $user->empresas_id) == $data->id ? 'selected' : '' }}>
-                                        {{ $data->razon_social }}</option>
-                                @endforeach
-                            </select>
-                        </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
@@ -78,24 +67,6 @@
                                     placeholder="Usuario" value="{{ old('name', $user->name) }}" />
                             </div>
                         </div>
-                        <div class="row gx-3 mb-3">
-                            <div class="col-sm-6">
-                                <label for="jefe_user_id" class="small mb-1">Jefe</label>
-                                <select name="jefe_user_id" class="form-control" id="jefe_user_id" {{$readonly ? 'disabled' : ''}}>
-                                    <option value=""> --- Select ---</option>
-                                    @foreach ($jefes as $data)
-                                        <option value="{{ $data->id }}"
-                                            {{ old('jefe_user_id', $user->jefe_user_id) == $data->id ? 'selected' : '' }}>
-                                            {{ $data->last_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="cargo">Cargo</label>
-                                <input class="form-control" id="cargo" name="cargo" type="text"
-                                    placeholder="cargo del empleado" value="{{ old('cargo', $user->cargo) }}" />
-                            </div>
-                        </div>
                         <div class="mb-3">
                             <label class="small mb-1" for="email">Email </label>
                             <input class="form-control" id="email" name="email" type="email"
@@ -103,36 +74,14 @@
                         </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-5">
-                                <label class="small mb-1" for="telefono">Telefono</label>
-                                <input class="form-control" id="telefono" name="telefono" type="tel"
-                                    placeholder="Ingrese nro de telefono"
-                                    value="{{ old('telefono', $user->telefono) }}" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="small mb-1" for="area">Area</label>
-                                <input class="form-control" id="area" name="area" type="text"
-                                    placeholder="Ingrese nro de area"
-                                    value="{{ old('area', $user->area) }}" />
-                            </div>
                             <div class="col-md-3">
-                                <label for="es_jefe" class="small mb-1">Es jefe</label>
+                                <label for="es_jefe" class="small mb-1">Activo</label>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="es_jefe"
-                                        name="es_jefe" {{ $user->es_jefe > 0 ? 'checked' : '' }} {{$readonly ? 'disabled' : ''}}>
-                                    <label class="form-check-label" for="es_jefe">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="activo"
+                                        name="activo" {{ $user->activo > 0 ? 'checked' : '' }} {{$readonly ? 'disabled' : ''}}>
+                                    <label class="form-check-label" for="activo">
                                         (No/Si)</label>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-12">
-                                <label class="small mb-1" for="observaciones">Presentación</label>
-                                <textarea class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese su presentación"
-                                    rows="3">{{ old('observaciones', $user->observaciones) }}</textarea>
                             </div>
                         </div>
                         <!-- Save changes button-->

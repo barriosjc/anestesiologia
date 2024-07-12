@@ -16,11 +16,10 @@ class Role extends SpatieRole
         return $resu;
     }
 
-    public static function v_roles_empresas ($empresas_id) {
+    public static function v_roles () {
 
         $resu = Role::query()
         ->select(['roles.id', 'roles.name', 'roles.guard_name'])
-        ->where('guard_name', session('empresa')->uri)
         ->orderby('roles.name', 'desc');
   
         return $resu;

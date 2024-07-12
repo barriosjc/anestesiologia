@@ -60,10 +60,10 @@ return [
             'visibility' => 'public',
         ],
         
-        'empresas' => [
+        'partes' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/empresas'),
-            'url' => '/storage/empresas/',
+            'root' => storage_path('app/public/partes'),
+            'url' => '/storage/partes/',
             'visibility' => 'public',
         ],
     ],

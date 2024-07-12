@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>{{ config('app.name', 'Clap2.0') }}</title>
+    <title>{{ config('app.name', 'SAADA') }}</title>
     <link href="{{asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
     <link href="{{asset('css/custom.css') }}" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
@@ -15,6 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"> </script>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     @livewireStyles
 </head>
 
@@ -25,7 +27,8 @@
         <div id="layoutSidenav_nav">
             @include('layouts.main_secciones.sidebar')
         </div>
-        <div id="layoutSidenav_content">
+        <div id="layoutSidenav_content" class="mt-3">
+            @include('utiles.alerts')
             @include('layouts.main_secciones.contenido')
 
             @include('layouts.main_secciones.footer')
@@ -39,6 +42,7 @@
     <script src="{{asset('libs/sbadmin/js/datatables/datatables-simple-demo.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
     crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 @livewireScripts
 @stack('scriptscreateenc')

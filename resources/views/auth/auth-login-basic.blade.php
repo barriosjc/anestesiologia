@@ -36,13 +36,8 @@
                                                 <h5 class="fw-light my-4">¡Te damos la bienvenida!</h5>
                                             </div>
                                             <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                                                @if (empty(session('empresa')))
-                                                <img class="dropdown-user-img"
-                                                        src="{{ asset(Storage::disk('empresas')->url('/web/imagenes/logo-clap-header.png')) }}" />
-                                                @else
-                                                    <img class="dropdown-user-img"
-                                                        src="{{ asset(Storage::disk('empresas')->url(session('empresa')->logo ?? '')) }}" />
-                                                @endif
+                                                    <img class="dropdown-user-img" style="height:51px;width:110px"
+                                                        src="{{  asset("img\logo_grande.jpg") }}" />
                                             </div>
                                         </div>
                                     </div>

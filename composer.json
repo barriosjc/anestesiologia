@@ -16,7 +16,7 @@
         "livewire/livewire": "*",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.28",
-        "spatie/laravel-permission": "^5.10"
+        "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

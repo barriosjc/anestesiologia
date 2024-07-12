@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-use App\Http\Controllers\entidades\EmpresaController;
 use App\Http\Controllers\entidades\GrupalController;
 use App\Http\Controllers\GrupalUserController;
-use App\Http\Controllers\JerarquiumController;
+use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\PeriodoController;
+use App\Http\Controllers\entidades\ProfesionalController;
 use App\Http\Controllers\entidades\OpcionController;
 use App\Http\Controllers\encuestas\EncuestaController;
 use App\Http\Controllers\encuestas\RespuestaController;
@@ -31,6 +31,7 @@ use App\Http\Controllers\encuestas\ReconocimientosController;
 use App\Http\Controllers\varios\AsignarReconocimientosController;
 use App\Http\Controllers\varios\DashboardController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\entidades\PacienteController;
 
 Route::get('/tables', function () {
 
@@ -45,38 +46,37 @@ Route::get('/guard', function () {
 
 });
 
-Route::get('portal/{empresa}', [EmpresaController::class, 'entorno'])->name('entorno');
 Route::get('login/restablecer', [ResetPasswordController::class, 'restablecer'])->name('login.restablecer');
 Route::post('login/email', [ResetPasswordController::class, 'email'])->name('login.email');
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');
+    // Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');
     Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('pasword/profile', [ProfileController::class, 'save_password'])->name('profile.password.save');
-    
-    Route::group(['middleware' => ['role:super-admin']], function () {
-        Route::get('empresa/select', [EmpresaController::class, 'select'])->name('empresa.select');
-        Route::post('empresa/set', [EmpresaController::class, 'set'])->name('empresa.set');
-    });
-
-    Route::group(['middleware' => ['role:super-admin']], function () {
-        Route::resources(['empresas' => EmpresaController::class,]);
-    });
 
     Route::middleware('IngresoInicialMiddleware')->group(function () {
         $guard = 'web';
-        if (session('empresa') != null) {
-            $guard = session('empresa')->uri;
-        }
 
         Route::get('/', function () {
             return view('layouts.main');
         })->name('main');
 
-        Route::get("create_wiz", function () {
-            return view('encuestas.create_wiz');
-        });
+
+        Route::get('partes', [ParteController::class, 'index'])->name('partes_cab.index');
+        Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
+        Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
+        Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');
+        Route::get('partes/edit/{id}', [ParteController::class, 'edit'])->name('partes_cab.edit');
+        
+        Route::get('partes/det/create/{id}', [ParteController::class, 'create_det'])->name('partes_det.create');
+        Route::post('partes/det/store', [ParteController::class, 'store_det'])->name('partes_det.store');
+        Route::delete('partes/det/delete/{id}', [ParteController::class, 'destroy_det'])->name('partes_det.destroy');
+        Route::get('partes/det/edit/{id}', [ParteController::class, 'edit_det'])->name('partes_det.edit');
+        Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
+        
+        Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
+
 
         Route::get('reconocimientos/{id}/realizados/{titulo}', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
         Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
@@ -94,7 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
             [
                 'grupals' => GrupalController::class,
                 'grupalusers' => grupalUserController::class,
-                'jerarquias' => JerarquiumController::class,
+                'profesionales' => ProfesionalController::class,
                 'periodos' => PeriodoController::class,
                 'opcion' => OpcionController::class,
             ]
@@ -108,7 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
             // if (Auth()->user()->hasPermissionTo('ABM Usuarios', $guard)) {
             //     dd("valido ok", $guard);
             // }
-            Route::get('empresas/roles/combos', [RoleController::class, 'roles_empresas'])->name('empresas.roles');
+            Route::get('roles/combos/json', [RoleController::class, 'roles_json'])->name('roles.json');
             Route::resources([
                 'usuario' => UsuarioController::class,
             ]);

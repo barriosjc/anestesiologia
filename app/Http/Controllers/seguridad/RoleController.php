@@ -203,16 +203,16 @@ class RoleController extends Controller
  
       }
 
-    public function roles_empresas(Request $request)
+    public function roles_json(Request $request)
     {
         try {
-            $empresa_id = $request->input('empresas_id');
+
             //id de emp no se usa pero por ahora no lo quito
-            $roles = Role::v_roles_empresas($empresa_id)->get();
+            $roles = Role::get();
             $response = ['data' => $roles];
 
         } catch (\Exception $exception) {
-            return response()->json(['message' => 'hay un error al intentar traer los usuarios jefes'], 500);
+            return response()->json(['message' => 'hay un error al intentar traer los Roles'], 500);
         }
         return response()->json($response);
     }
