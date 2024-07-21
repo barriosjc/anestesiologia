@@ -19,8 +19,8 @@
         </script>
     </head>
 
-    <body class="bg-primary"
-        style="background-image: url({{ asset(Storage::disk('empresas')->url(session('empresa')->login ?? '')) }}); background-size: cover; background-repeat: no-repeat;">
+    <body class="bg-primary">
+        {{-- style="background-image: url({{ asset(Storage::disk('empresas')->url(session('empresa')->login ?? '')) }}); background-size: cover; background-repeat: no-repeat;"> --}}
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>

@@ -11,7 +11,7 @@
         <div class="nav accordion" id="accordionSidenav">
             @role('super-admin')
                 <div class="sidenav-menu-heading">AUDITORIA</div>
-                <a class="nav-link" href="{{ route('usuario.index') }}">
+                <a class="nav-link" href="{{ route('consumos.partes.filtrar') }}">
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     Auditoria carga
                 </a>
@@ -41,8 +41,11 @@
                             <a class="nav-link" href="{{ route('usuario.index') }}">Gerenciadoras</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('example', $guard) || $super)
-                        <a class="nav-link" href="{{ route('usuario.index') }}">Vademecums</a>
-                    @endif
+                            <a class="nav-link" href="{{ route('usuario.index') }}">Nomenclador</a>
+                        @endif
+                        @if (Auth()->user()->hasPermissionTo('example', $guard) || $super)
+                            <a class="nav-link" href="{{ route('nomenclador.valores.listado') }}">Valorización</a>
+                        @endif
                     </nav>
                 </div>
             @endrole
@@ -61,7 +64,7 @@
                 <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                         @if (Auth()->user()->hasPermissionTo('example', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Nueva</a>
+                            <a class="nav-link" href="{{ route('partes_cab.create') }}">Nueva</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('example', $guard) || $super)
                             <a class="nav-link" href="{{ route('partes_cab.index') }}">Listados</a>

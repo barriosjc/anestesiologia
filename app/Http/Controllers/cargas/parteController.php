@@ -17,10 +17,11 @@ class parteController extends Controller
 {
     public function index()
     {
-        $partes = parte_cab::v_parte_cab()->paginate(10);
+        // $partes = parte_cab::v_parte_cab()->paginate(5);
+        $partes = parte_cab::v_parte_cab()->get();
 
-        return view('cargas.cab.parte', compact('partes'))
-            ->with('i', (request()->input('page', 1) - 1) * $partes->perPage());
+        return view('cargas.cab.parte', compact('partes'));
+            // ->with('i', (request()->input('page', 1) - 1) * $partes->perPage());
     }
 
     public function create() 
@@ -131,8 +132,8 @@ class parteController extends Controller
     public function download($id) 
     {
         $parte = Parte_det::find($id);
-        $rutaArchivo = storage_path('app/public/partes/') . $parte->id ."/". $parte->path;
-        if (!Storage::disk('partes')->exists($parte->id ."/". $parte->path)) {
+        $rutaArchivo = storage_path('app/public/partes/') . $parte->parte_cab_id ."/". $parte->path;
+        if (!Storage::disk('partes')->exists($parte->parte_cab_id ."/". $parte->path)) {
             abort(404, 'El archivo no existe.');
         }
 
@@ -141,5 +142,14 @@ class parteController extends Controller
 
         // Retornar una respuesta de descarga
         return response()->download($rutaArchivo, $nombreOriginal);
+    }
+    
+    public function det_destroy($id)
+    {
+        $parte = Parte_det::find($id);
+        $parte->delete();
+
+        return redirect()->route('partes_det.create')
+        ->with('success', 'Detalle de Parte borrado correctamente.');
     }    
 }

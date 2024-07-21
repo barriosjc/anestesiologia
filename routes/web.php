@@ -15,23 +15,16 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-use App\Http\Controllers\entidades\GrupalController;
-use App\Http\Controllers\GrupalUserController;
 use App\Http\Controllers\cargas\ParteController;
-use App\Http\Controllers\PeriodoController;
-use App\Http\Controllers\entidades\ProfesionalController;
-use App\Http\Controllers\entidades\OpcionController;
-use App\Http\Controllers\encuestas\EncuestaController;
-use App\Http\Controllers\encuestas\RespuestaController;
-use App\Http\Controllers\seguridad\PermisosController;
-use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\RoleController;
+use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\UsuarioController;
-use App\Http\Controllers\encuestas\ReconocimientosController;
-use App\Http\Controllers\varios\AsignarReconocimientosController;
-use App\Http\Controllers\varios\DashboardController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\entidades\PacienteController;
+use App\Http\Controllers\produccion\ConsumoController;
+use App\Http\Controllers\seguridad\PermisosController;
+use App\Http\Controllers\entidades\NomencladorController;
+use App\Http\Controllers\entidades\ProfesionalController;
 
 Route::get('/tables', function () {
 
@@ -77,26 +70,18 @@ Route::group(['middleware' => 'auth'], function () {
         
         Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
 
+        Route::get('nomenclador/valores', [NomencladorController::class, 'valores'])->name('nomenclador.valores.listado');
+        Route::get('nomenclador/filtrar', [NomencladorController::class, 'valores_filtrar'])->name('nomenclador.valores.filtrar');
+        Route::post('nomeclador/valores/nuevos', [NomencladorController::class, 'valores_nuevos'])->name('nomenclador.valores.nuevo');
+        Route::post('nomeclador/valor/guardar', [NomencladorController::class, 'valor_guardar'])->name('nomenclador.valor.guardar');
+        Route::delete('nomenclador/valores/borrar/{id}', [NomencladorController::class, 'valores_borrar'])->name('nomenclador.valores.borrar');
 
-        Route::get('reconocimientos/{id}/realizados/{titulo}', [ReconocimientosController::class, 'realizados'])->name('reconocimientos.realizados');
-        Route::get('reconocimientos/{id}/recibidos', [ReconocimientosController::class, 'recibidos'])->name('reconocimientos.recibidos');
-        Route::get('reconocimientos/{id}/exportar', [ReconocimientosController::class, 'export'])->name('reconocimientos.exportar');
-        
-
-        // Route::group(['middleware' => ['can:Dashboard|guard_name:'.$uri]], function () {
-        //Route::group(['middleware' => ['can:Dashboard']], function () {
-            Route::get('dashboard/show', [DashboardController::class, 'show'])->name('dashboard.show');
-            Route::get('dashboard/cambio', [DashboardController::class, 'cambio'])->name('dashboard.cambio');
-
-            // });
+        // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
+        Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');
 
         Route::resources(
             [
-                'grupals' => GrupalController::class,
-                'grupalusers' => grupalUserController::class,
                 'profesionales' => ProfesionalController::class,
-                'periodos' => PeriodoController::class,
-                'opcion' => OpcionController::class,
             ]
         );
         //perfil de usuario
@@ -112,9 +97,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resources([
                 'usuario' => UsuarioController::class,
             ]);
-            Route::get('usuarios/importar/ver', [UsuarioController::class, 'importar'])->name('usuarios.importar.ver');
-            Route::get('usuarios/exportar', [UsuarioController::class, 'exportar'])->name('usuarios.exportar');
-            Route::post('usuarios/importar/subir', [UsuarioController::class, 'subir_datos'])->name('usuarios.importar.subir');
         // });
         //Route::group(['middleware' => ['can:seguridad']], function () {
             Route::resources([
@@ -137,18 +119,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
         //});
 
-            Route::get('respuesta', [RespuestaController::class, 'index'])->name('respuesta');
-            Route::post('respuesta/store', [respuestaController::class, 'store'])->name('respuesta.store');
-
-            Route::get('encuesta/nueva', [EncuestaController::class, 'create'])->name('encuesta.create');
-            Route::post('encuesta/store', [EncuestaController::class, 'create_store'])->name('encuesta.store');
-            Route::post('periodo/store', [EncuestaController::class, 'periodo_store'])->name('periodo.store');
-            Route::post('opciones/store', [EncuestaController::class, 'opcion_store'])->name('opciones.store');
-
-            Route::get('reconocimientos', [AsignarReconocimientosController::class, 'index'])->name('reconocimientos.index');
-            Route::post('reconocimientos', [AsignarReconocimientosController::class, 'save'])->name('reconocimientos.save');
-            Route::delete('reconocimientos/delete/{id}',  [AsignarReconocimientosController::class, 'destroy'])->name('reconocimientos.delete');
-            Route::get('reconocimientos/show', [AsignarReconocimientosController::class, 'ver'])->name('reconocimientos.show');
 
 
     });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Valores;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -32,5 +33,10 @@ class cobertura extends Model
      * @var array
      */
     protected $fillable = ['nombre', 'cuit', 'telefono', 'contacto'];
+    
+    public function valores()
+    {
+        return $this->hasMany(Valores::class);
+    }
     
 }

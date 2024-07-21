@@ -5,3 +5,22 @@
     text-decoration: none;
     cursor: not-allowed;
   }
+
+  .table-sm td, 
+    .table-sm th {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+  
+  .td-actions {
+    width: 10%;
+  }
+
+  .btn-small {
+    padding: 5px 5px 5px 5px; /* Ajusta el padding para hacerlo más pequeño */
+    font-size: 12px; /* Ajusta el tamaño de la fuente */
+  }
+
+  .icon-small {
+      font-size: 14px; /* Ajusta el tamaño del icono */
+  }

@@ -37,7 +37,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($ centros as $item)
+                                    @foreach ($centros as $item)
                                         <tr>
                                             <td>{{ ++$i }}</td>
 											<td>{{ $item->nombre }}</td>
