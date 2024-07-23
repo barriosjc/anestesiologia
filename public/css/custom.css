@@ -24,3 +24,12 @@
   .icon-small {
       font-size: 14px; /* Ajusta el tamaño del icono */
   }
+
+  .form-control-label {
+    display: flex;
+    align-items: center;
+    height: calc(1.5em + .75rem + 2px); /* same as form-control */
+    padding: 1.3rem .75rem; /* same as form-control */
+    border: 1px solid #ced4da; /* same as form-control */
+    border-radius: .4rem; /* same as form-control */
+}

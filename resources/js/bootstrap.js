@@ -14,7 +14,13 @@ window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-window.Popper = require('popper.js').default;
+// Import Popper.js
+import { createPopper } from '@popperjs/core';
+window.Popper = createPopper;
+
+import $ from 'jquery';
+
+window.$ = window.jQuery = $;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

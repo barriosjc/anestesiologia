@@ -27,7 +27,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                    <select class="form-control form-control-sm" id="cobertura_id" name="cobertura_id">
+                                    <select class="form-select form-select-sm" id="cobertura_id" name="cobertura_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
@@ -39,7 +39,7 @@
 
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="centro_id">Centros</label>
-                                    <select class="form-control form-control-sm" id="centro_id" name="centro_id">
+                                    <select class="form-select form-select-sm" id="centro_id" name="centro_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($centros as $item)
                                             <option value="{{ $item->id }}"
@@ -50,7 +50,7 @@
 
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="profesional_id">Profesional</label>
-                                    <select class="form-control form-control-sm" id="profesional_id" name="profesional_id">
+                                    <select class="form-select form-select-sm" id="profesional_id" name="profesional_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($profesionales as $item)
                                             <option value="{{ $item->id }}"
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label class="small mb-1" for="estado_id">Estados</label>
-                                    <select class="form-control form-control-sm" id="estado_id" name="estado_id">
+                                    <select class="form-select form-select-sm" id="estado_id" name="estado_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($estados as $item)
                                             <option value="{{ $item->id }}"
@@ -128,7 +128,7 @@
                                                 {{-- <form id="delete-form-{{ $item->id }}" 
                                                     action="{{ route('partes_cab.destroy', $item->id) }}" method="POST">--}}
                                                     <a class="btn btn-sm btn-success"
-                                                        href="{{ route('partes_cab.edit', $item->id) }}"
+                                                        href="{{ route('consumos.cargar', $item->id) }}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top" 
                                                         data-bs-title="Consultar documentos cargados e ingresar consumo a facturar">
                                                         <i class="fa fa-fw fa-edit"></i></a>

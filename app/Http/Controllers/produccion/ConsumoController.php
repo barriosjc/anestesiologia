@@ -5,10 +5,13 @@ namespace App\Http\Controllers\produccion;
 use App\Models\Centro;
 use App\Models\Estado;
 use App\Models\Cobertura;
+use App\Models\Documento;
 use App\Models\Parte_cab;
+use App\Models\Parte_det;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\nomenclador;
 
 class ConsumoController extends Controller
 {
@@ -33,9 +36,20 @@ class ConsumoController extends Controller
         if ($request->has('centro_id')  && !empty($request->centro_id)) {
             $query->where('centro_id', '=', $request->centro_id);
         }
-        // dd(empty($request->fec_desde), $request->fec_desde);
+        if ($request->has('profesional_id')  && !empty($request->profesional_id)) {
+            $query->where('profesional_id', '=', $request->profesional_id);
+        }
+        if ($request->has('estado_id')  && !empty($request->estado_id)) {
+            $query->where('estado_id', '=', $request->estado_id);
+        }
+        if ($request->has('nombre')  && !empty($request->nombre)) {
+            $query->where('paciente', 'like', "%".$request->nombre."%");
+        }
         if(!empty($request->fec_desde)){
             $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
+        }
+        if(!empty($request->fec_hasta)){
+            $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
         }
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
@@ -47,5 +61,26 @@ class ConsumoController extends Controller
 // dd($sql, $bindings);
         return view("consumo.partes", compact("partes", "coberturas", "centros", "profesionales", 
                 "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
+    }
+
+    public function cargar(int $id)
+    {
+        $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
+        $documentos = Documento::get();
+        $nomenclador = nomenclador::get();
+        $consumo_cab_id = null;
+
+        return view("consumo.cargar", compact("partes_det", "documentos", "consumo_cab_id", "nomenclador" ));
+    }
+
+    public function valor (Request $request)
+    {
+        $id = $request->id;
+        $consumo_cab_id = $request->consumo_cab_id;
+    
+        dd($consumo_cab_id);
+        $valor = 256.67;
+
+        return response()->json(['valor' => $valor]);
     }
 }

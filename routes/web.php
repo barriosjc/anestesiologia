@@ -78,6 +78,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
         Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');
+        Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
+        Route::get('consumos/valor', [ConsumoController::class, 'valor'])->name('consumos.valor');
 
         Route::resources(
             [
