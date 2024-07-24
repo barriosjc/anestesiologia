@@ -171,6 +171,7 @@
   module.exports = Util;
 });
 
+// funcion para switalert comun para borrar
 function confirmDelete(id) {
     Swal.fire({
         title: '¿Confirma eliminar?',

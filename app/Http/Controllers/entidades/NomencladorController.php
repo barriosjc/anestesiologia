@@ -119,8 +119,28 @@ class NomencladorController extends Controller
         $valores = Valores::find($id);  
         $valores->delete();
 
-        return redirect()->back();
-        
+        return redirect()->back();  
+    }
+
+    public function valores_buscar(Request $request) 
+    {
+        $codigo = str_replace("-", "", $request->input('codigo'));
+        $descripcion = $request->input('descripcion');
+
+        $query = Nomenclador::query();
+        if ($codigo) {
+            $query->where(DB::raw('REPLACE(codigo, "-", "")'),'like', '%' . $codigo . '%');
+        }
+
+        if ($descripcion) {
+            $query->where('descripcion', 'like', '%' . $descripcion . '%');
+        }
+
+        $results = $query->get();
+        // $sql = $query->toSql();
+        // $bindings = $query->getBindings();
+        // dd($sql,$bindings);
+        return response()->json($results);
     }
 
 }

@@ -75,11 +75,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('nomeclador/valores/nuevos', [NomencladorController::class, 'valores_nuevos'])->name('nomenclador.valores.nuevo');
         Route::post('nomeclador/valor/guardar', [NomencladorController::class, 'valor_guardar'])->name('nomenclador.valor.guardar');
         Route::delete('nomenclador/valores/borrar/{id}', [NomencladorController::class, 'valores_borrar'])->name('nomenclador.valores.borrar');
+        Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'valores_buscar'])->name('nomenclador.valores.buscar');
 
         // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
         Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');
         Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
-        Route::get('consumos/valor', [ConsumoController::class, 'valor'])->name('consumos.valor');
+        Route::post('consumos/valor/buscar', [ConsumoController::class, 'valor_buscar'])->name('consumos.valor.buscar');
+        Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
 
         Route::resources(
             [

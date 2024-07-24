@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\produccion;
 
+use Exception;
 use App\Models\Centro;
 use App\Models\Estado;
+use App\Models\Valores;
 use App\Models\Cobertura;
 use App\Models\Documento;
 use App\Models\Parte_cab;
 use App\Models\Parte_det;
+use App\Models\nomenclador;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\nomenclador;
 
 class ConsumoController extends Controller
 {
@@ -68,19 +70,42 @@ class ConsumoController extends Controller
         $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
         $documentos = Documento::get();
         $nomenclador = nomenclador::get();
-        $consumo_cab_id = null;
+        $parte_cab_id = $id;
 
-        return view("consumo.cargar", compact("partes_det", "documentos", "consumo_cab_id", "nomenclador" ));
+        return view("consumo.cargar", compact("partes_det", "documentos", "parte_cab_id", "nomenclador" ));
     }
 
-    public function valor (Request $request)
+    public function valor_buscar (Request $request)
     {
         $id = $request->id;
-        $consumo_cab_id = $request->consumo_cab_id;
+        $parte_cab_id = $request->parte_cab_id;
     
-        dd($consumo_cab_id);
-        $valor = 256.67;
-
+        $parte_cab = Parte_cab::where("id", $parte_cab_id)->first();
+        $cobertura = cobertura::where("id", $parte_cab->cobertura_id)->first();
+        $grupo = $cobertura->grupo; 
+        $query = Valores::query();
+        $query->where('grupo', '=', $grupo);
+        $query->where('nivel', $request->nivel);
+        $valor = $query->first()->valor;
         return response()->json(['valor' => $valor]);
+    }
+
+    public function guardar (Request $request)
+    {
+        $validate = $request->validate( [
+            "parte_cab_id" => "required",
+            "porcentaje" => "required|numeric|between:1,100",
+            "valor_total" => "required",
+            "nomenclador_id" => "required"
+        ]);
+
+        try{
+
+            return redirect()->back();
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
     }
 }

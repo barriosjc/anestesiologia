@@ -32,4 +32,14 @@
     padding: 1.3rem .75rem; /* same as form-control */
     border: 1px solid #ced4da; /* same as form-control */
     border-radius: .4rem; /* same as form-control */
-}
+  }
+
+  .form-control.bg-light {
+    background-color: #f8f9fa !important; /* Fondo claro */
+  }
+
+  .btn-lg {
+    font-size: 1.25rem; /* Tamaño de fuente más grande */
+    padding: 0.75rem 1.25rem; /* Relleno más grande */
+  }
+  
