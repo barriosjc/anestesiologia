@@ -22,8 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Profesional
- extends Model
+class Profesional extends Model
 {
     use SoftDeletes;
 

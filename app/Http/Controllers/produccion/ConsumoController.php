@@ -2,21 +2,40 @@
 
 namespace App\Http\Controllers\produccion;
 
+use DateTime;
 use Exception;
 use App\Models\Centro;
 use App\Models\Estado;
 use App\Models\Valores;
+use App\Models\Paciente;
 use App\Models\Cobertura;
 use App\Models\Documento;
 use App\Models\Parte_cab;
 use App\Models\Parte_det;
+use App\Models\Consumo_cab;
+use App\Models\Consumo_det;
 use App\Models\nomenclador;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class ConsumoController extends Controller
 {
+    
+    public function cargar(int $id)
+    {
+        $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
+        $documentos = Documento::get();
+        $nomenclador = nomenclador::get();
+        $parte_cab_id = $id;
+        $consumos = DB::table('v_consumos')->get();
+        $data = DB::table('v_parte_cab')->find($id);
+        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->fec_nacimiento.") / ".$data->fec_prestacion;
+
+        return view("consumo.cargar", compact("partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
+    }
+
     public function parte_filtrar(Request $request) 
     {
         $coberturas = Cobertura::get();
@@ -65,16 +84,6 @@ class ConsumoController extends Controller
                 "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
     }
 
-    public function cargar(int $id)
-    {
-        $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
-        $documentos = Documento::get();
-        $nomenclador = nomenclador::get();
-        $parte_cab_id = $id;
-
-        return view("consumo.cargar", compact("partes_det", "documentos", "parte_cab_id", "nomenclador" ));
-    }
-
     public function valor_buscar (Request $request)
     {
         $id = $request->id;
@@ -86,26 +95,66 @@ class ConsumoController extends Controller
         $query = Valores::query();
         $query->where('grupo', '=', $grupo);
         $query->where('nivel', $request->nivel);
-        $valor = $query->first()->valor;
-        return response()->json(['valor' => $valor]);
+        $nom_valor = $query->first();
+        $valor = $nom_valor->valor;
+        $porcentaje = 0;
+
+        //calcula edad
+        if(!empty($nom_valor->aplica_pocent_adic))
+        {
+            $paciente = Paciente::where("id", $parte_cab->paciente_id)->first();  
+            $fechaNacimiento = $paciente->fec_nacimiento;
+            $fechaNacimiento = new DateTime($fechaNacimiento);
+            $fechaActual = new DateTime('today');
+            $edad = $fechaActual->diff($fechaNacimiento)->y;
+            if(($edad < $cobertura->edad_hasta && $cobertura->edad_hasta != null)  || 
+                        ($edad > $cobertura->edad_desde && $cobertura->edad_desde != null)){
+                $porcentaje = $cobertura->porcentaje_adic;
+            }
+        }
+        return response()->json(['valor' => $valor, 'porcentaje' => $porcentaje]);
     }
 
     public function guardar (Request $request)
     {
         $validate = $request->validate( [
             "parte_cab_id" => "required",
-            "porcentaje" => "required|numeric|between:1,100",
-            "valor_total" => "required",
+            "porcentaje" => "required|numeric|between:1,200",
+            "valor_total" => "required|numeric|gt:0",
             "nomenclador_id" => "required"
         ]);
 
         try{
+            $consumo_cab = Consumo_cab::where('parte_cab_id', $request->parte_cab_id)->first();
+            if(empty($consumo_cab)){
+                $consumo_cab = new Consumo_cab();
+                $consumo_cab->parte_cab_id = $request->parte_cab_id;
+                $consumo_cab->estado_id = 1;
+                $consumo_cab->user_id = Auth()->user()->id;
+                $consumo_cab->save();
+            }
 
-            return redirect()->back();
+            $consumo_det = new Consumo_det;
+            $consumo_det->consumo_cab_id = $consumo_cab->id;
+            $consumo_det->nomenclador_id = $request->nomenclador_id;
+            $consumo_det->porcentaje = $request->porcentaje;
+            $consumo_det->cantidad = 1;
+            $consumo_det->valor = $request->valor_total;
+            $consumo_det->save();
+
+            return redirect()->route('consumos.cargar', $request->parte_cab_id);
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
-
     }
+
+    public function destroy(Request $request, $id) 
+    {
+        $profesional = Consumo_det::find($id)->delete();
+
+        return redirect()->back();
+    }
+
+    
 }

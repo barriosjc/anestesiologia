@@ -12,6 +12,9 @@
                 </div>
             </div>
             <div class="card-body">
+                <div class="alert alert-info" role="alert">
+                    {{$cabecera}}
+                  </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="tabla_data">
                         <thead class="thead">
@@ -33,6 +36,46 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @if(empty($partes))
+                            <tr>
+                                <td colspan="3" class="text-center">No hay documentación cargada hasta em momento.</tr>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tabla_consumo">
+                        <thead class="thead">
+                            <tr>
+                                <th>Practica</th>
+                                <th>%</th>
+                                <th>Valor ($)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($consumos as $item)
+                                <tr>
+                                    <td>{{ $item->nivel ." / ".$item->codigo ." / ".$item->nom_descripcion  }}</td>
+                                    <td>{{ $item->porcentaje }}</td>
+                                    <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
+                                    <td class="text-end">
+                                    <form id="delete-form-{{ $item->id }}" 
+                                            action="{{ route('consumos.borrar', $item->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <a class="btn btn-sm btn-danger"
+                                                onclick="confirmDelete({{ $item->id }})"><i
+                                                class="fa fa-fw fa-trash"></i></a>
+                                    </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if(empty($consumos))
+                            <tr colspan="4" class="text-center">No hay cargados consumos hasta el momento.</tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -72,8 +115,10 @@
                         </div>
                         <div class="col-md-2">
                             <label for="archivo">Valor ($)</label>
-                            <label class="form-control bg-light text-muted" id="total" name="total"></label>
+                            <label class="form-control bg-light text-muted" id="total" name="total">0</label>
                         </div>
+
+
                         <div class="col-md-1 d-flex align-items-end">
                             <button type="button" class="btn btn-primary btn-lg" id="submitButton">
                                 <i class="fa fa-fw fa-save"></i></button>
@@ -132,8 +177,8 @@
                         // If there's only one result, make another AJAX request
                         if (count === 1) {
                             let nivel = data[0].nivel;
-                            let porcentaje = parseFloat(document.getElementById('porcentaje').value);
-
+                            porcentajeInput = document.getElementById('porcentaje');
+                            let porcentajeIni = parseFloat(porcentajeInput.value);
                             // Fetch the value for the level
                             return fetch('{{ route('consumos.valor.buscar') }}', {
                                     method: 'POST',
@@ -148,6 +193,8 @@
                                 })
                                 .then(response => response.json()) // Convert response to JSON
                                 .then(valueData => {
+                                    let porcentaje = porcentajeIni + valueData.porcentaje;
+                                    porcentajeInput.value = porcentaje;
                                     let totalValue = valueData.valor * (porcentaje / 100);
                                     document.getElementById('valor_orig').value = valueData.valor;
                                     document.getElementById('total').textContent = totalValue
@@ -184,7 +231,7 @@
                 let porcentajeValue = parseFloat(porcentajeInput.value);
                 let valorOrig = parseFloat(document.getElementById('valor_orig').value);
 
-                if (porcentajeValue > 100) {
+                if (porcentajeValue > 200) {
                     porcentajeInput.value = 100;
                     porcentajeValue = 100;
                 }
