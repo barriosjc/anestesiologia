@@ -1,20 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Auth::routes();
-
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\ProfileController;
@@ -26,17 +13,10 @@ use App\Http\Controllers\seguridad\PermisosController;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 
-Route::get('/tables', function () {
+Auth::routes();
 
-    return view('tables');
-});
-
-Route::get('/guard', function () {
-
-    session('empresa')->uri = 'web';
-
-    return redirect()->route('login');
-
+Route::get('errores', function () {
+    return view('errors.404');
 });
 
 Route::get('login/restablecer', [ResetPasswordController::class, 'restablecer'])->name('login.restablecer');
@@ -83,7 +63,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('consumos/valor/buscar', [ConsumoController::class, 'valor_buscar'])->name('consumos.valor.buscar');
         Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
         Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
-
+        Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
+        Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
         Route::resources(
             [
                 'profesionales' => ProfesionalController::class,

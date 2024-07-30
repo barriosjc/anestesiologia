@@ -42,4 +42,19 @@
     font-size: 1.25rem; /* Tamaño de fuente más grande */
     padding: 0.75rem 1.25rem; /* Relleno más grande */
   }
-  
+
+  .td-actions form {
+    display: inline;
+  }
+
+  .td-actions button {
+      margin-left: 5px;
+  }
+
+  tr{
+    height: 20px;
+  }
+
+  td {
+    padding: 2px 5px; /* Ajusta el padding según tus necesidades */
+}

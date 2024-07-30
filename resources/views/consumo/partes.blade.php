@@ -8,11 +8,9 @@
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-
                             <span id="card_title">
                                 {{ __('Partes') }}
                             </span>
-
                             <div class="float-right">
                                 <a href="{{ route('partes_cab.create') }}" class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
@@ -120,29 +118,26 @@
                                             <td>{{ $item->paciente }}</td>
                                             <td>{{ $item->fec_prestacion }}</td>
                                             <td>{{ $item->cobertura }}</td>
-                                            <td><span
+                                            <td>
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                    @if(!empty($item->observacion))
+                                                        data-bs-title="{{$item->observacion}}"
+                                                    @endif
                                                     class="badge bg-{{ $item->est_id == 1 ? 'primary' : ($item->est_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}</span>
                                             </td>
                                             <td>{{ $item->cantidad }}</td>
                                             <td class="td-actions">
-                                                {{-- <form id="delete-form-{{ $item->id }}" 
-                                                    action="{{ route('partes_cab.destroy', $item->id) }}" method="POST">--}}
                                                     <a class="btn btn-sm btn-success"
                                                         href="{{ route('consumos.cargar', $item->id) }}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top" 
                                                         data-bs-title="Consultar documentos cargados e ingresar consumo a facturar">
                                                         <i class="fa fa-fw fa-edit"></i></a>
-                                                    {{-- @csrf
-                                                    @method('DELETE')
-
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        title="Delete parte"
-                                                        onclick="confirmDelete({{ $item->id }})"><i
-                                                            class="far fa-trash-alt text-white"></i></button>
-                                                </form> --}}
                                             </td>
                                         </tr>
                                     @endforeach
+                                    @if(empty($partes))
+                                    <tr colspan="9" class="text-center">No hay cargados consumos hasta el momento.</tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -153,19 +148,11 @@
         </div>
     </div>
     <script src="{{ asset('js/util.js') }}"></script>
-    {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script> --}}
-    {{-- <script>
 
-    $(document).ready( function () {
-        $('#table_data').DataTable(
-            {
-                "columnDefs":[{
-                    "targets":[7],
-                    "orderable":false
-                    }
-                ]
-            }
-        );
-    });
-    </script> --}}
+    <script>
+        $(document).ready(function(){
+            $('[data-bs-toggle="tooltip"]').tooltip(); 
+        });
+    </script>
+    
 @endsection

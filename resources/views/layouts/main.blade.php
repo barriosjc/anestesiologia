@@ -5,9 +5,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>{{ config('app.name', 'SAADA') }}</title>
-    <link href="{{ asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
+    {{-- <link rel="icon" type="image/x-icon" href="{{asset('favicon.png')}}" /> --}}
 
     <!-- FontAwesome -->
     <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
@@ -29,8 +27,11 @@
     <!-- Include base CSS (optional) -->
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css" /> --}}
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" /> --}}
-        <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <link href="{{ asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
 </head>
 
 <body class="nav-fixed">

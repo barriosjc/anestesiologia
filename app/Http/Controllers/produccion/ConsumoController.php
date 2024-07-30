@@ -22,20 +22,6 @@ use App\Http\Controllers\Controller;
 
 class ConsumoController extends Controller
 {
-    
-    public function cargar(int $id)
-    {
-        $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
-        $documentos = Documento::get();
-        $nomenclador = nomenclador::get();
-        $parte_cab_id = $id;
-        $consumos = DB::table('v_consumos')->get();
-        $data = DB::table('v_parte_cab')->find($id);
-        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->fec_nacimiento.") / ".$data->fec_prestacion;
-
-        return view("consumo.cargar", compact("partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
-    }
-
     public function parte_filtrar(Request $request) 
     {
         $coberturas = Cobertura::get();
@@ -84,6 +70,20 @@ class ConsumoController extends Controller
                 "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
     }
 
+    public function cargar(int $id)
+    {
+        $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
+        $documentos = Documento::get();
+        $nomenclador = nomenclador::get();
+        $parte_cab_id = $id;
+        $consumos = DB::table('v_consumos')->get();
+        $data = DB::table('v_parte_cab')->find($id);
+        $soloConsulta = in_array(Parte_cab::find($id)->estado_id, [3,1]);
+        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->fec_nacimiento.") / ".$data->fec_prestacion;
+
+        return view("consumo.cargar", compact("soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
+    }
+    
     public function valor_buscar (Request $request)
     {
         $id = $request->id;
@@ -156,5 +156,56 @@ class ConsumoController extends Controller
         return redirect()->back();
     }
 
+    public function observar(Request $request) 
+    {       
+        $validate = $request->validate([
+            "id" => "required",
+            "observaciones" => "required|max:255"
+        ]);
+        
+        $result = $this->cambiaEstado($validate, 2);
+    
+        if ($result['success']) {
+            return redirect()->route("consumos.partes.filtrar")->with('success', 'Estado cambiado exitosamente.');
+        } else {
+            return redirect()->back()->withErrors($result['message'])->withInput();
+        }
+    }
+    
+    public function aProcesar(Request $request) 
+    {       
+        $validate = $request->validate([
+            "id" => "required",
+            "observaciones" => "nullable|max:255"
+        ]);
+        
+        $result = $this->cambiaEstado($validate, 3);
+    
+        if ($result['success']) {
+            return redirect()->route("partes_cab.index")->with('success', 'Estado cambiado exitosamente.');
+        } else {
+            return redirect()->back()->withErrors($result['message'])->withInput();
+        }
+    }
+    
+    private function cambiaEstado($request, $estado_id)
+    {
+        try {
+            $parte = parte_cab::find($request["id"]);
+            if (!($parte->estado_id == 1 || $parte->estado_id == 2) && $estado_id == 3) {
+                throw new \Exception('El estado no puede ser cambiado a "A liquidar" desde el estado actual.');
+            }
+            if (!($parte->estado_id == 1 || $parte->estado_id == 3) && $estado_id == 2) {
+                throw new \Exception('El estado no puede ser cambiado a "Observado" desde el estado actual.');
+            }
+            $parte->observaciones = $request["observaciones"];
+            $parte->estado_id = $estado_id; 
+            $parte->save();
+    
+            return ['success' => true];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }    
     
 }

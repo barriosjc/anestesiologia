@@ -13,8 +13,6 @@
             </div>
             <div class="card-body">
                 <input type="hidden" name="parte_cab_id" id="parte_cab_id" value="{{ old('parte_cab_id', $parte_cab_id) }}">
-
-
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="tabla_data">
                         <thead class="thead">
@@ -48,6 +46,11 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @if(empty($partes))
+                                <tr>
+                                    <td colspan="3" class="text-center">No hay cargada documentación hasta el momento.</td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

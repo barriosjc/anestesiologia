@@ -18,7 +18,9 @@ class parteController extends Controller
     public function index()
     {
         // $partes = parte_cab::v_parte_cab()->paginate(5);
-        $partes = parte_cab::v_parte_cab()->get();
+        $partes = parte_cab::v_parte_cab()
+            ->orderBy("id","desc")
+            ->get();
 
         return view('cargas.cab.parte', compact('partes'));
             // ->with('i', (request()->input('page', 1) - 1) * $partes->perPage());

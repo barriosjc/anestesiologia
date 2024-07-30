@@ -6,12 +6,22 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="card-title">Detalle del parte</span>
                 <div>
+                    <!-- Modal -->
+                    <div class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal"
+                                data-bs-target="#valorModal" data-id="{{ $parte_cab_id}}">
+                        Observar el parte
+                    </div>
                     <a href="{{ route('consumos.partes.filtrar') }}" class="btn btn-info btn-sm" data-placement="left">
                         Volver
                     </a>
                 </div>
             </div>
             <div class="card-body">
+                @if($soloConsulta)
+                    <div class="alert alert-danger" role="alert">
+                        Parte en modo consulta, solo se puede editar partes en estados: A procesar o En facturación.
+                    </div>
+                @endif
                 <div class="alert alert-info" role="alert">
                     {{$cabecera}}
                   </div>
@@ -37,9 +47,9 @@
                                 </tr>
                             @endforeach
                             @if(empty($partes))
-                            <tr>
-                                <td colspan="3" class="text-center">No hay documentación cargada hasta em momento.</tr>
-                            </tr>
+                                <tr>
+                                    <td colspan="3" class="text-center">No hay documentación cargada hasta em momento.</td>
+                                </tr>
                             @endif
                         </tbody>
                     </table>
@@ -120,20 +130,50 @@
 
 
                         <div class="col-md-1 d-flex align-items-end">
+                            @if(!$soloConsulta)
                             <button type="button" class="btn btn-primary btn-lg" id="submitButton">
                                 <i class="fa fa-fw fa-save"></i></button>
+                            @endif
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+
+        {{-- modales --}}
+        <div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="valorModalLabel">Pasar el parte a observado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('consumos.observar') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="{{$parte_cab_id}}">
+                            <label class="label-control">Observaciones</label>
+                            <textarea rows="4" name="observaciones" class="form-control"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </section>
 
     <script>
         //submit para guardar los datos
-        document.getElementById('submitButton').addEventListener('click', function() {
-            document.getElementById('form_consumo').submit();
-        });
+        var submitButton = document.getElementById('submitButton');
+        if (submitButton) {        
+            submitButton.addEventListener('click', function() {
+                document.getElementById('form_consumo').submit();
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             let token = document.querySelector('input[name="_token"]').value;
@@ -143,6 +183,9 @@
                 let codigo = document.getElementById('codigo').value;
                 let descripcion = document.getElementById('descripcion').value;
 
+                if (codigo == "" && descripcion == "") {
+                    return
+                }
                 fetch('{{ route('nomenclador.valores.buscar') }}', {
                         method: 'POST',
                         headers: {

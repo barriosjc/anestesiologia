@@ -90,7 +90,7 @@ class ProfileController extends Controller
             $empresa = session('empresa');
             Mail::send([], [], function ($message)  use ($request, $correo, $empresa) {
                 $message->to($request->email, $request->last_name)
-                    ->subject('Registro de usuario para ingreso a portal Clap!')
+                    ->subject('Registro de usuario para ingreso a portal SAADA')
                     ->setBody($correo->render(), 'text/html');
             });
         }
