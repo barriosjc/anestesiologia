@@ -36,22 +36,22 @@
                         </thead>
                         <tbody>
                             @foreach ($partes_det as $item)
-                                <tr>
-                                    <td>{{ $item->nro_hoja }}</td>
-                                    <td>{{ $item->documento->nombre }}</td>
-                                    <td class="text-end">
-                                        <a class="btn btn-sm btn-warning"
-                                            href="{{ route('partes_det.download', $item->id) }}"><i
-                                                class="fa fa-fw fa-download"></i></a>
+                                <tr style="height: 30px;">
+                                    <td style="padding: 5px;">{{ $item->nro_hoja }}</td>
+                                    <td style="padding: 5px;">{{ $item->documento->nombre }}</td>
+                                    <td class="text-end" style="padding: 5px;">
+                                        <a class="btn btn-sm btn-warning" href="{{ route('partes_det.download', $item->id) }}">
+                                            <i class="fa fa-fw fa-download"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
                             @if(empty($partes))
-                                <tr>
-                                    <td colspan="3" class="text-center">No hay documentación cargada hasta em momento.</td>
+                                <tr style="height: 30px;">
+                                    <td colspan="3" class="text-center" style="padding: 5px;">No hay documentación cargada hasta el momento.</td>
                                 </tr>
                             @endif
-                        </tbody>
+                        </tbody>                        
                     </table>
                 </div>
                 <hr>

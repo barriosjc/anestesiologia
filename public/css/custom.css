@@ -1,4 +1,4 @@
-.disabled-link {
+  .disabled-link {
     pointer-events: none;
     color: gray;
     background-color: #d6d2d2 !important;
@@ -51,10 +51,10 @@
       margin-left: 5px;
   }
 
-  tr{
-    height: 20px;
+  .table-row-small {
+    height: 30px;
   }
 
-  td {
-    padding: 2px 5px; /* Ajusta el padding según tus necesidades */
-}
+  .table-cell-small {
+      padding: 5px;
+  }

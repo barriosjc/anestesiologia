@@ -65,7 +65,7 @@
                                                 <a class="btn btn-sm btn-info llama_modal" data-bs-toggle="modal" 
                                                     data-bs-target="#valorModal" data-id="{{ $item->id}}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" 
-                                                    data-bs-title="Listo todo el parte, ahora para pasar: A procesar, click aquí.">
+                                                    data-bs-title="Cargado todo el parte, ahora para pasar: A procesar, click aquí.">
                                                     <i class="fa-solid fa-rotate-right"></i>
                                                 </a>
                                                 <a class="btn btn-sm btn-success" href="{{ route('partes_cab.edit', $item->id) }}">

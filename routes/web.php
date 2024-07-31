@@ -65,6 +65,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
         Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
         Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
+
+        Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicion_filtrar'])->name('consumo.rendiciones.filtrar');
+
         Route::resources(
             [
                 'profesionales' => ProfesionalController::class,

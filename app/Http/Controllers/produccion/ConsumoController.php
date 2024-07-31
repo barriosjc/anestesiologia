@@ -207,5 +207,53 @@ class ConsumoController extends Controller
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }    
-    
+
+    public function rendicion_filtrar(Request $request) 
+    {
+        $coberturas = Cobertura::get();
+        $centros = Centro::get();
+        $profesionales = Profesional::get();
+        $estados = Estado::get();
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
+        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
+        $nombre = $request->has('nombre') ? $request->nombre : null;
+        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
+        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : null;
+        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
+
+        $query = DB::table('v_rendiciones');
+        if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
+            $query->where('cobertura_id', '=', $request->cobertura_id);
+        }
+        if ($request->has('centro_id')  && !empty($request->centro_id)) {
+            $query->where('centro_id', '=', $request->centro_id);
+        }
+        if ($request->has('profesional_id')  && !empty($request->profesional_id)) {
+            $query->where('profesional_id', '=', $request->profesional_id);
+        }
+        if ($request->has('estado_id')  && !empty($request->estado_id)) {
+            $query->where('estado_id', '=', $request->estado_id);
+        }
+        if ($request->has('nombre')  && !empty($request->nombre)) {
+            $query->where('paciente', 'like', "%".$request->nombre."%");
+        }
+        if(!empty($request->fec_desde)){
+            $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
+        }
+        if(!empty($request->fec_hasta)){
+            $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
+        }
+        $partes = $query->orderBy('created_at', 'asc')
+                    ->paginate();
+
+                    // Ver la consulta SQL y los bindings
+// $sql = $query->toSql();
+// $bindings = $query->getBindings();
+
+// dd($sql, $bindings);
+        return view("consumo.rendiciones", compact("partes", "coberturas", "centros", "profesionales", 
+                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
+    }
+
 }

@@ -15,9 +15,9 @@
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     Auditoria carga
                 </a>
-                <a class="nav-link" href="{{ route('usuario.index') }}">
+                <a class="nav-link" href="{{ route('consumo.rendiciones.filtrar') }}">
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
-                    Rendiciones
+                    Generar Rendiciones
                 </a>
                 <a class="nav-link" href="{{ route('usuario.index') }}">
                     <div class="nav-link-icon"><i data-feather="home"></i></div>

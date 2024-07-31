@@ -11,6 +11,12 @@
                             <span id="card_title">
                                 {{ __('Partes') }}
                             </span>
+                            <div class="float-right">
+                                <a href="{{ route('partes_cab.create') }}" class="btn btn-primary btn-sm float-right"
+                                    data-placement="left">
+                                    {{ __('Nuevo') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -92,37 +98,43 @@
                             <table class="table table-striped table-hover" id="table_data">
                                 <thead class="thead">
                                     <tr>
+                                        <th><div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="ck_todo">
+                                          </div>
+                                        </th>
                                         <th>Nro</th>
-                                        <th>Centro</th>
-                                        <th>Profesional</th>
+                                        <th>F.proc</th>
                                         <th>Paciente</th>
-                                        <th>Fecha</th>
-                                        <th>Cobertura</th>
+                                        <th>Práctica</th>
+                                        <th>%</th>
+                                        <th>Valor($)</th>
                                         <th>Estado</th>
-                                        <th>Docs</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($partes as $item)
-                                        <tr>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input ck_item" type="checkbox" id="ck_{{$item->consumos_det_id}}">
+                                                </div>
+                                            </td>
                                             <td>{{ $item->id }}</td>
-                                            <td>{{ $item->centro }}</td>
-                                            <td>{{ $item->profesional }}</td>
-                                            <td>{{ $item->paciente }}</td>
                                             <td>{{ $item->fec_prestacion }}</td>
-                                            <td>{{ $item->cobertura }}</td>
+                                            <td>{{ $item->dni ."/".$item->pac_nombre }}</td>
+                                            <td>{{ $item->nivel."/".$item->codigo."/".$item->nom_descripcion }}</td>
+                                            <td>{{ $item->porcentaje }}</td>
+                                            <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
                                             <td>
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" 
                                                     @if(!empty($item->observacion))
                                                         data-bs-title="{{$item->observacion}}"
                                                     @endif
-                                                    class="badge bg-{{ $item->est_id == 1 ? 'primary' : ($item->est_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}</span>
+                                                    class="badge bg-{{ $item->estado_id == 1 ? 'primary' : ($item->estado_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}</span>
                                             </td>
-                                            <td>{{ $item->cantidad }}</td>
                                             <td class="td-actions">
                                                     <a class="btn btn-sm btn-success"
-                                                        href="{{ route('consumos.cargar', $item->id) }}"
+                                                        href=""
                                                         data-bs-toggle="tooltip" data-bs-placement="top" 
                                                         data-bs-title="Consultar documentos cargados e ingresar consumo a facturar">
                                                         <i class="fa fa-fw fa-edit"></i></a>
@@ -147,6 +159,15 @@
         $(document).ready(function(){
             $('[data-bs-toggle="tooltip"]').tooltip(); 
         });
+
+        // marca todos las filas
+        document.getElementById('ck_todo').addEventListener('change', function() {
+            console.log("hizo click");
+        var checkboxes = document.querySelectorAll('.ck_item');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = document.getElementById('ck_todo').checked;
+        });
+    });
     </script>
     
 @endsection
