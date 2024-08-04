@@ -117,7 +117,16 @@
                                                     @if(!empty($item->observacion))
                                                         data-bs-title="{{$item->observacion}}"
                                                     @endif
-                                                    class="badge bg-{{ $item->est_id == 1 ? 'primary' : ($item->est_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}</span>
+                                                    class="badge bg-{{ $item->est_id == 1 ? 'primary' : 
+                                                                        ($item->est_id == 2 ? 'danger' : 
+                                                                        ($item->est_id == 3 ? 'warning' :
+                                                                        ($item->est_id == 4 ? 'info' :
+                                                                        ($item->est_id == 5 ? 'secondary' :
+                                                                        'success')))) }}">{{ $item->est_descripcion }}
+                                                    @if(!empty($item->observacion))
+                                                        <span class="badge text-bg-dark"> </span>
+                                                    @endif
+                                                </span>
                                             </td>
                                             <td>{{ $item->cantidad }}</td>
                                             <td class="td-actions">

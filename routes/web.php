@@ -67,7 +67,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
 
         Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicion_filtrar'])->name('consumo.rendiciones.filtrar');
-
+        Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicion_store'])->name('consumo.rendiciones.store');
+        Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicion_listado'])->name('consumo.rendiciones.listado');
+        Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicion_listar'])->name('consumo.rendiciones.listar');
+     
+     
         Route::resources(
             [
                 'profesionales' => ProfesionalController::class,

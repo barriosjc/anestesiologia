@@ -54,7 +54,12 @@
                                                     @if(!empty($item->observacion))
                                                         data-bs-title="{{$item->observacion}}"
                                                     @endif
-                                                    class="badge bg-{{ $item->est_id == 1 ? 'primary' : ($item->est_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}
+                                                    class="badge bg-{{ $item->est_id == 1 ? 'primary' : 
+                                                                        ($item->est_id == 2 ? 'danger' : 
+                                                                        ($item->est_id == 3 ? 'warning' :
+                                                                        ($item->est_id == 4 ? 'info' :
+                                                                        ($item->est_id == 5 ? 'secondary' :
+                                                                        'success')))) }}">{{ $item->est_descripcion }}
                                                     @if(!empty($item->observacion))
                                                         <span class="badge text-bg-dark"> </span>
                                                     @endif
@@ -139,18 +144,19 @@
                 }
             );
 
-            // carga el id del parte_cab cuando hace click para abrir el modal
-            $('.llama_modal').on('click', function() {
-                var parteCabId = $(this).data('id');
-                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
-            });
-
             //inicializa el tooltip, para no entrar en conflicto en la grilla
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-title]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
+        
+            // carga el id del parte_cab cuando hace click para abrir el modal
+            $('.llama_modal').on('click', function() {
+                var parteCabId = $(this).data('id');
+                console.log("pasa por aca");
+                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
+            });
     </script>
 
 @endsection

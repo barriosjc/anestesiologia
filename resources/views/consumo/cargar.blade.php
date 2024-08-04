@@ -4,7 +4,7 @@
     <section class="content container-fluid">
         <div class="card card-default">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="card-title">Detalle del parte</span>
+                <span class="card-title">Detalle del parte nro: {{$parte_cab_id}}</span>
                 <div>
                     <!-- Modal -->
                     <div class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal"
@@ -19,7 +19,7 @@
             <div class="card-body">
                 @if($soloConsulta)
                     <div class="alert alert-danger" role="alert">
-                        Parte en modo consulta, solo se puede editar partes en estados: A procesar o En facturación.
+                        Parte en modo consulta, solo se puede editar partes en estados: A liquidar o En facturación.
                     </div>
                 @endif
                 <div class="alert alert-info" role="alert">

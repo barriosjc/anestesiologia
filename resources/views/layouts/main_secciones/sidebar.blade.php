@@ -19,7 +19,7 @@
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     Generar Rendiciones
                 </a>
-                <a class="nav-link" href="{{ route('usuario.index') }}">
+                <a class="nav-link" href="{{ route('consumo.rendiciones.listado') }}">
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     Listados
                 </a>

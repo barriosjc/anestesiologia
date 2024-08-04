@@ -9,18 +9,12 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title">
-                                {{ __('Partes') }}
+                                {{ __('Generar rendiciones') }}
                             </span>
-                            <div class="float-right">
-                                <a href="{{ route('partes_cab.create') }}" class="btn btn-primary btn-sm float-right"
-                                    data-placement="left">
-                                    {{ __('Nuevo') }}
-                                </a>
-                            </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="reportForm" action="{{ route('consumos.partes.filtrar') }}" method='GET'>
+                        <form id="reportForm" action="{{ route('consumo.rendiciones.filtrar') }}" method='GET'>
                             {{-- @csrf --}}
                             <div class="row">
                                 <div class="form-group col-md-3">
@@ -86,6 +80,17 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="form-group col-md-2">
+                                    <label class="small mb-1" for="cobertura_id">Periodo generado</label>
+                                    <select class="form-select form-select-sm" id="periodo_gen" name="periodo_gen">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($periodos as $item)
+                                            <option value="{{ $item->nombre }}">
+                                                {{ $item->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="form-group col-md-3 d-flex align-items-end">
                                     <button id="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
                                         partes</button>
@@ -94,59 +99,87 @@
                         </form>
 
 
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="table_data">
-                                <thead class="thead">
-                                    <tr>
-                                        <th><div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="ck_todo">
-                                          </div>
-                                        </th>
-                                        <th>Nro</th>
-                                        <th>F.proc</th>
-                                        <th>Paciente</th>
-                                        <th>Práctica</th>
-                                        <th>%</th>
-                                        <th>Valor($)</th>
-                                        <th>Estado</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($partes as $item)
-                                            <td>
+                        <form id="generate_rendicion_form" method="POST" action="{{ route('consumo.rendiciones.store') }}">
+                            @csrf
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover" id="table_data">
+                                    <thead class="thead">
+                                        <tr>
+                                            <th>
                                                 <div class="form-check form-switch">
-                                                    <input class="form-check-input ck_item" type="checkbox" id="ck_{{$item->consumos_det_id}}">
+                                                    <input class="form-check-input" type="checkbox" id="ck_todo">
                                                 </div>
-                                            </td>
-                                            <td>{{ $item->id }}</td>
-                                            <td>{{ $item->fec_prestacion }}</td>
-                                            <td>{{ $item->dni ."/".$item->pac_nombre }}</td>
-                                            <td>{{ $item->nivel."/".$item->codigo."/".$item->nom_descripcion }}</td>
-                                            <td>{{ $item->porcentaje }}</td>
-                                            <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
-                                            <td>
-                                                <span data-bs-toggle="tooltip" data-bs-placement="top" 
-                                                    @if(!empty($item->observacion))
-                                                        data-bs-title="{{$item->observacion}}"
-                                                    @endif
-                                                    class="badge bg-{{ $item->estado_id == 1 ? 'primary' : ($item->estado_id == 2 ? 'danger' : 'success') }}">{{ $item->est_descripcion }}</span>
-                                            </td>
-                                            <td class="td-actions">
-                                                    <a class="btn btn-sm btn-success"
-                                                        href=""
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                                            </th>
+                                            <th>Nro</th>
+                                            <th>F.proc</th>
+                                            <th>Paciente</th>
+                                            <th>Práctica</th>
+                                            <th>%</th>
+                                            <th>Valor($)</th>
+                                            <th>Estado</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{-- id="ck_{{ $item->consumos_det_id }}" --}}
+                                        @foreach ($partes as $item)
+                                            <tr>
+                                                <td>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input ck_item" type="checkbox"
+                                                        data-parte-id="{{ $item->parte_cab_id }}" value="{{ $item->consumos_det_id }}">
+                                                    </div>
+                                                </td>
+                                                <td>{{ $item->parte_cab_id }}</td>
+                                                <td>{{ $item->fec_prestacion }}</td>
+                                                <td>{{ $item->dni . '/' . $item->pac_nombre }}</td>
+                                                <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}</td>
+                                                <td>{{ $item->porcentaje }}</td>
+                                                <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
+                                                <td>
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        @if (!empty($item->observacion)) data-bs-title="{{ $item->observacion }}" @endif
+                                                        class="badge bg-{{ $item->estado_id == 4 ? 'primary' : 
+                                                                            ($item->estado_id == 5 ? 'success' :
+                                                                            ($item->estado_id == 6 ? 'warning' :
+                                                                            ($item->estado_id == 7 ? 'info' : 
+                                                                            'danger'))) }}">{{ $item->est_descripcion }}</span>
+                                                </td>
+                                                <td class="td-actions">
+                                                    <a class="btn btn-sm btn-success" href="" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
                                                         data-bs-title="Consultar documentos cargados e ingresar consumo a facturar">
                                                         <i class="fa fa-fw fa-edit"></i></a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    @if(empty($partes))
-                                    <tr colspan="9" class="text-center">No hay cargados consumos hasta el momento.</tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        @if (empty($partes))
+                                            <tr colspan="9" class="text-center">No hay cargados consumos hasta el momento.
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                        
+                            <div class="row justify-content-end align-items-end">
+                                <div class="form-group col-md-2">
+                                    <label class="small mb-1" for="cobertura_id">Periodo generado</label>
+                                    <select class="form-select form-select-sm" id="periodo" name="periodo">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($periodos as $item)
+                                            <option value="{{ $item->nombre }}">
+                                                {{ $item->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" id="generate_rendicion_btn" class="btn btn-primary btn-sm">
+                                        {{ __('Generar rendición') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 {{-- {!! $partes->links() !!} --}}
@@ -156,18 +189,42 @@
     <script src="{{ asset('js/util.js') }}"></script>
 
     <script>
-        $(document).ready(function(){
-            $('[data-bs-toggle="tooltip"]').tooltip(); 
-        });
+        $(document).ready(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip();
 
-        // marca todos las filas
-        document.getElementById('ck_todo').addEventListener('change', function() {
-            console.log("hizo click");
-        var checkboxes = document.querySelectorAll('.ck_item');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = document.getElementById('ck_todo').checked;
-        });
-    });
-    </script>
+            // marca todos las filas de la tabla
+            document.getElementById('ck_todo').addEventListener('change', function() {
+                var checkboxes = document.querySelectorAll('.ck_item');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = document.getElementById('ck_todo').checked;
+                });
+            });
     
+            // hacer submit de filas marcadas
+            $('#generate_rendicion_btn').on('click', function() {
+                let selectedItems = [];
+                $('.ck_item:checked').each(function() {
+                    let consumo_det_id = $(this).val();
+                    let parte_id = $(this).data('parte-id');
+                    selectedItems.push({ consumo_det_id: consumo_det_id, parte_id: parte_id });
+                });
+
+                let periodo = $('#periodo').val();
+
+                if (selectedItems.length === 0 || !periodo) {
+                    alert('Debe seleccionar al menos una fila y un periodo.');
+                    return;
+                }
+
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'selected_ids',
+                    value: JSON.stringify(selectedItems)
+                }).appendTo('#generate_rendicion_form');
+
+                $('#generate_rendicion_form').submit();
+            });
+
+        });
+    </script>
 @endsection

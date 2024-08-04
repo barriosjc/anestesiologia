@@ -58,3 +58,6 @@
   .table-cell-small {
       padding: 5px;
   }
+  .custom-width-valor {
+    width: 10%; /* Ajusta el porcentaje según sea necesario */
+  }
