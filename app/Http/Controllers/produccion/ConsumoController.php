@@ -20,10 +20,11 @@ use App\Models\nomenclador;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Exports\ProdProfCoberExport;
+// use App\Exports\ProdProfCoberExport;
 use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf;
-use PhpParser\Node\Stmt\TryCatch;
+use App\Http\Controllers\produccion\ReportFactory;
+// use PhpParser\Node\Stmt\TryCatch;
 
 class ConsumoController extends Controller
 {
@@ -263,7 +264,6 @@ class ConsumoController extends Controller
                     // Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
-
 // dd($sql, $bindings);
         return view("consumo.rendiciones", compact("periodos", "partes", "coberturas", "centros", "profesionales", 
                 "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
@@ -309,62 +309,39 @@ class ConsumoController extends Controller
 
     public function rendicion_listar(Request $request)
     {
-        $this->validate($request, [
-            "estados" => "required",
-            "reporte_id" => "required",
-            "periodo_gen" => "required"
-        ]);        
-
         try {
-        if (!$request->reporte_id) {
-            throw new Exception('Es obligatorio seleccionar el tipo de reporte a generar.');
-        }
-
-        if ($request->reporte_id == 1) {
-            if (!($request->profesional_id  && $request->periodo_gen)){
-                throw new Exception('Para este tipo de reporte debe seleccionar mínimo Profesional y Periodo');
+            if (!$request->reporte_id) {
+                throw new Exception('Es obligatorio seleccionar el tipo de reporte a generar.');
             }
-        }
+    
+            // Crear la estrategia adecuada usando la Factory
+            $strategy = ReportFactory::create($request->reporte_id);
+          
+            // Validar la solicitud usando la estrategia
+            $par_adicionales = $strategy->validate($request);
+             
+            // Generar el reporte
+            $consumos = $strategy->generate($request);
+    
+            if (count($consumos) == 0) {
+                throw new Exception('Atención !!! No se ha encontrado datos para generar la Rendición.');
+            }
+    
+            $parametros =$par_adicionales;
+            $parametros["consumos"] = $consumos;
 
-        $query = DB::table('v_rendicion_agrupxnivel');
-        if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
-        }
-        if ($request->has('centro_id')  && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
-        }
-        if ($request->has('profesional_id')  && !empty($request->profesional_id)) {
-            $query->where('profesional_id', '=', $request->profesional_id);
-        }
-        if ($request->has('nombre')  && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%".$request->nombre."%");
-        }
-        if ($request->has('periodo_gen')  && !empty($request->periodo_gen)) {
-            $query->where('periodo', '=', $request->periodo_gen);
-        }
-        $selectedEstados = $request->input('estados');
-        if (count($selectedEstados) > 1) {
-            $query->where(function($query) use ($selectedEstados) {
-                foreach ($selectedEstados as $estadoId) {
-                    $query->orWhere('estado_id', $estadoId);
-                }
-            });
-        } else {
-            $query->where('estado_id', $selectedEstados[0]);
-        }
-        $consumos = $query->orderBy('parte_cab_id', 'asc')
-                    ->get();
-        // dd($query->toSql(), $query->getBindings());
-
-        if (count($consumos) == 0) {
-            throw new Exception('Atención !!! No se ha encontrado datos para generar la Rendición.accordion.');
-        }
-        $pdf = Pdf::loadView('Reportes.Rendiciones.ProfFactxCentro', compact("consumos"));
-        return $pdf->stream();
-
+            $viewName = $strategy->getViewName();
+            $pdf = Pdf::loadView($viewName, $parametros);
+            return $pdf->stream();
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->validator->errors())->withInput();
         } catch (\Exception $e) {
-            return back()->withErrors([$e->getMessage()])
-                    ->withInput();
-        }
+            return back()->withErrors([$e->getMessage()])->withInput();
+        }    
+        // } catch (\Exception $e) {
+        //     return back()->withErrors([$e->getMessage()])
+        //             ->withInput();
+        // }
     }
 }

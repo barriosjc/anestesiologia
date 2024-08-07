@@ -71,6 +71,16 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="fec_desde">Fec. qx desde</label>
+                                    <input class="form-control form-control-sm" id="fec_desde" name="fec_desde"
+                                        type="date" placeholder="Ingrese fecha desde" value="{{ old("fec_desde") }}" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="fec_hasta">Fec. qx hasta</label>
+                                    <input class="form-control form-control-sm" id="fec_hasta" name="fec_hasta"
+                                        type="date" placeholder="Ingrese fecha hasta" value="{{ old("fec_hasta") }}" />
+                                </div>
                             </div>
                             <div class="row pt-2">
                                 <div class="form-group col-md-10 ">

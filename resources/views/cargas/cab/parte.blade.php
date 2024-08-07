@@ -17,11 +17,11 @@
                                 {{ __('Cargas') }}
                             </span>
 
-                             <div class="float-right">
+                            <div class="float-right">
                                 <a href="{{ route('partes_cab.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Nuevo') }}
                                 </a>
-                              </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
