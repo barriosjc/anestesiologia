@@ -117,7 +117,6 @@
                                             <th>%</th>
                                             <th>Valor($)</th>
                                             <th>Estado</th>
-                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -127,12 +126,12 @@
                                                 <td>
                                                     <div class="form-check form-switch">
                                                         <input class="form-check-input ck_item" type="checkbox"
-                                                        data-parte-id="{{ $item->parte_cab_id }}" value="{{ $item->consumos_det_id }}">
+                                                            data-parte-id="{{ $item->parte_cab_id }}" value="{{ $item->consumos_det_id }}">
                                                     </div>
                                                 </td>
                                                 <td>{{ $item->parte_cab_id }}</td>
                                                 <td>{{ $item->fec_prestacion }}</td>
-                                                <td>{{ $item->dni . '/' . $item->pac_nombre }}</td>
+                                                <td>{{ $item->pac_nombre }}</td>
                                                 <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}</td>
                                                 <td>{{ $item->porcentaje }}</td>
                                                 <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
@@ -144,12 +143,6 @@
                                                                             ($item->estado_id == 6 ? 'warning' :
                                                                             ($item->estado_id == 7 ? 'info' : 
                                                                             'danger'))) }}">{{ $item->est_descripcion }}</span>
-                                                </td>
-                                                <td class="td-actions">
-                                                    <a class="btn btn-sm btn-success" href="" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Consultar documentos cargados e ingresar consumo a facturar">
-                                                        <i class="fa fa-fw fa-edit"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -163,10 +156,26 @@
                         
                             <div class="row justify-content-end align-items-end">
                                 <div class="form-group col-md-2">
+                                    <label class="small mb-1" for="cobertura_id">Estados</label>
+                                    <select class="form-select form-select-sm" id="estadoCambio" name="estadoCambio">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($estados as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->descripcion }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" id="cambio_estados_btn" class="btn btn-info btn-sm">
+                                        {{ __('Cambiar estados') }}
+                                    </button>
+                                </div>
+                                <div class="form-group col-md-2 offset-md-4">
                                     <label class="small mb-1" for="cobertura_id">Periodo generado</label>
                                     <select class="form-select form-select-sm" id="periodo" name="periodo">
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($periodos as $item)
+                                        @foreach ($estados as $item)
                                             <option value="{{ $item->nombre }}">
                                                 {{ $item->nombre }}
                                             </option>
@@ -200,6 +209,8 @@
                 });
             });
     
+            let token = document.querySelector('input[name="_token"]').value;
+
             // hacer submit de filas marcadas
             $('#generate_rendicion_btn').on('click', function() {
                 let selectedItems = [];
@@ -224,6 +235,48 @@
 
                 $('#generate_rendicion_form').submit();
             });
+
+        // Enviar filas seleccionadas para cambiar el estado
+        $('#cambio_estados_btn').on('click', function() {
+            let selectedItems = [];
+            $('.ck_item:checked').each(function() {
+                let consumo_det_id = $(this).val();
+                let parte_id = $(this).data('parte-id');
+                selectedItems.push({ consumo_det_id: consumo_det_id, parte_id: parte_id });
+            });
+
+            let estadoCambio = $('#estadoCambio').val();
+
+            if (selectedItems.length === 0 || !estadoCambio) {
+                alert('Debe seleccionar al menos una fila y un estado.');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route('consumo.rendiciones.estados') }}',
+                method: 'POST',
+                data: {
+                    _token: token,
+                    selected_ids: selectedItems,
+                    estadoCambio: estadoCambio
+                },
+                success: function(response) {
+                    const alertDiv = '<div class="alert alert-success py-2">' + response.success + '</div>';
+                    $('#alert-container').html(alertDiv);
+                },
+                error: function(response) {
+                    const alertDiv = '<div class="alert alert-warning py-2">' + response.responseJSON.error + '</div>';
+                    $('#alert-container').html(alertDiv);
+                },
+                complete: function() {
+                    const ytop = $('#alert-container').offset().top;
+                    window.scrollTo({
+                        top: ytop - 300, 
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
 
         });
     </script>

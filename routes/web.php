@@ -70,7 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicion_store'])->name('consumo.rendiciones.store');
         Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicion_listado'])->name('consumo.rendiciones.listado');
         Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicion_listar'])->name('consumo.rendiciones.listar');
-     
+        Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicion_estados'])->name('consumo.rendiciones.estados');
      
         Route::resources(
             [

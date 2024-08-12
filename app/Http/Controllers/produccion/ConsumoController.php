@@ -339,9 +339,63 @@ class ConsumoController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors([$e->getMessage()])->withInput();
         }    
-        // } catch (\Exception $e) {
-        //     return back()->withErrors([$e->getMessage()])
-        //             ->withInput();
-        // }
+    }
+
+    public function rendicion_estados(Request $request)
+    {
+
+        if($request->has('selected_ids') && $request->has('selected_ids') 
+                && !empty($request->selected_ids) && !empty($request->estadoCambio) )
+        {
+            $selectedIds = $request->input('selected_ids');
+            $nuevoEstado = $request->input('estadoCambio');
+
+            try {
+                $sepa = "";
+                $ids = "";
+                foreach($selectedIds as $item) {
+                    $consumo = Consumo_det::find($item['consumo_det_id']);
+                    $est_actual = $consumo->estado_id;  
+
+                    if($nuevoEstado == "5" && !in_array($est_actual, [6,7,8])) {	
+                        $ids = $ids . $sepa . $item['parte_id'];
+                        $sepa = " ,";
+                        continue;
+                    }
+                    if($nuevoEstado == "7" && $est_actual != 5) {
+                        $ids = $ids . $sepa . $item['parte_id'] ;	
+                        $sepa = " ,";
+                        continue;
+                    }
+                    if($nuevoEstado == "8" && $est_actual != 7) {
+                        $ids = $ids . $sepa . $item['parte_id'];	
+                        $sepa = " ,";
+                        continue;
+                    }
+                    if($nuevoEstado <= "5") {
+                        $ids = $ids . $sepa . $item['parte_id'];
+                        $sepa = " ,";
+                        continue;   
+                    } 
+                    if($nuevoEstado == "6" && in_array($est_actual, [1,2,3,4,6])) {
+                        $ids = $ids . $sepa . $item['parte_id'];
+                        $sepa = " ,";
+                        continue;   
+                    } 
+                    $consumo = Consumo_det::where('id','=', $item['consumo_det_id'])->first();
+                    $consumo->estado_id = $nuevoEstado; 
+                    $consumo->save();
+                }
+
+                if(!empty($ids)) {
+                    throw new Exception($ids);
+                }
+
+                return response()->json(['success' => 'Estado/s actualizado/s con éxito.'], 200);
+
+            } catch (\Throwable $th) {
+                return response()->json(['error'=> 'Algun/os Detalles de rendición no se permite el cambio de estado seleccionado en base a su estado previo a realizar el cambio, nros de parte: '.$th->getMessage().'. '], 422);
+            }
+        }
     }
 }

@@ -33,7 +33,6 @@
             $groupedConsumos = $consumos->groupBy('cen_nombre');
         @endphp
 
-
         <table class="table table-striped">
             <thead>
                 <tr>

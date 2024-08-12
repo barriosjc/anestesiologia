@@ -12,15 +12,15 @@
             @role('super-admin')
                 <div class="sidenav-menu-heading">AUDITORIA</div>
                 <a class="nav-link" href="{{ route('consumos.partes.filtrar') }}">
-                    <div class="nav-link-icon"><i data-feather="home"></i></div>
+                    <div class="nav-link-icon"><i class="fa-regular fa-eye"></i></div>
                     Auditoria carga
                 </a>
                 <a class="nav-link" href="{{ route('consumo.rendiciones.filtrar') }}">
-                    <div class="nav-link-icon"><i data-feather="home"></i></div>
+                    <div class="nav-link-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
                     Generar Rendiciones
                 </a>
                 <a class="nav-link" href="{{ route('consumo.rendiciones.listado') }}">
-                    <div class="nav-link-icon"><i data-feather="home"></i></div>
+                    <div class="nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     Listados
                 </a>
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
