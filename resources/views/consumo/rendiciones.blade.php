@@ -166,16 +166,32 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div id="div_refac" class="form-group col-md-2" style="display: none">
+                                    <label class="small mb-1" for="cobertura_id">Periodo a reasignar</label>
+                                    <select class="form-select form-select-sm" id="periodo_refac" name="periodo_refac">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($periodos as $item)
+                                            <option value="{{ $item->nombre }}">
+                                                {{ $item->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col-md-2">
                                     <button type="button" id="cambio_estados_btn" class="btn btn-info btn-sm">
                                         {{ __('Cambiar estados') }}
                                     </button>
                                 </div>
-                                <div class="form-group col-md-2 offset-md-4">
-                                    <label class="small mb-1" for="cobertura_id">Periodo generado</label>
+                                {{-- los 2 div siguentes es para mantener en posicion a los select y botones --}}
+                                <div id="div_esconde" class="col-md-2">
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                                <div id="periodo_asig" class="form-group col-md-2" >
+                                    <label class="small mb-1" for="cobertura_id">Periodo de rendición</label>
                                     <select class="form-select form-select-sm" id="periodo" name="periodo">
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($estados as $item)
+                                        @foreach ($periodos as $item)
                                             <option value="{{ $item->nombre }}">
                                                 {{ $item->nombre }}
                                             </option>
@@ -198,6 +214,20 @@
     <script src="{{ asset('js/util.js') }}"></script>
 
     <script>
+        $("#estadoCambio").on('change', function(){
+            let value = $(this).val();
+            // si se selecciona aRefactuar
+            if(value === '7'){
+                $("#div_refac").css('display', 'block');
+                $("#div_esconde").css('display', 'none');
+            } else {
+                // Si no, mantener el display none
+                $("#div_refac").css('display', 'none');
+                $("#div_esconde").css('display', 'block');
+                $(this).prop('selectedIndex', 0);
+            }
+        })
+
         $(document).ready(function() {
             $('[data-bs-toggle="tooltip"]').tooltip();
 
@@ -265,6 +295,7 @@
                     $('#alert-container').html(alertDiv);
                 },
                 error: function(response) {
+                    console.log(response)
                     const alertDiv = '<div class="alert alert-warning py-2">' + response.responseJSON.error + '</div>';
                     $('#alert-container').html(alertDiv);
                 },

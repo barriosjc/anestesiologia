@@ -19,10 +19,11 @@ use App\Models\Consumo_det;
 use App\Models\nomenclador;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 // use App\Exports\ProdProfCoberExport;
-use App\Http\Controllers\Controller;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\produccion\ReportFactory;
 // use PhpParser\Node\Stmt\TryCatch;
 
@@ -349,8 +350,13 @@ class ConsumoController extends Controller
         {
             $selectedIds = $request->input('selected_ids');
             $nuevoEstado = $request->input('estadoCambio');
+            $nuevoPeriodo = $request->input('periodo_refac');
 
             try {
+                if($nuevoEstado == "7" && $nuevoPeriodo == null) {
+                    throw new InvalidArgumentException("Si el estado es 'A refacturar' es obligatorio ingresar el periodo.");
+                }
+
                 $sepa = "";
                 $ids = "";
                 foreach($selectedIds as $item) {
@@ -381,9 +387,13 @@ class ConsumoController extends Controller
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;   
-                    } 
+                    }
+
                     $consumo = Consumo_det::where('id','=', $item['consumo_det_id'])->first();
                     $consumo->estado_id = $nuevoEstado; 
+                    if($nuevoEstado == "7") {
+                        $consumo->periodo = $nuevoPeriodo;
+                    }
                     $consumo->save();
                 }
 
@@ -393,7 +403,10 @@ class ConsumoController extends Controller
 
                 return response()->json(['success' => 'Estado/s actualizado/s con éxito.'], 200);
 
-            } catch (\Throwable $th) {
+            } catch (\InvalidArgumentException $e) {
+                return response()->json(['error' => $e->getMessage() . '.'], 422);
+            
+            }catch (\Throwable $th) {
                 return response()->json(['error'=> 'Algun/os Detalles de rendición no se permite el cambio de estado seleccionado en base a su estado previo a realizar el cambio, nros de parte: '.$th->getMessage().'. '], 422);
             }
         }

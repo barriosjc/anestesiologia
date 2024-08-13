@@ -10,8 +10,10 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\entidades\PacienteController;
 use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
+use App\Http\Controllers\seguridad\Usuario0Controller;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
+
 
 Auth::routes();
 
@@ -35,43 +37,46 @@ Route::group(['middleware' => 'auth'], function () {
             return view('layouts.main');
         })->name('main');
 
+        Route::group(['middleware' => ['permission:adm_partes']], function () {
+            Route::get('partes', [ParteController::class, 'index'])->name('partes_cab.index');
+            Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
+            Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
+            Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');
+            Route::get('partes/edit/{id}', [ParteController::class, 'edit'])->name('partes_cab.edit');
+            
+            Route::get('partes/det/create/{id}', [ParteController::class, 'create_det'])->name('partes_det.create');
+            Route::post('partes/det/store', [ParteController::class, 'store_det'])->name('partes_det.store');
+            Route::delete('partes/det/delete/{id}', [ParteController::class, 'destroy_det'])->name('partes_det.destroy');
+            Route::get('partes/det/edit/{id}', [ParteController::class, 'edit_det'])->name('partes_det.edit');
+            Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
+            
+            Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
+        });
 
-        Route::get('partes', [ParteController::class, 'index'])->name('partes_cab.index');
-        Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
-        Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
-        Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');
-        Route::get('partes/edit/{id}', [ParteController::class, 'edit'])->name('partes_cab.edit');
-        
-        Route::get('partes/det/create/{id}', [ParteController::class, 'create_det'])->name('partes_det.create');
-        Route::post('partes/det/store', [ParteController::class, 'store_det'])->name('partes_det.store');
-        Route::delete('partes/det/delete/{id}', [ParteController::class, 'destroy_det'])->name('partes_det.destroy');
-        Route::get('partes/det/edit/{id}', [ParteController::class, 'edit_det'])->name('partes_det.edit');
-        Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
-        
-        Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
+        Route::group(['middleware' => ['permission:adm_consumos']], function () {
+            Route::get('nomenclador/valores', [NomencladorController::class, 'valores'])->name('nomenclador.valores.listado');
+            Route::get('nomenclador/filtrar', [NomencladorController::class, 'valores_filtrar'])->name('nomenclador.valores.filtrar');
+            Route::post('nomeclador/valores/nuevos', [NomencladorController::class, 'valores_nuevos'])->name('nomenclador.valores.nuevo');
+            Route::post('nomeclador/valor/guardar', [NomencladorController::class, 'valor_guardar'])->name('nomenclador.valor.guardar');
+            Route::delete('nomenclador/valores/borrar/{id}', [NomencladorController::class, 'valores_borrar'])->name('nomenclador.valores.borrar');
+            Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'valores_buscar'])->name('nomenclador.valores.buscar');
 
-        Route::get('nomenclador/valores', [NomencladorController::class, 'valores'])->name('nomenclador.valores.listado');
-        Route::get('nomenclador/filtrar', [NomencladorController::class, 'valores_filtrar'])->name('nomenclador.valores.filtrar');
-        Route::post('nomeclador/valores/nuevos', [NomencladorController::class, 'valores_nuevos'])->name('nomenclador.valores.nuevo');
-        Route::post('nomeclador/valor/guardar', [NomencladorController::class, 'valor_guardar'])->name('nomenclador.valor.guardar');
-        Route::delete('nomenclador/valores/borrar/{id}', [NomencladorController::class, 'valores_borrar'])->name('nomenclador.valores.borrar');
-        Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'valores_buscar'])->name('nomenclador.valores.buscar');
+            // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
+            Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');
+            Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
+            Route::post('consumos/valor/buscar', [ConsumoController::class, 'valor_buscar'])->name('consumos.valor.buscar');
+            Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
+            Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
+            Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
+            Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
 
-        // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
-        Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');
-        Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
-        Route::post('consumos/valor/buscar', [ConsumoController::class, 'valor_buscar'])->name('consumos.valor.buscar');
-        Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
-        Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
-        Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
-        Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
+            Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicion_filtrar'])->name('consumo.rendiciones.filtrar');
+            Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicion_store'])->name('consumo.rendiciones.store');
+            Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicion_listado'])->name('consumo.rendiciones.listado');
+            Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicion_listar'])->name('consumo.rendiciones.listar');
+            Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicion_estados'])->name('consumo.rendiciones.estados');
+        });
 
-        Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicion_filtrar'])->name('consumo.rendiciones.filtrar');
-        Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicion_store'])->name('consumo.rendiciones.store');
-        Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicion_listado'])->name('consumo.rendiciones.listado');
-        Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicion_listar'])->name('consumo.rendiciones.listar');
-        Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicion_estados'])->name('consumo.rendiciones.estados');
-     
         Route::resources(
             [
                 'profesionales' => ProfesionalController::class,
