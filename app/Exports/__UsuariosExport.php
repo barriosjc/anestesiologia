@@ -17,16 +17,13 @@ class UsuariosExport implements FromCollection, WithHeadings, WithStyles
     */
     public function collection()
     {
-        $resu = DB::select('select u.id, u.last_name, u.name, g.descripcion, u.area, null as country, 
-                                u2.last_name as jefe_last_name, null as fec_nac, null as sede, u.email, 
-                                u.telefono, u.es_jefe, null as dni, u2.email email_jefe, r.name as perfil 
+        $resu = DB::select('select u.id, u.name, u.name, g.descripcion, null as country, 
+                                null as fec_nac, null as sede, u.email, 
+                                u.telefono, null as dni, r.name as perfil 
                         from users as u 
-                            left outer join  grupal as g on u.grupal_id = g.id
-                            left outer join users as u2 on u2.id = u.jefe_user_id
                             left outer join model_has_roles as mhr on u.id = mhr.model_id
                             left outer join roles as r on r.id = mhr.role_id 
-                        where u.empresas_id = ' . session('empresa')->id
-                            . ' and u.deleted_at is null');
+                        where u.deleted_at is null');
         $coleccion = collection::make($resu);
 
         return $coleccion;

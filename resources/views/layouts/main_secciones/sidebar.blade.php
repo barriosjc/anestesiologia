@@ -31,19 +31,19 @@
                 </a>
                 <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
                     <nav class="sidenav-menu-nested nav">
-                        @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('profesionales.index') }}">Médicos</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('usuario.index') }}">Lugares prestación</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('usuario.index') }}">Gerenciadoras</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('usuario.index') }}">Nomenclador</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('nomenclador.valores.listado') }}">Valorización</a>
                         @endif
                     </nav>
@@ -72,17 +72,11 @@
                 </div>
             @endif
 
-            @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
+            @role('super-admin')
                 <div class="sidenav-menu-heading">SEGURIDAD</div>
-                @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
                     <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
-                @endif
-                @if ($super)
-                    <a class="nav-link" href="{{ route('usuario.index') }}">Permisos</a>
-                @endif
-                @if (Auth()->user()->hasPermissionTo('adm_consumo', $guard) || $super)
-                    <a class="nav-link" href="{{ route('usuario.index') }}">Perfiles</a>
-                @endif
+                    <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
+                    <a class="nav-link" href="{{ route('roles.index') }}">Perfiles</a>
             @endif
 
         </div>

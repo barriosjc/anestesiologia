@@ -27,7 +27,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->name }}</td>
                     <td>{{ $item->guard_name }}</td>
-                    <td>{{ $item->created_at }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
                     <td>
                       <div class="float-right">
                         @if($padre === 'usuarios')

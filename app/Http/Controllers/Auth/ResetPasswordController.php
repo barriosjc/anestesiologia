@@ -31,16 +31,14 @@ class ResetPasswordController extends Controller
         if (!empty($user)) { 
             $clave = bin2hex(random_bytes(5));
             $hash = Hash::make($clave);
-            
-            $empresa = empresa::where("id", $user->empresas_id)->first();
             $user->password = $hash;
             $user->cambio_password = 1;
             $user->save();
 
-            $correo = new resetpasswordMaillable($user, $clave, $empresa);
-            Mail::send([], [], function ($message)  use ($user, $correo, $empresa) {
-                $message->to($user->email, $user->last_name)
-                    ->subject('Cambio de clave para ingreso a portal Reconocimiento '.$empresa->razon_social.'!')
+            $correo = new resetpasswordMaillable($user, $clave);
+            Mail::send([], [], function ($message)  use ($user, $correo) {
+                $message->to($user->email, $user->name)
+                    ->subject('Cambio de clave para ingreso al portal')
                     ->setBody($correo->render(), 'text/html');
             });
         }

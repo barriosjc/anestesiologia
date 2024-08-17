@@ -18,7 +18,7 @@
       </tr>
       <tr>
       <td align="left" style="padding-left:25px; padding-right:25px;">		  
-        <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>¡Bienvenido al sistemas de reconocimientos! {{$user->last_name}}</strong><strong></strong></p>
+        <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>¡Bienvenido al sistemas de reconocimientos! {{$user->name}}</strong><strong></strong></p>
         <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Se le ha realizado un cambio de clave</strong><strong></strong></p>
         <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #02733e; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Su nueva clave es: </strong>{{$clave}}</p>
         <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #02733e; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Ingrese con esta nueva clave, luego el sistema le pedirá una nueva clave que pueda recordar </strong></p>

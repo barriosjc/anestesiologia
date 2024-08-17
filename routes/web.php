@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\entidades\PacienteController;
 use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
-use App\Http\Controllers\seguridad\Usuario0Controller;
+// use App\Http\Controllers\seguridad\Usuario0Controller;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 
@@ -82,22 +82,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'profesionales' => ProfesionalController::class,
             ]
         );
+
         //perfil de usuario
         Route::get('profile/{id}/editar', [ProfileController::class, 'index'])->name('profile');
         Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
-        // Route::group(['middleware' => ['can:ABM Usuarios']], function () use ($guard) {
-            // if (Auth()->user()->hasPermissionTo('ABM Usuarios', $guard)) {
-            //     dd("valido ok", $guard);
-            // }
-            Route::get('roles/combos/json', [RoleController::class, 'roles_json'])->name('roles.json');
+        Route::get('roles/combos/json', [RoleController::class, 'roles_json'])->name('roles.json');
+        
+        Route::group(['middleware' => ['permission:adm_permisos']], function () {
             Route::resources([
                 'usuario' => UsuarioController::class,
-            ]);
-        // });
-        //Route::group(['middleware' => ['can:seguridad']], function () {
-            Route::resources([
                 'roles' => RoleController::class,
                 'permisos' => permisosController::class,
             ]);
@@ -115,7 +110,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/usuarios', [permisosController::class, 'usuarios'])->name('permisos.usuarios');
             Route::get('permisos/{id}/roles/{rolid}/{tarea}', [permisosController::class, 'roles']);
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
-        //});
+        });
 
 
 

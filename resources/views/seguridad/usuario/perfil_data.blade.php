@@ -1,5 +1,5 @@
     <div class="row">
-        @if(!isset($readonly)) 
+        @if (!isset($readonly))
             @php($readonly = false)
         @endif
         <div class="col-xl-4">
@@ -13,37 +13,13 @@
                         <!-- Profile picture image-->
                         <img class="img-account-profile rounded-circle mb-2"
                             src="{{ Storage::disk('usuarios')->url($user->foto) }}" alt="" />
-                        <!-- Profile picture help block-->
-                        {{-- <div class="small font-italic text-muted mb-4">JPG or PNG no mayor a 5 MB</div> --}}
-                        <div class="col mb-4">
-                            <h3><span class="badge bg-primary text-white">{{ $recibidos }} puntos obtenidos</span></h3>
-                        </div>
                         <!-- Profile picture upload button-->
-                        <input type="file" name="foto" id="foto" class="form-control" 
-                                data-bs-toggle="tooltip" data-bs-placement="right" title="JPG or PNG no mayor a 5 MB">
+                        <input type="file" name="foto" id="foto" class="form-control"
+                            data-bs-toggle="tooltip" data-bs-placement="right" title="JPG or PNG no mayor a 5 MB">
                         <button class="btn btn-primary" type="=submit">Guardar</button>
                     </div>
                 </div>
             </form>
-
-            <div class="card">
-                <div class="card-header text-white bg-primary">
-                    <div class="row">
-                        <div class="col">
-                            Insignias obtenidas
-                        </div>
-                    </div>
-                </div>
-                <ul class="list-group list-group-flush">
-                    @foreach ($reconocimientos as $data)
-                        <li class="list-group-item"><i class="fa-regular fa-star-half-stroke"></i> {{ $data->motivo }}
-                        </li>
-                    @endforeach
-                    @if ($reconocimientos->count()=== 0)
-                        <li class="list-group-item"> No posee insignias hasta el momento</li>
-                    @endif
-                </ul>
-            </div>
         </div>
         <div class="col-xl-8">
             <!-- Account details card-->
@@ -53,37 +29,33 @@
                     <form method="POST" action="{{ route('profile.save') }}" accept-charset="UTF-8">
                         @csrf
                         <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
+                        <div class="mb-3">
+                            <label class="small mb-1">Centro</label>
+                            <label class="form-control">{{ $user->centro->nombre ?? "Todos" }}</label>
+                        </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
-                                <label class="small mb-1" for="last_name">Nombre y apellido</label>
-                                <input class="form-control" id="last_name" name="last_name" type="text"
-                                    placeholder="Ingrese su nombre y apellido"
-                                    value="{{ old('last_name', $user->last_name) }}" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="name">Usuario</label>
+                                <label class="small mb-1" for="name">Nombre y apellido</label>
                                 <input class="form-control" id="name" name="name" type="text"
-                                    placeholder="Usuario" value="{{ old('name', $user->name) }}" />
+                                    placeholder="Ingrese su nombre y apellido"
+                                    value="{{ old('name', $user->name) }}" />
+                            </div>
+                            <div class="col-md-5">
+                                <label class="small mb-1" for="telefono">Telefono</label>
+                                <input class="form-control" id="telefono" name="telefono" type="tel"
+                                    placeholder="Ingrese nro de telefono"
+                                    value="{{ old('telefono', $user->telefono) }}" />
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label class="small mb-1" for="email">Email </label>
                             <input class="form-control" id="email" name="email" type="email"
                                 placeholder="Ingrese su email" value="{{ old('email', $user->email) }}" />
                         </div>
                         <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <div class="col-md-3">
-                                <label for="es_jefe" class="small mb-1">Activo</label>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="activo"
-                                        name="activo" {{ $user->activo > 0 ? 'checked' : '' }} {{$readonly ? 'disabled' : ''}}>
-                                    <label class="form-check-label" for="activo">
-                                        (No/Si)</label>
-                                </div>
-                            </div>
-                        </div>
+
                         <!-- Save changes button-->
                         <button class="btn btn-primary" type="submit">Guardar</button>
                     </form>
@@ -92,65 +64,25 @@
         </div>
     </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        var grupalSelect = $('#jefe_user_id');
-        var empresasSelect = $('#empresas_id');
+    <script type="text/javascript">
+        $(document).ready(function() {
 
-        if (empresasSelect.val() > 0) {
-            empresasId = empresasSelect.val();
-            cargaJefes(empresasId);
-        }
+            $("a").removeClass("active  ms-0");
+            $("#perfil").addClass("active  ms-0");
 
-        empresasSelect.change(function() {
-            var empresasId = $(this).val();
-            cargaJefes(empresasId);
+            if ({{ isset($readonly) ? true : false }}) {
+                var formulario = document.getElementById("formreadonly");
+                var campos = formulario.getElementsByTagName("input");
+                for (var i = 0; i < campos.length; i++) {
+                    campos[i].readOnly = true;
+                }
+                var campos = formulario.getElementsByTagName("button");
+                for (var i = 0; i < campos.length; i++) {
+                    campos[i].style.display = "none";
+                }
+
+                document.getElementById("foto").disabled = true;
+            }
+
         });
-
-        function cargaJefes(empresasId) {
-
-            grupalSelect.empty();
-            // var grupalEnBD = null;
-            var jefeId = {{ $user->jefe_user_id ? $user->jefe_user_id : 0 }};
-            if (empresasId) {
-                $.ajax({
-                    url: "{{ route('empresas.usuarios') }}",
-                    type: 'GET',
-                    data: {
-                        empresas_id: empresasId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        grupalSelect.append("<option value=''> --- Select ---</option>");
-                        $.each(response.data, function(key, value) {
-                            grupalSelect.append("<option value='" + value.id + "'" +
-                                (jefeId !== value.id ? '' : 'selected') +
-                                ">" + value.last_name + "</option>");
-                        });
-                    },
-                    error: function(response) {
-                        alert(response.messagge);
-                    }
-                });
-            }
-        }
-
-        $("a").removeClass("active  ms-0");
-        $("#perfil").addClass("active  ms-0");
-
-        if ({{ isset($readonly) ? true : false }}) {
-            var formulario = document.getElementById("formreadonly");
-            var campos = formulario.getElementsByTagName("input");
-            for (var i = 0; i < campos.length; i++) {
-                campos[i].readOnly = true;
-            }
-            var campos = formulario.getElementsByTagName("button");
-            for (var i = 0; i < campos.length; i++) {
-                campos[i].style.display = "none";
-            }
-
-            document.getElementById("foto").disabled = true;
-        }
-
-    });
-</script>
+    </script>

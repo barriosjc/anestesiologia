@@ -6,6 +6,10 @@ use Spatie\Permission\Models\Role as SpatieRole;
 class Role extends SpatieRole
 {
 
+    protected $casts = [
+        'created_at' => 'date',
+    ];
+
     public function getCreatedAtAttribute($value)
     {
         $resu = '';

@@ -7,11 +7,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">Crear un nuevo: Permiso</div>
-          <div class="card-body">
-            <a href="{{ url('/permisos') }}" title="Volver"><button class="btn btn-warning btn-sm"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-            <br />
-            <br />
+            <div class="card-header d-flex align-items-center justify-content-between">
+            Crear un nuevo: Permiso
+            <a href="{{ url('/permisos') }}" title="Volver" class="btn btn-warning btn-sm  float-right"><i class="fa fa-arrow-left" aria-hidden="true"></i> Volver</a>
+          </div>
+            <div class="card-body">
             <form method="POST" action="{{ url('/permisos') }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
               {{ csrf_field() }}
 

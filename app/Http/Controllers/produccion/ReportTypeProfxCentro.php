@@ -27,7 +27,7 @@ class ReportTypeProfxCentro implements ReportStrategy
             throw new \Illuminate\Validation\ValidationException($validator);
         }
 
-        return $validator->validated;
+        return $validator->validated();
 
     }
 

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\produccion;
 
 use Exception;
 use App\Http\Controllers\produccion\ReportTypeProfxCentro;
+use App\Http\Controllers\produccion\ReportTypeDetallexProfesional;
 
 class ReportFactory
 {

@@ -20,11 +20,11 @@ class resetpasswordMaillable extends Mailable
      *
      * @return void
      */
-    public function __construct($user, $clave, $empresa)
+    public function __construct($user, $clave)
     {
         $this->user = $user;
         $this->clave = $clave;
-        $this->empresa = $empresa;
+        // $this->empresa = $empresa;
     }
 
     /**

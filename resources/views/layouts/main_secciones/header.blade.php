@@ -6,7 +6,6 @@
         {{-- * * * * * * When using an image, we recommend the SVG format.--}}
         {{-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px--}}
         <h6 class="dropdown-header d-flex align-items-center">
-                {{-- {{dd("session",session('empresa')->logo,'fin')}} --}}
             <img style="height:51px;width:110px" class="dropdown-user-img" 
                 src="{{ asset("img\logo_grande.jpg") }}"  /> 
         </h6>

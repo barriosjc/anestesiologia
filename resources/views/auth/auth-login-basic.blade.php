@@ -37,7 +37,7 @@
                                             </div>
                                             <div class="col-lg-6 d-flex align-items-center justify-content-center">
                                                     <img class="dropdown-user-img" style="height:51px;width:110px"
-                                                        src="{{  asset("img\logo_grande.jpg") }}" />
+                                                        src="{{  asset("img\logo_grande.png") }}" />
                                             </div>
                                         </div>
                                     </div>

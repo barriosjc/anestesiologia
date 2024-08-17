@@ -8,7 +8,7 @@
                 <div class="card my-5">
                     <div class="card-body p-5 text-center">
                         <div class="h3 fw-light mb-3">Cambio de clave</div>
-                        <div class="small text-muted mb-2">{{ Auth()->user()->last_name }}</div>
+                        <div class="small text-muted mb-2">{{ Auth()->user()->name }}</div>
                     </div>
 
                     <div class="card-body p-3">

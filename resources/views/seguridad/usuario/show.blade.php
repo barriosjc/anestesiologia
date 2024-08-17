@@ -38,12 +38,8 @@
                                             <td> {{ $user->name }} </td>
                                         </tr>
                                         <tr>
-                                            <th> Nombre y apellido </th>
-                                            <td> {{ $user->last_name }} </td>
-                                        </tr>
-                                        <tr>
                                             <th> Avatar </th>
-                                            <td> <img src="{{ Storage::url($user->foto) }}" class="rounded-circle"
+                                            <td> <img src="{{ Storage::disk("usuarios")->url($user->foto) }}" class="rounded-circle"
                                                     width="45px" alt=""> </td>
                                         </tr>
                                         <tr>
@@ -53,10 +49,6 @@
                                         <tr>
                                             <th> eMail </th>
                                             <td> {{ $user->email }} </td>
-                                        </tr>
-                                        <tr>
-                                            <th> area </th>
-                                            <td> {{ $user->area }} </td>
                                         </tr>
                                     </tbody>
                                 </table>

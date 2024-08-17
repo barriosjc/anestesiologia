@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\cargas;
 
+use App\Models\User;
 use App\Models\Centro;
 use App\Models\paciente;
 use App\Models\cobertura;
@@ -28,7 +29,13 @@ class parteController extends Controller
 
     public function create() 
     {
-        $centros = centro::get();
+        $centro_id = User::find(Auth()->user()->id)->centro_id;
+        if($centro_id) {
+            $centros = centro::where("id", $centro_id)->get();
+        }else {
+            $centros = centro::get();
+        }
+        // dd($centros);
         $paciente = new paciente;
         $coberturas = cobertura::get();
         $profesionales = Profesional::get();

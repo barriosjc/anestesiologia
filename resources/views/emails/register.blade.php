@@ -18,7 +18,7 @@
       </tr>
       <tr>
         <td align="left" style="padding-left:25px; padding-right:25px;">		  
-          <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>¡Bienvenido al sistema de reconocimientos! {{$user->last_name}}</strong><strong></strong></p>
+          <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>¡Bienvenido al sistema de reconocimientos! {{$user->name}}</strong><strong></strong></p>
           <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #1F1F1F; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Credenciales de acceso:</strong><strong></strong></p>
           <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #02733e; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Email: </strong>{{$user->email}}</p>
           <p style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #02733e; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;"><strong>Clave: </strong>12345678</p>

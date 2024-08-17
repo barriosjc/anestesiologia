@@ -27,19 +27,21 @@ class PermisosController extends Controller
                     ->orWhere('guard_name', 'LIKE', "%$keyword%")
                     ->get();
             })
-                ->where("guard_name", session('empresa')->uri)
+                ->where("guard_name", "web")
                 ->orderBy('name', 'asc')
                 ->get();
             // ->latest()->simplepaginate($perPage);
         } else {
-            $permisos = Permission::where("guard_name", session('empresa')->uri)
+            $permisos = Permission::where("guard_name", "web")
                 ->orderBy('id', 'DESC')
                 ->orderby('name', 'asc')
                 ->get();   //latest()->simplepaginate($perPage);
         }
         $esabm = true;
 
-        return view('seguridad.permisos.index', compact('permisos', 'esabm'));
+        $padre = "permisos";
+
+        return view('seguridad.permisos.index', compact('permisos', 'esabm', 'padre'));
 
             // ->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -143,7 +145,6 @@ class PermisosController extends Controller
             ->select(
                 'id',
                 'name',
-                'last_name',
                 'email',
                 'email_verified_at',
                 'password',
@@ -154,7 +155,6 @@ class PermisosController extends Controller
                 'deleted_at'
             )
             ->whereNotIn('id', DB::table('model_has_permissions')->select('model_id')->where('permission_id', '=', $perid))
-            ->where('empresas_id', session('empresa')->id)
             ->get();
             // ->simplepaginate(5);
         $esabm = false;
@@ -195,7 +195,7 @@ class PermisosController extends Controller
                 'updated_at'
             )
             ->whereNotIn('id', DB::table('role_has_permissions')->select('role_id')->where('permission_id', '=', $perid))
-            ->where('guard_name', session('empresa')->uri)
+            ->where('guard_name', "web")
             ->get();
             // ->simplepaginate(5);
         $esabm = false;

@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\seguridad;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
-use App\Models\user;
 use App\Models\Role;
+use App\Models\user;
+use App\Http\Requests;
+use App\Models\Centro;
 use App\Models\Grupal;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Exports\UsuariosExport;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Mail\registerMailable;
+use App\Exports\UsuariosExport;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
 
 class UsuarioController extends Controller
 {
@@ -31,9 +32,8 @@ class UsuarioController extends Controller
 
         if (!empty($keyword)) {
             $user = User::where('name', 'LIKE', "%$keyword%")
-                ->orWhere('last_name', 'LIKE', "%$keyword%")
                 ->orWhere('email', 'LIKE', "%$keyword%")
-                ->orderby("last_name")
+                ->orderby("name")
                 ->latest()->simplepaginate($perPage);
         } else {
             $user = User::simplepaginate($perPage);
@@ -53,10 +53,11 @@ class UsuarioController extends Controller
     public function create()
     {
         $user = new user();
+        $centros = centro::get();
         $perfiles = role::get();
         $perfiles_user = '';
 
-        return view('seguridad.usuario.create')->with(compact('user', 'perfiles', 'perfiles_user'));
+        return view('seguridad.usuario.create')->with(compact('user', 'centros', 'perfiles', 'perfiles_user'));
     }
 
     /**
@@ -70,11 +71,11 @@ class UsuarioController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:50',
-            'last_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
+            'centro_id' => 'required'
         ]);
 
-        $validated['activo'] = isset($validated['activo']) ? 1 : 0;
+        // $validated['activo'] = isset($validated['activo']) ? 1 : 0;
         $validated['password'] = Hash::make('12345678');
         $validated['cambio_password'] = 1;
         $validated['foto'] = 'fotovacia.jpeg';
@@ -100,12 +101,12 @@ class UsuarioController extends Controller
             }
         }
         
-        $correo = new registerMailable($user);
-        Mail::send([], [], function ($message)  use ($request, $correo) {
-            $message->to($request->email, $request->last_name)
-                ->subject('Registro de usuario para ingreso al portal de reconocimientos !')
-                ->setBody($correo->render(), 'text/html');
-        });
+        // $correo = new registerMailable($user);
+        // Mail::send([], [], function ($message)  use ($request, $correo) {
+        //     $message->to($request->email, $request->last_name)
+        //         ->subject('Registro de usuario para ingreso al portal de reconocimientos !')
+        //         ->setBody($correo->render(), 'text/html');
+        // });
 
         return back()
             ->withInput($request->input())
@@ -137,7 +138,8 @@ class UsuarioController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $perfiles = role::v_roles_empresas()->get();
+        $perfiles = role::v_roles()->get();
+        $centros = Centro::get();
 
         // $perfiles_user = $user->roles;
         $perfiles_user = '';
@@ -145,7 +147,7 @@ class UsuarioController extends Controller
             $perfiles_user .= $value->id . ",";
         }
 
-        return view('seguridad.usuario.edit')->with(compact('user', 'perfiles', 'perfiles_user'));
+        return view('seguridad.usuario.edit')->with(compact('user', 'perfiles', 'perfiles_user', 'centros'));
     }
 
     /**
@@ -160,10 +162,9 @@ class UsuarioController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:50',
-            'last_name' => 'nullable|string|max:100',
+            'centro_id' => 'required',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
         ]);
-        $validated['activo'] = isset($validated['activo']) ? 1 : 0;
         $validated['password'] = Hash::make('12345678');
         $validated['cambio_password'] = 1;
 
@@ -279,74 +280,21 @@ class UsuarioController extends Controller
             // ->simplepaginate(5);
         $esabm = false;
 
-        $titulo = 'asignados al uzuario  ->   ' . strtoupper($user->name);
+        $titulo = 'asignados al usuario  ->   ' . strtoupper($user->name);
         $padre = "usuarios";
 
         return view('seguridad.permisos.index',  compact('padre', 'usuid', 'permisos', 'permisoss', 'esabm', 'titulo'));
     }
 
-    public function importar()
-    {
+    // public function importar()
+    // {
 
-        return view('seguridad.usuario.importar');
-    }
+    //     return view('seguridad.usuario.importar');
+    // }
 
-    public function exportar()
-    {
-        return Excel::download(new UsuariosExport, 'users.xlsx');
-    }
+    // public function exportar()
+    // {
+    //     return Excel::download(new UsuariosExport, 'users.xlsx');
+    // }
 
-    public function subir_datos(Request $request)
-    {
-        if ($request->hasFile('usuarios')) {
-            $uploadedFile = $request->file('usuarios');
-            if ($uploadedFile->getClientOriginalExtension() === 'xlsx') {
-                $excelData = Excel::toArray([], $uploadedFile);
-                foreach ($excelData[0] as $index => $row) {
-                    if ($index === 0) {
-                        continue;
-                    }
-                    $grupal_id = null;
-                    if (!empty($row[3])) {
-                        $grupal =  grupal::where('descripcion', $row[3])->first();
-                        if ($grupal) {
-                            $grupal_id = $grupal->id;
-                        }
-                    }
-                    $jefe_user_id = null;
-                    if (!empty($row[13])) {
-                        $usuario = user::where('email', $row[13])->first();
-                        if($usuario) {
-                            $jefe_user_id = $usuario->id;
-                        }
-                    }
-                    $user = user::where('id',  $row[0])->first();
-                    if (empty($user)) {
-                        $user = new user;
-                        $user->password =  Hash::make('12345678');
-                    }else {
-                        DB::delete('delete from model_has_roles
-                        where model_id = ' . $row[0]);
-                    }
-                    $user->id = $row[0];
-                    $user->last_name = $row[1];
-                    $user->name = $row[2];
-                    $user->email = $row[9];
-                    $user->foto = 'fotovacia.jpeg';
-                    $user->save();
-                    
-                    // model_has_role
-                    $role = Role::where('name', $row[14])
-                                    ->first();
-                    $user->assignRole($role);
-                    //$user->assignRole();
-                    
-                }
-                return back()
-                ->with('success', 'Se importaron los datos correctamente.');
-            }
-        }
-        return back()
-        ->with('error', 'No se ha proporcionado un archivo Excel válido');
-    }
 }

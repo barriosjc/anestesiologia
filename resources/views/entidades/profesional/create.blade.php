@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('template_title')
-    {{ __('Create') }} Médico
+    {{ __('Create') }} Profesional
 @endsection
 
 @section('contenido')
@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Médico</span>
+                        <span class="card-title">{{ __('Create') }} Profesional</span>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('profesionales.store') }}"  role="form" enctype="multipart/form-data">

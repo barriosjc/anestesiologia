@@ -92,6 +92,7 @@
                 var dni = $('#dni').val();
                 $('#alert-container').hide().empty();
                 $('#nombre').val("");
+                $('#fec_nacimiento').val("");
                 // $('#paciente_id').val("");
 
                 if (dni) {
@@ -124,7 +125,13 @@
                 let alertBox = `<div class="alert alert-${type} py-2 alert-dismissible fade show" role="alert">
                                 ${message}
                             </div>`;
+                //carga el alert y mueve el puntero al inicio de pantalla para ver msg
                 $('#alert-container').html(alertBox).show();
+                const ytop = $('#alert-container').offset().top;
+                window.scrollTo({
+                    top: ytop - 300, 
+                    behavior: 'smooth'
+                });
             }
         });
     </script>

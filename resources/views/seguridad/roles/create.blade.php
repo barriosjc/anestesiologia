@@ -7,12 +7,12 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">Crear un nuevo: Role</div>
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            Crear un nuevo: Role
+                            <a href="{{ url('/roles') }}" title="Volver"><button class="btn btn-warning btn-sm float-right"><i
+                                class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        </div>
                         <div class="card-body">
-                            <a href="{{ url('/roles') }}" title="Volver"><button class="btn btn-warning btn-sm"><i
-                                        class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                            <br />
-                            <br />
                             <form method="POST" action="{{ url('/roles') }}" accept-charset="UTF-8" class="form-horizontal"
                                 enctype="multipart/form-data">
                                 {{ csrf_field() }}

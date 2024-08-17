@@ -7,12 +7,12 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">Editar Usuario #{{ $user->id }}</div>
-                        <div class="card-body">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            Editar Usuario #{{ $user->id }}
                             <a href="{{ url('/usuario') }}" title="Volver"><button class="btn btn-warning btn-sm"><i
-                                        class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
-                            <br />
-                            <br />
+                                class="fa fa-arrow-left" aria-hidden="true"></i> Volver</button></a>
+                        </div>
+                        <div class="card-body">
                             <form method="POST" action="{{ url('/usuario/' . $user->id) }}" accept-charset="UTF-8"
                                 class="form-horizontal" enctype="multipart/form-data">
                                 {{ method_field('PATCH') }}

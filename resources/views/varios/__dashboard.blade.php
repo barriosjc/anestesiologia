@@ -186,7 +186,7 @@
                     <tbody>
                         @foreach ($valores as $item)
                             <tr>
-                                <td>{{ $item->last_name }}</td>
+                                <td>{{ $item->name }}</td>
                                 <td>{{ $item->cargo }}</td>
                                 <td>{{ $item->area }}</td>
                                 <td>{{ $item->cant }}</td>

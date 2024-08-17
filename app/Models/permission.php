@@ -6,6 +6,10 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
 class Permission extends SpatiePermission
 {
 
+    protected $casts = [
+        'created_at' => 'date',
+    ];
+    
     public function getCreatedAtAttribute($value)
     {
         $resu = '';

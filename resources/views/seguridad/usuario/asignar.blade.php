@@ -12,7 +12,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Usuario</th>
-                                        <th>Nombre y apellido</th>
                                         <th>Usu Verificado</th>
                                         <th>Mail</th>
                                         <th>
@@ -27,7 +26,6 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->name }}</td>
-                                            <td>{{ $item->last_name }}</td>
                                             <td>{{ $item->email_verified_at }}</td>
                                             <td>{{ $item->email }}</td>
                                             <td>
@@ -49,7 +47,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                            <div class="pagination-wrapper"> {!! $users->appends(['search' => Request::get('search')])->render() !!} </div>
+                            @if(empty($users))
+                                <div class="pagination-wrapper"> {!! $users->appends(['search' => Request::get('search')])->render() !!} </div>
+                            @endif
                         </div>
                     </div>
                 </div>
