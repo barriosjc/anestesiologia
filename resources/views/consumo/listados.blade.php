@@ -9,7 +9,7 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title">
-                                {{ __('Generar rendiciones') }}
+                                {{ __('Listados') }}
                             </span>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                                     <select class="form-select form-select-sm" id="cobertura_id" name="cobertura_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
-                                            <option value="{{ $item->id }}" {{old("cobertura_id") == $item->id ? "selected" : "" }}>{{ $item->nombre }}</option>
+                                            <option value="{{ $item->id }}" {{old("cobertura_id") == $item->id ? "selected" : "" }}>{{ $item->sigla }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -63,7 +63,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <label class="small mb-1" for="cobertura_id">Periodo generado</label>
+                                    <label class="small mb-1" for="periodo_gen">Periodo generado</label>
                                     <select class="form-select form-select-sm" id="periodo_gen" name="periodo_gen">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)
@@ -84,7 +84,7 @@
                             </div>
                             <div class="row pt-2">
                                 <div class="form-group col-md-10 ">
-                                    <label class="small mb-1" for="cobertura_id">Reportes a generar</label>
+                                    <label class="small mb-1" for="reporte_id">Reportes a generar</label>
                                     <select class="form-select form-select-sm" id="reporte_id" name="reporte_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($listados as $item)

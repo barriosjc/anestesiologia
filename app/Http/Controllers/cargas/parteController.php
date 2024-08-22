@@ -18,8 +18,8 @@ class parteController extends Controller
 {
     public function index()
     {
-        // $partes = parte_cab::v_parte_cab()->paginate(5);
         $partes = parte_cab::v_parte_cab()
+            ->where("centro_id", Auth()->user()->centro_id)
             ->orderBy("id","desc")
             ->get();
 

@@ -14,7 +14,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Valores') }}
+                                {{ __('Valorización') }}
                             </span>
                             <div class="form-group float-right">
                                 <div class="btn btn-sm btn-primary llama_modal float-right" data-bs-toggle="modal"
@@ -30,16 +30,16 @@
                             {{-- @csrf --}}
                             <div class="row">
                                 <div class="form-group col-md-3">
-                                    <label for="cobertura_id">Coberturas</label>
-                                    <select class="form-control" id="cobertura_id" name="cobertura_id">
+                                    <label for="codigo">Coberturas</label>
+                                    <select class="form-control" id="grupo" name="grupo">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
-                                            <option value="{{ $item->id }}" {{$cobertura_id == $item->id ? 'selected' : ''}}>{{ $item->nombre }}</option>
+                                            <option value="{{ $item->grupo }}" {{$cobertura_id == $item->id ? 'selected' : ''}}>{{ $item->sigla.' / '.$item->grupo }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-2">
+                                <div class="form-group col-md-3">
                                     <label for="centro_id">Centros</label>
                                     <select class="form-control" id="centro_id" name="centro_id">
                                         <option value="">-- Seleccione --</option>
@@ -86,7 +86,7 @@
                                                     data-bs-target="#valorModal" data-id="{{ $item->id }}"
                                                     data-valor="{{ $item->valor }}">
                                                     <i class="fa-regular fa-pen-to-square icon-small"></i>
-                                                </div><span> $ {{ $item->valor }}</span>
+                                                </div><span> $ {{ number_format((float) $item->valor, 2, ',', '.')  }}</span>
                                             </td>
                                             <td class="td-actions">
                                                 <form id="delete-form-{{ $item->id }}"

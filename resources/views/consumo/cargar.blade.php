@@ -70,7 +70,7 @@
                                 <tr>
                                     <td>{{ $item->nivel ." / ".$item->codigo ." / ".$item->nom_descripcion  }}</td>
                                     <td>{{ $item->porcentaje }}</td>
-                                    <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
+                                    <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
                                     <td class="text-end">
                                     <form id="delete-form-{{ $item->id }}" 
                                             action="{{ route('consumos.borrar', $item->id) }}" method="POST">
@@ -125,7 +125,7 @@
                         </div>
                         <div class="col-md-2">
                             <label for="archivo">Valor ($)</label>
-                            <label class="form-control bg-light text-muted" id="total" name="total">0</label>
+                            <label class="form-control bg-light text-muted" id="total" name="total">0,00</label>
                         </div>
 
 
@@ -239,9 +239,12 @@
                                     let porcentaje = porcentajeIni + valueData.porcentaje;
                                     porcentajeInput.value = porcentaje;
                                     let totalValue = valueData.valor * (porcentaje / 100);
+                                    let totalView = totalValue.toFixed(2);
+                                    totalView = totalView.replace('.', ',');
+                                    totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
                                     document.getElementById('valor_orig').value = valueData.valor;
-                                    document.getElementById('total').textContent = totalValue
-                                        .toFixed(2);
+                                    document.getElementById('total').textContent = totalView
                                     document.getElementById('valor_total').value = totalValue
                                         .toFixed(2);
 
@@ -280,7 +283,11 @@
                 }
 
                 let totalValue = valorOrig * (porcentajeValue / 100);
-                document.getElementById('total').textContent = totalValue.toFixed(2);
+                let totalView = totalValue.toFixed(2);
+                totalView = totalView.replace('.', ',');
+                totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                document.getElementById('total').textContent = totalView;
                 document.getElementById('valor_total').value = totalValue.toFixed(2);
 
             });
@@ -307,7 +314,11 @@
                             let valorOrig = parseFloat(data.valor); // Assuming `data.valor` contains the value
                             document.getElementById('valor_orig').value = valorOrig;
                             let total = valorOrig * (porcentaje / 100);
-                            document.getElementById('total').textContent = total.toFixed(2);
+                            let totalView = total.toFixed(2);
+                            totalView = totalView.replace('.', ',');
+                            totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                            document.getElementById('total').textContent = totalView;
                             document.getElementById('valor_total').value = total.toFixed(2);
                         })
                         .catch(error => console.error('Error:', error));

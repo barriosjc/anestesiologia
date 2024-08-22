@@ -344,7 +344,6 @@ class ConsumoController extends Controller
 
     public function rendicion_estados(Request $request)
     {
-
         if($request->has('selected_ids') && $request->has('selected_ids') 
                 && !empty($request->selected_ids) && !empty($request->estadoCambio) )
         {

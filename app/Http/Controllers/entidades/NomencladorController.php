@@ -84,11 +84,12 @@ class NomencladorController extends Controller
         $coberturas = Cobertura::get();
         $centros = Centro::get();
         $query = Valores::query();
+
         // if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+            $query->where('grupo', '=', $request->grupo);
         // }
         // if ($request->has('centro_id')  && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
+            // $query->where('centro_id', '=', $request->centro_id);
         // }
 
         $valores = $query->orderBy('nivel', 'asc')

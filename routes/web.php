@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\ProfileController;
@@ -9,13 +10,16 @@ use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\entidades\PacienteController;
 use App\Http\Controllers\produccion\ConsumoController;
-use App\Http\Controllers\seguridad\PermisosController;
 // use App\Http\Controllers\seguridad\Usuario0Controller;
+use App\Http\Controllers\seguridad\PermisosController;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 
 
-Auth::routes();
+// Auth::routes();
+Route::match(['get'],'login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('errores', function () {
     return view('errors.404');
@@ -80,6 +84,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resources(
             [
                 'profesionales' => ProfesionalController::class,
+                'centros' => CentroController::class,
+                'coberturas' => ProfesionalController::class,
             ]
         );
 

@@ -29,14 +29,14 @@
                             <table class="table table-striped table-hover" id="table_data">
                                 <thead class="thead">
                                     <tr>
-                                        <th style="width: 10%">Nro</th>
+                                        <th style="width: 7%">Nro</th>
                                         <th>Centro</th>
 										<th>Profesional</th>
 										<th>Paciente</th>
 										<th>Fecha</th>
                                         <th>Cobertura</th>
                                         <th>Estado</th>
-                                        <th>Docs</th>
+                                        <th style="width: 5%"><i class="fa-solid fa-paperclip"></i></th>
                                         <th style="width: 16%"></th>
                                     </tr>
                                 </thead>
@@ -48,7 +48,7 @@
                                             <td>{{ $item->profesional }}</td>
 											<td>{{ $item->paciente }}</td>
 											<td>{{ $item->fec_prestacion }}</td>
-                                            <td>{{ $item->cobertura }}</td>
+                                            <td>{{ $item->sigla }}</td>
                                             <td>
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" 
                                                     @if(!empty($item->observacion))

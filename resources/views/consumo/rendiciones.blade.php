@@ -23,7 +23,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                                                {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -81,11 +81,11 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <label class="small mb-1" for="cobertura_id">Periodo generado</label>
+                                    <label class="small mb-1" for="periodo_gen">Periodo generado</label>
                                     <select class="form-select form-select-sm" id="periodo_gen" name="periodo_gen">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)
-                                            <option value="{{ $item->nombre }}">
+                                            <option value="{{ $item->sigla }}">
                                                 {{ $item->nombre }}
                                             </option>
                                         @endforeach
@@ -134,7 +134,7 @@
                                                 <td>{{ $item->pac_nombre }}</td>
                                                 <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}</td>
                                                 <td>{{ $item->porcentaje }}</td>
-                                                <td>{{ number_format((float) $item->valor, 2, '.', '') }}</td>
+                                                <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
                                                 <td>
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                         @if (!empty($item->observacion)) data-bs-title="{{ $item->observacion }}" @endif
@@ -156,7 +156,7 @@
                         
                             <div class="row justify-content-end align-items-end">
                                 <div class="form-group col-md-2">
-                                    <label class="small mb-1" for="cobertura_id">Estados</label>
+                                    <label class="small mb-1" for="estadoCambio">Estados</label>
                                     <select class="form-select form-select-sm" id="estadoCambio" name="estadoCambio">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($estados as $item)
@@ -167,7 +167,7 @@
                                     </select>
                                 </div>
                                 <div id="div_refac" class="form-group col-md-2" style="display: none">
-                                    <label class="small mb-1" for="cobertura_id">Periodo a reasignar</label>
+                                    <label class="small mb-1" for="periodo_refac">Periodo a reasignar</label>
                                     <select class="form-select form-select-sm" id="periodo_refac" name="periodo_refac">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)
@@ -188,7 +188,7 @@
                                 <div class="col-md-2">
                                 </div>
                                 <div id="periodo_asig" class="form-group col-md-2" >
-                                    <label class="small mb-1" for="cobertura_id">Periodo de rendición</label>
+                                    <label class="small mb-1" for="periodo">Periodo de rendición</label>
                                     <select class="form-select form-select-sm" id="periodo" name="periodo">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Empresa;
-use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 // use Illuminate\Support\Facades\Session;
 // use Illuminate\Support\Facades\Cache;
 // use Illuminate\Support\Facades\Artisan;
@@ -40,6 +39,18 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
+                // Limpiar la cache de rutas
+                Artisan::call('route:clear');
+
+                // Limpiar la cache de configuración
+                Artisan::call('config:clear');
+        
+                // Limpiar la cache de vistas
+                Artisan::call('view:clear');
+        
+                // Limpiar la cache de aplicación (si es necesario)
+                Artisan::call('cache:clear');
+                
         return view('auth.auth-login-basic');
     }
 

@@ -9,7 +9,7 @@
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span id="card_title">
-                                {{ __('Partes') }}
+                                {{ __('Auditoria Carga') }}
                             </span>
                         </div>
                     </div>
@@ -23,7 +23,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                                                {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -111,7 +111,7 @@
                                             <td>{{ $item->profesional }}</td>
                                             <td>{{ $item->paciente }}</td>
                                             <td>{{ $item->fec_prestacion }}</td>
-                                            <td>{{ $item->cobertura }}</td>
+                                            <td>{{ $item->sigla }}</td>
                                             <td>
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" 
                                                     @if(!empty($item->observacion))

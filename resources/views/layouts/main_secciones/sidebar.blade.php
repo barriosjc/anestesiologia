@@ -35,10 +35,10 @@
                             <a class="nav-link" href="{{ route('profesionales.index') }}">Médicos</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Lugares prestación</a>
+                            <a class="nav-link" href="{{ route('usuario.index') }}">Centros</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Gerenciadoras</a>
+                            <a class="nav-link" href="{{ route('usuario.index') }}">Coberturas</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('usuario.index') }}">Nomenclador</a>
