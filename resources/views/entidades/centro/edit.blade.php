@@ -12,15 +12,20 @@
                 @includeif('partials.errors')
 
                 <div class="card card-default">
-                    <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Médico</span>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span class="card-title">{{ __('Modificar') }} Centro</span>
+                        <a href="{{ route('centros.index') }}" title="Volver">
+                            <button class="btn btn-warning btn-sm float-right">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
+                            </button>
+                        </a>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route(' centros.update', $ centros->id) }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('centros.update', $centros->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 
-                            @include('entidades. centro.form')
+                            @include('entidades.centro.form')
 
                         </form>
                     </div>

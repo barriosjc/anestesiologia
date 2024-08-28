@@ -13,11 +13,11 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Centros de atención') }}
+                                {{ __('Coberturas') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('centros.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('coberturas.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Nuevo') }}
                                 </a>
                               </div>
@@ -30,24 +30,30 @@
                                     <tr>
                                         <th>Nro</th>
 										<th>Nombre</th>
+                                        <th>Sigla</th>
 										<th>CUIT</th>
-										<th>Telefono</th>
-                                        <th>Contacto</th>
-                                        <th></th>
+                                        <th>Grupo</th>
+                                        <th>Edad desde</th>
+                                        <th>Edad hasta</th>
+                                        <th>% adic.</th>
+                                        <th style="width: 15%"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($centros as $item)
+                                    @foreach ($coberturas as $item)
                                         <tr>
                                             <td>{{ ++$i }}</td>
 											<td>{{ $item->nombre }}</td>
-                                            <td>{{ $item->cuit }}</td>
-											<td>{{ $item->telefono }}</td>
-                                            <td>{{ $item->contacto }}</td>
+                                            <td>{{ $item->sigla }}</td>
+											<td>{{ $item->cuit }}</td>
+                                            <td>{{ $item->grupo }}</td>
+                                            <td>{{ $item->edad_desde }}</td>
+                                            <td>{{ $item->edad_hasta }}</td>
+                                            <td>{{ $item->porcentaje_adic }}</td>
                                             <td>
-                                                <form id="delete-form-{{ $item->id }}" action="{{ route('centros.destroy',$item->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('centros.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('centros.edit',$item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                <form id="delete-form-{{ $item->id }}" action="{{ route('coberturas.destroy',$item->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('coberturas.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('coberturas.edit',$item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
                                                     @csrf
                                                     @method('DELETE')
 
@@ -64,8 +70,8 @@
                         </div>
                     </div>
                 </div>
-                @if(!empty($centros))
-                    {!! $centros->links() !!}
+                @if(!empty($coberturas))
+                    {!! $coberturas->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                 @endif
             </div>
         </div>

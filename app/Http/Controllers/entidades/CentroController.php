@@ -19,10 +19,10 @@ class CentroController extends Controller
      */
     public function index()
     {
-        $Centros = Centro::paginate(10);
+        $centros = Centro::paginate(10);
 
-        return view('entidades.Centro.index', compact('Centros'))
-            ->with('i', (request()->input('page', 1) - 1) * $Centros->perPage());
+        return view('entidades.centro.index', compact('centros'))
+            ->with('i', (request()->input('page', 1) - 1) * $centros->perPage());
     }
 
     /**
@@ -32,8 +32,8 @@ class CentroController extends Controller
      */
     public function create()
     {
-        $Centros = new Centro;
-        return view('entidades.Centro.create', compact('Centros'));
+        $centros = new Centro;
+        return view('entidades.centro.create', compact('centros'));
     }
 
     /**
@@ -51,14 +51,14 @@ class CentroController extends Controller
             'contacto' => 'nullable|string|max:45'
         ]);
 
-        $Centro = new Centro;
-        $Centro->nombre = $request['nombre'];
-        $Centro->cuit = $request['cuit'];
-        $Centro->telefono = $request['telefono'];
-        $Centro->contacto = $request['contacto'];
-        $Centro->save();
+        $centro = new Centro;
+        $centro->nombre = $request['nombre'];
+        $centro->cuit = $request['cuit'];
+        $centro->telefono = $request['telefono'];
+        $centro->contacto = $request['contacto'];
+        $centro->save();
         
-        return redirect()->route('Centros.index')
+        return redirect()->route('centros.index')
             ->with('success', 'Centro creado correctamente.');
     }
 
@@ -70,9 +70,9 @@ class CentroController extends Controller
      */
     public function show($id)
     {
-        $Centro = Centro::find($id);
+        $centro = Centro::find($id);
 
-        return view('entidades.Centro.show', compact('Centro'));
+        return view('entidades.centro.show', compact('centro'));
     }
 
     /**
@@ -83,19 +83,19 @@ class CentroController extends Controller
      */
     public function edit($id)
     {
-        $Centros = Centro::find($id);
+        $centros = Centro::find($id);
 
-        return view('entidades.Centro.edit', compact('Centros'));
+        return view('entidades.centro.edit', compact('centros'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  Centro $Centro
+     * @param  centro $centro
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Centro $Centro)
+    public function update(Request $request, Centro $centro)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:200',
@@ -104,14 +104,14 @@ class CentroController extends Controller
             'contacto' => 'nullable|string|max:45'
         ]);
 
-        $Centro->nombre = $request['nombre'];
-        $Centro->cuit = $request['cuit'];
-        $Centro->telefono = $request['telefono'];
-        $Centro->contacto = $request['contacto'];
-        $Centro->save();
+        $centro->nombre = $request['nombre'];
+        $centro->cuit = $request['cuit'];
+        $centro->telefono = $request['telefono'];
+        $centro->contacto = $request['contacto'];
+        $centro->save();
 
 
-        return redirect()->route('Centros.index')
+        return redirect()->route('centros.index')
             ->with('success', 'Centro actualizado correctamente.');
     }
 
@@ -122,9 +122,9 @@ class CentroController extends Controller
      */
     public function destroy($id)
     {
-        $Centro = Centro::find($id)->delete();
+        $centro = Centro::find($id)->delete();
 
-        return redirect()->route('Centros.index')
+        return redirect()->route('centros.index')
             ->with('success', 'Centro borrado correctamente.');
     }
 

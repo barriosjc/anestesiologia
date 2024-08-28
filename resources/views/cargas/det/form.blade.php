@@ -4,7 +4,7 @@
     <section class="content container-fluid">  
         <div class="card card-default">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="card-title">Carga de detalle del parte</span>
+                <span class="card-title">Carga de detalle del parte, Nro: {{$parte_cab_id}}</span>
                 <div>
                     <a href="{{ route('partes_cab.edit', $parte_cab_id) }}" class="btn btn-info btn-sm" data-placement="left">
                         Volver

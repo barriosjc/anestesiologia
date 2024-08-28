@@ -61,3 +61,8 @@
   .custom-width-valor {
     width: 10%; /* Ajusta el porcentaje según sea necesario */
   }
+ 
+  .no-bullets {
+    list-style-type: none;
+    padding-left: 0; /* Opcional: para eliminar la sangría */
+}

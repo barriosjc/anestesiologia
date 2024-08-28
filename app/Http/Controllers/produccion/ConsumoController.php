@@ -344,12 +344,24 @@ class ConsumoController extends Controller
 
     public function rendicion_estados(Request $request)
     {
+        $this->validate($request, [
+            "selected_ids" => "required",
+            "estadoCambio" => "required",
+            "periodo_refac" => "required_if:estadoCambio,7",
+            "obs_refac" => "nullable|max:250"
+        ],[
+            "selected_ids.required" => "Debe seleccionar de la grilla los procedimientos que requiere cambiar de estado.",
+            "periodo_refac.required_if" => "El campo periodo de refacción es obligatorio cuando se quiere cambiar el estado A refacturar."
+
+        ]);
+
         if($request->has('selected_ids') && $request->has('selected_ids') 
                 && !empty($request->selected_ids) && !empty($request->estadoCambio) )
         {
             $selectedIds = $request->input('selected_ids');
             $nuevoEstado = $request->input('estadoCambio');
             $nuevoPeriodo = $request->input('periodo_refac');
+            $obs_refac = $request->input('obs_refac');
 
             try {
                 if($nuevoEstado == "7" && $nuevoPeriodo == null) {
@@ -392,6 +404,7 @@ class ConsumoController extends Controller
                     $consumo->estado_id = $nuevoEstado; 
                     if($nuevoEstado == "7") {
                         $consumo->periodo = $nuevoPeriodo;
+                        $consumo->obs_refac = $obs_refac;
                     }
                     $consumo->save();
                 }

@@ -12,14 +12,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $id
  * @property $nombre
  * @property $cuit
- * @property $telefono
- * @property $contacto
+ * @property $grupo
+ * @property $porcentaje_adic
+ * @property $edad_desde
+ * @property $edad_hasta
  * @property $created_at
  * @property $updated_at
  * @property $deleted_at
  *
  */
-class cobertura extends Model
+class Cobertura extends Model
 {
     use SoftDeletes;
 
@@ -32,11 +34,7 @@ class cobertura extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'cuit', 'telefono', 'contacto'];
+    protected $fillable = ['nombre', 'cuit', 'grupo', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
     
-    public function valores()
-    {
-        return $this->hasMany(Valores::class);
-    }
     
 }

@@ -56,7 +56,7 @@
                     <option value=""> --- Select ---</option>
                     @foreach ($coberturas as $data)
                         <option value="{{ $data->id }}" {{old('cobertura_id', $parte->cobertura_id) == $data->id ? 'selected' : ''}}> 
-                            {{ $data->nombre }}</option>
+                            {{ $data->sigla }}</option>
                     @endforeach
                 </select>
             </div>
@@ -80,6 +80,7 @@
 
         <div class="box-footer mt20">
             <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+            @php($parte_id = $parte_id ?? session('parte_id'))
             @if(!empty($parte_id))
                 <a href="{{route('partes_det.create', $parte_id)}}" class="btn btn-success">{{ __('Cargar detalle') }}</a>
             @endif

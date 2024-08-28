@@ -5,13 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
+use App\Http\Controllers\entidades\CentroController;
 use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\entidades\PacienteController;
-use App\Http\Controllers\produccion\ConsumoController;
 // use App\Http\Controllers\seguridad\Usuario0Controller;
+use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
+use App\Http\Controllers\entidades\CoberturaController;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 
@@ -40,6 +42,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', function () {
             return view('layouts.main');
         })->name('main');
+
+        //perfil de usuario
+        Route::get('profile/{id}/editar', [ProfileController::class, 'index'])->name('profile');
+        Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
+        Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
+        Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
+        Route::get('roles/combos/json', [RoleController::class, 'roles_json'])->name('roles.json');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
             Route::get('partes', [ParteController::class, 'index'])->name('partes_cab.index');
@@ -81,20 +90,15 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicion_estados'])->name('consumo.rendiciones.estados');
         });
 
-        Route::resources(
-            [
-                'profesionales' => ProfesionalController::class,
-                'centros' => CentroController::class,
-                'coberturas' => ProfesionalController::class,
-            ]
-        );
-
-        //perfil de usuario
-        Route::get('profile/{id}/editar', [ProfileController::class, 'index'])->name('profile');
-        Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
-        Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
-        Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
-        Route::get('roles/combos/json', [RoleController::class, 'roles_json'])->name('roles.json');
+        Route::group(['middleware' => ['permission:adm_entidades']], function () {
+            Route::resources(
+                [
+                    'profesionales' => ProfesionalController::class,
+                    'centros' => CentroController::class,
+                    'coberturas' => CoberturaController::class,
+                ]
+            );
+        });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {
             Route::resources([

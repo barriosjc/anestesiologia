@@ -31,20 +31,19 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="codigo">Coberturas</label>
-                                    <select class="form-control" id="grupo" name="grupo">
+                                    <select class="form-select" id="grupo" name="grupo">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->grupo }}" {{$cobertura_id == $item->id ? 'selected' : ''}}>{{ $item->sigla.' / '.$item->grupo }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-
                                 <div class="form-group col-md-3">
-                                    <label for="centro_id">Centros</label>
-                                    <select class="form-control" id="centro_id" name="centro_id">
+                                    <label for="periodo">Periodo</label>
+                                    <select class="form-select" id="periodo" name="periodo">
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($centros as $item)
-                                            <option value="{{ $item->id }}" {{$centro_id == $item->id ? 'selected' : ''}}>{{ $item->nombre }}</option>
+                                        @foreach ($periodos as $item)
+                                            <option value="{{ $item->nombre }}" {{$periodo == $item->nombre ? 'selected' : ''}}>{{ $item->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -62,8 +61,8 @@
                                 <thead class="thead">
                                     <tr>
                                         <th>Nro</th>
-                                        <th>Cobertura</th>
-                                        <th>Centro</th>
+                                        <th>Grupo</th>
+                                        <th>Periodo</th>
                                         <th>Nivel</th>
                                         <th>Tipo</th>
                                         <th>Valor</th>
@@ -74,8 +73,8 @@
                                     @foreach ($valores as $item)
                                         <tr>
                                             <td>{{ ++$i }}</td>
-                                            <td>{{ $item->cobertura?->nombre }}</td>
-                                            <td>{{ $item->centro?->nombre }}</td>
+                                            <td>{{ $item->grupo }}</td>
+                                            <td>{{ $item->periodo }}</td>
                                             <td>{{ $item->nivel }}</td>
                                             <td><span
                                                     class="badge bg-{{ $item->tipo == 1 ? 'primary' : 'success' }}">{{ $item->tipo == 1 ? 'Manual' : 'Factor' }}</span>
@@ -173,20 +172,20 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <label for="cobertura_id">Coberturas</label>
-                                <select class="form-control"  name="cobertura_id">
+                                <select class="form-select"  name="cobertura_id">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="centro_id">Centros</label>
-                                <select class="form-control" name="centro_id">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($centros as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                <label for="periodo">Periodo</label>
+                                <select class="form-select" name="periodo">
+                              <option value="">-- Seleccione --</option>
+                                    @foreach ($periodos as $item)
+                                        <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -196,20 +195,20 @@
                             <h4>Copiar desde</h4>
                             <div class="form-group col-md-6">
                                 <label for="cobertura_id">Coberturas</label>
-                                <select class="form-control" name="cobertura_id_copy">
+                                <select class="form-select" name="cobertura_id_copy">
                                     <option value="">-- Seleccione --</option>
                                     @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <div class="form-group col-md-6">
-                                <label for="centro_id">Centros</label>
-                                <select class="form-control" name="centro_id_copy">
+                                <label for="centro_id">Periodo</label>
+                                <select class="form-select" name="periodo_copy">
                                     <option value="">-- Seleccione --</option>
-                                    @foreach ($centros as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                    @foreach ($periodos as $item)
+                                        <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
                                     @endforeach
                                 </select>
                             </div>

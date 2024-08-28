@@ -9,6 +9,7 @@ use App\Models\nomenclador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Periodo;
 use Exception;
 
 class NomencladorController extends Controller
@@ -17,23 +18,24 @@ class NomencladorController extends Controller
         $valores = Valores::withTrashed()
         ->paginate();
         $coberturas = Cobertura::get();
-        $centros = Centro::get();
+        $periodos = Periodo::get();
         $cobertura_id = null;
-        $centro_id = null;
+        $periodo = null;
 
-        return view("entidades.nomenclador.valores",compact("valores", "coberturas", "centros", "cobertura_id", "centro_id"))
+        return view("entidades.nomenclador.valores",compact("valores", "coberturas", "periodos", "cobertura_id", "periodo"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
     public function valores_nuevos(Request $request)
     {
         $validate = $request->validate( [
-            "cobertura_id"=> "required"
+            "cobertura_id"=> "required",
+            "perido" => "required"
         ]);
 
         try{
             $niveles = valores::where("cobertura_id", $request->cobertura_id)
-                                ->where("centro_id", $request->centro_id)
+                                ->where("periodo", $request->perido)
                                 ->exists();
             if($niveles){
                 throw new Exception("Error, Ya hay valores cargados para el Convenio y Centro seleccionado, no se puede duplicar.");

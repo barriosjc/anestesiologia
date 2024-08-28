@@ -152,10 +152,10 @@
     </div>
     <script src="{{ asset('js/util.js') }}"></script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function(){
             $('[data-bs-toggle="tooltip"]').tooltip(); 
         });
-    </script>
+    </script> --}}
     
 @endsection

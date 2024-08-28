@@ -27,7 +27,7 @@ class Valores extends Model
 
     protected $table = 'nom_valores';
     
-    protected $perPage = 10;
+    protected $perPage = 20;
 
     /**
      * Attributes that should be mass-assignable.

@@ -35,13 +35,13 @@
                             <a class="nav-link" href="{{ route('profesionales.index') }}">Médicos</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Centros</a>
+                            <a class="nav-link" href="{{ route('centros.index') }}">Centros</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Coberturas</a>
+                            <a class="nav-link" href="{{ route('coberturas.index') }}">Coberturas</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
-                            <a class="nav-link" href="{{ route('usuario.index') }}">Nomenclador</a>
+                            <a class="nav-link" href="{{ route('coberturas.index') }}">Nomenclador</a>
                         @endif
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
                             <a class="nav-link" href="{{ route('nomenclador.valores.listado') }}">Valorización</a>

@@ -35,7 +35,7 @@ class Profesional extends Model
      *
      * @var array
      */
-    protected $fillable = ['id','nombre','email','matricula','telefono','estado'];
+    protected $fillable = ['id','nombre','email','matricula','telefono'];
 
 
 

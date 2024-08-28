@@ -2,37 +2,24 @@
     <div class="box-body">
         <div class="row gx-3 mb-3">
             <div class="col-md-6">
-                <label class="small mb-1" for="nombre">Nombre y apellido</label>
+                <label class="small mb-1" for="nombre">Nombre</label>
                 <input class="form-control" id="nombre" name="nombre" type="text"
-                    placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $ centros->nombre) }}" />
+                    placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $centros->nombre) }}" />
             </div>
             <div class="col-md-6">
-                <label class="small mb-1" for="matricula">Matrícula</label>
-                <input class="form-control" id="matricula" name="matricula" type="text" placeholder="matricula"
-                    value="{{ old('matricula', $ centros->matricula) }}" />
+                <label class="small mb-1" for="cuit">CUIT</label>
+                <input class="form-control" id="cuit" name="cuit" type="text" placeholder="cuit"
+                    value="{{ old('cuit', $centros->cuit) }}" />
             </div>
-        </div>
-        <div class="mb-3">
-            <label class="small mb-1" for="email">Email </label>
-            <input class="form-control" id="email" name="email" type="email" placeholder="Ingrese su email"
-                value="{{ old('email', $ centros->email) }}" />
-        </div>
-        <!-- Form Row-->
-        <div class="row gx-3 mb-3">
-            <!-- Form Group (phone number)-->
             <div class="col-md-6">
-                <label class="small mb-1" for="telefono">Teléfono</label>
-                <input class="form-control" id="telefono" name="telefono" type="text" placeholder="telefono"
-                    value="{{ old('telefono', $ centros->telefono) }}" />
+                <label class="small mb-1" for="telefono">Teléfono </label>
+                <input class="form-control" id="telefono" name="telefono" type="text" placeholder="Ingrese el teléfono"
+                    value="{{ old('telefono', $centros->telefono) }}" />
             </div>
-            <div class="col-md-3">
-                <label for="estado" class="small mb-1">Estado</label>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="estado" name="estado"
-                        {{ $ centros->estado > 0 ? 'checked' : '' }}>
-                    <label class="form-check-label" for="estado">
-                        (No/Si)</label>
-                </div>
+            <div class="col-md-6">
+                <label class="small mb-1" for="contacto">Contacto</label>
+                <input class="form-control" id="contacto" name="contacto" type="text" placeholder="contacto"
+                    value="{{ old('contacto', $centros->contacto) }}" />
             </div>
         </div>
     </div>

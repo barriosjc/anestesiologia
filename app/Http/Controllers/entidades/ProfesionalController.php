@@ -65,18 +65,18 @@ class ProfesionalController extends Controller
             ->with('success', 'Médico creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $profesional = profesional::find($id);
+    // /**
+    //  * Display the specified resource.
+    //  *
+    //  * @param  int $id
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function show($id)
+    // {
+    //     $profesional = profesional::find($id);
 
-        return view('entidades.profesional.show', compact('profesional'));
-    }
+    //     return view('entidades.profesional.show', compact('profesional'));
+    // }
 
     /**
      * Show the form for editing the specified resource.

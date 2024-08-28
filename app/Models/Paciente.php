@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $deleted_at
  *
  */
-class paciente extends Model
+class Paciente extends Model
 {
     use SoftDeletes;
 

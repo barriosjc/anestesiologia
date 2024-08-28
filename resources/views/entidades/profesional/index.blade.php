@@ -1,9 +1,5 @@
 @extends('layouts.main')
 
-@section('template_title')
-    Médicos
-@endsection
-
 @section('contenido')
     <div class="container-fluid">
         <div class="row">
@@ -13,7 +9,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Médicos') }}
+                                {{ __('Profesionales') }}
                             </span>
 
                              <div class="float-right">

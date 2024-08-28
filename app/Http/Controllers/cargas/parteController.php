@@ -4,8 +4,8 @@ namespace App\Http\Controllers\cargas;
 
 use App\Models\User;
 use App\Models\Centro;
-use App\Models\paciente;
-use App\Models\cobertura;
+use App\Models\Paciente;
+use App\Models\Cobertura;
 use App\Models\Documento;
 use App\Models\Parte_cab;
 use App\Models\Parte_det;
@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
-class parteController extends Controller
+class ParteController extends Controller
 {
     public function index()
     {
@@ -31,13 +31,13 @@ class parteController extends Controller
     {
         $centro_id = User::find(Auth()->user()->id)->centro_id;
         if($centro_id) {
-            $centros = centro::where("id", $centro_id)->get();
+            $centros = Centro::where("id", $centro_id)->get();
         }else {
-            $centros = centro::get();
+            $centros = Centro::get();
         }
         // dd($centros);
-        $paciente = new paciente;
-        $coberturas = cobertura::get();
+        $paciente = new Paciente;
+        $coberturas = Cobertura::get();
         $profesionales = Profesional::get();
         $parte = new Parte_cab;
         $parte_id = null;
@@ -57,9 +57,9 @@ class parteController extends Controller
             'fec_prestacion' => 'required|date|before_or_equal:today'
         ]);
 
-        $paciente = paciente::where('dni', $request->dni)->first();
+        $paciente = Paciente::where('dni', $request->dni)->first();
         if (empty($paciente)  ) {
-            $paciente = new paciente;
+            $paciente = new Paciente;
         }
         $paciente->dni = $request->dni;
         $paciente->nombre = $request->nombre;
@@ -85,15 +85,16 @@ class parteController extends Controller
         // dd($parte);
         // return redirect()->route('partes_cab.index')
         return back()->withInput()
-            ->with(['success' => "Se ha $msg la cabecera del parte correctamente."]);
+            ->with(['success' => "Se ha $msg la cabecera del parte correctamente, nro: {$parte->id}.",
+                    'parte_id' => $parte->id]);
     }
 
     public function edit($id)
     {
         $parte = Parte_cab::find($id);
-        $paciente = paciente::where('id', $parte->paciente_id)->first();
-        $centros = centro::get();
-        $coberturas = cobertura::get();
+        $paciente = Paciente::where('id', $parte->paciente_id)->first();
+        $centros = Centro::get();
+        $coberturas = Cobertura::get();
         $profesionales = Profesional::get();
         $parte_id = $parte->id;
 
@@ -103,6 +104,10 @@ class parteController extends Controller
     public function destroy($id)
     {
         $parte = Parte_cab::find($id);
+        //si esta ingresado o observado no se puede borrar
+        if(!in_array($parte->estado, [1,2])){
+            return redirect()->back()->with('error', "No es posible borrar el parte {$parte->id} con el estado actual.");
+        }
         $parte->delete();
 
         return redirect()->route('partes_cab.index')
