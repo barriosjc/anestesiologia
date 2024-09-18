@@ -27,7 +27,7 @@
                                         <th>Nro</th>
 										<th>Nombre</th>
 										<th>Emai</th>
-										<th>matricula</th>
+										<th>DNI</th>
 
                                         <th></th>
                                     </tr>
@@ -38,12 +38,12 @@
                                             <td>{{ ++$i }}</td>
 											<td>{{ $item->nombre }}</td>
                                             <td>{{ $item->email }}</td>
-											<td>{{ $item->matricula }}</td>
+											<td>{{ $item->dni }}</td>
 
                                             <td>
-                                                <form id="delete-form-{{ $item->id }}" action="{{ route('profesionales.destroy',$item->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('profesionales.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('profesionales.edit',$item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                <form id="delete-form-{{ $item->id }}" action="{{ route('profesionales.destroy', $item->id) }}" method="POST">
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('profesional.cargar.documentacion', $item->id) }}"><i class="fa fa-file-alt"></i></a>
+                                                    <a class="btn btn-sm btn-success" href="{{ route('profesionales.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
                                                     @csrf
                                                     @method('DELETE')
 
@@ -60,7 +60,9 @@
                         </div>
                     </div>
                 </div>
-                {!! $profesionales->links() !!}
+                @if(!empty($profesionales))
+                {!! $profesionales->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+            @endif
             </div>
         </div>
     </div>

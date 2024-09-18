@@ -116,7 +116,7 @@ class ParteController extends Controller
 
     public function create_det(int $id) 
     {
-        $documentos = Documento::get();
+        $documentos = Documento::where("tipo", "like", "%parte%")->get();
         $partes = Parte_det::with('documento')->where('parte_cab_id' , $id)->paginate(5);
         $parte = new Parte_det;
         $parte_cab_id = $id;
@@ -126,6 +126,13 @@ class ParteController extends Controller
 
     public function store_det(Request $request) 
     {
+        $validatedData = $request->validate([
+            'parte_cab_id' => 'required|exists:partes_cab,id',
+            'documento_id' => 'required|exists:documentos,id',
+            'archivo' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:5548',
+            'nro_hoja' => 'required|integer'
+        ]);
+
         $archivo = $request->file('archivo');
         $archivoNombre = $archivo->getClientOriginalName();
 
@@ -158,12 +165,17 @@ class ParteController extends Controller
         return response()->download($rutaArchivo, $nombreOriginal);
     }
     
-    public function det_destroy($id)
+    public function destroy_det(int $id)
     {
         $parte = Parte_det::find($id);
+        $parte_id = $parte->parte_cab_id;
+        if(!in_array( $parte->estado_id, [1,2] )) {
+            return redirect()->route('partes_det.create', $parte_id)
+            ->with('error', 'No es posible borrar la documentación con el estado actual del parte.');
+        }
         $parte->delete();
 
-        return redirect()->route('partes_det.create')
+        return redirect()->route('partes_det.create', $parte_id)
         ->with('success', 'Detalle de Parte borrado correctamente.');
     }    
 }

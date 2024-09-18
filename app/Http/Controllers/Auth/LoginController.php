@@ -39,17 +39,11 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-                // Limpiar la cache de rutas
-                Artisan::call('route:clear');
-
-                // Limpiar la cache de configuración
-                Artisan::call('config:clear');
-        
-                // Limpiar la cache de vistas
-                Artisan::call('view:clear');
-        
-                // Limpiar la cache de aplicación (si es necesario)
-                Artisan::call('cache:clear');
+                // Artisan::call('route:clear');
+                // Artisan::call('config:clear');
+                // Artisan::call('view:clear');
+                // Artisan::call('cache:clear');
+                // Artisan::call('storage:link');
                 
         return view('auth.auth-login-basic');
     }

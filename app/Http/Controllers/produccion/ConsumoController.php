@@ -35,40 +35,49 @@ class ConsumoController extends Controller
         $centros = Centro::get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
-        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
-        $nombre = $request->has('nombre') ? $request->nombre : null;
-        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
-        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : null;
-        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('cobertura_id', null);
+        $centro_id = $request->has('centro_id') ? $request->centro_id : session('centro_id', null);
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('profesional_id', null);
+        $nombre = $request->has('nombre') ? $request->nombre : session('nombre', null);
+        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : session('fec_desde', null);
+        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : session('fec_hasta', null);
+        $estado_id = $request->has('estado_id') ? $request->estado_id : session('estado_id', null);
 
         $query = Parte_cab::v_parte_cab();
-        if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+        if (!empty($cobertura_id)) {
+            $query->where('cobertura_id', '=', $cobertura_id);
         }
-        if ($request->has('centro_id')  && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
+        if (!empty($centro_id)) {
+            $query->where('centro_id', '=', $centro_id);
         }
-        if ($request->has('profesional_id')  && !empty($request->profesional_id)) {
-            $query->where('profesional_id', '=', $request->profesional_id);
+        if (!empty($profesional_id)) {
+            $query->where('profesional_id', '=', $profesional_id);
         }
-        if ($request->has('estado_id')  && !empty($request->estado_id)) {
-            $query->where('estado_id', '=', $request->estado_id);
+        if (!empty($estado_id)) {
+            $query->where('estado_id', '=', $estado_id);
         }
-        if ($request->has('nombre')  && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%".$request->nombre."%");
+        if (!empty($nombre)) {
+            $query->where('paciente', 'like', "%".$nombre."%");
         }
-        if(!empty($request->fec_desde)){
-            $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
+        if (!empty($fec_desde)) {
+            $query->where('fec_prestacion_orig', '>=', $fec_desde);
         }
-        if(!empty($request->fec_hasta)){
-            $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
+        if (!empty($fec_hasta)) {
+            $query->where('fec_prestacion_orig', '<=', $fec_hasta);
         }
+    
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
-
-                    // Ver la consulta SQL y los bindings
+    
+        // guardo el filtro en session
+        session()->put('cobertura_id', $cobertura_id);
+        session()->put('centro_id', $centro_id);
+        session()->put('profesional_id', $profesional_id);
+        session()->put('nombre', $nombre);
+        session()->put('fec_desde', $fec_desde);
+        session()->put('fec_hasta', $fec_hasta);
+        session()->put('estado_id', $estado_id);
+// Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
 
@@ -80,7 +89,7 @@ class ConsumoController extends Controller
     public function cargar(int $id)
     {
         $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
-        $documentos = Documento::get();
+        $documentos = Documento::where("tipo", "like", "%parte%")->get();
         $nomenclador = nomenclador::get();
         $parte_cab_id = $id;
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
@@ -233,6 +242,8 @@ class ConsumoController extends Controller
         $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
         $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : null;
         $estado_id = $request->has('estado_id') ? $request->estado_id : null;
+        $periodo_gen = $request->has('periodo_gen') ? $request->periodo_gen : null;
+        
 
         $query = DB::table('v_rendiciones');
         if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
@@ -247,8 +258,8 @@ class ConsumoController extends Controller
         if ($request->has('estado_id')  && !empty($request->estado_id)) {
             $query->where('estado_id', '=', $request->estado_id);
         }
-        if ($request->has('nombre')  && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%".$request->nombre."%");
+        if ($request->has('pac_nombre')  && !empty($request->pac_nombre)) {
+            $query->where('pac_nombre', 'like', "%".$request->pac_nombre."%");
         }
         if(!empty($request->fec_desde)){
             $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
@@ -256,8 +267,8 @@ class ConsumoController extends Controller
         if(!empty($request->fec_hasta)){
             $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
         }
-        if(!empty($request->periodo)){
-            $query->where('per_nombre', '=', $request->periodo);
+        if(!empty($periodo_gen)){
+            $query->where('periodo', '=', $periodo_gen);
         }
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
@@ -267,7 +278,7 @@ class ConsumoController extends Controller
 // $bindings = $query->getBindings();
 // dd($sql, $bindings);
         return view("consumo.rendiciones", compact("periodos", "partes", "coberturas", "centros", "profesionales", 
-                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
+                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id", "periodo_gen"));
     }
 
     public function rendicion_store(Request $request)
@@ -348,11 +359,11 @@ class ConsumoController extends Controller
             "selected_ids" => "required",
             "estadoCambio" => "required",
             "periodo_refac" => "required_if:estadoCambio,7",
-            "obs_refac" => "nullable|max:250"
+            "obs_refac" => "required_if:estadoCambio,7|max:250"
         ],[
             "selected_ids.required" => "Debe seleccionar de la grilla los procedimientos que requiere cambiar de estado.",
-            "periodo_refac.required_if" => "El campo periodo de refacción es obligatorio cuando se quiere cambiar el estado A refacturar."
-
+            "periodo_refac.required_if" => "El campo periodo de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar.",
+            "obs_refac.required_if" => "El campo Observaciones de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar."
         ]);
 
         if($request->has('selected_ids') && $request->has('selected_ids') 
@@ -413,7 +424,7 @@ class ConsumoController extends Controller
                     throw new Exception($ids);
                 }
 
-                return response()->json(['success' => 'Estado/s actualizado/s con éxito.'], 200);
+                return response()->json(['success' => 'Estado/s actualizado/s con éxito. Vuelva a recargar la página para ver los estados cambiados.'], 200);
 
             } catch (\InvalidArgumentException $e) {
                 return response()->json(['error' => $e->getMessage() . '.'], 422);
@@ -422,5 +433,23 @@ class ConsumoController extends Controller
                 return response()->json(['error'=> 'Algun/os Detalles de rendición no se permite el cambio de estado seleccionado en base a su estado previo a realizar el cambio, nros de parte: '.$th->getMessage().'. '], 422);
             }
         }
+    }
+
+    public function rendicion_revalorizar(Request $request){
+        $this->validate($request, [
+            "selected_ids" => "required",
+            "periodo_valorizar" => "required"
+        ]);        
+
+        $selectedIds = json_decode($request->input('selected_ids'));
+        $periodo = $request->input('periodo_valorizar');
+    
+        foreach ($selectedIds as $item) {
+            $det = Consumo_det::find($item->consumo_det_id);
+            $nivel = nomenclador::where("id", $det->nomenclador_id)->first()->nivel;
+            $valor = valores::where("nivel", $nivel)->first()->valor;   
+        }
+
+
     }
 }

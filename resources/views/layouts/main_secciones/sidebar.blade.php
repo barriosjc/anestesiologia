@@ -1,5 +1,3 @@
-@php($guard = 'web')
-
 @if (Auth()->user()->hasRole('super-admin'))
     @php($super = true)
 @else
@@ -31,41 +29,41 @@
                 </a>
                 <div class="collapse" id="pagesCollapseError" data-bs-parent="#accordionSidenavPagesMenu">
                     <nav class="sidenav-menu-nested nav">
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('profesionales.index') }}">Médicos</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('centros.index') }}">Centros</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('coberturas.index') }}">Coberturas</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('coberturas.index') }}">Nomenclador</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('nomenclador.valores.listado') }}">Valorización</a>
                         @endif
                     </nav>
                 </div>
             @endrole
 
-            @if (Auth()->user()->hasPermissionTo('adm_partes', $guard) ||
+            @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') ||
                     $super)
-                <div class="sidenav-menu-heading">Usuarios  </div>
+                <div class="sidenav-menu-heading">ADMINISTRATIVOS </div>
                 {{-- Sidenav Accordion (Votaciones) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                     data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                    Rendiciones
+                    Carga de Partes
                     <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
                 <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        @if (Auth()->user()->hasPermissionTo('adm_partes', $guard) || $super)
-                            <a class="nav-link" href="{{ route('partes_cab.create') }}">Nueva</a>
+                        @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
+                            <a class="nav-link" href="{{ route('partes_cab.create') }}">Nuevo</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_partes', $guard) || $super)
+                        @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
                             <a class="nav-link" href="{{ route('partes_cab.index') }}">Listados</a>
                         @endif
                     </nav>

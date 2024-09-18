@@ -7,9 +7,9 @@
                     placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $profesionales->nombre) }}" />
             </div>
             <div class="col-md-6">
-                <label class="small mb-1" for="matricula">Matrícula</label>
-                <input class="form-control" id="matricula" name="matricula" type="text" placeholder="matricula"
-                    value="{{ old('matricula', $profesionales->matricula) }}" />
+                <label class="small mb-1" for="dni">DNI</label>
+                <input class="form-control" id="dni" name="dni" type="text" placeholder="dni"
+                    value="{{ old('dni', $profesionales->dni) }}" />
             </div>
         </div>
         <div class="mb-3">

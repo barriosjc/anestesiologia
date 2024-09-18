@@ -21,7 +21,6 @@ class permissionMiddleware
         if (Auth::guest()) {
             return redirect('/login');
         }
-     
         if (! ($request->user()->can($permission) or $request->user()->hasrole('super-admin'))) {
            abort(403);
         }

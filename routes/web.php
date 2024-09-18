@@ -17,7 +17,6 @@ use App\Http\Controllers\entidades\CoberturaController;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 
-
 // Auth::routes();
 Route::match(['get'],'login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
@@ -64,6 +63,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
             
             Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
+            Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
@@ -81,13 +81,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
             Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
             Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
-            Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
 
             Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicion_filtrar'])->name('consumo.rendiciones.filtrar');
             Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicion_store'])->name('consumo.rendiciones.store');
             Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicion_listado'])->name('consumo.rendiciones.listado');
             Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicion_listar'])->name('consumo.rendiciones.listar');
             Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicion_estados'])->name('consumo.rendiciones.estados');
+            Route::post('consumos/rendicion/revalorizar', [ConsumoController::class, 'rendicion_revalorizar'])->name('consumo.rendiciones.revalorizar');
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {
@@ -98,6 +98,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'coberturas' => CoberturaController::class,
                 ]
             );
+            Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargar_docum'])->name('profesional.cargar.documentacion');
+            Route::post('profesional/documentacion/guardar', [ProfesionalController::class, 'guardar_docum'])->name('profesional.guardar.documentacion');
+            Route::delete('profesional/documentacion/borrar/{id}', [ProfesionalController::class, 'borrar_docum'])->name('profesional.borrar.documentacion');
+            Route::get('profesional/documentacion/download/{id}', [ProfesionalController::class, 'download_docum'])->name('profesional.download.documentacion');
         });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {

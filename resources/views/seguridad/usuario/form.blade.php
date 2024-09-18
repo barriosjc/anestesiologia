@@ -30,6 +30,11 @@
                     {{ $data->nombre }}</option>
             @endforeach
         </select>
+
+        <div class="form-check form-switch pt-3">
+            <input class="form-check-input" type="checkbox" role="switch" name="blanquear" id="blanquear" >
+            <label class="form-check-label" for="blanquear">Blanquear clave</label>
+          </div>
     </div>
 </div>
 

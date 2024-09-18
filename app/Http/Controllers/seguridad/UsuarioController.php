@@ -34,9 +34,9 @@ class UsuarioController extends Controller
             $user = User::where('name', 'LIKE', "%$keyword%")
                 ->orWhere('email', 'LIKE', "%$keyword%")
                 ->orderby("name")
-                ->latest()->simplepaginate($perPage);
+                ->latest()->paginate($perPage);
         } else {
-            $user = User::simplepaginate($perPage);
+            $user = User::paginate($perPage);
         }
 
         $esabm = true;
@@ -137,7 +137,6 @@ class UsuarioController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-
         $perfiles = role::v_roles()->get();
         $centros = Centro::get();
 
@@ -165,9 +164,11 @@ class UsuarioController extends Controller
             'centro_id' => 'required',
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
         ]);
-        $validated['password'] = Hash::make('12345678');
-        $validated['cambio_password'] = 1;
 
+        if($request->has('blanquear')) {
+            $validated['password'] = Hash::make('12345678');
+            $validated['cambio_password'] = 1;
+        }
         $request->validate([
             'perfil_id' => 'required'
         ]);

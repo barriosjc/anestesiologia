@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $deleted_at
  * @property $id
  * @property $nombre
- * @property $matricula
+ * @property $dni
  * @property $email
  * @property $telefono
  * @property $estado
@@ -35,8 +35,11 @@ class Profesional extends Model
      *
      * @var array
      */
-    protected $fillable = ['id','nombre','email','matricula','telefono'];
+    protected $fillable = ['id','nombre','email','dni','telefono'];
 
-
+    public function documentos()
+    {
+        return $this->belongsToMany(Documento::class, 'profesionales_docum', 'profesional_id', 'documento_id');
+    }
 
 }

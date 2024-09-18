@@ -146,7 +146,9 @@
                         </div>
                     </div>
                 </div>
-                {{-- {!! $partes->links() !!} --}}
+                @if(!empty($partes))
+                    {!! $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                @endif
             </div>
         </div>
     </div>

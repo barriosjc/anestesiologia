@@ -178,8 +178,8 @@ function confirmDelete(id) {
         text: "No podrás revertir esto!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
@@ -187,4 +187,27 @@ function confirmDelete(id) {
             document.getElementById('delete-form-'+id).submit();
         }
     })
+}
+
+function confirmJob(msg, metodo) {
+  Swal.fire({
+      title: msg,
+      text: "Esta acción es irreversible.",
+      icon: 'info', 
+      showCancelButton: true,
+      confirmButtonColor: '#17a2b8', 
+      cancelButtonColor: '##d33', 
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar',
+      background: '#e3f2fd', 
+      customClass: {
+        title: 'swal-title-custom', 
+        popup: 'swal-popup-custom',
+      }
+  }).then((result) => {
+      if (result.isConfirmed) {
+          // document.getElementById(metodo).submit();
+          window[metodo]();
+      }
+  })
 }

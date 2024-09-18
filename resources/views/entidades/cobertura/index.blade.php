@@ -5,6 +5,7 @@
 @endsection
 
 @section('contenido')
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -25,7 +26,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover" id="table_data">
                                 <thead class="thead">
                                     <tr>
                                         <th>Nro</th>
@@ -42,7 +43,7 @@
                                 <tbody>
                                     @foreach ($coberturas as $item)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
+                                            <td>{{ $item->id }}</td>
 											<td>{{ $item->nombre }}</td>
                                             <td>{{ $item->sigla }}</td>
 											<td>{{ $item->cuit }}</td>
@@ -70,29 +71,28 @@
                         </div>
                     </div>
                 </div>
-                @if(!empty($coberturas))
+                {{-- @if(!empty($coberturas))
                     {!! $coberturas->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-                @endif
+                @endif --}}
             </div>
         </div>
     </div>
+    <script src="{{asset('js/util.js')}}"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: '¿Confirma eliminar?',
-                text: "No podrás revertir esto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-form-'+id).submit();
+        $(document).ready( function () {
+            //iniciar tabla enrriquesida
+            $('#table_data').DataTable(
+                {
+                    "columnDefs":[{
+                        "targets":[8],
+                        "orderable":false
+                        }
+                    ],
+                    "order": [] 
                 }
-            })
-        }
+            );
+        });
     </script>
 
 @endsection

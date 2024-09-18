@@ -46,7 +46,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            @if(empty($partes))
+                            @if(empty($partes_det))
                                 <tr style="height: 30px;">
                                     <td colspan="3" class="text-center" style="padding: 5px;">No hay documentación cargada hasta el momento.</td>
                                 </tr>

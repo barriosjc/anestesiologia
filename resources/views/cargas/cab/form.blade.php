@@ -36,8 +36,8 @@
                 </div>
             </div>
             <div class="col-md-5">
-                <label class="small mb-1" for="nombre">Nombre y apellido</label>
-                <input class="form-control" id="nombre" name="nombre" type="text"
+                <label class="small mb-1" for="nombre">Nombre y apellido/a</label>
+                <input class="form-control" id="nombre" name="nombre" 
                     placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $paciente->nombre) }}" />
             </div>
             <div class="col-md-4">
