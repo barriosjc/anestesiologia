@@ -101,7 +101,7 @@ class ProfesionalController extends Controller
      * @param  profesional $profesional
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, profesional $profesional)
+    public function update(Request $request, int $id)
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:200',
@@ -110,6 +110,7 @@ class ProfesionalController extends Controller
             'dni' => 'required|string|max:20'
         ]);
 
+        $profesional = profesional::find($id);
         $profesional->nombre = $request['nombre'];
         $profesional->email = $request['email'];
         $profesional->telefono = $request['telefono'];

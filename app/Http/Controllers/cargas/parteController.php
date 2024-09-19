@@ -105,7 +105,7 @@ class ParteController extends Controller
     {
         $parte = Parte_cab::find($id);
         //si esta ingresado o observado no se puede borrar
-        if(!in_array($parte->estado, [1,2])){
+        if(in_array($parte->estado, [1,2])){
             return redirect()->back()->with('error', "No es posible borrar el parte {$parte->id} con el estado actual.");
         }
         $parte->delete();
@@ -167,15 +167,15 @@ class ParteController extends Controller
     
     public function destroy_det(int $id)
     {
-        $parte = Parte_det::find($id);
-        $parte_id = $parte->parte_cab_id;
+        $parte_det = Parte_det::find($id);
+        $parte = Parte_cab::where("id", $parte_det->parte_cab_id)->first();
         if(!in_array( $parte->estado_id, [1,2] )) {
-            return redirect()->route('partes_det.create', $parte_id)
+            return redirect()->route('partes_det.create', $parte->id)
             ->with('error', 'No es posible borrar la documentación con el estado actual del parte.');
         }
-        $parte->delete();
+        $parte_det->delete();
 
-        return redirect()->route('partes_det.create', $parte_id)
+        return redirect()->route('partes_det.create', $parte->id)
         ->with('success', 'Detalle de Parte borrado correctamente.');
     }    
 }

@@ -1,10 +1,10 @@
 @extends('layouts.main')
 
 @section('contenido')
-    <section class="content container-fluid">  
+    <section class="content container-fluid">
         <div class="card card-default">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="card-title">Carga de detalle del parte, Nro: {{$parte_cab_id}}</span>
+                <span class="card-title">Carga de detalle del parte, Nro: {{ $parte_cab_id }}</span>
                 <div>
                     <a href="{{ route('partes_cab.edit', $parte_cab_id) }}" class="btn btn-info btn-sm" data-placement="left">
                         Volver
@@ -28,27 +28,26 @@
                                     <td>{{ $item->nro_hoja }}</td>
                                     <td>{{ $item->documento->nombre }}</td>
                                     <td class="text-end">
+                                        <a class="btn btn-sm btn-warning"
+                                            href="{{ route('partes_det.download', $item->id) }}"><i
+                                                class="fa fa-fw fa-download"></i>
+                                        </a>
                                         <form id="delete-form-{{ $item->id }}"
                                             action="{{ route('partes_det.destroy', $item->id) }}" method="POST">
-                                            <a class="btn btn-sm btn-warning"
-                                                href="{{ route('partes_det.download', $item->id) }}"><i
-                                                    class="fa fa-fw fa-download"></i></a>
-                                            {{-- <a class="btn btn-sm btn-success"
-                                                href="{{ route('partes_cab.edit', $item->id) }}"><i
-                                                    class="fa fa-fw fa-edit"></i></a> --}}
                                             @csrf
                                             @method('DELETE')
-
-                                            <button type="button" class="btn btn-danger btn-sm" title="Delete parte"
-                                                    ><i
-                                                    class="far fa-trash-alt text-white"></i></button>
+                                            <button type="button" class="btn btn-danger btn-sm" title="Borrar documento"
+                                                onclick="confirmDelete({{ $item->id }})">
+                                                <i class="far fa-trash-alt text-white"></i>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
                             @endforeach
-                            @if(empty($partes))
+                            @if (empty($partes))
                                 <tr>
-                                    <td colspan="3" class="text-center">No hay cargada documentación hasta el momento.</td>
+                                    <td colspan="3" class="text-center">No hay cargada documentación hasta el momento.
+                                    </td>
                                 </tr>
                             @endif
                         </tbody>
@@ -89,6 +88,4 @@
         </div>
     </section>
     <script src="{{ asset('js/util.js') }}"></script>
-
-
 @endsection

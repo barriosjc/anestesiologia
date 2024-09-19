@@ -95,7 +95,8 @@ class ConsumoController extends Controller
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
-        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->fec_nacimiento.") / ".$data->fec_prestacion;
+
+        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
 
         return view("consumo.cargar", compact("soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
     }

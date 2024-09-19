@@ -28,7 +28,7 @@
                                 <tr>
                                     <td>{{ $item->nro_hoja }}</td>
                                     <td>{{ $item->documento->nombre }}</td>
-                                    <td>{{ $item->fecha_vcto }}</td>
+                                    <td>{{ $item->fecha_vctoy }}</td>
                                     <td class="text-end">
                                         <form id="delete-form-{{ $item->id }}"
                                             action="{{ route('profesional.borrar.documentacion', $item->id) }}" method="POST">

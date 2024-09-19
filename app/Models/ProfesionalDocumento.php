@@ -20,6 +20,28 @@ class ProfesionalDocumento extends Model
         'fecha_vcto'
     ];
 
+    public function getFechaVctoAtAttribute($value)
+    {
+        $resu = '';
+        if (!empty($value)) {
+            $resu = date('d/m/Y', strtotime($value));
+        }
+
+        return $resu;
+    }
+
+    public function getFechaVctoyAttribute()
+    {
+        $resu = $this->fecha_vcto;
+        if (!empty($resu)) {
+            $resu = substr($resu,0,4)."-".substr($resu,5,2)."-".substr($resu,8,2);
+            // dd($resu);
+            $resu = date('d/m/Y', strtotime($resu));
+        }
+
+        return $resu;
+    }
+
     public $timestamps = true;
 
     public function profesional()
