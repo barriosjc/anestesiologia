@@ -9,20 +9,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Grupal
  *
  * @property $id
+ * @property $gerenciador_id
+ * @property $cobertura_id
+ * @property $centro_id
+ * @property $periodo_id
  * @property $grupo
- * @property $nivel
- * @property $valor
- * @property $tipo
  * @property $created_at
  * @property $updated_at
  * @property $deleted_at
  *
  */
-class Valores extends Model
+class Valores_cab extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'nom_valores';
+    protected $table = 'nom_valores_cab';
     
     protected $perPage = 20;
 
