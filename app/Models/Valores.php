@@ -32,4 +32,5 @@ class Valores extends Model
      * @var array
      */
     protected $fillable = ['grupo', 'nivel', 'valor', 'tipo'];
+
 }
