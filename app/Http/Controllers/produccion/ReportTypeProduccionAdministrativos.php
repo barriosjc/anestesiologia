@@ -7,20 +7,16 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\produccion\ReportStrategy;
 use Illuminate\Support\Facades\Validator;
 
-class ReportTypeProfxCentro implements ReportStrategy
+class ReportTypeProduccionAdministrativos implements ReportStrategy
 {
     public function validate(Request $request): array
     {
         $validator = Validator::make($request->all(), [
-            "estados" => "required",
-            "reporte_id" => "required",
-            "profesional_id" => "required",
-            "periodo_gen" => "required"
+            "fec_desde_adm" => "required",
+            "fec_hasta_adm" => "required"
         ], [
-            'estados.required' => 'El campo Estados es obligatorio.',
-            'reporte_id.required' => 'El campo Reporte ID es obligatorio.',
-            'profesional_id.required' => 'El campo Profesional ID es obligatorio.',
-            'periodo_get' => 'Es obligatorio seleccionar el periodo de la rendición a generar.'
+            'fec_desde_adm.required' => 'El campo Fecha desde parte es obligatorio.',
+            'fec_hasta_adm.required' => 'El campo Fecha hasta parte es obligatorio.'
         ]);
 
         if ($validator->fails()) {
@@ -33,40 +29,39 @@ class ReportTypeProfxCentro implements ReportStrategy
 
     public function generate(Request $request)
     {
-        $query = DB::table('v_rendicion_agrupxnivel');
-        $query->where('profesional_id', '=', $request->profesional_id);
-        $query->where('periodo', '=', $request->periodo_gen);
-        $this->applyCommonFilters($query, $request);
-        return $query->get();
+        $query = DB::table('v_parte_cab');
+        $query->whereBetween('fecha', [$request->fec_desde_adm, $request->fec_hasta_adm])->get();
+        // $this->applyCommonFilters($query, $request);
+        return $query;
     }
 
     public function getViewName(): string
     {
-        return 'Reportes.Rendiciones.ProfFactxCentro';
+        return 'Reportes.Partes.Produccion';
     }
 
-    private function applyCommonFilters($query, $request)
-    {
-        if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
-        }
-        if ($request->has('centro_id') && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
-        }
-        if ($request->has('nombre') && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%" . $request->nombre . "%");
-        }
-        $selectedEstados = $request->input('estados');
-        if (count($selectedEstados) > 1) {
-            $query->where(function ($query) use ($selectedEstados) {
-                foreach ($selectedEstados as $estadoId) {
-                    $query->orWhere('estado_id', $estadoId);
-                }
-            });
-        } else {
-            $query->where('estado_id', $selectedEstados[0]);
-        }
-    }
+    // private function applyCommonFilters($query, $request)
+    // {
+    //     if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
+    //         $query->where('cobertura_id', '=', $request->cobertura_id);
+    //     }
+    //     if ($request->has('centro_id') && !empty($request->centro_id)) {
+    //         $query->where('centro_id', '=', $request->centro_id);
+    //     }
+    //     if ($request->has('nombre') && !empty($request->nombre)) {
+    //         $query->where('paciente', 'like', "%" . $request->nombre . "%");
+    //     }
+    //     $selectedEstados = $request->input('estados');
+    //     if (count($selectedEstados) > 1) {
+    //         $query->where(function ($query) use ($selectedEstados) {
+    //             foreach ($selectedEstados as $estadoId) {
+    //                 $query->orWhere('estado_id', $estadoId);
+    //             }
+    //         });
+    //     } else {
+    //         $query->where('estado_id', $selectedEstados[0]);
+    //     }
+    // }
 }
 
 

@@ -28,7 +28,7 @@
 
 <body>
     <div class="container">
-        <h3>Listado de rendición de : {{ $consumos[0]->prof_nombre }} periodo: {{ $consumos[0]->periodo }}</h3>
+        <h3>Listado de producción de : {{ $consumos[0]->prof_nombre }} periodo: {{ $consumos[0]->periodo }}</h3>
         @php
             $groupedConsumos = $consumos->groupBy('cen_nombre');
         @endphp
