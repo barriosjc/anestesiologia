@@ -236,7 +236,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <button type="button" id="revalorizar_btn" class="btn btn-warning btn-sm"
-                                            onclick="confirmJob('Revalorizar los partes marcados.', 'revalorizarPartesJS')">
+                                            onclick="revalorizarPartesJS()">
                                         {{ __('Revaloriazar partes') }}
                                     </button>
                                 </div>
@@ -252,6 +252,8 @@
     <script src="{{ asset('js/util.js') }}"></script>
 
     <script>
+        let token = document.querySelector('input[name="_token"]').value;
+        
         $("#estadoCambio").on('change', function() {
             let value = $(this).val();
             // si se selecciona aRefactuar
@@ -278,51 +280,37 @@
                     parte_id: parte_id
                 });
             });
+            let periodo = $('#periodo_revalorizar').val();
 
             if (selectedItems.length === 0 || !periodo) {
                 alert('Debe seleccionar al menos una fila y un periodo.');
                 return;
             }
-            
-            let periodo = $('#periodo_revalorizar').val();
-
-            $.ajax({
-                url: "{{ route('consumo.rendiciones.revalorizar') }}",
-                method: 'POST',
-                data: {
-                    _token: token,
-                    selected_ids: selectedItems,
-                    periodo_revalorizar: periodo_revalorizar
-                },
-                success: function(response) {
-                    const alertDiv = '<div class="alert alert-success py-2">' + response
-                        .success + '</div>';
-                    $('#alert-container').html(alertDiv);
-                },
-                error: function(response) {
-                    let errorMessages = '';
-                    if (response.responseJSON && response.responseJSON.errors) {
-                        for (const [field, messages] of Object.entries(response.responseJSON
-                                .errors)) {
-                            errorMessages += "<li>" + messages + "</li>";
-                        }
-                    } else {
-                        errorMessages = 'Ocurrió un error inesperado.';
+            $.post("{{ route('consumo.rendiciones.revalorizar') }}", {
+                _token: token,
+                selected_ids: selectedItems,
+                periodo_revalorizar: periodo
+            }, function(response) {
+                const alertDiv = '<div class="alert alert-success py-2">' + response.success + '</div>';
+                $('#alert-container').html(alertDiv);
+            }).fail(function(response) {
+                let errorMessages = 'Ocurrió un error inesperado.';
+                if (response.responseJSON && response.responseJSON.errors) {
+                    errorMessages = '';
+                    for (const [field, messages] of Object.entries(response.responseJSON.errors)) {
+                        errorMessages += "<li>" + messages + "</li>";
                     }
-
-                    const alertDiv =
-                        '<div class="alert alert-danger py-2"><ul class="no-bullets">' +
-                        errorMessages + '</ul></div>';
-                    $('#alert-container').html(alertDiv);
-                },
-                complete: function() {
-                    const ytop = $('#alert-container').offset().top;
-                    window.scrollTo({
-                        top: ytop - 300,
-                        behavior: 'smooth'
-                    });
                 }
-            });
+                const alertDiv = '<div class="alert alert-danger py-2"><ul class="no-bullets">' + errorMessages + '</ul></div>';
+                $('#alert-container').html(alertDiv);
+            }).always( function() {
+                        const ytop = $('#alert-container').offset().top;
+                        window.scrollTo({
+                            top: ytop - 300,
+                            behavior: 'smooth'
+                        });
+                    }
+                )
         };
 
         $(document).ready(function() {
@@ -335,8 +323,6 @@
                     checkbox.checked = document.getElementById('ck_todo').checked;
                 });
             });
-
-            let token = document.querySelector('input[name="_token"]').value;
 
             // hacer submit de filas marcadas
             $('#generate_rendicion_btn').on('click', function() {
@@ -399,12 +385,16 @@
                     },
                     error: function(response) {
                         let errorMessages = '';
+                        console.log(response.responseJSON.error)
                         if (response.responseJSON && response.responseJSON.errors) {
                             for (const [field, messages] of Object.entries(response.responseJSON
                                     .errors)) {
                                 errorMessages += "<li>" + messages + "</li>";
                             }
-                        } else {
+                        } else if(response.responseJSON.error) {
+                            errorMessages += "<li>" + response.responseJSON.error + "</li>";
+                        }
+                        else {
                             errorMessages = 'Ocurrió un error inesperado.';
                         }
 

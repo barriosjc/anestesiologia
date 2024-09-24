@@ -38,20 +38,22 @@ class Valores_cab extends Model
                             'periodo',
                             'grupo'];
 
-    public static function v_valores (int $gerenciador_id, int $cobertura_id, int $centro_id, string $periodo, string $codigo) {
-
+    public static function v_valores (int $gerenciador_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id) 
+    {
         $resu = Valores_cab::query()
-        ->select('valor', 'nivel', )
-        ->join('nom_valores as nv','nv.grupo', 'nvc.grupo')
-        ->join('nomenclador as n', 'n.nivel', 'nv.nivel');
-    
+        ->select('nv.valor', 'n.nivel', 'nv.aplica_pocent_adic' )
+        ->join('nom_valores as nv','nv.grupo', 'nom_valores_cab.grupo')
+        ->join('nomenclador as n', 'n.nivel', 'nv.nivel')
+        ->where('gerenciador_id', $gerenciador_id)
+        ->where('cobertura_id', $cobertura_id)
+        ->where('centro_id', $centro_id)
+        ->where('periodo', $periodo)
+        ->where('n.id', $nomenclador_id)
+        ->first();
+// $sql = $resu->toSql();
+// $bindings = $resu->getBindings();
+// dd($sql, $bindings, $resu->first());
         return $resu;
     }
 
-    select * 
-    from nom_valores_cab as nvc		
-    inner join nom_valores as nv on nv.grupo = nvc.grupo
-    inner join nomenclador as n on n.nivel = nv.nivel
-where gerenciador_id = 1 and cobertura_id = 1 and centro_id = 1
-and periodo = "2024/09" and codigo = "02-01-04"
 }

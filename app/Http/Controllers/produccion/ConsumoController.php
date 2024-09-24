@@ -8,7 +8,7 @@ use App\Models\Centro;
 use App\Models\Estado;
 use App\Models\Listado;
 use App\Models\Periodo;
-use App\Models\Valores;
+use App\Models\Valores_cab;
 use App\Models\Paciente;
 use App\Models\Cobertura;
 use App\Models\Documento;
@@ -91,6 +91,7 @@ class ConsumoController extends Controller
         $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
         $documentos = Documento::where("tipo", "like", "%parte%")->get();
         $nomenclador = nomenclador::get();
+        $periodos = Periodo::get();
         $parte_cab_id = $id;
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
@@ -98,26 +99,44 @@ class ConsumoController extends Controller
 
         $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
 
-        return view("consumo.cargar", compact("soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
+        return view("consumo.cargar", compact("periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
     }
     
     public function valor_buscar (Request $request)
     {
+        if(empty($request->periodo) ) {
+            return response()->json([
+                'error' => 'Faltan periodo'
+            ], 400); // Devuelve un código de error 400 (Bad Request)
+        }
+        if(empty($request->parte_cab_id)) {
+            return response()->json([
+                'error' => 'Faltan id parte'
+            ], 400); // Devuelve un código de error 400 (Bad Request)
+        }
+        if(empty($request->nomenclador_id)) {
+            return response()->json([
+                'error' => 'Faltan id nomenclador'
+            ], 400); // Devuelve un código de error 400 (Bad Request)
+        }
         $id = $request->id;
         $parte_cab_id = $request->parte_cab_id;
     
+        $id = $request->id;
+        $parte_cab_id = $request->parte_cab_id;
         $parte_cab = Parte_cab::where("id", $parte_cab_id)->first();
         $cobertura = cobertura::where("id", $parte_cab->cobertura_id)->first();
-        $grupo = $cobertura->grupo; 
-        $query = Valores::query();
-        $query->where('grupo', '=', $grupo);
-        $query->where('nivel', $request->nivel);
-        $nom_valor = $query->first();
-        $valor = $nom_valor->valor;
+        // $grupo = $cobertura->grupo; 
+        $valores = Valores_cab::v_valores(1, $parte_cab->cobertura_id, $parte_cab->centro_id,
+                                        $request->periodo, $request->nomenclador_id);
+        if(empty($valores)) {
+            return response()->json(['valor' => 0, 'porcentaje' => 0]);
+        }
+        $valor = $valores->valor;
         $porcentaje = 0;
 
         //calcula edad
-        if(!empty($nom_valor->aplica_pocent_adic))
+        if(!empty($valores->aplica_pocent_adic))
         {
             $paciente = Paciente::where("id", $parte_cab->paciente_id)->first();  
             $fechaNacimiento = $paciente->fec_nacimiento;
@@ -298,7 +317,7 @@ class ConsumoController extends Controller
             $det->estado_id = 5; //liquidado
             $det->save();
 
-            $parte = Parte_cab::find($item->parte_id);
+            $parte = Parte_cab::where("id",$item->parte_id)->first();
             $parte->estado_id = 5;
             $parte->save(); 
         }
@@ -436,21 +455,35 @@ class ConsumoController extends Controller
         }
     }
 
-    public function rendicion_revalorizar(Request $request){
+    public function rendicion_revalorizar(Request $request)
+    {
         $this->validate($request, [
             "selected_ids" => "required",
-            "periodo_valorizar" => "required"
+            "periodo_revalorizar" => "required"
         ]);        
 
-        $selectedIds = json_decode($request->input('selected_ids'));
-        $periodo = $request->input('periodo_valorizar');
+        $cantidad = 0;
+        $selectedIds = $request->input('selected_ids');
+        $periodo = $request->input('periodo_revalorizar');
     
         foreach ($selectedIds as $item) {
-            $det = Consumo_det::find($item->consumo_det_id);
-            $nivel = nomenclador::where("id", $det->nomenclador_id)->first()->nivel;
-            $valor = valores::where("nivel", $nivel)->first()->valor;   
+            $rendiciones = DB::table('v_rendiciones')
+            ->where('consumos_det_id', $item['consumo_det_id'])
+            ->first();
+           
+            $valores = Valores_cab::v_valores(1, $rendiciones->cobertura_id, 
+                                                $rendiciones->centro_id, 
+                                                $periodo,
+                                                $rendiciones->nomenclador_id);
+
+            if(!empty($valores)){
+                $consumo_det = Consumo_det::find($item['consumo_det_id']);
+                $consumo_det->valor = $valores->valor * ($rendiciones->porcentaje / 100);
+                $consumo_det->save();
+                $cantidad += 1;
+            }
         }
 
-
+        return response()->json(['success' => "Se actualizaron los valores de {$cantidad} consumos."], 200);
     }
 }

@@ -98,6 +98,17 @@
                     <input type="hidden" name="valor_orig" id="valor_orig">
                     <input type="hidden" name="valor_total" id="valor_total">
                     <div class="row gx-3 mb-3">
+                        <div class="col-md-2">
+                            <label for="archivo">Periodo</label>
+                            <select name="periodo" class="form-select periodo" id="periodo">
+                                <option value="">-- Seleccione --</option>
+                                @foreach ($periodos as $item)
+                                    <option value="{{ $item->nombre }}">
+                                        {{ $item->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-4">
                             <label for="codigo">Procedimiento</label>
                             <div class="input-group">
@@ -112,18 +123,18 @@
                                         class="fa fa-fw fa-search"></i></button>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <labe for="">Nomenclador</label>
                                 <select name="nomenclador_id" class="form-select nomenclador_id" id="nomenclador_id">
                                     {{-- los items por js --}}
                                 </select>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-1 pt-3">
                             <label for="archivo">% </label>
                             <input type="text" class="form-control" id="porcentaje" name="porcentaje" required
                                 data-bs-toggle="tooltip" title="Debe ingresar un valor numérico." value=100>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 pt-3">
                             <label for="archivo">Valor ($)</label>
                             <label class="form-control bg-light text-muted" id="total" name="total">0,00</label>
                         </div>
@@ -168,6 +179,8 @@
 
     <script>
         //submit para guardar los datos
+        // let nomenclador_id = null;
+        // let parte_cab_id = null;
         var submitButton = document.getElementById('submitButton');
         if (submitButton) {        
             submitButton.addEventListener('click', function() {
@@ -177,8 +190,16 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             let token = document.querySelector('input[name="_token"]').value;
-            let parte_cab_id = document.getElementById('parte_cab_id').value;
+            
+            // calcula el valor al cambiar el periodo
+            document.getElementById('periodo').addEventListener('change', function() {
+                let selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value) {
+                    mostrarValor();
+                }
+            });
 
+            // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
             document.getElementById('search').addEventListener('click', function() {
                 let codigo = document.getElementById('codigo').value;
                 let descripcion = document.getElementById('descripcion').value;
@@ -186,6 +207,7 @@
                 if (codigo == "" && descripcion == "") {
                     return
                 }
+                // busca en el nomenclador, puede traer uno o varios
                 fetch('{{ route('nomenclador.valores.buscar') }}', {
                         method: 'POST',
                         headers: {
@@ -217,38 +239,8 @@
                             nomencladorSelect.appendChild(option);
                         });
 
-                        // If there's only one result, make another AJAX request
                         if (count === 1) {
-                            let nivel = data[0].nivel;
-                            porcentajeInput = document.getElementById('porcentaje');
-                            let porcentajeIni = parseFloat(porcentajeInput.value);
-                            // Fetch the value for the level
-                            return fetch('{{ route('consumos.valor.buscar') }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    },
-                                    body: JSON.stringify({
-                                        nivel: nivel,
-                                        parte_cab_id: parte_cab_id
-                                    })
-                                })
-                                .then(response => response.json()) // Convert response to JSON
-                                .then(valueData => {
-                                    let porcentaje = porcentajeIni + valueData.porcentaje;
-                                    porcentajeInput.value = porcentaje;
-                                    let totalValue = valueData.valor * (porcentaje / 100);
-                                    let totalView = totalValue.toFixed(2);
-                                    totalView = totalView.replace('.', ',');
-                                    totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-                                    document.getElementById('valor_orig').value = valueData.valor;
-                                    document.getElementById('total').textContent = totalView
-                                    document.getElementById('valor_total').value = totalValue
-                                        .toFixed(2);
-
-                                });
+                            mostrarValor()
                         }
                     })
                     .catch(error => console.error('Error:', error));
@@ -263,7 +255,7 @@
             codigo.addEventListener('focus', clearInput);
             descripcion.addEventListener('focus', clearInput);
 
-            //validar que no se pueda ingredar un porcentaje > 100
+            //validar que no se pueda ingresar un porcentaje > 100
             let porcentajeInput = document.getElementById('porcentaje');
             let porcentajeValue = parseFloat(porcentajeInput.value);
 
@@ -293,37 +285,74 @@
             });
 
 
-            // Evento al cambiar el select
+            // aca selecciono una practica del combo
             document.getElementById('nomenclador_id').addEventListener('change', function() {
                 let selectedOption = this.options[this.selectedIndex];
                 if (selectedOption.value) {
-                    fetch('{{ route('consumos.valor.buscar') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': token
-                            },
-                            body: JSON.stringify({
-                                nivel: selectedOption.text.split(' / ')[0],
-                                parte_cab_id: parte_cab_id
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            let porcentaje = parseFloat(document.getElementById('porcentaje').value);
-                            let valorOrig = parseFloat(data.valor); // Assuming `data.valor` contains the value
-                            document.getElementById('valor_orig').value = valorOrig;
-                            let total = valorOrig * (porcentaje / 100);
-                            let totalView = total.toFixed(2);
-                            totalView = totalView.replace('.', ',');
-                            totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-                            document.getElementById('total').textContent = totalView;
-                            document.getElementById('valor_total').value = total.toFixed(2);
-                        })
-                        .catch(error => console.error('Error:', error));
+                    mostrarValor();
                 }
             });
+
+            // funcion comun que se llama para mostrar el valor
+            function mostrarValor() {
+                let parte_cab_id = document.getElementById('parte_cab_id').value;
+                let periodo = document.getElementById('periodo').value;
+                let porcentajeInput = document.getElementById('porcentaje');
+                let porcentajeIni = parseFloat(porcentajeInput.value);
+                nomencladorSelect = document.getElementById('nomenclador_id');
+                selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
+                nomenclador_id = selectedNomencladorId.value
+                if (periodo == "" || nomenclador_id == "") {
+                    return
+                }
+
+                return fetch('{{ route('consumos.valor.buscar') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        periodo: periodo, 
+                        nomenclador_id: nomenclador_id,
+                        parte_cab_id: parte_cab_id
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Si no es exitoso, manejar error
+                        return response.json().then(errorData => {
+                            // console.error(errorData.error);
+                            limpiarCampos(); // Llama a la función para limpiar los campos
+                            throw new Error(errorData.error);
+                        });
+                    }
+                    return response.json(); // Convertir respuesta a JSON
+                })
+                .then(valueData => {
+                    let porcentaje = porcentajeIni + valueData.porcentaje;
+                    porcentajeInput.value = porcentaje;
+                    let totalValue = valueData.valor * (porcentaje / 100);
+                    let totalView = totalValue.toFixed(2);
+                    totalView = totalView.replace('.', ',');
+                    totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                    document.getElementById('valor_orig').value = valueData.valor;
+                    document.getElementById('total').textContent = totalView;
+                    document.getElementById('valor_total').value = totalValue.toFixed(2);
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            }
+
+            // Función para limpiar los campos en caso de error
+            function limpiarCampos() {
+                document.getElementById('valor_orig').value = '';
+                document.getElementById('total').textContent = '';
+                document.getElementById('valor_total').value = '';
+            }
+
         });
     </script>
 @endsection
