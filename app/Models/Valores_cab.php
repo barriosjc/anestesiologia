@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Grupal
+ * Class Valores_cab
  *
  * @property $id
  * @property $gerenciador_id
@@ -24,7 +24,7 @@ class Valores_cab extends Model
     use SoftDeletes;
 
     protected $table = 'nom_valores_cab';
-    
+
     protected $perPage = 20;
 
     /**
@@ -32,28 +32,44 @@ class Valores_cab extends Model
      *
      * @var array
      */
-    protected $fillable = ['gerenciador_id',
-                            'cobertura_id',
-                            'centro_id',
-                            'periodo',
-                            'grupo'];
+    protected $fillable = [
+        'gerenciador_id',
+        'cobertura_id',
+        'centro_id',
+        'periodo',
+        'grupo'
+    ];
 
-    public static function v_valores (int $gerenciador_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id) 
+    public function cobertura()
     {
-        $resu = Valores_cab::query()
-        ->select('nv.valor', 'n.nivel', 'nv.aplica_pocent_adic' )
-        ->join('nom_valores as nv','nv.grupo', 'nom_valores_cab.grupo')
-        ->join('nomenclador as n', 'n.nivel', 'nv.nivel')
-        ->where('gerenciador_id', $gerenciador_id)
-        ->where('cobertura_id', $cobertura_id)
-        ->where('centro_id', $centro_id)
-        ->where('periodo', $periodo)
-        ->where('n.id', $nomenclador_id)
-        ->first();
-// $sql = $resu->toSql();
-// $bindings = $resu->getBindings();
-// dd($sql, $bindings, $resu->first());
-        return $resu;
+        return $this->belongsTo(Cobertura::class, 'cobertura_id');
     }
 
+    public function centro()
+    {
+        return $this->belongsTo(Centro::class, 'centro_id');
+    }
+
+    public function gerenciadora()
+    {
+        return $this->belongsTo(Gerenciadora::class, 'gerenciador_id');
+    }
+
+    public static function v_valores(int $gerenciador_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id)
+    {
+        $resu = Valores_cab::query()
+            ->select('nv.valor', 'n.nivel', 'nv.aplica_pocent_adic')
+            ->join('nom_valores as nv', 'nv.grupo', 'nom_valores_cab.grupo')
+            ->join('nomenclador as n', 'n.nivel', 'nv.nivel')
+            ->where('gerenciador_id', $gerenciador_id)
+            ->where('cobertura_id', $cobertura_id)
+            ->where('centro_id', $centro_id)
+            ->where('periodo', $periodo)
+            ->where('n.id', $nomenclador_id)
+            ->first();
+        // $sql = $resu->toSql();
+        // $bindings = $resu->getBindings();
+        // dd($sql, $bindings, $resu->first());
+        return $resu;
+    }
 }

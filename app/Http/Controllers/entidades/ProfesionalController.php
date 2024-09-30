@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
-use App\Models\ProfesionalDocumento;
+use App\Models\Profesional_documento;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -140,7 +140,7 @@ class ProfesionalController extends Controller
     public function cargar_docum(int $id) 
     {
         $documentos = Documento::where("tipo", "like", "%prof%")->get();
-        $prof_docum = ProfesionalDocumento::with('documento')->where('profesional_id' , $id)->paginate(5);
+        $prof_docum = Profesional_documento::with('documento')->where('profesional_id' , $id)->paginate(5);
         //$parte = new Parte_det;
         $profesional_id = $id;
 
@@ -176,7 +176,7 @@ class ProfesionalController extends Controller
         $path = Storage::disk('usuarios')->putFileAs($request->profesional_id, $archivo, $archivoNombre);
 
         // Guardar el path en la base de datos
-        $prof_docum = new ProfesionalDocumento();
+        $prof_docum = new Profesional_documento();
         $prof_docum->profesional_id = $request->profesional_id;
         $prof_docum->documento_id = $request->documento_id;
         $prof_docum->nro_hoja = $request->nro_hoja;
@@ -188,7 +188,7 @@ class ProfesionalController extends Controller
 
     public function download_docum($id) 
     {
-        $prof_docum = ProfesionalDocumento::find($id);
+        $prof_docum = Profesional_documento::find($id);
         $rutaArchivo = storage_path('app/public/usuarios/') . $prof_docum->profesional_id ."/". $prof_docum->path;
         if (!Storage::disk('usuarios')->exists($prof_docum->profesional_id ."/". $prof_docum->path)) {
             abort(404, 'El archivo no existe.');
@@ -202,7 +202,7 @@ class ProfesionalController extends Controller
     
     public function borrar_docum(int $id)
     {
-        $prof_docum = ProfesionalDocumento::find($id);
+        $prof_docum = Profesional_documento::find($id);
         // $profesional_id = $prof_docum->profesional_id;
         $prof_docum->delete();
 

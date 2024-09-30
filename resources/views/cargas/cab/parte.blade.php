@@ -43,7 +43,14 @@
                                 <tbody>
                                     @foreach ($partes as $item)
                                         <tr>
-                                            <td>{{ $item->id }}</td>
+                                            <td>
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                    @if(!empty($item->name))
+                                                        data-bs-title="usuario: {{$item->name}} - cargado: {{$item->created_at}}"
+                                                    @endif
+                                                    class="badge bg-primary">{{ $item->id }}
+                                                </span>
+                                            </td>
 											<td>{{ $item->centro }}</td>
                                             <td>{{ $item->profesional }}</td>
 											<td>{{ $item->paciente }}</td>
@@ -131,7 +138,9 @@
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script>
         $(document).ready( function () {
-
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                html: true 
+            });
             //iniciar tabla enrriquesida
             $('#table_data').DataTable(
                 {

@@ -25,6 +25,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\produccion\ReportFactory;
+use App\Models\User;
+use Carbon\Carbon;
+
 // use PhpParser\Node\Stmt\TryCatch;
 
 class ConsumoController extends Controller
@@ -42,6 +45,9 @@ class ConsumoController extends Controller
         $fec_desde = $request->has('fec_desde') ? $request->fec_desde : session('fec_desde', null);
         $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : session('fec_hasta', null);
         $estado_id = $request->has('estado_id') ? $request->estado_id : session('estado_id', null);
+        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : session('fec_desde_adm', null);
+        $fec_hasta_adm = $request->has('fec_hasta_adm') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('fec_hasta_adm', null);
+
 
         $query = Parte_cab::v_parte_cab();
         if (!empty($cobertura_id)) {
@@ -65,7 +71,12 @@ class ConsumoController extends Controller
         if (!empty($fec_hasta)) {
             $query->where('fec_prestacion_orig', '<=', $fec_hasta);
         }
-    
+        if (!empty($fec_desde_adm)) {
+            $query->where('created_at', '>=', $fec_desde_adm);
+        }
+        if (!empty($fec_hasta_adm)) {
+            $query->where('created_at', '<=', $fec_hasta_adm);
+        }
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
     
@@ -76,6 +87,8 @@ class ConsumoController extends Controller
         session()->put('nombre', $nombre);
         session()->put('fec_desde', $fec_desde);
         session()->put('fec_hasta', $fec_hasta);
+        session()->put('fec_desde_adm', $fec_desde_adm);
+        session()->put('fec_hasta_adm', $fec_hasta_adm);
         session()->put('estado_id', $estado_id);
 // Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
@@ -83,7 +96,8 @@ class ConsumoController extends Controller
 
 // dd($sql, $bindings);
         return view("consumo.partes", compact("partes", "coberturas", "centros", "profesionales", 
-                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id"));
+                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id",
+                "fec_desde_adm", "fec_hasta_adm"));
     }
 
     public function cargar(int $id)
@@ -97,7 +111,7 @@ class ConsumoController extends Controller
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
 
-        $cabecera = $data->cobertura ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
+        $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
 
         return view("consumo.cargar", compact("periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
     }
@@ -334,8 +348,9 @@ class ConsumoController extends Controller
         $estados = Estado::get();
         $periodos = Periodo::get();
         $listados = Listado::get();
+        $users = User::get();
         
-        return view("consumo.listados", compact("periodos", "coberturas", "centros", "profesionales", "estados", "listados"));
+        return view("consumo.listados", compact("users", "periodos", "coberturas", "centros", "profesionales", "estados", "listados"));
         
     }
 
@@ -351,19 +366,22 @@ class ConsumoController extends Controller
           
             // Validar la solicitud usando la estrategia
             $par_adicionales = $strategy->validate($request);
-             
+
             // Generar el reporte
-            $consumos = $strategy->generate($request);
+            $reporte = $strategy->generate($request);
     
-            if (count($consumos) == 0) {
+            if (count($reporte) == 0) {
                 throw new Exception('Atención !!! No se ha encontrado datos para generar la Rendición.');
             }
     
-            $parametros =$par_adicionales;
-            $parametros["consumos"] = $consumos;
+            $parametros = $par_adicionales;
+            $parametros["datos"] = $reporte;
+            $parametros["parametros"] = $par_adicionales;
 
             $viewName = $strategy->getViewName();
-            $pdf = Pdf::loadView($viewName, $parametros);
+            $formato = $strategy->getFormat();
+            $pdf = Pdf::loadView($viewName, $parametros)
+                        ->setPaper($formato->getTamano(), $formato->getOrientacion());
             return $pdf->stream();
     
         } catch (\Illuminate\Validation\ValidationException $e) {

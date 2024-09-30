@@ -53,8 +53,26 @@ class ParteController extends Controller
             'centro_id' => 'required',
             'profesional_id' => 'required',
             'nombre' => 'required',
-            'fec_nacimiento' => 'required|date|before_or_equal:today',
-            'fec_prestacion' => 'required|date|before_or_equal:today'
+            'fec_nacimiento' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $year = explode('-', $value)[0];
+                    $currentYear = date('Y');
+                    if ($year < 1900 || $year > $currentYear) {
+                        $fail("El campo fecha de nacimiento debe ser un año entre 1900 y $currentYear.");
+                    }
+                },
+            ],
+            'fec_prestacion' => ['required','date',
+                function ($attribute, $value, $fail) {
+                    $year = explode('-', $value)[0];
+                    $currentYear = date('Y');
+                    if ($year < 1900 || $year > $currentYear) {
+                        $fail("El campo fecha de prestación debe ser un año entre 1900 y $currentYear.");
+                    }
+                }
+            ]
         ]);
 
         $paciente = Paciente::where('dni', $request->dni)->first();
@@ -162,7 +180,8 @@ class ParteController extends Controller
         $nombreOriginal = basename($rutaArchivo);
 
         // Retornar una respuesta de descarga
-        return response()->download($rutaArchivo, $nombreOriginal);
+        // return response()->download($rutaArchivo, $nombreOriginal);
+        return response()->file($rutaArchivo);
     }
     
     public function destroy_det(int $id)

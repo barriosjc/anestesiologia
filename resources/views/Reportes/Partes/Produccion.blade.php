@@ -28,31 +28,29 @@
 
 <body>
     <div class="container">
-        <h3>Listado de producción de : {{ $consumos[0]->prof_nombre }} periodo: {{ $consumos[0]->periodo }}</h3>
+        <h3>Listado de producción desde : {{ $parametros["fec_desde_adm"] }} hasta {{ $parametros["fec_hasta_adm"] }} </h3>
         @php
-            $groupedConsumos = $consumos->groupBy('cen_nombre');
+            $grupoUsers = $datos->groupBy('name');
         @endphp
 
 
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width:10%">F.prestación</th>
-                    <th style="width:40%">Paciente</th>
-                    <th style="width:20%">Cobertura</th>
-                    <th style="width:20%">Nivel</th>
-                    <th style="width:10%">Valor</th>
+                    <th style="width:10%">Fecha Carga</th>
+                    <th style="width:40%">cantidad</th>
+        
                 </tr>
             </thead>
-            @foreach ($groupedConsumos as $cen_nombre => $consumosGroup)
+            @foreach ($grupoUsers as $name => $usuarios)
                 <tr>
                     <td colspan="6">
                         <hr style="border: 1px solid #ddd; margin: 0;">
                     </td>
                 </tr>
                 <tr class="custom-font">
-                    <td colspan="4"><h4>{{ $cen_nombre }}</h4></td>
-                    <td class="text-end w-5"><h4>{{ number_format((float) $consumosGroup->sum('valor') , 2, ',', '.') }}</h4></td>
+                    <td colspan="4"><h4>{{ $name }}</h4></td>
+                    <td class="text-end w-5"><h4>{{ number_format((float) $usuarios->sum('cantidad') , 0, ',', '.') }}</h4></td>
                 </tr>
                 <tr>
                     <td colspan="6">
@@ -60,13 +58,10 @@
                     </td>
                 </tr>             
                 <tbody>
-                    @foreach ($consumosGroup as $consumo)
-                        <tr>
-                            <td>{{ $consumo->fec_prestacion }}</td>
-                            <td>{{ $consumo->pac_nombre }}</td>
-                            <td>{{ $consumo->cob_sigla }}</td>
-                            <td>{{ $consumo->niveles }}</td>
-                            <td class="custom-width-valor text-end">{{ number_format((float) $consumo->valor, 2, ',', '.') }}</td>
+                    @foreach ($usuarios as $item)
+                        <tr> 
+                            <td>{{ $item->fecha }}</td>
+                            <td>{{ $item->cantidad }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -77,7 +72,7 @@
                 </td>
             </tr>        
             <tr class="custom-font">
-                <td colspan="5" class="text-end"><h4> Total : $ {{ number_format((float) $consumos->sum('valor') , 2, ',', '.') }}</h4></td>
+                <td colspan="5" class="text-end"><h4> Total : {{ number_format((float) $datos->sum('cantidad') , 0, ',', '.') }}</h4></td>
             </tr>
         </table>
     </div>

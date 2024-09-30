@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Grupal
+ * Class Valores
  *
  * @property $id
  * @property $grupo

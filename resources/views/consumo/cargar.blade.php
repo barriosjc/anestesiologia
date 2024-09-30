@@ -40,7 +40,8 @@
                                     <td style="padding: 5px;">{{ $item->nro_hoja }}</td>
                                     <td style="padding: 5px;">{{ $item->documento->nombre }}</td>
                                     <td class="text-end" style="padding: 5px;">
-                                        <a class="btn btn-sm btn-warning" href="{{ route('partes_det.download', $item->id) }}">
+                                        <a class="btn btn-sm btn-warning" target="_blank" 
+                                                href="{{ route('partes_det.download', $item->id) }}">
                                             <i class="fa fa-fw fa-download"></i>
                                         </a>
                                     </td>

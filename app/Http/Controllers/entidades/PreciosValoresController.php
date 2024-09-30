@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\entidades;
 
-use App\Models\Centro;
 use App\Models\Valores;
-use App\Models\Cobertura;
 use App\Models\nomenclador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Periodo;
 use Exception;
 
-class NomencladorController extends Controller
+class PreciosValoresController extends Controller
 {
-    public function listas(){
+    public function index(){
         $valores = Valores::withTrashed()
             ->paginate();
         $niveles = Nomenclador::select('nivel')->distinct()->get();
@@ -24,16 +21,7 @@ class NomencladorController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
-    public function precios(){
-        $valores = Valores::withTrashed()
-            ->paginate();
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
-        $nivel = null;
-
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
-            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
-    }
-    public function valores_nuevos(Request $request)
+    public function nuevo(Request $request)
     {
         $validate = $request->validate( [
             "cobertura_id"=> "required",
@@ -88,7 +76,7 @@ class NomencladorController extends Controller
         }
     }
 
-    public function valores_filtrar(Request $request)
+    public function filtrar(Request $request)
     {
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $query = Valores::query();
@@ -111,7 +99,7 @@ class NomencladorController extends Controller
             ->with('nivel', $request->nivel);
     }
 
-    public function valor_guardar(Request $request)
+    public function guardar(Request $request)
     {
         $validate = $request->validate( [
             "valor"=> "required",
@@ -136,32 +124,11 @@ class NomencladorController extends Controller
         return redirect()->back();
     }
 
-    public function valores_borrar(int $id) {
+    public function borrar(int $id) {
         $valores = Valores::find($id);
         $valores->delete();
 
         return redirect()->back();
-    }
-
-    public function valores_buscar(Request $request)
-    {
-        $codigo = str_replace("-", "", $request->input('codigo'));
-        $descripcion = $request->input('descripcion');
-
-        $query = Nomenclador::query();
-        if ($codigo) {
-            $query->where(DB::raw('REPLACE(codigo, "-", "")'),'like', '%' . $codigo . '%');
-        }
-
-        if ($descripcion) {
-            $query->where('descripcion', 'like', '%' . $descripcion . '%');
-        }
-
-        $results = $query->get();
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
-        // dd($sql,$bindings);
-        return response()->json($results);
     }
 
 }

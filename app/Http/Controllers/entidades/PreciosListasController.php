@@ -10,18 +10,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Periodo;
+use App\Models\Valores_cab;
 use Exception;
 
-class NomencladorController extends Controller
+class PreciosListasController extends Controller
 {
-    public function listas(){
-        $valores = Valores::withTrashed()
-            ->paginate();
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
-        $nivel = null;
+    public function index(){
+        $listas = Valores_cab::with([
+                    'gerenciadora:id,nombre',
+                    'cobertura:id,sigla',
+                    'centro:id,nombre'
+                ])
+                ->whereHas('gerenciadora')
+                ->whereHas('cobertura')
+                ->whereHas('centro')
+                ->paginate();
+        $coberturas = Cobertura::get();
 
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
-            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
+        return view("entidades.nomenclador.listas",compact("listas", "coberturas"))
+            ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
     }
 
     public function precios(){
@@ -33,6 +40,7 @@ class NomencladorController extends Controller
         return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
+
     public function valores_nuevos(Request $request)
     {
         $validate = $request->validate( [
@@ -88,7 +96,7 @@ class NomencladorController extends Controller
         }
     }
 
-    public function valores_filtrar(Request $request)
+    public function filtrar(Request $request)
     {
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $query = Valores::query();
@@ -106,38 +114,30 @@ class NomencladorController extends Controller
                     ->paginate();
 
 // dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.nomenclador.valores",compact("valores", "niveles"))
+        return view("entidades.nomenclador.listas",compact("valores", "niveles"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
             ->with('nivel', $request->nivel);
     }
 
-    public function valor_guardar(Request $request)
+    public function guardar(Request $request)
     {
         $validate = $request->validate( [
-            "valor"=> "required",
+            "cobertura_id"=> "required",
         ]);
 
-        if (strpos($request->valor, ',') !== false) {
-            // Formato europeo: eliminar puntos y reemplazar la coma por un punto
-            $valor_convertido = str_replace('.', '', $request->valor);
-            $valor_convertido = str_replace(',', '.', $valor_convertido);
+        if($request->has("id") && !empty($request->id)){
+            $lista = valores_cab::where("id", $request->id)->first();
         } else {
-            // Formato estándar: no hacer nada
-            $valor_convertido = $request->valor;
+            $lista = new Valores_cab;
         }
-        if(!is_numeric($valor_convertido)) {
-            return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
-        }
-
-        $valores = valores::where("id", $request->valores_id)->first();
-        $valores->valor = $valor_convertido;
-        $valores->save();
+        $lista->fill($validate);
+        $lista->save();
 
         return redirect()->back();
     }
 
-    public function valores_borrar(int $id) {
-        $valores = Valores::find($id);
+    public function borrar(int $id) {
+        $valores = Valores_cab::find($id);
         $valores->delete();
 
         return redirect()->back();

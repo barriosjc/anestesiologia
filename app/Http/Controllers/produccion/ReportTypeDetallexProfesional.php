@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\produccion;
 
+use App\Enums\Orientacion;
+use App\Enums\TamanoPapel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,12 +16,11 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         {
             $validator = Validator::make($request->all(), [
                 "reporte_id" => "required",
-                "profesional_id" => "required",
+                "profesional_id" => "nullable",
                 "fec_desde" => "required|date",
                 "fec_hasta" => "required|date"
             ], [
                 'reporte_id.required' => 'El campo Reporte ID es obligatorio.',
-                'profesional_id.required' => 'El campo Profesional ID es obligatorio.',
                 'fec_desde.required' => 'El campo Fecha Desde es obligatorio.',
                 'fec_desde.date' => 'El campo Fecha Desde debe ser una fecha válida.',
                 'fec_hasta.required' => 'El campo Fecha Hasta es obligatorio.',
@@ -37,13 +38,12 @@ class ReportTypeDetallexProfesional implements ReportStrategy
     public function generate(Request $request)
     {
         $query = DB::table('v_rendiciones');
-        $query->where('profesional_id', '=', $request->profesional_id);
         $query->whereBetween('fec_prestacion_orig', [$request->fec_desde, $request->fec_hasta]);
         $this->applyCommonFilters($query, $request);
         $resu = $query->get();  
 //       $sql = $query->toSql();
 //  $bindings = $query->getBindings();
-
+// dd($sql, $bindings);
         return $resu;
     }
 
@@ -52,8 +52,16 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         return 'Reportes.Rendiciones.DetallexProfesional';
     }
 
+    public function getFormat(): PdfFormat
+    {
+        return new PdfFormat(TamanoPapel::A4, Orientacion::LANDSCAPE);
+    }
+
     private function applyCommonFilters($query, $request)
     {
+        if($request->has("profesional_id") && !empty($request->profesional_id)) {
+            $query->where('profesional_id', '=', $request->profesional_id);
+        }
         if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
             $query->where('cobertura_id', '=', $request->cobertura_id);
         }
@@ -71,9 +79,10 @@ class ReportTypeDetallexProfesional implements ReportStrategy
                         $query->orWhere('estado_id', $estadoId);
                     }
                 });
-            } else {
-                $query->where('estado_id', $selectedEstados[0]);
-            }
+            } 
+            // else {
+            //     $query->where('estado_id', $selectedEstados[0]);
+            // }
         }
     }
 }

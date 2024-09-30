@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\produccion;
 
+use App\Enums\Orientacion;
+use App\Enums\TamanoPapel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,8 @@ class ReportTypeProduccionAdministrativos implements ReportStrategy
     {
         $validator = Validator::make($request->all(), [
             "fec_desde_adm" => "required",
-            "fec_hasta_adm" => "required"
+            "fec_hasta_adm" => "required",
+            "user_id" => "nullable",
         ], [
             'fec_desde_adm.required' => 'El campo Fecha desde parte es obligatorio.',
             'fec_hasta_adm.required' => 'El campo Fecha hasta parte es obligatorio.'
@@ -29,9 +32,12 @@ class ReportTypeProduccionAdministrativos implements ReportStrategy
 
     public function generate(Request $request)
     {
-        $query = DB::table('v_parte_cab');
-        $query->whereBetween('fecha', [$request->fec_desde_adm, $request->fec_hasta_adm])->get();
-        // $this->applyCommonFilters($query, $request);
+        $query = DB::table('v_parte_cab')
+            ->select(DB::raw('name, DATE(created_at) as fecha, COUNT(*) as cantidad'))
+            ->whereBetween('created_at', [$request->fec_desde_adm, $request->fec_hasta_adm])
+            ->groupBy('name', DB::raw('DATE(created_at)'))
+            ->get();
+
         return $query;
     }
 
@@ -40,6 +46,10 @@ class ReportTypeProduccionAdministrativos implements ReportStrategy
         return 'Reportes.Partes.Produccion';
     }
 
+    public function getFormat(): PdfFormat
+    {
+        return new PdfFormat(TamanoPapel::A4, Orientacion::PORTRAIT);
+    }
     // private function applyCommonFilters($query, $request)
     // {
     //     if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {

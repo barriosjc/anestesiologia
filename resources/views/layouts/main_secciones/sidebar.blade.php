@@ -41,15 +41,25 @@
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('coberturas.index') }}">Nomenclador</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                            <a class="nav-link" href="{{ route('nomenclador.valores.listado') }}">Valorización</a>
-                        @endif
-                    </nav>
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                            data-bs-target="#pagesCollapsePrecios" aria-expanded="false" aria-controls="pagesCollapsePrecios">
+                            Listas de precios
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="pagesCollapsePrecios" data-bs-parent="#accordionSidenavPagesMenu">
+                            <nav class="sidenav-menu-nested nav">
+                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                                    <a class="nav-link" href="{{ route('nomenclador.listas.listas') }}">Listas</a>
+                                @endif
+                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                                    <a class="nav-link" href="{{ route('nomenclador.valores.listas') }}">Precios</a>
+                                @endif
+                            </nav>
+                        </div>
                 </div>
             @endrole
 
-            @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') ||
-                    $super)
+            @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
                 <div class="sidenav-menu-heading">ADMINISTRATIVOS </div>
                 {{-- Sidenav Accordion (Votaciones) --}}
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
@@ -72,20 +82,20 @@
 
             @role('super-admin')
                 <div class="sidenav-menu-heading">SEGURIDAD</div>
-                    <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
-                    <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
-                    <a class="nav-link" href="{{ route('roles.index') }}">Perfiles</a>
-            @endif
+                <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
+                <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
+                <a class="nav-link" href="{{ route('roles.index') }}">Perfiles</a>
+                @endif
 
+            </div>
         </div>
-    </div>
 
-    {{-- Sidenav Footer --}}
-    <div class="sidenav-footer">
-        <div class="sidenav-footer-content">
-            <div class="sidenav-footer-subtitle">Usuario :<strong> {{ auth()->user()->name }}</strong>
-            {{-- <div class="fw-bold">{{ auth()->user()->name }}</div> --}}
+        {{-- Sidenav Footer --}}
+        <div class="sidenav-footer">
+            <div class="sidenav-footer-content">
+                <div class="sidenav-footer-subtitle">Usuario :<strong> {{ auth()->user()->name }}</strong>
+                    {{-- <div class="fw-bold">{{ auth()->user()->name }}</div> --}}
+                </div>
+            </div>
         </div>
-        </div>
-    </div>
-</nav>
+    </nav>

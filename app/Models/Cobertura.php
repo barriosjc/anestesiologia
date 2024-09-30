@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Valores;
+use App\Models\Valores_cab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -36,5 +36,8 @@ class Cobertura extends Model
      */
     protected $fillable = ['nombre', 'cuit', 'grupo', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
     
-    
+    public function valoresCab()
+    {
+        return $this->hasMany(Valores_cab::class, 'cobertura_id');
+    }
 }

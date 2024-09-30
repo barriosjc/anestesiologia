@@ -80,7 +80,17 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group col-md-3 d-flex align-items-end">
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="fec_desde_adm">Fec. carga desde</label>
+                                    <input class="form-control form-control-sm" id="fec_desde_adm" name="fec_desde_adm"
+                                        type="date" placeholder="Ingrese fecha desde" value="{{ $fec_desde_adm }}" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="fec_hasta_adm">Fec. carga hasta</label>
+                                    <input class="form-control form-control-sm" id="fec_hasta_adm" name="fec_hasta_adm"
+                                        type="date" placeholder="Ingrese fecha hasta" value="{{ $fec_hasta_adm }}" />
+                                </div>
+                                <div class="form-group col-md-2 d-flex align-items-end">
                                     <button id="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
                                         partes</button>
                                 </div>
@@ -106,7 +116,14 @@
                                 <tbody>
                                     @foreach ($partes as $item)
                                         <tr>
-                                            <td>{{ $item->id }}</td>
+                                            <td>
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" 
+                                                    @if(!empty($item->name))
+                                                        data-bs-title="usuario: {{$item->name}} - cargado: {{$item->created_at}}"
+                                                    @endif
+                                                    class="badge bg-primary">{{ $item->id }}
+                                                </span>
+                                            </td>
                                             <td>{{ $item->centro }}</td>
                                             <td>{{ $item->profesional }}</td>
                                             <td>{{ $item->paciente }}</td>

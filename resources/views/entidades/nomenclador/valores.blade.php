@@ -29,28 +29,23 @@
                         <form id="reportForm" action="{{ route('nomenclador.valores.filtrar') }}" method='GET'>
                             {{-- @csrf --}}
                             <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="codigo">Coberturas</label>
-                                    <select class="form-select" id="grupo" name="grupo">
-                                        <option value="">-- Seleccione --</option>
-                                        @foreach ($coberturas as $item)
-                                            <option value="{{ $item->grupo }}" {{$cobertura_id == $item->id ? 'selected' : ''}}>{{ $item->sigla.' / '.$item->grupo }}</option>
-                                        @endforeach
-                                    </select>
+                                <div class="col-md-3">
+                                    <label class="small mb-1" for="grupo">Grupo</label>
+                                    <input class="form-control" id="grupo" name="grupo" type="text" placeholder="grupo"
+                                        value="{{ old('grupo') }}" />
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="periodo">Periodo</label>
-                                    <select class="form-select" id="periodo" name="periodo">
+                                    <label for="nivel">Nivel</label>
+                                    <select class="form-select" id="nivel" name="nivel">
                                         <option value="">-- Seleccione --</option>
-                                        @foreach ($periodos as $item)
-                                            <option value="{{ $item->nombre }}" {{$periodo == $item->nombre ? 'selected' : ''}}>{{ $item->nombre }}</option>
+                                        @foreach ($niveles as $item)
+                                            <option value="{{ $item->nivel }}" {{$nivel == $item->nivel ? 'selected' : ''}}>{{ $item->nivel }}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                                 <div class="form-group col-md-3 d-flex align-items-end">
-                                    <button id="submitInputs" class="btn btn-primary" type="submit">Cargar
-                                        Nomenclador</button>
+                                    <button id="submitInputs" class="btn btn-primary" type="submit">Filtrar Listas</button>
                                 </div>
                             </div>
                         </form>
@@ -62,7 +57,6 @@
                                     <tr>
                                         <th>Nro</th>
                                         <th>Grupo</th>
-                                        <th>Periodo</th>
                                         <th>Nivel</th>
                                         <th>Tipo</th>
                                         <th>Valor</th>
@@ -74,7 +68,6 @@
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             <td>{{ $item->grupo }}</td>
-                                            <td>{{ $item->periodo }}</td>
                                             <td>{{ $item->nivel }}</td>
                                             <td><span
                                                     class="badge bg-{{ $item->tipo == 1 ? 'primary' : 'success' }}">{{ $item->tipo == 1 ? 'Manual' : 'Factor' }}</span>
@@ -159,7 +152,7 @@
     </div>
 
     {{-- modales nuevo --}}
-    <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -222,5 +215,5 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection

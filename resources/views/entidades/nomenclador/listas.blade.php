@@ -1,20 +1,31 @@
 @extends('layouts.main')
 
+@section('template_title')
+    Listas de precios
+@endsection
+
 @section('contenido')
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> --}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
+
                             <span id="card_title">
-                                {{ __('Listados') }}
+                                {{ __('Listas de precios') }}
                             </span>
+
+                            <div class="float-right">
+                                <a href="{{ route('nomenclador.listas.nuevo') }}" class="btn btn-primary btn-sm float-right"
+                                    data-placement="left">
+                                    {{ __('Nuevo') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="reportForm" action="{{ route('consumo.rendiciones.listar') }}" method='POST'
+                        <form id="reportForm" action="{{ route('nomenclador.listas.buscar') }}" method='POST'
                             target="_blank">
                             @csrf
                             <div class="row">
@@ -136,21 +147,57 @@
                                 </div>
                             </div>
                         </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead">
+                                    <tr>
+                                        <th>Gerenciadora</th>
+                                        <th>Cobertura</th>
+                                        <th>Centro</th>
+                                        <th>Periodo</th>
+                                        <th>Grupo</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($listas as $item)
+                                        <tr>
+                                            <td>{{ $item->gerenciadora->nombre }}</td>
+                                            <td>{{ $item->cobertura->sigla }}</td>
+                                            <td>{{ $item->centro->nombre }}</td>
+                                            <td>{{ $item->periodo }}</td>
+                                            <td>{{ $item->grupo }}</td>
+                                            <td>
+                                                <form id="delete-form-{{ $item->id }}"
+                                                    action="{{ route('nomenclador.listas.borrar', $item->id) }}"
+                                                    method="POST">
+                                                    <a class="btn btn-sm btn-primary "
+                                                        href="{{ route('nomenclador.valores.filtrar', $item->id) }}"><i
+                                                            class="fa fa-fw fa-eye"></i></a>
+                                                    <a class="btn btn-sm btn-success"
+                                                        href="{{ route('nomenclador.listas.modificar', $item->id) }}"><i
+                                                            class="fa fa-fw fa-edit"></i></a>
+                                                    @csrf
+                                                    @method('DELETE')
+
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        title="Borrar lista de precio"
+                                                        onclick="confirmDelete({{ $item->id }})"><i
+                                                            class="far fa-trash-alt text-white"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                @if (!empty($listas))
+                    {!! $listas->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                @endif
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/util.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip();
-
-            $('.select2-multiple').select2({
-                placeholder: "Select options",
-                allowClear: true
-            });
-        });
-    </script>
 @endsection

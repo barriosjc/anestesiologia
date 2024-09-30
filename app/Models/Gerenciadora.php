@@ -19,11 +19,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $deleted_at
  *
  */
-class Centro extends Model
+class Gerenciadora extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'centros';
+    protected $table = 'gerenciadoras';
     
     protected $perPage = 20;
 
@@ -34,14 +34,9 @@ class Centro extends Model
      */
     protected $fillable = ['nombre', 'cuit', 'telefono', 'contacto'];
 
-    public function valores()
+    public function valores_cab()
     {
-        return $this->hasMany(Valores::class);
-    }
-
-    public function valoresCab()
-    {
-        return $this->hasMany(Valores_cab::class, 'centro_id');
+        return $this->hasMany(Valores_cab::class, 'gerenciador_id');
     }
     
 }
