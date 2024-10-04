@@ -53,7 +53,7 @@ class UsuarioController extends Controller
     public function create()
     {
         $user = new user();
-        $centros = centro::get();
+        $centros = Centro::orderby("nombre")->get();
         $perfiles = role::get();
         $perfiles_user = '';
 
@@ -138,7 +138,7 @@ class UsuarioController extends Controller
     {
         $user = User::findOrFail($id);
         $perfiles = role::v_roles()->get();
-        $centros = Centro::get();
+        $centros = Centro::orderby("nombre")->get();
 
         // $perfiles_user = $user->roles;
         $perfiles_user = '';

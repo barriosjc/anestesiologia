@@ -34,8 +34,8 @@ class ConsumoController extends Controller
 {
     public function parte_filtrar(Request $request) 
     {
-        $coberturas = Cobertura::get();
-        $centros = Centro::get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
         $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('cobertura_id', null);
@@ -105,7 +105,7 @@ class ConsumoController extends Controller
         $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
         $documentos = Documento::where("tipo", "like", "%parte%")->get();
         $nomenclador = nomenclador::get();
-        $periodos = Periodo::get();
+        $periodos = Periodo::orderby("nombre")->get();
         $parte_cab_id = $id;
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
@@ -264,11 +264,11 @@ class ConsumoController extends Controller
 
     public function rendicion_filtrar(Request $request) 
     {
-        $coberturas = Cobertura::get();
-        $centros = Centro::get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
-        $periodos = Periodo::get();
+        $periodos = Periodo::orderby("nombre")->get();
         $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
         $centro_id = $request->has('centro_id') ? $request->centro_id : null;
         $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
@@ -342,11 +342,11 @@ class ConsumoController extends Controller
 
     public function rendicion_listado(Request $request) 
     {
-        $coberturas = Cobertura::get();
-        $centros = Centro::get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
-        $periodos = Periodo::get();
+        $periodos = Periodo::orderby("nombre")->get();
         $listados = Listado::get();
         $users = User::get();
         

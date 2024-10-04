@@ -66,8 +66,8 @@ class PreciosValoresController extends Controller
             $valores = valores::where("cobertura_id", $request->cobertura_id ?? null)
                         ->where("centro_id", $request->centro_id ?? null)
                         ->paginate();
-            $coberturas = Cobertura::get();
-            $centros = Centro::get();
+            $coberturas = Cobertura::orderby("nombre")->get();
+            $centros = Centro::orderby("nombre")->get();
 
             return redirect()->back();
 

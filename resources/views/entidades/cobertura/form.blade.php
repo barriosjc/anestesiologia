@@ -18,11 +18,6 @@
             </div>
         </div>
         <div class="row gx-3 mb-3">
-            <div class="col-md-2">
-                <label class="small mb-1" for="grupo">Grupo</label>
-                <input class="form-control" id="grupo" name="grupo" type="text" placeholder="grupo"
-                    value="{{ old('grupo', $coberturas->grupo) }}" />
-            </div>
             <div class="col-md-3">
                 <label class="small mb-1" for="edad_desde">Edad desde</label>
                 <input class="form-control" id="edad_desde" name="edad_desde" type="text" placeholder="edad_desde"

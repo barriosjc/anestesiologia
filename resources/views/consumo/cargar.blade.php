@@ -209,7 +209,7 @@
                     return
                 }
                 // busca en el nomenclador, puede traer uno o varios
-                fetch('{{ route('nomenclador.valores.buscar') }}', {
+                fetch('{{ route('nomenclador.buscar.coddesc') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

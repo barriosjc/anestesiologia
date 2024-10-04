@@ -2,166 +2,162 @@
 
 namespace App\Http\Controllers\entidades;
 
+use Exception;
 use App\Models\Centro;
+use App\Models\Periodo;
 use App\Models\Valores;
 use App\Models\Cobertura;
 use App\Models\nomenclador;
+use App\Models\Valores_cab;
+use App\Models\Gerenciadora;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Periodo;
-use App\Models\Valores_cab;
-use Exception;
 
 class PreciosListasController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $listas = Valores_cab::with([
-                    'gerenciadora:id,nombre',
-                    'cobertura:id,sigla',
-                    'centro:id,nombre'
-                ])
-                ->whereHas('gerenciadora')
-                ->whereHas('cobertura')
-                ->whereHas('centro')
-                ->paginate();
-        $coberturas = Cobertura::get();
+            'gerenciadora:id,nombre',
+            'cobertura:id,sigla',
+            'centro:id,nombre'
+        ])
+            ->whereHas('gerenciadora')
+            ->whereHas('cobertura')
+            ->whereHas('centro')
+            ->paginate();
+        $gerenciadoras = Gerenciadora::orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
+        $periodos = Periodo::orderby("nombre")->get();
+        $validated = ["gerenciadora_id" => null, "cobertura_id" => null, "centro_id" => null, "periodo" => null, "grupo" => null];
 
-        return view("entidades.nomenclador.listas",compact("listas", "coberturas"))
+        return view("entidades.nomenclador.listas", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
             ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
     }
 
-    public function precios(){
+    public function precios()
+    {
         $valores = Valores::withTrashed()
             ->paginate();
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $nivel = null;
 
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
+        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
-    public function valores_nuevos(Request $request)
+    public function nuevo(Request $request)
     {
-        $validate = $request->validate( [
-            "cobertura_id"=> "required",
-            "perido" => "required"
-        ]);
+        $gerenciadoras = Gerenciadora::orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
+        $periodos = Periodo::orderby("nombre")->get();
+        $listas = new Valores_cab;
 
-        try{
-            $niveles = valores::where("cobertura_id", $request->cobertura_id)
-                                ->where("periodo", $request->perido)
-                                ->exists();
-            if($niveles){
-                throw new Exception("Error, Ya hay valores cargados para el Convenio y Centro seleccionado, no se puede duplicar.");
-            }
-
-            if(isset($request->cobertura_id_copy) || isset($request->centro_id_copy)){
-                // Recoger los datos basados en los parámetros
-                $datosOriginales = Valores::where('cobertura_id', $request->cobertura_id_copy)
-                                        ->where('centro_id', $request->centro_id_copy)
-                                        ->select('nivel', 'valor')
-                                        ->withTrashed()
-                                        ->get();
-
-                // Mapear los datos para cambiar cobertura_id y centro_id
-                $datosModificados = $datosOriginales->map(function($item) use ($request) {
-                    return [
-                        'cobertura_id' => $request->cobertura_id, // Nuevo valor de cobertura_id
-                        'centro_id' => $request->centro_id,       // Nuevo valor de centro_id
-                        'nivel' => $item->nivel,
-                        'valor' => $item->valor,
-                    ];
-                })->toArray();
-
-                // Insertar los datos modificados en la tabla
-                DB::table('nom_valores')->insert($datosModificados);
-            }else
-            {
-                $nivelesQuery = Nomenclador::selectRaw('? as cobertura_id, ? as centro_id, nivel',
-                                                        [$request->cobertura_id ?? null, $request->centro_id ?? null])
-                                        ->distinct();
-                DB::table('nom_valores')->insertUsing(['cobertura_id', 'centro_id', 'nivel'], $nivelesQuery);
-            }
-            $valores = valores::where("cobertura_id", $request->cobertura_id ?? null)
-                        ->where("centro_id", $request->centro_id ?? null)
-                        ->paginate();
-            $coberturas = Cobertura::get();
-            $centros = Centro::get();
-
-            return redirect()->back();
-
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
+        return view("entidades.nomenclador.create", 
+                compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
-    public function filtrar(Request $request)
+    public function modificar(int $id)
     {
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
-        $query = Valores::query();
+        $gerenciadoras = Gerenciadora::orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
+        $periodos = Periodo::orderby("nombre")->get();
+        $listas = Valores_cab::where("id", $id)->first();
+// dd($listas);
+        return view("entidades.nomenclador.edit", 
+                compact("gerenciadoras", "coberturas", "centros", "periodos","listas"));
+    }
 
-        if ($request->has('grupo')  && !empty($request->grupo) ) {
+    public function filtrar(Request $request,)
+    {
+        $validated = $request->validate([
+            'gerenciadora_id' => 'nullable|integer|exists:gerenciadoras,id',  
+            'cobertura_id' => 'nullable|integer|exists:coberturas,id',
+            'centro_id' => 'nullable|integer|exists:centros,id',
+            'periodo' => 'nullable|string|exists:periodos,nombre',  
+            'grupo' => 'nullable|integer|min:1|max:1000'  
+        ]);        
+
+        $query = Valores_cab::with([
+            'gerenciadora:id,nombre',
+            'cobertura:id,sigla',
+            'centro:id,nombre'
+        ])
+            ->whereHas('gerenciadora')
+            ->whereHas('cobertura')
+            ->whereHas('centro');
+
+        if ($request->has('gerenciadora_id')  && !empty($request->gerenciadora_id)) {
+            $query->where('gerenciadora_id', '=', $request->gerenciadora_id);
+        }
+        if ($request->has('cobertura_id')  && !empty($request->cobertura_id)) {
+            $query->where('cobertura_id', '=', $request->cobertura_id);
+        }
+        if ($request->has('centro_id')  && !empty($request->centro_id)) {
+            $query->where('centro_id', '=', $request->centro_id);
+        }
+        if ($request->has('periodo')  && !empty($request->periodo)) {
+            $query->where('periodo', '=', $request->periodo);
+        }
+        if ($request->has('grupo')  && !empty($request->grupo)) {
             $query->where('grupo', '=', $request->grupo);
         }
-        if ($request->has('nivel')  && !empty($request->nivel)) {
-            $query->where('nivel', '=', $request->nivel);
-        }
+        $listas = $query->paginate();
+        $gerenciadoras = Gerenciadora::orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get();
+        $centros = Centro::orderby("nombre")->get();
+        $periodos = Periodo::orderby("nombre")->get();
 
-        $valores = $query->orderBy('nivel', 'asc')
-                    ->orderBy('created_at', 'asc')
-                    ->withTrashed()
-                    ->paginate();
 
-// dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.nomenclador.listas",compact("valores", "niveles"))
-            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
-            ->with('nivel', $request->nivel);
+        return view("entidades.nomenclador.listas", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
+            ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
     }
 
     public function guardar(Request $request)
     {
-        $validate = $request->validate( [
-            "cobertura_id"=> "required",
-        ]);
+        $validated = $request->validate([
+            'cobertura_id' => 'required|integer',
+            'centro_id' => 'required|integer',
+            'periodo' => 'required|string|max:10',  
+            'grupo' => 'required|integer|min:1|max:1000',
+            'gerenciadora_id' => [
+                'required',
+                'integer',
+                Rule::unique('nom_valores_cab')
+                    ->where(function ($query) use ($request) {
+                        return $query->where('cobertura_id', $request->cobertura_id)
+                                    ->where('centro_id', $request->centro_id)
+                                    ->where('periodo', $request->periodo);
+                    })
+                    ->ignore($request->id) 
+            ]  
+        ],
+        ['gerenciadora_id.unique' => 'Los datos ingresados para la lista de precios ya tiene un grupo asignado.'
+    ]); 
 
-        if($request->has("id") && !empty($request->id)){
+        if ($request->has("id") && !empty($request->id)) {
             $lista = valores_cab::where("id", $request->id)->first();
         } else {
             $lista = new Valores_cab;
         }
-        $lista->fill($validate);
+        $lista->fill($validated);
         $lista->save();
 
         return redirect()->back();
     }
 
-    public function borrar(int $id) {
+    public function borrar(int $id)
+    {
         $valores = Valores_cab::find($id);
         $valores->delete();
 
         return redirect()->back();
     }
 
-    public function valores_buscar(Request $request)
-    {
-        $codigo = str_replace("-", "", $request->input('codigo'));
-        $descripcion = $request->input('descripcion');
-
-        $query = Nomenclador::query();
-        if ($codigo) {
-            $query->where(DB::raw('REPLACE(codigo, "-", "")'),'like', '%' . $codigo . '%');
-        }
-
-        if ($descripcion) {
-            $query->where('descripcion', 'like', '%' . $descripcion . '%');
-        }
-
-        $results = $query->get();
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
-        // dd($sql,$bindings);
-        return response()->json($results);
-    }
 
 }

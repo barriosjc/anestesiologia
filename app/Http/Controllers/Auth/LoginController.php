@@ -39,10 +39,10 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-                // Artisan::call('route:clear');
-                // Artisan::call('config:clear');
-                // Artisan::call('view:clear');
-                // Artisan::call('cache:clear');
+                Artisan::call('route:clear');
+                Artisan::call('config:clear');
+                Artisan::call('view:clear');
+                Artisan::call('cache:clear');
                 // Artisan::call('storage:link');
                 
         return view('auth.auth-login-basic');

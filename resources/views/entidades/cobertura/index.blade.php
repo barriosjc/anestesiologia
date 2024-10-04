@@ -33,7 +33,6 @@
 										<th>Nombre</th>
                                         <th>Sigla</th>
 										<th>CUIT</th>
-                                        <th>Grupo</th>
                                         <th>Edad desde</th>
                                         <th>Edad hasta</th>
                                         <th>% adic.</th>
@@ -47,7 +46,6 @@
 											<td>{{ $item->nombre }}</td>
                                             <td>{{ $item->sigla }}</td>
 											<td>{{ $item->cuit }}</td>
-                                            <td>{{ $item->grupo }}</td>
                                             <td>{{ $item->edad_desde }}</td>
                                             <td>{{ $item->edad_hasta }}</td>
                                             <td>{{ $item->porcentaje_adic }}</td>
@@ -85,7 +83,7 @@
             $('#table_data').DataTable(
                 {
                     "columnDefs":[{
-                        "targets":[8],
+                        "targets":[7],
                         "orderable":false
                         }
                     ],

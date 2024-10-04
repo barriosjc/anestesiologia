@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property $id
  * @property $nombre
  * @property $cuit
- * @property $grupo
  * @property $porcentaje_adic
  * @property $edad_desde
  * @property $edad_hasta
@@ -34,7 +33,7 @@ class Cobertura extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'cuit', 'grupo', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
+    protected $fillable = ['nombre', 'cuit', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
     
     public function valoresCab()
     {

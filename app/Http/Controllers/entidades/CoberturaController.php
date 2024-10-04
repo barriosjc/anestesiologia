@@ -19,7 +19,7 @@ class CoberturaController extends Controller
      */
     public function index()
     {
-        $coberturas = Cobertura::get();
+        $coberturas = Cobertura::orderby("nombre")->get();
         // ::paginate();
 
         return view('entidades.cobertura.index', compact('coberturas'));
@@ -49,7 +49,6 @@ class CoberturaController extends Controller
             'nombre' => 'required|string|max:200',
             'cuit' => 'required|string|max:15',
             'sigla' => 'required|string|max:45',
-            'grupo' => 'required|int',
             'edad_desde' => 'nullable|int',
             'edad_hasta' => 'nullable|int',
             'porcentaje_adic' => 'nullable|int'
@@ -59,7 +58,6 @@ class CoberturaController extends Controller
         $cobertura->nombre = $request['nombre'];
         $cobertura->cuit = $request['cuit'];
         $cobertura->sigla = $request['sigla'];
-        $cobertura->grupo = $request['grupo'];
         $cobertura->edad_desde = $request['edad_desde'];
         $cobertura->edad_hasta = $request['edad_hasta'];
         $cobertura->porcentaje_adic = $request['porcentaje_adic'];
@@ -108,7 +106,6 @@ class CoberturaController extends Controller
             'nombre' => 'required|string|max:200',
             'cuit' => 'required|string|max:15',
             'sigla' => 'required|string|max:45',
-            'grupo' => 'required|int',
             'edad_desde' => 'nullable|int',
             'edad_hasta' => 'nullable|int',
             'porcentaje_adic' => 'nullable|int'
@@ -117,7 +114,6 @@ class CoberturaController extends Controller
         $cobertura->nombre = $request['nombre'];
         $cobertura->cuit = $request['cuit'];
         $cobertura->sigla = $request['sigla'];
-        $cobertura->grupo = $request['grupo'];
         $cobertura->edad_desde = $request['edad_desde'];
         $cobertura->edad_hasta = $request['edad_hasta'];
         $cobertura->porcentaje_adic = $request['porcentaje_adic'];

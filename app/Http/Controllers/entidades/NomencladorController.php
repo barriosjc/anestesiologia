@@ -78,8 +78,8 @@ class NomencladorController extends Controller
             $valores = valores::where("cobertura_id", $request->cobertura_id ?? null)
                         ->where("centro_id", $request->centro_id ?? null)
                         ->paginate();
-            $coberturas = Cobertura::get();
-            $centros = Centro::get();
+            $coberturas = Cobertura::orderby("nombre")->get();
+            $centros = Centro::orderby("nombre")->get();
 
             return redirect()->back();
 
@@ -143,7 +143,7 @@ class NomencladorController extends Controller
         return redirect()->back();
     }
 
-    public function valores_buscar(Request $request)
+    public function buscar_cod_desc(Request $request)
     {
         $codigo = str_replace("-", "", $request->input('codigo'));
         $descripcion = $request->input('descripcion');

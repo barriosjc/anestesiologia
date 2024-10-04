@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Valores_cab
  *
  * @property $id
- * @property $gerenciador_id
+ * @property $gerenciadora_id
  * @property $cobertura_id
  * @property $centro_id
  * @property $periodo_id
@@ -33,7 +33,7 @@ class Valores_cab extends Model
      * @var array
      */
     protected $fillable = [
-        'gerenciador_id',
+        'gerenciadora_id',
         'cobertura_id',
         'centro_id',
         'periodo',
@@ -52,16 +52,16 @@ class Valores_cab extends Model
 
     public function gerenciadora()
     {
-        return $this->belongsTo(Gerenciadora::class, 'gerenciador_id');
+        return $this->belongsTo(Gerenciadora::class, 'gerenciadora_id');
     }
 
-    public static function v_valores(int $gerenciador_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id)
+    public static function v_valores(int $gerenciadora_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id)
     {
         $resu = Valores_cab::query()
             ->select('nv.valor', 'n.nivel', 'nv.aplica_pocent_adic')
             ->join('nom_valores as nv', 'nv.grupo', 'nom_valores_cab.grupo')
             ->join('nomenclador as n', 'n.nivel', 'nv.nivel')
-            ->where('gerenciador_id', $gerenciador_id)
+            ->where('gerenciadora_id', $gerenciadora_id)
             ->where('cobertura_id', $cobertura_id)
             ->where('centro_id', $centro_id)
             ->where('periodo', $periodo)

@@ -69,19 +69,20 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
+            Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'buscar_cod_desc'])->name('nomenclador.buscar.coddesc');
+            
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
             Route::get('nomenclador/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
             Route::get('nomeclador/valores/nuevos', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valores.nuevo');
             Route::post('nomeclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
             Route::delete('nomenclador/valores/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valores.borrar');
-            // Route::post('nomeclador/valores/buscar', [PreciosValoresController::class, 'valores_buscar'])->name('nomenclador.valores.buscar');
-
+            
             Route::get('nomenclador/listas', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
-            Route::get('nomenclador/listas/nuevos', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
+            Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
             Route::delete('nomenclador/listas/borrar/{id}', [PreciosListasController::class, 'borrar'])->name('nomenclador.listas.borrar');
             Route::get('nomenclador/listas/filtrar', [PreciosListasController::class, 'filtrar'])->name('nomenclador.listas.filtrar');
-            Route::get('nomenclador/listas/modificar', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
-            Route::post('nomeclador/lista/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.lista.guardar');
+            Route::get('nomenclador/listas/modificar/{id}', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
+            Route::post('nomeclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
 
             // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
             Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parte_filtrar'])->name('consumos.partes.filtrar');

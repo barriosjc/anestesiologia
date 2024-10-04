@@ -33,11 +33,11 @@ class ParteController extends Controller
         if($centro_id) {
             $centros = Centro::where("id", $centro_id)->get();
         }else {
-            $centros = Centro::get();
+            $centros = Centro::orderby("nombre")->get();
         }
         // dd($centros);
         $paciente = new Paciente;
-        $coberturas = Cobertura::get();
+        $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $parte = new Parte_cab;
         $parte_id = null;
@@ -111,8 +111,8 @@ class ParteController extends Controller
     {
         $parte = Parte_cab::find($id);
         $paciente = Paciente::where('id', $parte->paciente_id)->first();
-        $centros = Centro::get();
-        $coberturas = Cobertura::get();
+        $centros = Centro::orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $parte_id = $parte->id;
 

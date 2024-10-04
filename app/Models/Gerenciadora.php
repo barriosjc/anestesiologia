@@ -36,7 +36,7 @@ class Gerenciadora extends Model
 
     public function valores_cab()
     {
-        return $this->hasMany(Valores_cab::class, 'gerenciador_id');
+        return $this->hasMany(Valores_cab::class, 'gerenciadora_id');
     }
     
 }
