@@ -32,7 +32,8 @@ class PreciosListasController extends Controller
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $periodos = Periodo::orderby("nombre")->get();
-        $validated = ["gerenciadora_id" => null, "cobertura_id" => null, "centro_id" => null, "periodo" => null, "grupo" => null];
+        $validated = ["gerenciadora_id" => null, "cobertura_id" => null,
+        "centro_id" => null, "periodo" => null, "grupo" => null];
 
         return view("entidades.nomenclador.listas", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
             ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
@@ -57,8 +58,7 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
         $listas = new Valores_cab;
 
-        return view("entidades.nomenclador.create", 
-                compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
+        return view("entidades.nomenclador.create", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
     public function modificar(int $id)
@@ -69,19 +69,18 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
         $listas = Valores_cab::where("id", $id)->first();
 // dd($listas);
-        return view("entidades.nomenclador.edit", 
-                compact("gerenciadoras", "coberturas", "centros", "periodos","listas"));
+        return view("entidades.nomenclador.edit", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
     public function filtrar(Request $request,)
     {
         $validated = $request->validate([
-            'gerenciadora_id' => 'nullable|integer|exists:gerenciadoras,id',  
+            'gerenciadora_id' => 'nullable|integer|exists:gerenciadoras,id',
             'cobertura_id' => 'nullable|integer|exists:coberturas,id',
             'centro_id' => 'nullable|integer|exists:centros,id',
-            'periodo' => 'nullable|string|exists:periodos,nombre',  
-            'grupo' => 'nullable|integer|min:1|max:1000'  
-        ]);        
+            'periodo' => 'nullable|string|exists:periodos,nombre',
+            'grupo' => 'nullable|integer|min:1|max:1000'
+        ]);
 
         $query = Valores_cab::with([
             'gerenciadora:id,nombre',
@@ -120,10 +119,11 @@ class PreciosListasController extends Controller
 
     public function guardar(Request $request)
     {
-        $validated = $request->validate([
+        $validated = $request->validate(
+            [
             'cobertura_id' => 'required|integer',
             'centro_id' => 'required|integer',
-            'periodo' => 'required|string|max:10',  
+            'periodo' => 'required|string|max:10',
             'grupo' => 'required|integer|min:1|max:1000',
             'gerenciadora_id' => [
                 'required',
@@ -134,11 +134,12 @@ class PreciosListasController extends Controller
                                     ->where('centro_id', $request->centro_id)
                                     ->where('periodo', $request->periodo);
                     })
-                    ->ignore($request->id) 
-            ]  
-        ],
-        ['gerenciadora_id.unique' => 'Los datos ingresados para la lista de precios ya tiene un grupo asignado.'
-    ]); 
+                    ->ignore($request->id)
+            ]
+            ],
+            ['gerenciadora_id.unique' => 'Los datos ingresados para la lista de precios ya tiene un grupo asignado.'
+            ]
+        );
 
         if ($request->has("id") && !empty($request->id)) {
             $lista = valores_cab::where("id", $request->id)->first();
@@ -158,6 +159,4 @@ class PreciosListasController extends Controller
 
         return redirect()->back();
     }
-
-
 }

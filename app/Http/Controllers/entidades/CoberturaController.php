@@ -136,5 +136,4 @@ class CoberturaController extends Controller
         return redirect()->route('coberturas.index')
             ->with('success', 'Cobertura borrado correctamente.');
     }
-
 }

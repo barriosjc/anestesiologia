@@ -8,7 +8,7 @@
             <div class="col-md-8">
                 <label class="small mb-1">Centro</label>
                 <select name="centro_id" class="form-select" id="centro_id" required>
-                    <option value=""> --- Select ---</option>
+                    <option value=""> -- Seleccione --</option>
                     @foreach ($centros as $data)
                         <option value="{{ $data->id }}" {{old('centro_id', $parte->centro_id) == $data->id ? 'selected' : ''}}>    
                             {{ $data->nombre }}</option>
@@ -50,20 +50,21 @@
 
         <!-- Form Row-->
         <div class="row gx-3 mb-3">
-            <div class="col-md-6">
-                <label class="small mb-1">Cobertura</label>
-                <select name="cobertura_id" class="form-select" id="cobertura_id" required>
-                    <option value=""> --- Select ---</option>
+            <div class="col-md-6 custom-select2">
+                <label class="small mb-1">Coberturas</label>
+                <select name="cobertura_id" class="form-control select2" id="cobertura_id" required>
+                    <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $data)
-                        <option value="{{ $data->id }}" {{old('cobertura_id', $parte->cobertura_id) == $data->id ? 'selected' : ''}}> 
-                            {{ $data->sigla }}</option>
+                        <option value="{{ $data->id }}" {{old('cobertura_id', $parte->cobertura_id) == $data->id ? 'selected' : ''}}>
+                            {{ $data->sigla }}
+                        </option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="small mb-1">Profesional</label>
                 <select name="profesional_id" class="form-select" id="profesional_id" required>
-                    <option value=""> --- Select ---</option>
+                    <option value=""> -- Seleccione --</option>
                     @foreach ($profesionales as $data)
                         <option value="{{ $data->id }}" {{old('profesional_id', $parte->profesional_id) == $data->id ? 'selected' : ''}}> 
                             {{ $data->nombre }}</option>
@@ -89,6 +90,10 @@
 
     <script>
         $(document).ready(function() {
+            $(document).ready(function() {
+                $('.select2').select2();
+            });
+
             $('#search-button').on('click', function() {
                 var dni = $('#dni').val();
                 $('#alert-container').hide().empty();

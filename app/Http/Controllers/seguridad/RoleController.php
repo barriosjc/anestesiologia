@@ -25,22 +25,22 @@ class RoleController extends Controller
         // $roles = Role::all();
         // dd($roles);
         if (!empty($keyword)) {
-          $roles = Role::where(function ($query) use ($keyword) {
+            $roles = Role::where(function ($query) use ($keyword) {
                         $query->where('name', 'LIKE', "%$keyword%")
                             ->orWhere('guard_name', 'LIKE', "%$keyword%");
-                            })
+            })
                     ->where("guard_name", "web")
                     ->orderBy('name', 'asc')
                     ->get();
         } else {
-          $roles = Role::orderBy('name','asc')
+            $roles = Role::orderBy('name', 'asc')
                     ->where("guard_name", "web")
                     ->get();
                         // ->simplepaginate($perPage);
         }
         $esabm = true;
 
-        return view('seguridad.roles.index',compact('roles','esabm'))
+        return view('seguridad.roles.index', compact('roles', 'esabm'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -74,8 +74,8 @@ class RoleController extends Controller
         //$role->syncPermissions($request->input('permission'));
         $esabm = true;
 
-        return redirect()->route('roles.index',compact('esabm'))
-                        ->with('flash_message','Role created successfully');
+        return redirect()->route('roles.index', compact('esabm'))
+                        ->with('flash_message', 'Role created successfully');
     }
 
     public function show($id)
@@ -86,7 +86,7 @@ class RoleController extends Controller
         //     ->get();
 
 
-        return view('seguridad.roles.show',compact('roles'));
+        return view('seguridad.roles.show', compact('roles'));
     }
 
     public function edit($id)
@@ -98,7 +98,7 @@ class RoleController extends Controller
         //     ->all();
 
 
-        return view('seguridad.roles.edit',compact('roles'));
+        return view('seguridad.roles.edit', compact('roles'));
     }
 
     public function update(Request $request, $id)
@@ -115,19 +115,20 @@ class RoleController extends Controller
         $esabm = true;
         //$role->syncPermissions($request->input('permission'));
 
-        return redirect()->route('roles.index',compact('esabm'))
-                        ->with('flash_message','Role actualizada correctamente');
+        return redirect()->route('roles.index', compact('esabm'))
+                        ->with('flash_message', 'Role actualizada correctamente');
     }
 
     public function destroy($id)
     {
-        DB::table("roles")->where('id',$id)->delete();
+        DB::table("roles")->where('id', $id)->delete();
 
         return redirect()->route('roles.index')
-                        ->with('flash_message','Role deleted successfully');
+                        ->with('flash_message', 'Role deleted successfully');
     }
 
-    public function usuarios(int $rolid, int $usuid = null, string $tarea = ''){
+    public function usuarios(int $rolid, int $usuid = null, string $tarea = '')
+    {
 
         $rol = role::find($rolid);
         $user = user::find($usuid);
@@ -142,31 +143,49 @@ class RoleController extends Controller
         }
 
         $user = DB::table('users')
-                ->select( 'users.id', 'users.name', 'email',
-                'email_verified_at', 'password', 'remember_token',
-                'foto', 'users.created_at', 'users.updated_at', 'users.deleted_at')
+                ->select(
+                    'users.id',
+                    'users.name',
+                    'email',
+                    'email_verified_at',
+                    'password',
+                    'remember_token',
+                    'foto',
+                    'users.created_at',
+                    'users.updated_at',
+                    'users.deleted_at'
+                )
                 ->join('model_has_roles as mr', 'mr.model_id', 'users.id')
                 ->where('mr.role_id', '=', $rol->id)
                 ->simplepaginate(5);
                 // ->get();
                 
 //        $user = $rol->users()->simplepaginate(5);
-        $users = DB::table('users')                 
-            ->select( 'id', 'name', 'email',
-                        'email_verified_at', 'password', 'remember_token',
-                        'foto', 'created_at', 'updated_at', 'deleted_at')
-            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid)) 
+        $users = DB::table('users')
+            ->select(
+                'id',
+                'name',
+                'email',
+                'email_verified_at',
+                'password',
+                'remember_token',
+                'foto',
+                'created_at',
+                'updated_at',
+                'deleted_at'
+            )
+            ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
             ->simplepaginate(5);
         $esabm = false;
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);
         $padre = "roles";
         // $rolid = $roles->id;
 
-        return view('seguridad.usuario.index',  compact('padre', 'rolid', 'user', 'users', 'esabm', 'titulo'));   
-
+        return view('seguridad.usuario.index', compact('padre', 'rolid', 'user', 'users', 'esabm', 'titulo'));
     }
 
-    public function permisos(int $rolid, int $perid = null, string $tarea = ''){
+    public function permisos(int $rolid, int $perid = null, string $tarea = '')
+    {
 
         $rol = role::find($rolid);
         $per = permission::find($perid);
@@ -184,9 +203,14 @@ class RoleController extends Controller
         $permisos = $rol->permissions()
                             ->get();
         // ->simplepaginate(5);
-        $permisoss = DB::table('permissions')                 
-            ->select('id', 'name', 'guard_name', 
-            'created_at', 'updated_at')
+        $permisoss = DB::table('permissions')
+            ->select(
+                'id',
+                'name',
+                'guard_name',
+                'created_at',
+                'updated_at'
+            )
             ->whereNotIn('id', DB::table('role_has_permissions')->select('permission_id')->where('role_id', '=', $rolid))
             ->where('guard_name', "web")
             ->get();
@@ -197,24 +221,18 @@ class RoleController extends Controller
         $padre = "roles";
         // $rolid = $roles->id;
 
-        return view('seguridad.permisos.index',  compact('padre', 'rolid', 'permisos', 'permisoss', 'esabm', 'titulo'));   
- 
-      }
+        return view('seguridad.permisos.index', compact('padre', 'rolid', 'permisos', 'permisoss', 'esabm', 'titulo'));
+    }
 
-    public function roles_json(Request $request)
+    public function rolesJson(Request $request)
     {
         try {
-
             //id de emp no se usa pero por ahora no lo quito
             $roles = Role::get();
             $response = ['data' => $roles];
-
         } catch (\Exception $exception) {
             return response()->json(['message' => 'hay un error al intentar traer los Roles'], 500);
         }
         return response()->json($response);
     }
-
-
-    
 }

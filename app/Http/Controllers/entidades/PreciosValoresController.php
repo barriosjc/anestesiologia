@@ -11,63 +11,56 @@ use Exception;
 
 class PreciosValoresController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $valores = Valores::withTrashed()
             ->paginate();
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $nivel = null;
 
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
+        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
     public function nuevo(Request $request)
     {
-        $validate = $request->validate( [
-            "cobertura_id"=> "required",
-            "perido" => "required"
-        ]);
+        $validate = $request->validate(
+            [
+            "grupo_c" => "required|integer|max:999|exists:nom_valores,grupo",
+            "grupo_n" => "required|integer|max:999|unique:nom_valores,grupo",
+            "porcentaje" => "required|integer|between:-99,100"
+            ],
+            [
+            "grupo_c.required" => "Debe ingresar el Numero entero de grupo que existe para copiar, tomado como plantilla.",
+            "grupo_c.integer" => "El grupo debe ser un número entero.",
+            "grupo_c.max" => "El grupo no puede ser mayor a 999.",
+            "grupo_c.exists" => "El grupo a copiar no se encuentra en ninguna lista de precios.",
+            
+            "grupo_n.required" => "Debe ingresar el Numero entero de grupo, el nro puede estar siendo usado.",
+            "grupo_n.integer" => "El nuevo grupo debe ser un número entero.",
+            "grupo_n.max" => "El nuevo grupo no puede ser mayor a 999.",
+            "grupo_n.unique" => "El nuevo grupo ya está asignado a una lista de precios existente.",
+            
+            "porcentaje.required" => "Debe ingresar un valor de % aplicar entre -99 a 100.",
+            "porcentaje.integer" => "El porcentaje debe ser un número entero.",
+            "porcentaje.between" => "El porcentaje debe estar entre -99 y 100."
+            ]
+        );
 
-        try{
-            $niveles = valores::where("cobertura_id", $request->cobertura_id)
-                                ->where("periodo", $request->perido)
-                                ->exists();
-            if($niveles){
-                throw new Exception("Error, Ya hay valores cargados para el Convenio y Centro seleccionado, no se puede duplicar.");
+        try {
+            $registros = Valores::where('grupo', $request->grupo_c)->get();
+            
+            foreach ($registros as $registro) {
+                Valores::create(
+                    [
+                    'nivel' => $registro->nivel,
+                    'valor' => $registro->valor + ($request->porcentaje * $registro->valor / 100),
+                    'grupo' => $request->grupo_n,
+                    'aplica_pocent_adic' => $registro->aplica_pocent_adic,
+                    'tipo' => $registro->tipo
+                    ]
+                );
             }
-
-            if(isset($request->cobertura_id_copy) || isset($request->centro_id_copy)){
-                // Recoger los datos basados en los parámetros
-                $datosOriginales = Valores::where('cobertura_id', $request->cobertura_id_copy)
-                                        ->where('centro_id', $request->centro_id_copy)
-                                        ->select('nivel', 'valor')
-                                        ->withTrashed()
-                                        ->get();
-
-                // Mapear los datos para cambiar cobertura_id y centro_id
-                $datosModificados = $datosOriginales->map(function($item) use ($request) {
-                    return [
-                        'cobertura_id' => $request->cobertura_id, // Nuevo valor de cobertura_id
-                        'centro_id' => $request->centro_id,       // Nuevo valor de centro_id
-                        'nivel' => $item->nivel,
-                        'valor' => $item->valor,
-                    ];
-                })->toArray();
-
-                // Insertar los datos modificados en la tabla
-                DB::table('nom_valores')->insert($datosModificados);
-            }else
-            {
-                $nivelesQuery = Nomenclador::selectRaw('? as cobertura_id, ? as centro_id, nivel',
-                                                        [$request->cobertura_id ?? null, $request->centro_id ?? null])
-                                        ->distinct();
-                DB::table('nom_valores')->insertUsing(['cobertura_id', 'centro_id', 'nivel'], $nivelesQuery);
-            }
-            $valores = valores::where("cobertura_id", $request->cobertura_id ?? null)
-                        ->where("centro_id", $request->centro_id ?? null)
-                        ->paginate();
-            $coberturas = Cobertura::orderby("nombre")->get();
-            $centros = Centro::orderby("nombre")->get();
 
             return redirect()->back();
 
@@ -81,7 +74,7 @@ class PreciosValoresController extends Controller
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $query = Valores::query();
 
-        if ($request->has('grupo')  && !empty($request->grupo) ) {
+        if ($request->has('grupo')  && !empty($request->grupo)) {
             $query->where('grupo', '=', $request->grupo);
         }
         if ($request->has('nivel')  && !empty($request->nivel)) {
@@ -89,20 +82,20 @@ class PreciosValoresController extends Controller
         }
 
         $valores = $query->orderBy('nivel', 'asc')
-                    ->orderBy('created_at', 'asc')
-                    ->withTrashed()
-                    ->paginate();
+            ->orderBy('created_at', 'asc')
+            ->withTrashed()
+            ->paginate();
 
-// dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.nomenclador.valores",compact("valores", "niveles"))
+        // dd( $request->cobertura_id, $request->centro_id);
+        return view("entidades.nomenclador.valores", compact("valores", "niveles"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
             ->with('nivel', $request->nivel);
     }
 
     public function guardar(Request $request)
     {
-        $validate = $request->validate( [
-            "valor"=> "required",
+        $validate = $request->validate([
+            "valor" => "required",
         ]);
 
         if (strpos($request->valor, ',') !== false) {
@@ -113,7 +106,7 @@ class PreciosValoresController extends Controller
             // Formato estándar: no hacer nada
             $valor_convertido = $request->valor;
         }
-        if(!is_numeric($valor_convertido)) {
+        if (!is_numeric($valor_convertido)) {
             return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
         }
 
@@ -124,11 +117,11 @@ class PreciosValoresController extends Controller
         return redirect()->back();
     }
 
-    public function borrar(int $id) {
+    public function borrar(int $id)
+    {
         $valores = Valores::find($id);
         $valores->delete();
 
         return redirect()->back();
     }
-
 }

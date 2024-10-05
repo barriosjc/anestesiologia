@@ -127,5 +127,4 @@ class CentroController extends Controller
         return redirect()->route('centros.index')
             ->with('success', 'Centro borrado correctamente.');
     }
-
 }

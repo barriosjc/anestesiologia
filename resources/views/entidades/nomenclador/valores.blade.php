@@ -152,68 +152,41 @@
     </div>
 
     {{-- modales nuevo --}}
-    {{-- <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Nuevo, puede copiar o cargar valores desde cero</h5>
+                    <h5 class="modal-title">Nueva Lista</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('nomenclador.valores.nuevo') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="cobertura_id">Coberturas</label>
-                                <select class="form-select"  name="cobertura_id">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="grupo_c">Grupo a copiar</label>
+                                <input class="form-control" id="grupo_c" name="grupo_c" type="text" placeholder="grupo_c"
+                                    value="{{ old('grupo_c') }}" />
                             </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="periodo">Periodo</label>
-                                <select class="form-select" name="periodo">
-                              <option value="">-- Seleccione --</option>
-                                    @foreach ($periodos as $item)
-                                        <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-4">
+                                <label class="small mb-1" for="grupo_n">Nuevo Grupo</label>
+                                <input class="form-control" id="grupo_n" name="grupo_n" type="text" placeholder="grupo_n"
+                                    value="{{ old('grupo_n') }}" />
                             </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <h4>Copiar desde</h4>
-                            <div class="form-group col-md-6">
-                                <label for="cobertura_id">Coberturas</label>
-                                <select class="form-select" name="cobertura_id_copy">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="centro_id">Periodo</label>
-                                <select class="form-select" name="periodo_copy">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($periodos as $item)
-                                        <option value="{{ $item->nombre }}">{{ $item->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
+                            <div class="col-md-3">
+                                <label class="small mb-1" for="porcentaje">% incremento</label>
+                                <input class="form-control" id="porcentaje" name="porcentaje" type="text" placeholder="porcentaje"
+                                    title="Valor % permitido de -99 a 100" data-bs-toggle="tooltip"
+                                    value="{{ old('porcentaje') }}" />
+                            </div>  
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="submit" class="btn btn-primary">Crear</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div> --}}
+    </div>
 @endsection

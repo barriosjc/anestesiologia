@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                    <select class="form-select form-select-sm" id="cobertura_id" name="cobertura_id">
+                                    <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
@@ -315,6 +315,11 @@
 
         $(document).ready(function() {
             $('[data-bs-toggle="tooltip"]').tooltip();
+
+            $('.select2').select2({
+                placeholder: "-- Seleccione --",
+                allowClear: true
+            });
 
             // marca todos las filas de la tabla
             document.getElementById('ck_todo').addEventListener('change', function() {

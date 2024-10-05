@@ -20,7 +20,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                    <select class="form-select form-select-sm" id="cobertura_id" name="cobertura_id">
+                                    <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
@@ -149,6 +149,11 @@
 
             $('.select2-multiple').select2({
                 placeholder: "Select options",
+                allowClear: true
+            });
+            
+            $('#cobertura_id').select2({
+                placeholder: "-- Seleccione --",
                 allowClear: true
             });
         });

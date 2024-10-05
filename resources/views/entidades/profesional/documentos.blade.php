@@ -61,7 +61,7 @@
 
                             <label class="small mb-1">Tipo Documento</label>
                             <select name="documento_id" class="form-select" id="documento_id" required>
-                                <option value=""> --- Select ---</option>
+                                <option value=""> -- Seleccione --</option>
                                 @foreach ($documentos as $data)
                                         {{-- {{ old('documento_id', $parte->documento_id) == $data->id ? 'selected' : '' }}> --}}
                                         <option value="{{ $data->id }}">

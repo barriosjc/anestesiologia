@@ -72,3 +72,48 @@ form {
   padding: 0; 
   display: inline;
 }
+.select2-container .select2-selection--single {
+  height: calc(1.5em + 1.25rem + 2px); /* Aumentar el alto */
+  padding: 0.375rem 0.75rem; /* Corregido de -0.375rem a 0.375rem */
+  font-size: 0.80rem;
+  line-height: 1.5;
+  border-radius: 0.375rem;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #495057;
+  padding-left: 1rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%;
+  right: 0.75rem;
+}
+
+.select2-container--default .select2-selection--single:hover {
+  border-color: #80bdff;
+}
+
+.select2-container--default .select2-selection--single:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-select2 .select2-container--default .select2-selection--single {
+  height: calc(1.5em + 1.25rem + 2px) !important; /* Aumentar el alto */
+  padding: 0.375rem 0.75rem !important; /* Corregido de -0.375rem a 0.375rem */
+}
+
+.custom-select2 .select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: calc(1.5em + 1rem + 2px) !important;
+}
+
+.select2-container--default .select2-results__option {
+  font-size: 0.875rem; 
+  line-height: 1.25; 
+}
+
+

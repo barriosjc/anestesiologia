@@ -32,7 +32,7 @@ use Carbon\Carbon;
 
 class ConsumoController extends Controller
 {
-    public function parte_filtrar(Request $request) 
+    public function parteFiltrar(Request $request)
     {
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
@@ -95,9 +95,22 @@ class ConsumoController extends Controller
 // $bindings = $query->getBindings();
 
 // dd($sql, $bindings);
-        return view("consumo.partes", compact("partes", "coberturas", "centros", "profesionales", 
-                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id",
-                "fec_desde_adm", "fec_hasta_adm"));
+        return view("consumo.partes", compact(
+            "partes",
+            "coberturas",
+            "centros",
+            "profesionales",
+            "cobertura_id",
+            "centro_id",
+            "profesional_id",
+            "nombre",
+            "fec_desde",
+            "fec_hasta",
+            "estados",
+            "estado_id",
+            "fec_desde_adm",
+            "fec_hasta_adm"
+        ));
     }
 
     public function cargar(int $id)
@@ -113,22 +126,22 @@ class ConsumoController extends Controller
 
         $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
 
-        return view("consumo.cargar", compact("periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera" ));
+        return view("consumo.cargar", compact("periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera"));
     }
     
-    public function valor_buscar (Request $request)
+    public function valorBuscar(Request $request)
     {
-        if(empty($request->periodo) ) {
+        if (empty($request->periodo)) {
             return response()->json([
                 'error' => 'Faltan periodo'
             ], 400); // Devuelve un código de error 400 (Bad Request)
         }
-        if(empty($request->parte_cab_id)) {
+        if (empty($request->parte_cab_id)) {
             return response()->json([
                 'error' => 'Faltan id parte'
             ], 400); // Devuelve un código de error 400 (Bad Request)
         }
-        if(empty($request->nomenclador_id)) {
+        if (empty($request->nomenclador_id)) {
             return response()->json([
                 'error' => 'Faltan id nomenclador'
             ], 400); // Devuelve un código de error 400 (Bad Request)
@@ -140,47 +153,51 @@ class ConsumoController extends Controller
         $parte_cab_id = $request->parte_cab_id;
         $parte_cab = Parte_cab::where("id", $parte_cab_id)->first();
         $cobertura = cobertura::where("id", $parte_cab->cobertura_id)->first();
-        // $grupo = $cobertura->grupo; 
-        $valores = Valores_cab::v_valores(1, $parte_cab->cobertura_id, $parte_cab->centro_id,
-                                        $request->periodo, $request->nomenclador_id);
-        if(empty($valores)) {
+        // $grupo = $cobertura->grupo;
+        $valores = Valores_cab::v_valores(
+            1,
+            $parte_cab->cobertura_id,
+            $parte_cab->centro_id,
+            $request->periodo,
+            $request->nomenclador_id
+        );
+        if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);
         }
         $valor = $valores->valor;
         $porcentaje = 0;
 
         //calcula edad
-        if(!empty($valores->aplica_pocent_adic))
-        {
-            $paciente = Paciente::where("id", $parte_cab->paciente_id)->first();  
+        if (!empty($valores->aplica_pocent_adic)) {
+            $paciente = Paciente::where("id", $parte_cab->paciente_id)->first();
             $fechaNacimiento = $paciente->fec_nacimiento;
             $fechaNacimiento = new DateTime($fechaNacimiento);
             $fechaActual = new DateTime('today');
             $edad = $fechaActual->diff($fechaNacimiento)->y;
-            if(($edad < $cobertura->edad_hasta && $cobertura->edad_hasta != null)  || 
-                        ($edad > $cobertura->edad_desde && $cobertura->edad_desde != null)){
+            if (($edad < $cobertura->edad_hasta && $cobertura->edad_hasta != null)  ||
+                        ($edad > $cobertura->edad_desde && $cobertura->edad_desde != null)) {
                 $porcentaje = $cobertura->porcentaje_adic;
             }
         }
         return response()->json(['valor' => $valor, 'porcentaje' => $porcentaje]);
     }
 
-    public function guardar (Request $request)
+    public function guardar(Request $request)
     {
-        $validate = $request->validate( [
+        $validate = $request->validate([
             "parte_cab_id" => "required",
             "porcentaje" => "required|numeric|between:1,200",
             "valor_total" => "required|numeric|gt:0",
             "nomenclador_id" => "required"
         ]);
 
-        try{
+        try {
             $parte = Parte_cab::find($request->parte_cab_id);
             $parte->estado_id = 4; //en facturacion
             $parte->save();
 
             $consumo_cab = Consumo_cab::where('parte_cab_id', $request->parte_cab_id)->first();
-            if(empty($consumo_cab)){
+            if (empty($consumo_cab)) {
                 $consumo_cab = new Consumo_cab();
                 $consumo_cab->parte_cab_id = $request->parte_cab_id;
                 $consumo_cab->user_id = Auth()->user()->id;
@@ -197,21 +214,20 @@ class ConsumoController extends Controller
             $consumo_det->save();
 
             return redirect()->route('consumos.cargar', $request->parte_cab_id);
-
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function destroy(Request $request, $id) 
+    public function destroy(Request $request, $id)
     {
         $profesional = Consumo_det::find($id)->delete();
 
         return redirect()->back();
     }
 
-    public function observar(Request $request) 
-    {       
+    public function observar(Request $request)
+    {
         $validate = $request->validate([
             "id" => "required",
             "observaciones" => "required|max:255"
@@ -226,8 +242,8 @@ class ConsumoController extends Controller
         }
     }
     
-    public function aProcesar(Request $request) 
-    {       
+    public function aProcesar(Request $request)
+    {
         $validate = $request->validate([
             "id" => "required",
             "observaciones" => "nullable|max:255"
@@ -253,16 +269,16 @@ class ConsumoController extends Controller
                 throw new \Exception('El estado no puede ser cambiado a "Observado" desde el estado actual.');
             }
             $parte->observaciones = $request["observaciones"];
-            $parte->estado_id = $estado_id; 
+            $parte->estado_id = $estado_id;
             $parte->save();
     
             return ['success' => true];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
         }
-    }    
+    }
 
-    public function rendicion_filtrar(Request $request) 
+    public function rendicionFiltrar(Request $request)
     {
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
@@ -280,7 +296,7 @@ class ConsumoController extends Controller
         
 
         $query = DB::table('v_rendiciones');
-        if ($request->has('cobertura_id')  && !empty($request->cobertura_id) ) {
+        if ($request->has('cobertura_id')  && !empty($request->cobertura_id)) {
             $query->where('cobertura_id', '=', $request->cobertura_id);
         }
         if ($request->has('centro_id')  && !empty($request->centro_id)) {
@@ -295,13 +311,13 @@ class ConsumoController extends Controller
         if ($request->has('pac_nombre')  && !empty($request->pac_nombre)) {
             $query->where('pac_nombre', 'like', "%".$request->pac_nombre."%");
         }
-        if(!empty($request->fec_desde)){
+        if (!empty($request->fec_desde)) {
             $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
         }
-        if(!empty($request->fec_hasta)){
+        if (!empty($request->fec_hasta)) {
             $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
         }
-        if(!empty($periodo_gen)){
+        if (!empty($periodo_gen)) {
             $query->where('periodo', '=', $periodo_gen);
         }
         $partes = $query->orderBy('created_at', 'asc')
@@ -311,11 +327,25 @@ class ConsumoController extends Controller
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
 // dd($sql, $bindings);
-        return view("consumo.rendiciones", compact("periodos", "partes", "coberturas", "centros", "profesionales", 
-                "cobertura_id", "centro_id", "profesional_id", "nombre", "fec_desde", "fec_hasta", "estados", "estado_id", "periodo_gen"));
+        return view("consumo.rendiciones", compact(
+            "periodos",
+            "partes",
+            "coberturas",
+            "centros",
+            "profesionales",
+            "cobertura_id",
+            "centro_id",
+            "profesional_id",
+            "nombre",
+            "fec_desde",
+            "fec_hasta",
+            "estados",
+            "estado_id",
+            "periodo_gen"
+        ));
     }
 
-    public function rendicion_store(Request $request)
+    public function rendicionStore(Request $request)
     {
         $this->validate($request, [
             "selected_ids" => "required",
@@ -331,16 +361,16 @@ class ConsumoController extends Controller
             $det->estado_id = 5; //liquidado
             $det->save();
 
-            $parte = Parte_cab::where("id",$item->parte_id)->first();
+            $parte = Parte_cab::where("id", $item->parte_id)->first();
             $parte->estado_id = 5;
-            $parte->save(); 
+            $parte->save();
         }
     
         // Redirecciona o devuelve una respuesta
-        return redirect()->back()->with('success','Se generó la rendición. ');
+        return redirect()->back()->with('success', 'Se generó la rendición. ');
     }
 
-    public function rendicion_listado(Request $request) 
+    public function rendicionListado(Request $request)
     {
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
@@ -351,10 +381,9 @@ class ConsumoController extends Controller
         $users = User::get();
         
         return view("consumo.listados", compact("users", "periodos", "coberturas", "centros", "profesionales", "estados", "listados"));
-        
     }
 
-    public function rendicion_listar(Request $request)
+    public function rendicionListar(Request $request)
     {
         try {
             if (!$request->reporte_id) {
@@ -383,102 +412,98 @@ class ConsumoController extends Controller
             $pdf = Pdf::loadView($viewName, $parametros)
                         ->setPaper($formato->getTamano(), $formato->getOrientacion());
             return $pdf->stream();
-    
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->validator->errors())->withInput();
         } catch (\Exception $e) {
             return back()->withErrors([$e->getMessage()])->withInput();
-        }    
+        }
     }
 
-    public function rendicion_estados(Request $request)
+    public function rendicionEstados(Request $request)
     {
         $this->validate($request, [
             "selected_ids" => "required",
             "estadoCambio" => "required",
             "periodo_refac" => "required_if:estadoCambio,7",
             "obs_refac" => "required_if:estadoCambio,7|max:250"
-        ],[
+        ], [
             "selected_ids.required" => "Debe seleccionar de la grilla los procedimientos que requiere cambiar de estado.",
             "periodo_refac.required_if" => "El campo periodo de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar.",
             "obs_refac.required_if" => "El campo Observaciones de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar."
         ]);
 
-        if($request->has('selected_ids') && $request->has('selected_ids') 
-                && !empty($request->selected_ids) && !empty($request->estadoCambio) )
-        {
+        if ($request->has('selected_ids') && $request->has('selected_ids')
+                && !empty($request->selected_ids) && !empty($request->estadoCambio)) {
             $selectedIds = $request->input('selected_ids');
             $nuevoEstado = $request->input('estadoCambio');
             $nuevoPeriodo = $request->input('periodo_refac');
             $obs_refac = $request->input('obs_refac');
 
             try {
-                if($nuevoEstado == "7" && $nuevoPeriodo == null) {
+                if ($nuevoEstado == "7" && $nuevoPeriodo == null) {
                     throw new InvalidArgumentException("Si el estado es 'A refacturar' es obligatorio ingresar el periodo.");
                 }
 
                 $sepa = "";
                 $ids = "";
-                foreach($selectedIds as $item) {
+                foreach ($selectedIds as $item) {
                     $consumo = Consumo_det::find($item['consumo_det_id']);
-                    $est_actual = $consumo->estado_id;  
+                    $est_actual = $consumo->estado_id;
 
-                    if($nuevoEstado == "5" && !in_array($est_actual, [6,7,8])) {	
+                    if ($nuevoEstado == "5" && !in_array($est_actual, [6,7,8])) {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;
                     }
-                    if($nuevoEstado == "7" && $est_actual != 5) {
-                        $ids = $ids . $sepa . $item['parte_id'] ;	
+                    if ($nuevoEstado == "7" && $est_actual != 5) {
+                        $ids = $ids . $sepa . $item['parte_id'] ;
                         $sepa = " ,";
                         continue;
                     }
-                    if($nuevoEstado == "8" && $est_actual != 7) {
-                        $ids = $ids . $sepa . $item['parte_id'];	
+                    if ($nuevoEstado == "8" && $est_actual != 7) {
+                        $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;
                     }
-                    if($nuevoEstado <= "5") {
+                    if ($nuevoEstado <= "5") {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
-                        continue;   
-                    } 
-                    if($nuevoEstado == "6" && in_array($est_actual, [1,2,3,4,6])) {
+                        continue;
+                    }
+                    if ($nuevoEstado == "6" && in_array($est_actual, [1,2,3,4,6])) {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
-                        continue;   
+                        continue;
                     }
 
-                    $consumo = Consumo_det::where('id','=', $item['consumo_det_id'])->first();
-                    $consumo->estado_id = $nuevoEstado; 
-                    if($nuevoEstado == "7") {
+                    $consumo = Consumo_det::where('id', '=', $item['consumo_det_id'])->first();
+                    $consumo->estado_id = $nuevoEstado;
+                    if ($nuevoEstado == "7") {
                         $consumo->periodo = $nuevoPeriodo;
                         $consumo->obs_refac = $obs_refac;
                     }
                     $consumo->save();
                 }
 
-                if(!empty($ids)) {
+                if (!empty($ids)) {
                     throw new Exception($ids);
                 }
 
                 return response()->json(['success' => 'Estado/s actualizado/s con éxito. Vuelva a recargar la página para ver los estados cambiados.'], 200);
-
             } catch (\InvalidArgumentException $e) {
                 return response()->json(['error' => $e->getMessage() . '.'], 422);
-            
-            }catch (\Throwable $th) {
+            } catch (\Throwable $th) {
                 return response()->json(['error'=> 'Algun/os Detalles de rendición no se permite el cambio de estado seleccionado en base a su estado previo a realizar el cambio, nros de parte: '.$th->getMessage().'. '], 422);
             }
         }
     }
 
-    public function rendicion_revalorizar(Request $request)
+    public function rendicionRevalorizar(Request $request)
     {
         $this->validate($request, [
             "selected_ids" => "required",
             "periodo_revalorizar" => "required"
-        ]);        
+        ]);
 
         $cantidad = 0;
         $selectedIds = $request->input('selected_ids');
@@ -489,12 +514,15 @@ class ConsumoController extends Controller
             ->where('consumos_det_id', $item['consumo_det_id'])
             ->first();
            
-            $valores = Valores_cab::v_valores(1, $rendiciones->cobertura_id, 
-                                                $rendiciones->centro_id, 
-                                                $periodo,
-                                                $rendiciones->nomenclador_id);
+            $valores = Valores_cab::v_valores(
+                1,
+                $rendiciones->cobertura_id,
+                $rendiciones->centro_id,
+                $periodo,
+                $rendiciones->nomenclador_id
+            );
 
-            if(!empty($valores)){
+            if (!empty($valores)) {
                 $consumo_det = Consumo_det::find($item['consumo_det_id']);
                 $consumo_det->valor = $valores->valor * ($rendiciones->porcentaje / 100);
                 $consumo_det->save();

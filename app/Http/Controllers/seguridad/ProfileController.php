@@ -2,20 +2,12 @@
 
 namespace App\Http\Controllers\seguridad;
 
-use App\Models\Tickets;
 use App\Models\user;
-use App\Models\Cliente;
-use App\Models\Parametro;
 use Illuminate\Http\Request;
-use App\Mail\registerMailable;
-use App\Models\ordenes_compras;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UtilesController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+
 // use Illuminate\Support\Facades\Mail;
 
 class ProfileController extends Controller
@@ -29,7 +21,7 @@ class ProfileController extends Controller
     {
         $user = user::where("id", $id)->first();
 
-        return view('seguridad.usuario.perfil')->with(compact( 'user'));
+        return view('seguridad.usuario.perfil')->with(compact('user'));
     }
 
     // public function nuevo()
@@ -102,7 +94,7 @@ class ProfileController extends Controller
         return view('seguridad.usuario.password')->with(compact('titulo'));
     }
 
-    public function save_password(Request $request)
+    public function savePassword(Request $request)
     {
         $validado = $request->validate([
             'password_nueva' => ['required', 'string', 'min:8', 'max:20', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
@@ -127,35 +119,5 @@ class ProfileController extends Controller
         $user->save();
 
         return back()->with('success', 'Se actualizó la nueva password correctamente.');
-    }
-
-    // public function readonly($id)
-    // {
-    //     $user = user::where("id", $id)->first();
-    //     $readonly = true;
-
-    //     return view('seguridad.usuario.perfil_readonly')->with(compact( 'user', 'readonly'));
-    // }
-
-    // front end, se accede desde mi perfil, usuario
-    // public function profile() 
-    // {
-    //     $cliente = Cliente::where('user_id', Auth()->user()->id)->first();
-    //     $valores = UtilesController::ProfileCants();
-    //     $activo = 'profile';
-
-    //     if ($cliente) {
-    //         return view('profile.front_profile')->with(compact('cliente', 'valores', 'activo'));
-    //     }else {
-    //         return redirect()->route('profile')->with(compact('user'));
-    //     }
-    // }
-
-    public function pass_change()
-    {
-        $valores = UtilesController::ProfileCants();
-        $activo = 'password';
-
-        return view('profile.cambio_clave')->with(compact('valores', 'activo'));
     }
 }

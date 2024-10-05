@@ -61,7 +61,8 @@ class ProfesionalController extends Controller
         $profesional->email = $request['email'];
         $profesional->telefono = $request['telefono'];
         $profesional->dni = $request['dni'];
-        $profesional->estado = isset($request['estado']) ? 1 : 0;;
+        $profesional->estado = isset($request['estado']) ? 1 : 0;
+        ;
         $profesional->save();
         
         return redirect()->route('profesionales.index')
@@ -115,7 +116,8 @@ class ProfesionalController extends Controller
         $profesional->email = $request['email'];
         $profesional->telefono = $request['telefono'];
         $profesional->dni = $request['dni'];
-        $profesional->estado = isset($request['estado']) ? 1 : 0;;
+        $profesional->estado = isset($request['estado']) ? 1 : 0;
+        ;
         $profesional->save();
 
 
@@ -137,17 +139,17 @@ class ProfesionalController extends Controller
     }
 
     // trabajar con detalle de documentacion
-    public function cargar_docum(int $id) 
+    public function cargarDocum(int $id)
     {
         $documentos = Documento::where("tipo", "like", "%prof%")->get();
-        $prof_docum = Profesional_documento::with('documento')->where('profesional_id' , $id)->paginate(5);
+        $prof_docum = Profesional_documento::with('documento')->where('profesional_id', $id)->paginate(5);
         //$parte = new Parte_det;
         $profesional_id = $id;
 
-        return view('entidades.profesional.documentos', compact( 'prof_docum', 'documentos', 'profesional_id'));
-    } 
+        return view('entidades.profesional.documentos', compact('prof_docum', 'documentos', 'profesional_id'));
+    }
 
-    public function guardar_docum(Request $request) 
+    public function guardarDocum(Request $request)
     {
         // dd($request->file('archivo'));
         // 'archivo' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:10000',
@@ -164,7 +166,7 @@ class ProfesionalController extends Controller
                     return $documento && strtoupper($documento->vencimiento) === 'S';
                 })
             ]
-        ], [    
+        ], [
             'fecha_vcto.required' => 'La fecha de vencimiento es obligatoria para el tipo de documento ingresado.'
         ]);
         // dd("paso por aca 167");
@@ -180,13 +182,13 @@ class ProfesionalController extends Controller
         $prof_docum->profesional_id = $request->profesional_id;
         $prof_docum->documento_id = $request->documento_id;
         $prof_docum->nro_hoja = $request->nro_hoja;
-        $prof_docum->path = $archivoNombre; 
+        $prof_docum->path = $archivoNombre;
         $prof_docum->fecha_vcto = $request->fecha_vcto;
         $prof_docum->save();
         return back();
     }
 
-    public function download_docum($id) 
+    public function downloadDocum($id)
     {
         $prof_docum = Profesional_documento::find($id);
         $rutaArchivo = storage_path('app/public/usuarios/') . $prof_docum->profesional_id ."/". $prof_docum->path;
@@ -200,7 +202,7 @@ class ProfesionalController extends Controller
         return response()->download($rutaArchivo, $nombreOriginal);
     }
     
-    public function borrar_docum(int $id)
+    public function borrarDocum(int $id)
     {
         $prof_docum = Profesional_documento::find($id);
         // $profesional_id = $prof_docum->profesional_id;

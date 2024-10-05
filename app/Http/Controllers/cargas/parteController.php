@@ -20,32 +20,33 @@ class ParteController extends Controller
     {
         $partes = parte_cab::v_parte_cab()
             ->where("centro_id", Auth()->user()->centro_id)
-            ->orderBy("id","desc")
+            ->orderBy("id", "desc")
             ->get();
 
         return view('cargas.cab.parte', compact('partes'));
             // ->with('i', (request()->input('page', 1) - 1) * $partes->perPage());
     }
 
-    public function create() 
+    public function create()
     {
         $centro_id = User::find(Auth()->user()->id)->centro_id;
-        if($centro_id) {
+
+        if ($centro_id) {
             $centros = Centro::where("id", $centro_id)->get();
-        }else {
+        } else {
             $centros = Centro::orderby("nombre")->get();
         }
         // dd($centros);
-        $paciente = new Paciente;
+        $paciente = new Paciente();
         $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
-        $parte = new Parte_cab;
+        $parte = new Parte_cab();
         $parte_id = null;
 
         return view('cargas.cab.create', compact('parte', 'centros', 'paciente', 'coberturas', 'profesionales', 'parte_id'));
-    } 
+    }
 
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'dni' => 'required|string|max:20',
@@ -76,8 +77,8 @@ class ParteController extends Controller
         ]);
 
         $paciente = Paciente::where('dni', $request->dni)->first();
-        if (empty($paciente)  ) {
-            $paciente = new Paciente;
+        if (empty($paciente)) {
+            $paciente = new Paciente();
         }
         $paciente->dni = $request->dni;
         $paciente->nombre = $request->nombre;
@@ -86,7 +87,7 @@ class ParteController extends Controller
         $paciente_id = $paciente->id;
 
         if (empty($request->parte_id)) {
-            $parte = new Parte_cab;
+            $parte = new Parte_cab();
             $msg = "creado";
         } else {
             $parte = Parte_cab::where('id', $request->parte_id)->first();
@@ -123,7 +124,7 @@ class ParteController extends Controller
     {
         $parte = Parte_cab::find($id);
         //si esta ingresado o observado no se puede borrar
-        if(in_array($parte->estado, [1,2])){
+        if (in_array($parte->estado, [1,2])) {
             return redirect()->back()->with('error', "No es posible borrar el parte {$parte->id} con el estado actual.");
         }
         $parte->delete();
@@ -132,17 +133,17 @@ class ParteController extends Controller
         ->with('success', 'Parte borrado correctamente.');
     }
 
-    public function create_det(int $id) 
+    public function createDet(int $id)
     {
         $documentos = Documento::where("tipo", "like", "%parte%")->get();
-        $partes = Parte_det::with('documento')->where('parte_cab_id' , $id)->paginate(5);
-        $parte = new Parte_det;
+        $partes = Parte_det::with('documento')->where('parte_cab_id', $id)->paginate(5);
+        $parte = new Parte_det();
         $parte_cab_id = $id;
 
         return view('cargas.det.form', compact('parte', 'partes', 'documentos', 'parte_cab_id'));
-    } 
+    }
 
-    public function store_det(Request $request) 
+    public function storeDet(Request $request)
     {
         $validatedData = $request->validate([
             'parte_cab_id' => 'required|exists:partes_cab,id',
@@ -162,17 +163,17 @@ class ParteController extends Controller
         $parteDet->parte_cab_id = $request->parte_cab_id;
         $parteDet->documento_id = $request->documento_id;
         $parteDet->nro_hoja = $request->nro_hoja;
-        $parteDet->path = $archivoNombre; 
+        $parteDet->path = $archivoNombre;
         $parteDet->save();
 
         return back();
     }
 
-    public function download($id) 
+    public function download($id)
     {
         $parte = Parte_det::find($id);
-        $rutaArchivo = storage_path('app/public/partes/') . $parte->parte_cab_id ."/". $parte->path;
-        if (!Storage::disk('partes')->exists($parte->parte_cab_id ."/". $parte->path)) {
+        $rutaArchivo = storage_path('app/public/partes/') . $parte->parte_cab_id . "/" . $parte->path;
+        if (!Storage::disk('partes')->exists($parte->parte_cab_id . "/" . $parte->path)) {
             abort(404, 'El archivo no existe.');
         }
 
@@ -183,12 +184,12 @@ class ParteController extends Controller
         // return response()->download($rutaArchivo, $nombreOriginal);
         return response()->file($rutaArchivo);
     }
-    
-    public function destroy_det(int $id)
+
+    public function destroyDet(int $id)
     {
         $parte_det = Parte_det::find($id);
         $parte = Parte_cab::where("id", $parte_det->parte_cab_id)->first();
-        if(!in_array( $parte->estado_id, [1,2] )) {
+        if (!in_array($parte->estado_id, [1,2])) {
             return redirect()->route('partes_det.create', $parte->id)
             ->with('error', 'No es posible borrar la documentación con el estado actual del parte.');
         }
@@ -196,5 +197,5 @@ class ParteController extends Controller
 
         return redirect()->route('partes_det.create', $parte->id)
         ->with('success', 'Detalle de Parte borrado correctamente.');
-    }    
+    }
 }

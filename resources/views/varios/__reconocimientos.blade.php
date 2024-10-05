@@ -62,7 +62,7 @@
                                 <div class="form-group">
                                     <label>Usuario</label>
                                     <select name="users_id" class="form-control" id="users_id">
-                                        <option value=""> --- Select ---</option>
+                                        <option value=""> -- Seleccione --</option>
                                         @foreach ($users as $data)
                                             <option value="{{ $data->id }}">
                                                 {{ $data->last_name . ' - ' . $data->email }}</option>

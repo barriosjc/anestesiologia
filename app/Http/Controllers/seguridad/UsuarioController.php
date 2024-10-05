@@ -165,7 +165,7 @@ class UsuarioController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $request->id,
         ]);
 
-        if($request->has('blanquear')) {
+        if ($request->has('blanquear')) {
             $validated['password'] = Hash::make('12345678');
             $validated['cambio_password'] = 1;
         }
@@ -284,18 +284,6 @@ class UsuarioController extends Controller
         $titulo = 'asignados al usuario  ->   ' . strtoupper($user->name);
         $padre = "usuarios";
 
-        return view('seguridad.permisos.index',  compact('padre', 'usuid', 'permisos', 'permisoss', 'esabm', 'titulo'));
+        return view('seguridad.permisos.index', compact('padre', 'usuid', 'permisos', 'permisoss', 'esabm', 'titulo'));
     }
-
-    // public function importar()
-    // {
-
-    //     return view('seguridad.usuario.importar');
-    // }
-
-    // public function exportar()
-    // {
-    //     return Excel::download(new UsuariosExport, 'users.xlsx');
-    // }
-
 }

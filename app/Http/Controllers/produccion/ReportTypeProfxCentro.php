@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\produccion;
 
 use App\Enums\Orientacion;
@@ -26,7 +27,6 @@ class ReportTypeProfxCentro implements ReportStrategy
         }
 
         return $validator->validated();
-
     }
 
     public function generate(Request $request)
@@ -75,5 +75,3 @@ class ReportTypeProfxCentro implements ReportStrategy
         }
     }
 }
-
-

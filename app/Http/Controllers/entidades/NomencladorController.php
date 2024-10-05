@@ -14,41 +14,43 @@ use Exception;
 
 class NomencladorController extends Controller
 {
-    public function listas(){
-        $valores = Valores::withTrashed()
-            ->paginate();
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
-        $nivel = null;
-
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
-            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
-    }
-
-    public function precios(){
-        $valores = Valores::withTrashed()
-            ->paginate();
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
-        $nivel = null;
-
-        return view("entidades.nomenclador.valores",compact("valores", "niveles", "nivel"))
-            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
-    }
-    public function valores_nuevos(Request $request)
+    public function listas()
     {
-        $validate = $request->validate( [
+        $valores = Valores::withTrashed()
+            ->paginate();
+        $niveles = Nomenclador::select('nivel')->distinct()->get();
+        $nivel = null;
+
+        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
+            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
+    }
+
+    public function precios()
+    {
+        $valores = Valores::withTrashed()
+            ->paginate();
+        $niveles = Nomenclador::select('nivel')->distinct()->get();
+        $nivel = null;
+
+        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
+            ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
+    }
+    public function valoresNuevos(Request $request)
+    {
+        $validate = $request->validate([
             "cobertura_id"=> "required",
             "perido" => "required"
         ]);
 
-        try{
+        try {
             $niveles = valores::where("cobertura_id", $request->cobertura_id)
                                 ->where("periodo", $request->perido)
                                 ->exists();
-            if($niveles){
+            if ($niveles) {
                 throw new Exception("Error, Ya hay valores cargados para el Convenio y Centro seleccionado, no se puede duplicar.");
             }
 
-            if(isset($request->cobertura_id_copy) || isset($request->centro_id_copy)){
+            if (isset($request->cobertura_id_copy) || isset($request->centro_id_copy)) {
                 // Recoger los datos basados en los parámetros
                 $datosOriginales = Valores::where('cobertura_id', $request->cobertura_id_copy)
                                         ->where('centro_id', $request->centro_id_copy)
@@ -57,7 +59,7 @@ class NomencladorController extends Controller
                                         ->get();
 
                 // Mapear los datos para cambiar cobertura_id y centro_id
-                $datosModificados = $datosOriginales->map(function($item) use ($request) {
+                $datosModificados = $datosOriginales->map(function ($item) use ($request) {
                     return [
                         'cobertura_id' => $request->cobertura_id, // Nuevo valor de cobertura_id
                         'centro_id' => $request->centro_id,       // Nuevo valor de centro_id
@@ -68,10 +70,11 @@ class NomencladorController extends Controller
 
                 // Insertar los datos modificados en la tabla
                 DB::table('nom_valores')->insert($datosModificados);
-            }else
-            {
-                $nivelesQuery = Nomenclador::selectRaw('? as cobertura_id, ? as centro_id, nivel',
-                                                        [$request->cobertura_id ?? null, $request->centro_id ?? null])
+            } else {
+                $nivelesQuery = Nomenclador::selectRaw(
+                    '? as cobertura_id, ? as centro_id, nivel',
+                    [$request->cobertura_id ?? null, $request->centro_id ?? null]
+                )
                                         ->distinct();
                 DB::table('nom_valores')->insertUsing(['cobertura_id', 'centro_id', 'nivel'], $nivelesQuery);
             }
@@ -82,18 +85,17 @@ class NomencladorController extends Controller
             $centros = Centro::orderby("nombre")->get();
 
             return redirect()->back();
-
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function valores_filtrar(Request $request)
+    public function valoresFiltrar(Request $request)
     {
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $query = Valores::query();
 
-        if ($request->has('grupo')  && !empty($request->grupo) ) {
+        if ($request->has('grupo')  && !empty($request->grupo)) {
             $query->where('grupo', '=', $request->grupo);
         }
         if ($request->has('nivel')  && !empty($request->nivel)) {
@@ -106,14 +108,14 @@ class NomencladorController extends Controller
                     ->paginate();
 
 // dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.nomenclador.valores",compact("valores", "niveles"))
+        return view("entidades.nomenclador.valores", compact("valores", "niveles"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
             ->with('nivel', $request->nivel);
     }
 
     public function valor_guardar(Request $request)
     {
-        $validate = $request->validate( [
+        $validate = $request->validate([
             "valor"=> "required",
         ]);
 
@@ -125,7 +127,7 @@ class NomencladorController extends Controller
             // Formato estándar: no hacer nada
             $valor_convertido = $request->valor;
         }
-        if(!is_numeric($valor_convertido)) {
+        if (!is_numeric($valor_convertido)) {
             return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
         }
 
@@ -136,21 +138,22 @@ class NomencladorController extends Controller
         return redirect()->back();
     }
 
-    public function valores_borrar(int $id) {
+    public function valoresBorrar(int $id)
+    {
         $valores = Valores::find($id);
         $valores->delete();
 
         return redirect()->back();
     }
 
-    public function buscar_cod_desc(Request $request)
+    public function buscarCodDesc(Request $request)
     {
         $codigo = str_replace("-", "", $request->input('codigo'));
         $descripcion = $request->input('descripcion');
 
         $query = Nomenclador::query();
         if ($codigo) {
-            $query->where(DB::raw('REPLACE(codigo, "-", "")'),'like', '%' . $codigo . '%');
+            $query->where(DB::raw('REPLACE(codigo, "-", "")'), 'like', '%' . $codigo . '%');
         }
 
         if ($descripcion) {
@@ -163,5 +166,4 @@ class NomencladorController extends Controller
         // dd($sql,$bindings);
         return response()->json($results);
     }
-
 }
