@@ -20,13 +20,9 @@ use App\Http\Controllers\entidades\PreciosListasController;
 use App\Http\Controllers\entidades\PreciosValoresController;
 
 // Auth::routes();
-Route::match(['get'],'login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::match(['get'], 'login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('errores', function () {
-    return view('errors.404');
-});
 
 Route::get('login/restablecer', [ResetPasswordController::class, 'restablecer'])->name('login.restablecer');
 Route::post('login/email', [ResetPasswordController::class, 'email'])->name('login.email');
@@ -41,7 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
         $guard = 'web';
 
         Route::get('/', function () {
-            return view('layouts.main');
+            return view('varios.novedades');
         })->name('main');
 
         //perfil de usuario
@@ -52,12 +48,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('roles/combos/json', [RoleController::class, 'rolesJson'])->name('roles.json');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
-            Route::get('partes', [ParteController::class, 'index'])->name('partes_cab.index');
             Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
             Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
             Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');
             Route::get('partes/edit/{id}', [ParteController::class, 'edit'])->name('partes_cab.edit');
-            
+            Route::post('partes/datos/obtener', [ParteController::class, 'getData'])->name('partes_cab.obtener');
+            Route::get('partes/filtrar', [ParteController::class, 'filtrar'])->name('partes_cab.filtrar');
+
             Route::get('partes/det/create/{id}', [ParteController::class, 'createDet'])->name('partes_det.create');
             Route::post('partes/det/store', [ParteController::class, 'storeDet'])->name('partes_det.store');
             Route::delete('partes/det/delete/{id}', [ParteController::class, 'destroyDet'])->name('partes_det.destroy');
@@ -98,6 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicionListar'])->name('consumo.rendiciones.listar');
             Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicionEstados'])->name('consumo.rendiciones.estados');
             Route::post('consumos/rendicion/revalorizar', [ConsumoController::class, 'rendicionRevalorizar'])->name('consumo.rendiciones.revalorizar');
+            Route::post('consumos/rendicion/agregar', [ConsumoController::class, 'rendicionAgregar'])->name('consumo.rendiciones.agregar');
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {
@@ -135,8 +133,5 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/roles/{rolid}/{tarea}', [permisosController::class, 'roles']);
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
         });
-
-
-
     });
 });

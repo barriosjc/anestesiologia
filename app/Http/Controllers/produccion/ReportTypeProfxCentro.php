@@ -63,7 +63,7 @@ class ReportTypeProfxCentro implements ReportStrategy
         }
         $selectedEstados = $request->input('estados');
         if (!empty($selectedEstados)) {
-            if (count($selectedEstados) > 1) {
+            if (count($selectedEstados) > 0) {
                 $query->where(function ($query) use ($selectedEstados) {
                     foreach ($selectedEstados as $estadoId) {
                         $query->orWhere('estado_id', $estadoId);
@@ -73,5 +73,8 @@ class ReportTypeProfxCentro implements ReportStrategy
                 $query->where('estado_id', $selectedEstados[0]);
             }
         }
+// $sql = $query->toSql();
+// $bindings = $query->getBindings();
+// dd("segundo reporte",$sql, $bindings);
     }
 }

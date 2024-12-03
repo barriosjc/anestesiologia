@@ -9,7 +9,7 @@
                         @php($parte_id = $parte_id ?? session('parte_id'))
                         <span class="card-title">{{ $parte_id == null ? "Crear" : "Modificar" }} Parte {{ $parte_id == null ? "" : ", Nro: {$parte_id}" }}</span>
                         <div>
-                            <a href="{{ route('partes_cab.index') }}" class="btn btn-info btn-sm"  data-placement="left">
+                            <a href="{{ route('partes_cab.filtrar') }}" class="btn btn-info btn-sm"  data-placement="left">
                               Volver
                             </a>
                         </div>

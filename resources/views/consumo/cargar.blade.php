@@ -165,7 +165,7 @@
                         <div class="modal-body">
                             <input type="hidden" name="id" value="{{$parte_cab_id}}">
                             <label class="label-control">Observaciones</label>
-                            <textarea rows="4" name="observaciones" class="form-control"></textarea>
+                            <textarea rows="4" name="observaciones" class="form-control"> {{ $observaciones }} </textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>

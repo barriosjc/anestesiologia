@@ -46,9 +46,13 @@ class Parte_cab extends Model
         , 'observacion'
     ];
         
-    public static function v_parte_cab() {
-
+    public static function vParteCab()
+    {
         $query = DB::table('v_parte_cab')
+            ->select('id', 'profesional_id', 'paciente_id', 'cobertura_id', 'centro_id', 'observacion', 'user_id',
+                'estado_id', 'created_at', 'deleted_at', 'updated_at', 'fec_prestacion', 'fec_prestacion_orig', 'profesional',
+                'centro', 'paciente', 'fec_nacimiento', 'fec_nacimiento_orig', 'name', 'email', 'edad', 'cobertura', 'sigla',
+                'est_descripcion', 'est_id', 'cantidad')
             ->orderBy('id', 'desc');
     
         return $query;

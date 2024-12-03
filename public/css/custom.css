@@ -6,41 +6,51 @@
     cursor: not-allowed;
   }
 
-  .table-sm td, 
-    .table-sm th {
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
-    }
-  
+  .table-sm td,
+  .table-sm th {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
   .td-actions {
     width: 10%;
   }
 
   .btn-small {
-    padding: 5px 5px 5px 5px; /* Ajusta el padding para hacerlo más pequeño */
-    font-size: 12px; /* Ajusta el tamaño de la fuente */
+    padding: 5px 5px 5px 5px;
+    /* Ajusta el padding para hacerlo más pequeño */
+    font-size: 12px;
+    /* Ajusta el tamaño de la fuente */
   }
 
   .icon-small {
-      font-size: 14px; /* Ajusta el tamaño del icono */
+    font-size: 14px;
+    /* Ajusta el tamaño del icono */
   }
 
   .form-control-label {
     display: flex;
     align-items: center;
-    height: calc(1.5em + .75rem + 2px); /* same as form-control */
-    padding: 1.3rem .75rem; /* same as form-control */
-    border: 1px solid #ced4da; /* same as form-control */
-    border-radius: .4rem; /* same as form-control */
+    height: calc(1.5em + .75rem + 2px);
+    /* same as form-control */
+    padding: 1.3rem .75rem;
+    /* same as form-control */
+    border: 1px solid #ced4da;
+    /* same as form-control */
+    border-radius: .4rem;
+    /* same as form-control */
   }
 
   .form-control.bg-light {
-    background-color: #f8f9fa !important; /* Fondo claro */
+    background-color: #f8f9fa !important;
+    /* Fondo claro */
   }
 
   .btn-lg {
-    font-size: 1.25rem; /* Tamaño de fuente más grande */
-    padding: 0.75rem 1.25rem; /* Relleno más grande */
+    font-size: 1.25rem;
+    /* Tamaño de fuente más grande */
+    padding: 0.75rem 1.25rem;
+    /* Relleno más grande */
   }
 
   .td-actions form {
@@ -48,7 +58,7 @@
   }
 
   .td-actions button {
-      margin-left: 5px;
+    margin-left: 5px;
   }
 
   .table-row-small {
@@ -56,64 +66,95 @@
   }
 
   .table-cell-small {
-      padding: 5px;
+    padding: 5px;
   }
+
   .custom-width-valor {
-    width: 10%; /* Ajusta el porcentaje según sea necesario */
+    width: 10%;
+    /* Ajusta el porcentaje según sea necesario */
   }
- 
+
   .no-bullets {
     list-style-type: none;
-    padding-left: 0; /* Opcional: para eliminar la sangría */
+    padding-left: 0;
+    /* Opcional: para eliminar la sangría */
+  }
+
+  form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+  }
+
+  .custom-select {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 2.25rem 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    appearance: none;
+  }
+
+  .custom-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  .custom-select:disabled {
+    background-color: #e9ecef;
+  }
+
+  /* Asegura que los estilos personalizados sean aplicados, incluso si select2 aplica los suyos */
+.select2-container .form-select-2 {
+  display: block !important;
+  width: 100% !important;
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: #212529 !important;
+  background-color: #fff !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 16px 12px !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 0.25rem !important;
+  appearance: none !important;
 }
 
-form {
-  margin: 0; 
-  padding: 0; 
-  display: inline;
-}
-.select2-container .select2-selection--single {
-  height: calc(1.5em + 1.25rem + 2px); /* Aumentar el alto */
-  padding: 0.375rem 0.75rem; /* Corregido de -0.375rem a 0.375rem */
-  font-size: 0.80rem;
-  line-height: 1.5;
-  border-radius: 0.375rem;
-  border: 1px solid #ced4da;
-  background-color: #fff;
+.select2-container .form-select-2:focus {
+  border-color: #86b7fe !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  color: #495057;
-  padding-left: 1rem;
+.select2-container .form-select-2:disabled {
+  background-color: #e9ecef !important;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-  height: 100%;
-  right: 0.75rem;
+.d-none {
+  display: none !important;
 }
 
-.select2-container--default .select2-selection--single:hover {
-  border-color: #80bdff;
+@media (max-width: 767px) {
+  .d-md-table-cell {
+      display: none !important;
+  }
 }
 
-.select2-container--default .select2-selection--single:focus {
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+@media (min-width: 768px) {
+  .d-md-table-cell {
+      display: table-cell !important;
+  }
 }
-
-.custom-select2 .select2-container--default .select2-selection--single {
-  height: calc(1.5em + 1.25rem + 2px) !important; /* Aumentar el alto */
-  padding: 0.375rem 0.75rem !important; /* Corregido de -0.375rem a 0.375rem */
-}
-
-.custom-select2 .select2-container--default .select2-selection--single .select2-selection__rendered {
-  line-height: calc(1.5em + 1rem + 2px) !important;
-}
-
-.select2-container--default .select2-results__option {
-  font-size: 0.875rem; 
-  line-height: 1.25; 
-}
-
-

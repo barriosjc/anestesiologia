@@ -42,14 +42,14 @@ class ConsumoController extends Controller
         $centro_id = $request->has('centro_id') ? $request->centro_id : session('centro_id', null);
         $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('profesional_id', null);
         $nombre = $request->has('nombre') ? $request->nombre : session('nombre', null);
-        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : session('fec_desde', null);
-        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : session('fec_hasta', null);
+        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('fec_desde', null);
+        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('fec_hasta', null);
         $estado_id = $request->has('estado_id') ? $request->estado_id : session('estado_id', null);
-        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : session('fec_desde_adm', null);
-        $fec_hasta_adm = $request->has('fec_hasta_adm') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('fec_hasta_adm', null);
+        $fec_desde_adm = $request->has('submitInputs') ? $request->fec_desde_adm : session('fec_desde_adm', null);
+        $fec_hasta_adm = $request->has('submitInputs') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('fec_hasta_adm', null);
+        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('nro_parte', null);
 
-
-        $query = Parte_cab::v_parte_cab();
+        $query = Parte_cab::vParteCab();
         if (!empty($cobertura_id)) {
             $query->where('cobertura_id', '=', $cobertura_id);
         }
@@ -77,10 +77,13 @@ class ConsumoController extends Controller
         if (!empty($fec_hasta_adm)) {
             $query->where('created_at', '<=', $fec_hasta_adm);
         }
+        if (!empty($nro_parte)) {
+            $query->where('id', $nro_parte);
+        }
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
-    
-        // guardo el filtro en session
+
+                    // guardo el filtro en session
         session()->put('cobertura_id', $cobertura_id);
         session()->put('centro_id', $centro_id);
         session()->put('profesional_id', $profesional_id);
@@ -90,27 +93,30 @@ class ConsumoController extends Controller
         session()->put('fec_desde_adm', $fec_desde_adm);
         session()->put('fec_hasta_adm', $fec_hasta_adm);
         session()->put('estado_id', $estado_id);
-// Ver la consulta SQL y los bindings
-// $sql = $query->toSql();
-// $bindings = $query->getBindings();
+        session()->put('nro_parte', $nro_parte);
 
-// dd($sql, $bindings);
+// Ver la consulta SQL y los bindings
+        // $sql = $query->toSql();
+        // $bindings = $query->getBindings();
+        // dd($sql, $bindings);
+
         return view("consumo.partes", compact(
-            "partes",
-            "coberturas",
-            "centros",
-            "profesionales",
-            "cobertura_id",
-            "centro_id",
-            "profesional_id",
-            "nombre",
-            "fec_desde",
-            "fec_hasta",
-            "estados",
-            "estado_id",
-            "fec_desde_adm",
-            "fec_hasta_adm"
-        ));
+                    "partes",
+                    "coberturas",
+                    "centros",
+                    "profesionales",
+                    "cobertura_id",
+                    "centro_id",
+                    "profesional_id",
+                    "nombre",
+                    "fec_desde",
+                    "fec_hasta",
+                    "estados",
+                    "estado_id",
+                    "fec_desde_adm",
+                    "fec_hasta_adm",
+                    "nro_parte"
+                ));
     }
 
     public function cargar(int $id)
@@ -123,10 +129,11 @@ class ConsumoController extends Controller
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
+        $observaciones = $data->observacion;
 
-        $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion;
+        $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion." / Obs: ".$observaciones;
 
-        return view("consumo.cargar", compact("periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera"));
+        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera"));
     }
     
     public function valorBuscar(Request $request)
@@ -188,7 +195,7 @@ class ConsumoController extends Controller
             "parte_cab_id" => "required",
             "porcentaje" => "required|numeric|between:1,200",
             "valor_total" => "required|numeric|gt:0",
-            "nomenclador_id" => "required"
+            "nomenclador_id" => "required",
         ]);
 
         try {
@@ -232,8 +239,10 @@ class ConsumoController extends Controller
             "id" => "required",
             "observaciones" => "required|max:255"
         ]);
-        
-        $result = $this->cambiaEstado($validate, 2);
+
+        $validate["estado_cambio"] = 2;
+
+        $result = $this->cambiaEstado($validate);
     
         if ($result['success']) {
             return redirect()->route("consumos.partes.filtrar")->with('success', 'Estado cambiado exitosamente.');
@@ -246,30 +255,35 @@ class ConsumoController extends Controller
     {
         $validate = $request->validate([
             "id" => "required",
+            "estado_cambio" => "required",
             "observaciones" => "nullable|max:255"
         ]);
         
-        $result = $this->cambiaEstado($validate, 3);
+        $result = $this->cambiaEstado($validate);
     
         if ($result['success']) {
-            return redirect()->route("partes_cab.index")->with('success', 'Estado cambiado exitosamente.');
+            return redirect()->route("partes_cab.filtrar")->with('success', 'Estado cambiado exitosamente.');
         } else {
             return redirect()->back()->withErrors($result['message'])->withInput();
         }
     }
     
-    private function cambiaEstado($request, $estado_id)
+    private function cambiaEstado($ingresos)
     {
         try {
-            $parte = parte_cab::find($request["id"]);
-            if (!($parte->estado_id == 1 || $parte->estado_id == 2) && $estado_id == 3) {
+            $parte = parte_cab::find($ingresos["id"]);
+            if (!($parte->estado_id == 1 || $parte->estado_id == 2 || $parte->estado_id == 9) && $ingresos['estado_cambio'] == 3) {
                 throw new \Exception('El estado no puede ser cambiado a "A liquidar" desde el estado actual.');
             }
-            if (!($parte->estado_id == 1 || $parte->estado_id == 3) && $estado_id == 2) {
+            if (!($parte->estado_id == 1 || $parte->estado_id == 3) && $ingresos['estado_cambio'] == 2) {
                 throw new \Exception('El estado no puede ser cambiado a "Observado" desde el estado actual.');
             }
-            $parte->observaciones = $request["observaciones"];
-            $parte->estado_id = $estado_id;
+            if (!($parte->estado_id == 1 || $parte->estado_id == 2) && $ingresos['estado_cambio'] == 9) {
+                throw new \Exception('El estado no puede ser cambiado a "Con faltantes" desde el estado actual.');
+            }
+
+            $parte->observaciones = strip_tags($ingresos['observaciones']);
+            $parte->estado_id = $ingresos['estado_cambio'];
             $parte->save();
     
             return ['success' => true];
@@ -293,7 +307,7 @@ class ConsumoController extends Controller
         $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : null;
         $estado_id = $request->has('estado_id') ? $request->estado_id : null;
         $periodo_gen = $request->has('periodo_gen') ? $request->periodo_gen : null;
-        
+        $nro_parte =  $request->has('nro_parte') ? $request->nro_parte : null;
 
         $query = DB::table('v_rendiciones');
         if ($request->has('cobertura_id')  && !empty($request->cobertura_id)) {
@@ -320,6 +334,9 @@ class ConsumoController extends Controller
         if (!empty($periodo_gen)) {
             $query->where('periodo', '=', $periodo_gen);
         }
+        if (!empty($nro_parte)) {
+            $query->where('parte_cab_id', '=', $nro_parte);
+        }
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
 
@@ -341,7 +358,8 @@ class ConsumoController extends Controller
             "fec_hasta",
             "estados",
             "estado_id",
-            "periodo_gen"
+            "periodo_gen",
+            "nro_parte"
         ));
     }
 
@@ -432,8 +450,7 @@ class ConsumoController extends Controller
             "obs_refac.required_if" => "El campo Observaciones de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar."
         ]);
 
-        if ($request->has('selected_ids') && $request->has('selected_ids')
-                && !empty($request->selected_ids) && !empty($request->estadoCambio)) {
+        if ($request->has('selected_ids') && !empty($request->selected_ids) && !empty($request->estadoCambio)) {
             $selectedIds = $request->input('selected_ids');
             $nuevoEstado = $request->input('estadoCambio');
             $nuevoPeriodo = $request->input('periodo_refac');
@@ -460,7 +477,7 @@ class ConsumoController extends Controller
                         $sepa = " ,";
                         continue;
                     }
-                    if ($nuevoEstado == "8" && $est_actual != 7) {
+                    if ($nuevoEstado == "8" && !in_array($est_actual, [5,7])) {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;
@@ -531,5 +548,35 @@ class ConsumoController extends Controller
         }
 
         return response()->json(['success' => "Se actualizaron los valores de {$cantidad} consumos."], 200);
+    }
+
+    public function rendicionAgregar(Request $request)
+    {
+        $this->validate($request, [
+            "selected_ids" => "required",
+            "periodoAgregar" => "required",
+            "estadoAgregar" => "required",
+            "valorAgregar" => "required",
+            "obsAgregar" => "required|max:250"
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        if (count($selectedIds) <> 1) {
+            return response()->json(['error' => 'Para este proceso debe seleccionar solo (1) un consumo. '], 422);
+        }
+  
+        foreach ($selectedIds as $item) {
+            $original = Consumo_det::where('id', $item['consumo_det_id'])
+                ->first();
+           
+            $nuevo = $original->replicate();
+            $nuevo->periodo = $request->input('periodoAgregar');
+            $nuevo->estado_id = $request->input('estadoAgregar');
+            $nuevo->valor = $request->input('valorAgregar');
+            $nuevo->obs_refac = $request->input("obsAgregar");
+            $nuevo->save();
+        }
+
+        return response()->json(['success' => "Se agregó el nuevo consunsumo a la rendición, recargue el formulario para ver los cambios."], 200);
     }
 }

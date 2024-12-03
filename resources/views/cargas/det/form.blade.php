@@ -6,6 +6,14 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="card-title">Carga de detalle del parte, Nro: {{ $parte_cab_id }}</span>
                 <div>
+                    <a class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal" 
+                        data-bs-target="#valorModal" 
+                        data-id="{{ $parte_cab_id}}"
+                        data-observaciones = "{{ $observaciones}}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                        data-bs-title="Pasar el estado del parte a A liquidar o Con faltantes">
+                        Cambiar estado
+                    </a>
                     <a href="{{ route('partes_cab.edit', $parte_cab_id) }}" class="btn btn-info btn-sm" data-placement="left">
                         Volver
                     </a>
@@ -86,6 +94,19 @@
                 </form>
             </div>
         </div>
+        @include('cargas.cab.partials.cambio_estado')
+
     </section>
     <script src="{{ asset('js/util.js') }}"></script>
-@endsection
+    <script>
+        $(document).ready(function() {
+            // Manejar la apertura del modal
+            $(document).on('click', '.llama_modal', function() {
+                var parteCabId = $(this).data('id');
+                var observaciones = $(this).data("observaciones");
+                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
+                document.querySelector('textarea[name="observaciones"]').value = observaciones;
+            });
+        });
+    </script>
+    @endsection

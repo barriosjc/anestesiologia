@@ -19,7 +19,8 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                    <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
+                                    <select class="form-select form-select-sm select2" id="cobertura_id"
+                                        name="cobertura_id">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
@@ -92,8 +93,15 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group col-md-3 d-flex align-items-end">
-                                    <button id="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="nro_parte">Nro parte</label>
+                                    <input class="form-control form-control-sm" id="nro_parte"
+                                        name="nro_parte" type="number" min="0" step=1
+                                        max="999999999" placeholder="número"
+                                        value="{{ old('nro_parte', session('nro_parte')) }}" />
+                                </div>
+                                <div class="form-group col-md-2 d-flex align-items-end">
+                                    <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
                                         partes</button>
                                 </div>
                             </div>
@@ -103,7 +111,7 @@
                         <form id="generate_rendicion_form" method="POST"
                             action="{{ route('consumo.rendiciones.store') }}">
                             @csrf
-                            <div class="table-responsive">
+                            <div id="contenedor-grilla" class="table-responsive">
                                 <table class="table table-striped table-hover" id="table_data">
                                     <thead class="thead">
                                         <tr>
@@ -115,6 +123,7 @@
                                             <th>Nro</th>
                                             <th>F.proc</th>
                                             <th>Paciente</th>
+                                            <th class="columna-extra">Periodo</th>
                                             <th>Práctica</th>
                                             <th>%</th>
                                             <th>Valor($)</th>
@@ -135,8 +144,9 @@
                                                 <td>{{ $item->parte_cab_id }}</td>
                                                 <td>{{ $item->fec_prestacion }}</td>
                                                 <td>{{ $item->pac_nombre }}</td>
-                                                <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}
-                                                </td>
+                                                <td class="columna-extra">{{ $item->periodo }}
+                                                    <td >{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}
+                                                    </td>
                                                 <td>{{ $item->porcentaje }}</td>
                                                 <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
                                                 <td>
@@ -168,6 +178,10 @@
                                 </table>
                             </div>
 
+                            @if(!empty($partes))
+                                {!! $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                            @endif
+
                             <div class="row align-items-end">
                                 <div id="periodo_asig" class="form-group col-md-2">
                                     <label class="small mb-1" for="periodo">Periodo de rendición</label>
@@ -189,7 +203,7 @@
                             <Hr>
                             <div class="row align-items-end pt-2">
                                 <div class="form-group col-md-2">
-                                    <label class="small mb-1" for="estadoCambio">Cabio de estado</label>
+                                    <label class="small mb-1" for="estadoCambio">Cambio de estado</label>
                                     <select class="form-select form-select-sm" id="estadoCambio" name="estadoCambio">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($estados as $item)
@@ -223,9 +237,50 @@
                             </div>
                             <Hr>
                             <div class="row align-items-end pt-2">
+                                    <div class="form-group col-md-2">
+                                        <label class="small mb-1" for="estadoAgregar">Agregar nuevo consumo</label>
+                                        <select class="form-select form-select-sm" id="estadoAgregar" name="estadoAgregar">
+                                            <option value="">-- Seleccione --</option>
+                                            @foreach ($estados as $item)
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->descripcion }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div id="div_refac" class="form-group col-md-2">
+                                        <label class="small mb-1" for="periodoAgregar">Periodo</label>
+                                        <select class="form-select form-select-sm" id="periodoAgregar" name="periodoAgregar">
+                                            <option value="">-- Seleccione --</option>
+                                            @foreach ($periodos as $item)
+                                                <option value="{{ $item->nombre }}">
+                                                    {{ $item->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-5">
+                                        <label class="small mb-1" for="obsAgregar">Observaciones</label>
+                                        <textarea class="form-control form-control-sm" id="obsAgregar" name="obsAgregar" rows="1"
+                                            placeholder="Por que agrega neuvo consumo? "></textarea>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="small mb-1" for="valorAgregar">Valor ($)</label>
+                                        <input type="text" class="form-control form-control-sm" id="valorAgregar"
+                                            name="valorAgregar">
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" id="btnAgregar" class="btn btn-info btn-sm">
+                                            {{ __('Guardar') }}
+                                        </button>
+                                    </div>
+                            </div>
+                            <Hr>
+                            <div class="row align-items-end pt-2">
                                 <div id="div_revalorizar" class="form-group col-md-2">
                                     <label class="small mb-1" for="periodo_refac">Periodo a revalorizar</label>
-                                    <select class="form-select form-select-sm" id="periodo_revalorizar" name="periodo_revalorizar">
+                                    <select class="form-select form-select-sm" id="periodo_revalorizar"
+                                        name="periodo_revalorizar">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)
                                             <option value="{{ $item->nombre }}">
@@ -236,7 +291,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <button type="button" id="revalorizar_btn" class="btn btn-warning btn-sm"
-                                            onclick="revalorizarPartesJS()">
+                                        onclick="revalorizarPartesJS()">
                                         {{ __('Revaloriazar partes') }}
                                     </button>
                                 </div>
@@ -253,7 +308,7 @@
 
     <script>
         let token = document.querySelector('input[name="_token"]').value;
-        
+
         $("#estadoCambio").on('change', function() {
             let value = $(this).val();
             // si se selecciona aRefactuar
@@ -301,16 +356,16 @@
                         errorMessages += "<li>" + messages + "</li>";
                     }
                 }
-                const alertDiv = '<div class="alert alert-danger py-2"><ul class="no-bullets">' + errorMessages + '</ul></div>';
+                const alertDiv = '<div class="alert alert-danger py-2"><ul class="no-bullets">' + errorMessages +
+                    '</ul></div>';
                 $('#alert-container').html(alertDiv);
-            }).always( function() {
-                        const ytop = $('#alert-container').offset().top;
-                        window.scrollTo({
-                            top: ytop - 300,
-                            behavior: 'smooth'
-                        });
-                    }
-                )
+            }).always(function() {
+                const ytop = $('#alert-container').offset().top;
+                window.scrollTo({
+                    top: ytop - 300,
+                    behavior: 'smooth'
+                });
+            })
         };
 
         $(document).ready(function() {
@@ -374,7 +429,7 @@
                 let obs_refac = $('#obs_refac').val();
 
                 $.ajax({
-                    url: '{{ route('consumo.rendiciones.estados') }}',
+                    url: "{{ route('consumo.rendiciones.estados') }}",
                     method: 'POST',
                     data: {
                         _token: token,
@@ -396,10 +451,9 @@
                                     .errors)) {
                                 errorMessages += "<li>" + messages + "</li>";
                             }
-                        } else if(response.responseJSON.error) {
+                        } else if (response.responseJSON.error) {
                             errorMessages += "<li>" + response.responseJSON.error + "</li>";
-                        }
-                        else {
+                        } else {
                             errorMessages = 'Ocurrió un error inesperado.';
                         }
 
@@ -416,9 +470,95 @@
                         });
                     }
                 });
+            });
 
+            // agregar nuevo consumo
+            $('#btnAgregar').on('click', function() {
+                let selectedItems = [];
+                $('.ck_item:checked').each(function() {
+                    let consumo_det_id = $(this).val();
+                    let parte_id = $(this).data('parte-id');
+                    selectedItems.push({
+                        consumo_det_id: consumo_det_id,
+                        parte_id: parte_id
+                    });
+                });
 
+                let estadoAgregar = $('#estadoAgregar').val();
+                let periodoAgregar = $('#periodoAgregar').val();
+                let obsAgregar = $('#obsAgregar').val();
+                let valorAgregar = $('#valorAgregar').val();
+
+                $.ajax({
+                    url: "{{ route('consumo.rendiciones.agregar') }}",
+                    method: 'POST',
+                    data: {
+                        _token: token,
+                        selected_ids: selectedItems,
+                        estadoAgregar: estadoAgregar,
+                        periodoAgregar: periodoAgregar,
+                        obsAgregar: obsAgregar,
+                        valorAgregar: valorAgregar
+                    },
+                    success: function(response) {
+                        const alertDiv = '<div class="alert alert-success py-2">' + response.success + '</div>';
+                        $('#alert-container').html(alertDiv);
+                    },
+                    error: function(response) {
+                        let errorMessages = '';
+                            console.log(response.responseJSON.error)
+                        if (response.responseJSON && response.responseJSON.errors) {
+                            for (const [field, messages] of Object.entries(response.responseJSON
+                                    .errors)) {
+                                errorMessages += "<li>" + messages + "</li>";
+                            }
+                        } else if (response.responseJSON.error) {
+                            errorMessages += "<li>" + response.responseJSON.error + "</li>";
+                        } else {
+                            errorMessages = 'Ocurrió un error inesperado.';
+                        }
+
+                        const alertDiv =
+                            '<div class="alert alert-danger py-2"><ul class="no-bullets">' +
+                            errorMessages + '</ul></div>';
+                        $('#alert-container').html(alertDiv);
+                    },
+                    complete: function() {
+                        const ytop = $('#alert-container').offset().top;
+                        window.scrollTo({
+                            top: ytop - 300,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contenedorGrilla = document.getElementById('contenedor-grilla');
+            const columnasExtra = document.querySelectorAll('.columna-extra');
+
+            const ajustarColumnas = () => {
+                const anchoGrilla = contenedorGrilla.offsetWidth;
+                // console.log("paso por aca: ",anchoGrilla);
+                if (anchoGrilla < 1250) {
+                    columnasExtra.forEach(col => col.classList.add('d-none'));
+                } else {
+                    columnasExtra.forEach(col => col.classList.remove('d-none'));
+                }
+            };
+
+//             window.addEventListener('resize', () => {
+//     console.log('Se detectó un cambio en el tamaño de la ventana');
+// });
+
+            window.addEventListener('resize', ajustarColumnas);
+            const observer = new ResizeObserver(ajustarColumnas);
+            observer.observe(contenedorGrilla);
+            ajustarColumnas();
+        });
+    </script>
+
 @endsection

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class ResetPasswordController extends Controller
 {
 
-    public function  restablecer()
+    public function restablecer()
     {
         return view('auth.passwords.email');
     }
@@ -28,7 +28,7 @@ class ResetPasswordController extends Controller
 
         $user = user::where('email', $request->email)->first();
 
-        if (!empty($user)) { 
+        if (!empty($user)) {
             $clave = bin2hex(random_bytes(5));
             $hash = Hash::make($clave);
             $user->password = $hash;
@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
             $user->save();
 
             $correo = new resetpasswordMaillable($user, $clave);
-            Mail::send([], [], function ($message)  use ($user, $correo) {
+            Mail::send([], [], function ($message) use ($user, $correo) {
                 $message->to($user->email, $user->name)
                     ->subject('Cambio de clave para ingreso al portal')
                     ->setBody($correo->render(), 'text/html');

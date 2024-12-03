@@ -8,12 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-// use Illuminate\Support\Facades\Session;
-// use Illuminate\Support\Facades\Cache;
-// use Illuminate\Support\Facades\Artisan;
-// use Spatie\Permission\PermissionServiceProvider;
-// use Spatie\Permission\Contracts\Permission;
-// use Spatie\Permission\Contracts\Role;
 
 class LoginController extends Controller
 {
@@ -39,10 +33,12 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-                Artisan::call('route:clear');
-                Artisan::call('config:clear');
-                Artisan::call('view:clear');
-                Artisan::call('cache:clear');
+                // Artisan::call('route:clear');
+                // Artisan::call('config:clear');
+                // Artisan::call('view:clear');
+                // Artisan::call('cache:clear');
+                // Artisan::call('config:cache');
+                // Artisan::call('route:cache');
                 // Artisan::call('storage:link');
                 
         return view('auth.auth-login-basic');
@@ -61,7 +57,7 @@ class LoginController extends Controller
 
     protected function attemptLogin(Request $request)
     {
-        try{
+        try {
             $credentials = $this->credentials($request);
             // if (session()->has('empresa')) {
             //     $credentials['empresas_id'] = session('empresa')->id;
@@ -70,8 +66,8 @@ class LoginController extends Controller
             if (Auth::attempt($credentials)) {
                 // $empresa = Empresa::where('id', Auth()->user()->empresas_id)->first();
                 // if ($empresa) {
-                //     session(['empresa' => $empresa]);    
-                //     Auth::shouldUse($empresa->uri);          
+                //     session(['empresa' => $empresa]);
+                //     Auth::shouldUse($empresa->uri);
                 //     //dd(Auth::getDefaultDriver());
                 // }else {
                 //     $empresa = new Empresa;
@@ -82,7 +78,7 @@ class LoginController extends Controller
                 return true;
             }
         } catch (\Exception $e) {
-            die( "</br></br></br></br><pre>" .
+            die("</br></br></br></br><pre>" .
                 $e->getMessage() .
                 "</pre>");
         }
@@ -102,7 +98,6 @@ class LoginController extends Controller
 
 
         return redirect()->route('main');
-
     }
 
     /**
@@ -125,5 +120,4 @@ class LoginController extends Controller
     //     return route('main');
 
     // }
-
 }

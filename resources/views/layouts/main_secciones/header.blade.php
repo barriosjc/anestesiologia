@@ -6,12 +6,12 @@
         {{-- * * * * * * When using an image, we recommend the SVG format.--}}
         {{-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px--}}
         <h6 class="dropdown-header d-flex align-items-center">
-            <img style="height:51px;width:110px" class="dropdown-user-img" 
-                src="{{ asset("img\logo_grande.jpg") }}"  /> 
+            <a href="{{ route('main') }}">
+                <img style="height:51px;width:110px" class="dropdown-user-img" 
+                    src="{{ asset("img\logo_grande.jpg") }}"  />
+            </a> 
         </h6>
-        {{-- Navbar Search Input--}}
-        {{-- * * Note: * * Visible only on and above the lg breakpoint--}}
-           
+
         {{-- Navbar Items--}}
         <ul class="navbar-nav align-items-center ms-auto">
             {{-- Documentation Dropdown--}}
@@ -63,34 +63,24 @@
             {{-- Alerts Dropdown--}}
             
             {{-- User Dropdown--}}
-            <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">                                                                                                                                                                                                                                             
-                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="{{asset(Storage::disk("usuarios")->url(Auth::user()->foto))}}" /></a>
+            <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="img-fluid" src="{{asset(Storage::disk('usuarios')->url(Auth::user()->foto))}}" />
+                </a>
                 <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
-                    <!-- <h6 class="dropdown-header d-flex align-items-center">
-                        <img class="dropdown-user-img" src="{{Storage::disk("usuarios")->url(Auth::user()->foto)}}" /> 
-                        <div class="dropdown-user-details">
-                            <div class="dropdown-user-details-name">{{Auth()->user()->name}}</div>
-                            <div class="dropdown-user-details-email">{{Auth()->user()->email}}</div>
-                        </div>
-                    </h6> -->
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item"  href="{{ route('profile', ['id' => Auth()->user()->id]) }}">
+                    <a class="dropdown-item" href="{{ route('profile', ['id' => Auth()->user()->id]) }}">
                         <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                         Mi perfil
                     </a>
-                    <a class="dropdown-item" href="#!">
-                        <div class="dropdown-item-icon">
-                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                        document.getElementById('logout-form').submit();">
-                            <i data-feather="log-out"></i>                                                        
-                                {{ __('Logout') }}
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
+                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i data-feather="log-out"></i>
+                        {{ __('Logout') }}
                     </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </div>
             </li>
+            
         </ul>
     </nav>

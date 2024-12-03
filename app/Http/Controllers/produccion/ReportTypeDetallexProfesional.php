@@ -42,9 +42,7 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         $query->whereBetween('fec_prestacion_orig', [$request->fec_desde, $request->fec_hasta]);
         $this->applyCommonFilters($query, $request);
         $resu = $query->get();
-//       $sql = $query->toSql();
-//  $bindings = $query->getBindings();
-// dd($sql, $bindings);
+
         return $resu;
     }
 
@@ -72,9 +70,10 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         if ($request->has('nombre') && !empty($request->nombre)) {
             $query->where('paciente', 'like', "%" . $request->nombre . "%");
         }
+
         if ($request->has('estados') && !empty($request->estados)) {
             $selectedEstados = $request->input('estados');
-            if (count($selectedEstados) > 1) {
+            if (count($selectedEstados) > 0) {
                 $query->where(function ($query) use ($selectedEstados) {
                     foreach ($selectedEstados as $estadoId) {
                         $query->orWhere('estado_id', $estadoId);
@@ -85,5 +84,9 @@ class ReportTypeDetallexProfesional implements ReportStrategy
             //     $query->where('estado_id', $selectedEstados[0]);
             // }
         }
+        // $sql = $query->toSql();
+// $bindings = $query->getBindings();
+// dd("primer listado",$sql, $bindings, $request);
+// dd( !empty($request->estados));
     }
 }

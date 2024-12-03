@@ -91,7 +91,7 @@
                                         type="date" placeholder="Ingrese fecha hasta" value="{{ $fec_hasta_adm }}" />
                                 </div>
                                 <div class="form-group col-md-2 d-flex align-items-end">
-                                    <button id="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
+                                    <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
                                         partes</button>
                                 </div>
                             </div>
