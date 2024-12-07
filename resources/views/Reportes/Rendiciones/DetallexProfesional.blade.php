@@ -65,20 +65,37 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th style="width:10%">Nro Parte</th>
-                        <th style="width:8%">Fecha qx</th>
-                        <th style="width:27%">Paciente</th>
-                        <th style="width:9%">Cobertura</th>
-                        <th style="width:7%">Periodo</th>
-                        <th style="width:20%">Práctica</th>
-                        <th style="width:4%">%</th>
-                        <th style="width:10%">Valor($)</th>
-                        <th style="width:10%">Estado</th>
+@if ($conObs)
+<th style="width:7%">Nro Parte</th>
+<th style="width:8%">Fecha qx</th>
+<th style="width:20%">Paciente</th>
+<th style="width:9%">Cobertura</th>
+<th style="width:7%">Periodo</th>
+<th style="width:12%">Práctica</th>
+<th style="width:4%">%</th>
+<th style="width:7%">Valor($)</th>
+<th style="width:10%">Estado</th>
+<th style="width:20%">Observaciones</th>
+@else
+<th style="width:10%">Nro Parte</th>
+<th style="width:8%">Fecha qx</th>
+<th style="width:27%">Paciente</th>
+<th style="width:9%">Cobertura</th>
+<th style="width:7%">Periodo</th>
+<th style="width:20%">Práctica</th>
+<th style="width:4%">%</th>
+<th style="width:10%">Valor($)</th>
+<th style="width:10%">Estado</th>
+@endif
                     </tr>
                 </thead>
                 @foreach ($groupedConsumos as $cen_nombre => $consumosGroup)
                     <tr>
-                        <td colspan="9">
+                        @if ($conObs)
+                        <td colspan="10" >
+                        @else 
+                        <td colspan="9" >
+                        @endif
                             <hr style="border: 1px solid #ddd; margin: 0;">
                         </td>
                     </tr>
@@ -91,7 +108,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="9">
+                        @if ($conObs)
+                        <td colspan="10" >
+                        @else 
+                        <td colspan="9" >
+                        @endif
                             <hr style="border: 1px solid #ddd; margin: 0;">
                         </td>
                     </tr>
@@ -108,12 +129,19 @@
                                 <td class="custom-width-valor text-end">
                                     {{ number_format((float) $consumo->valor, 2, ',', '.') }}</td>
                                 <td>{{ $consumo->est_descripcion }}</td>
+                                @if ($conObs)
+                                    <td>{{ $consumo->obs_refac }}</td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
                 @endforeach
                 <tr>
-                    <td colspan="9">
+                    @if ($conObs)
+                    <td colspan="10" >
+                    @else 
+                    <td colspan="9" >
+                    @endif
                         <hr style="border: 1px solid #ddd; margin: 0;">
                     </td>
                 </tr>

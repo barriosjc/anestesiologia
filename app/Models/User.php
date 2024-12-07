@@ -58,5 +58,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Centro::class, 'centro_id');
     }
-
+    public function calendar()
+    {
+        return $this->hasMany(Calendar::class, 'user_id');
+    }
 }

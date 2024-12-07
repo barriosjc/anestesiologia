@@ -73,6 +73,9 @@
                 </a>
                 <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
+                        @if (Auth()->user()->hasPermissionTo('adm_calendario', 'web') || $super)
+                            <a class="nav-link" href="{{ route('partes_cab.calendar') }}">Tomar día</a>
+                        @endif
                         @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
                             <a class="nav-link" href="{{ route('partes_cab.create') }}">Nuevo</a>
                         @endif

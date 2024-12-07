@@ -78,9 +78,10 @@ class LoginController extends Controller
                 return true;
             }
         } catch (\Exception $e) {
-            die("</br></br></br></br><pre>" .
-                $e->getMessage() .
-                "</pre>");
+            // die("</br></br></br></br><pre>" .
+            //     $e->getMessage() .
+            //     "</pre>");
+            abort(500);
         }
         return false;
     }

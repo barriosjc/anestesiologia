@@ -78,4 +78,6 @@
 
     <!-- Custom Util Scripts -->
     <script src="{{ asset('js/util.js') }}"></script>
+    
+    @stack('scripts')
 </body>

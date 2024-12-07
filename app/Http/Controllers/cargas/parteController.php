@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Centro;
 use App\Models\Estado;
+use App\Models\Calendar;
 use App\Models\Paciente;
 use App\Models\Cobertura;
 use App\Models\Documento;
@@ -19,30 +20,6 @@ use Illuminate\Support\Facades\Storage;
 
 class ParteController extends Controller
 {
-    // public function index()
-    // {
-    //     $coberturas = Cobertura::orderby("nombre")->get();
-    //     $centros = Centro::orderby("nombre")->get();
-    //     $profesionales = Profesional::orderby("nombre")->get();
-    //     $estados = Estado::get();
-    //     $users = User::get();
-
-    //     $partes = parte_cab::v_parte_cab()
-    //         ->where("centro_id", Auth()->user()->centro_id)
-    //         ->orderBy("id", "desc")
-    //         ->paginate();
-
-    //     return view('cargas.cab.parte', compact(
-    //         'partes',
-    //         "coberturas",
-    //         "centros",
-    //         "profesionales",
-    //         "estados",
-    //         "users"
-    //     ));
-    //                 // ->with('i', (request()->input('page', 1) - 1) * $partes->perPage());
-    // }
-
     public function filtrar(Request $request)
     {
         // dd($request->all());
@@ -175,7 +152,13 @@ class ParteController extends Controller
                     if ($year < 1900 || $year > $currentYear) {
                         $fail("El campo fecha de prestación debe ser un año entre 1900 y $currentYear.");
                     }
-                }
+                    $calendar = Calendar::where('fecha_ini', $value)
+                                    ->where('user_id', Auth()->user()->id)
+                                    ->exists();
+                    if (! $calendar) {
+                        $fail("Bloqueo de Carga !!! Primero debe tomar la fecha en el Calendario y luego cargar los partes de esa fecha.");
+                    }
+                },
             ]
         ]);
 
@@ -303,32 +286,106 @@ class ParteController extends Controller
         ->with('success', 'Detalle de Parte borrado correctamente.');
     }
 
-    // public function getData(Request $request)
-    // {
-    //     $query = Parte_cab::v_parte_cab()->select([
-    //         'id', 'centro', 'profesional', 'paciente', 'fec_prestacion', 'sigla',
-    //         'est_id', 'est_descripcion', 'observacion', 'cantidad', 'name', 'created_at'
-    //     ]);
-    
-    //     return DataTables::of($query)
-    //         ->addColumn('acciones', function ($item) {
-    //             return view('cargas.cab.partials.partes_acciones', ['item' => $item])->render();
-    //         })
-    //         ->editColumn('est_descripcion', function ($item) {
-    //             $badgeColor = match ($item->est_id) {
-    //                 1 => 'primary',
-    //                 2 => 'danger',
-    //                 3 => 'warning',
-    //                 4 => 'info',
-    //                 5 => 'secondary',
-    //                 default => 'success'
-    //             };
-    //             return view('cargas.cab.partials.estados', ['item' => $item, 'badgeColor' => $badgeColor])->render();
-    //         })
-    //         ->addColumn('id_tooltip', function ($item) {
-    //             return view('cargas.cab.partials.id_tooltip', ['item' => $item])->render();
-    //         })
-    //         ->rawColumns(['acciones', 'est_descripcion', 'id'])
-    //         ->make(true);
-    // }
+    public function calendar()
+    {
+        $calendario = Calendar::all();
+        $calendar = [];
+        foreach ($calendario as $item) {
+            $name = "";
+            $color = "";
+            $colores = [
+                ['color' => '#ff0000', 'forecolor' => '#ffffff'],
+                ['color' => '#00ff00', 'forecolor' => '#000000'],
+                ['color' => '#0000ff', 'forecolor' => '#ffffff'],
+                ['color' => '#ffff00', 'forecolor' => '#000000'],
+                ['color' => '#ff00ff', 'forecolor' => '#ffffff'],
+                ['color' => '#00ffff', 'forecolor' => '#000000'],
+                ['color' => '#bbbb55', 'forecolor' => '#000000'],
+            ];
+        
+            $name = User::where('id', $item->user_id)->first()->name;
+            $users = User::role('administrativo')->orderby('id')->get();
+            foreach ($users as $key => $user) {
+                if ($user->id == $item->user_id) {
+                    $name = $user->name;
+                    $color = $colores[$key]['color'];
+                    $textColor = $colores[$key]['forecolor'];
+                    break;
+                }
+            }
+        
+            $calendar[] = [
+                'title' => $name,
+                'start' => $item->fecha_ini,
+                'allDay' => true,
+                'color' => $color,
+                'textColor' => $textColor,
+            ];
+        
+            if ($item->observaciones) {
+                $calendar[] = [
+                    'title' => $item->observaciones,
+                    'start' => $item->fecha_ini,
+                    'allDay' => true,
+                    'color' => '#ffffff',
+                    'textColor' => 'black',
+                ];
+            }
+            // Añadimos el evento "CERRADO" al final.
+            if ($item->cerrado) {
+                $calendar[] = [
+                    'title' => "** CERRADO **",
+                    'start' => $item->fecha_ini,
+                    'end' => $item->fecha_ini,
+                    'allDay' => true,
+                    'color' => '#e481a9',
+                    'textColor' => 'white',
+                ];
+            }
+        }
+        
+// dd($calendar);
+        return view("cargas.calendar.index", compact('calendar'));
+    }
+
+    public function calendarGuardar(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'fecha' => 'required|date',
+            'observaciones' => 'nullable|string|max:255',
+            'cerrado' => 'nullable|string',
+            'cancelar' => 'nullable|string',
+            ]);
+
+        $calendar = Calendar::where('fecha_ini', $request->fecha)->first();
+        if ($calendar && $calendar->user_id <> Auth()->user()->id) {
+            return redirect()->route('partes_cab.calendar')
+                ->withErrors(['error' => 'No es posible modificar el calendario de otro usuario.']);
+        }
+
+        if ($request->has('cancelar') && $request->cancelar == 'on')
+        {
+            $partes = Parte_cab::where('fecha_prestacion', $request->fecha)->exists();
+            if ($partes) {
+                return redirect()->route('partes_cab.calendar')
+                    ->withErrors(['error' => 'No es posible cancelar la fecha porque tiene parte(s) cargada(s).']);
+            }   
+            $calendar->delete();
+            return redirect()->route('partes_cab.calendar')
+                ->with('success', 'Fecha cancelada '. $request->fecha .' correctamente');
+        }
+
+        if (!$calendar) {
+            $calendar = new Calendar();
+        }
+        // dd(Auth()->user()->id);
+        $calendar->user_id = Auth()->user()->id;
+        $calendar->fecha_ini = $request->fecha;
+        $calendar->observaciones = $request->observaciones;
+        $calendar->cerrado = $request->cerrado == 'on' ? 1 : 0  ;
+        $calendar->save();
+        
+        return redirect()->route('partes_cab.calendar');
+    }
 }

@@ -48,6 +48,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('roles/combos/json', [RoleController::class, 'rolesJson'])->name('roles.json');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
+            Route::get('partes/calendar', [ParteController::class, 'calendar'])->name('partes_cab.calendar');
+            Route::post('partes/calendar/guardar', [ParteController::class, 'calendarGuardar'])->name('partes_cab.calendar.guardar');
+            
             Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
             Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
             Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');

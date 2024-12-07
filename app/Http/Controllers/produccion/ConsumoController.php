@@ -420,7 +420,13 @@ class ConsumoController extends Controller
             if (count($reporte) == 0) {
                 throw new Exception('Atención !!! No se ha encontrado datos para generar la Rendición.');
             }
-    
+
+            if ($request->reporte_id == 2) {  
+                $conObs = $reporte->contains(function ($item) {
+                    return in_array($item->estado_id, [7, 8]);
+                });
+                $par_adicionales["conObs"] = $conObs;
+            }
             $parametros = $par_adicionales;
             $parametros["datos"] = $reporte;
             $parametros["parametros"] = $par_adicionales;

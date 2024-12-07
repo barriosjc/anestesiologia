@@ -158,3 +158,9 @@
       display: table-cell !important;
   }
 }
+
+.fc-event-title {
+  white-space: normal; /* Permite saltos de línea */
+  word-wrap: break-word; /* Ajusta palabras largas */
+  font-weight: bold; 
+}
