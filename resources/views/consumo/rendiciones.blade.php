@@ -54,8 +54,8 @@
                                 </div>
 
                                 <div class="form-group col-md-3">
-                                    <label class="small mb-1" for="pac_nombre">Paciente</label>
-                                    <input type="text" class="form-control form-control-sm" name="pac_nombre"
+                                    <label class="small mb-1" for="nombre">Paciente</label>
+                                    <input type="text" class="form-control form-control-sm" name="nombre"
                                         value="{{ $nombre }}" placeholder="Nombre del paciente">
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                                     <input class="form-control form-control-sm" id="nro_parte"
                                         name="nro_parte" type="number" min="0" step=1
                                         max="999999999" placeholder="número"
-                                        value="{{ old('nro_parte', session('nro_parte')) }}" />
+                                        value="{{ old('nro_parte', session('c_nro_parte')) }}" />
                                 </div>
                                 <div class="form-group col-md-2 d-flex align-items-end">
                                     <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar

@@ -38,16 +38,16 @@ class ConsumoController extends Controller
         $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('cobertura_id', null);
-        $centro_id = $request->has('centro_id') ? $request->centro_id : session('centro_id', null);
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('profesional_id', null);
-        $nombre = $request->has('nombre') ? $request->nombre : session('nombre', null);
-        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('fec_desde', null);
-        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('fec_hasta', null);
-        $estado_id = $request->has('estado_id') ? $request->estado_id : session('estado_id', null);
-        $fec_desde_adm = $request->has('submitInputs') ? $request->fec_desde_adm : session('fec_desde_adm', null);
-        $fec_hasta_adm = $request->has('submitInputs') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('fec_hasta_adm', null);
-        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('nro_parte', null);
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('cp_cobertura_id', null);
+        $centro_id = $request->has('centro_id') ? $request->centro_id : session('cp_centro_id', null);
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('cp_profesional_id', null);
+        $nombre = $request->has('nombre') ? $request->nombre : session('cp_nombre', null);
+        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('cp_fec_desde', null);
+        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('cp_fec_hasta', null);
+        $estado_id = $request->has('estado_id') ? $request->estado_id : session('cp_estado_id', null);
+        $fec_desde_adm = $request->has('submitInputs') ? $request->fec_desde_adm : session('cp_fec_desde_adm', null);
+        $fec_hasta_adm = $request->has('submitInputs') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('cp_fec_hasta_adm', null);
+        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('cp_nro_parte', null);
 
         $query = Parte_cab::vParteCab();
         if (!empty($cobertura_id)) {
@@ -84,16 +84,16 @@ class ConsumoController extends Controller
                     ->paginate();
 
                     // guardo el filtro en session
-        session()->put('cobertura_id', $cobertura_id);
-        session()->put('centro_id', $centro_id);
-        session()->put('profesional_id', $profesional_id);
-        session()->put('nombre', $nombre);
-        session()->put('fec_desde', $fec_desde);
-        session()->put('fec_hasta', $fec_hasta);
-        session()->put('fec_desde_adm', $fec_desde_adm);
-        session()->put('fec_hasta_adm', $fec_hasta_adm);
-        session()->put('estado_id', $estado_id);
-        session()->put('nro_parte', $nro_parte);
+        session()->put('cp_cobertura_id', $cobertura_id);
+        session()->put('cp_centro_id', $centro_id);
+        session()->put('cp_profesional_id', $profesional_id);
+        session()->put('cp_nombre', $nombre);
+        session()->put('cp_fec_desde', $fec_desde);
+        session()->put('cp_fec_hasta', $fec_hasta);
+        session()->put('cp_fec_desde_adm', $fec_desde_adm);
+        session()->put('cp_fec_hasta_adm', $fec_hasta_adm);
+        session()->put('cp_estado_id', $estado_id);
+        session()->put('cp_nro_parte', $nro_parte);
 
 // Ver la consulta SQL y los bindings
         // $sql = $query->toSql();
@@ -299,37 +299,37 @@ class ConsumoController extends Controller
         $profesionales = Profesional::get();
         $estados = Estado::get();
         $periodos = Periodo::orderby("nombre")->get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
-        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
-        $nombre = $request->has('nombre') ? $request->nombre : null;
-        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
-        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : null;
-        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
-        $periodo_gen = $request->has('periodo_gen') ? $request->periodo_gen : null;
-        $nro_parte =  $request->has('nro_parte') ? $request->nro_parte : null;
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('c_cobertura_id', null);
+        $centro_id = $request->has('centro_id') ? $request->centro_id : session('c_centro_id', null);
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('c_profesional_id', null);
+        $nombre = $request->has('nombre') ? $request->nombre : session('c_nombre', null);
+        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : session('c_fec_desde', null);
+        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : session('c_fec_hasta', null);
+        $estado_id = $request->has('estado_id') ? $request->estado_id : session('c_estado_id', null);
+        $periodo_gen = $request->has('periodo_gen') ? $request->periodo_gen : session('c_periodo_gen', null);
+        $nro_parte =  $request->has('nro_parte') ? $request->nro_parte : session('c_nro_parte', null);
 
         $query = DB::table('v_rendiciones');
-        if ($request->has('cobertura_id')  && !empty($request->cobertura_id)) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+        if (!empty($cobertura_id)) {
+            $query->where('cobertura_id', '=', $cobertura_id);
         }
-        if ($request->has('centro_id')  && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
+        if (!empty($centro_id)) {
+            $query->where('centro_id', '=', $centro_id);
         }
-        if ($request->has('profesional_id')  && !empty($request->profesional_id)) {
-            $query->where('profesional_id', '=', $request->profesional_id);
+        if ( !empty($rofesional_id)) {
+            $query->where('profesional_id', '=', $rofesional_id);
         }
-        if ($request->has('estado_id')  && !empty($request->estado_id)) {
-            $query->where('estado_id', '=', $request->estado_id);
+        if ( !empty($estado_id)) {
+            $query->where('estado_id', '=', $estado_id);
         }
-        if ($request->has('pac_nombre')  && !empty($request->pac_nombre)) {
-            $query->where('pac_nombre', 'like', "%".$request->pac_nombre."%");
+        if (!empty($nombre)) {
+            $query->where('pac_nombre', 'like', "%".$nombre."%");
         }
-        if (!empty($request->fec_desde)) {
-            $query->where('fec_prestacion_orig', '>=', $request->fec_desde);
+        if (!empty($fec_desde)) {
+            $query->where('fec_prestacion_orig', '>=', $fec_desde);
         }
-        if (!empty($request->fec_hasta)) {
-            $query->where('fec_prestacion_orig', '<=', $request->fec_hasta);
+        if (!empty($fec_hasta)) {
+            $query->where('fec_prestacion_orig', '<=', $fec_hasta);
         }
         if (!empty($periodo_gen)) {
             $query->where('periodo', '=', $periodo_gen);
@@ -338,8 +338,19 @@ class ConsumoController extends Controller
             $query->where('parte_cab_id', '=', $nro_parte);
         }
         $partes = $query->orderBy('created_at', 'asc')
-                    ->paginate();
+            ->paginate();
 
+        session()->put('c_cobertura_id', $cobertura_id);
+        session()->put('c_centro_id', $centro_id);
+        session()->put('c_profesional_id', $profesional_id);
+        session()->put('c_nombre', $nombre);
+        session()->put('c_fec_desde', $fec_desde);
+        session()->put('c_fec_hasta', $fec_hasta);
+        session()->put('c_estado_id', $estado_id);
+        session()->put('c_periodo_gen', $periodo_gen);
+        session()->put('c_nro_parte', $nro_parte);
+            
+                    
                     // Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
@@ -455,7 +466,7 @@ class ConsumoController extends Controller
             "periodo_refac.required_if" => "El campo periodo de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar.",
             "obs_refac.required_if" => "El campo Observaciones de refacturación es obligatorio cuando se quiere cambiar el estado A refacturar."
         ]);
-
+        
         if ($request->has('selected_ids') && !empty($request->selected_ids) && !empty($request->estadoCambio)) {
             $selectedIds = $request->input('selected_ids');
             $nuevoEstado = $request->input('estadoCambio');
@@ -466,19 +477,20 @@ class ConsumoController extends Controller
                 if ($nuevoEstado == "7" && $nuevoPeriodo == null) {
                     throw new InvalidArgumentException("Si el estado es 'A refacturar' es obligatorio ingresar el periodo.");
                 }
-
                 $sepa = "";
                 $ids = "";
                 foreach ($selectedIds as $item) {
                     $consumo = Consumo_det::find($item['consumo_det_id']);
                     $est_actual = $consumo->estado_id;
 
+                    // dd($nuevoEstado, $est_actual);
+
                     if ($nuevoEstado == "5" && !in_array($est_actual, [6,7,8])) {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;
                     }
-                    if ($nuevoEstado == "7" && $est_actual != 5) {
+                    if ($nuevoEstado == "7" && !in_array($est_actual, [5,8])) {
                         $ids = $ids . $sepa . $item['parte_id'] ;
                         $sepa = " ,";
                         continue;

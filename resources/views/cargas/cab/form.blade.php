@@ -81,7 +81,7 @@
 
         <div class="box-footer mt20">
             <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
-            @php($parte_id = $parte_id ?? session('parte_id'))
+            @php($parte_id = $parte_id ?? session('p_parte_id'))
             @if(!empty($parte_id))
                 <a href="{{route('partes_det.create', $parte_id)}}" class="btn btn-success">{{ __('Cargar detalle') }}</a>
             @endif

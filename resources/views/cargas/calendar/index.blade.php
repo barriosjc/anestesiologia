@@ -36,7 +36,7 @@
                         <textarea rows="4" name="observaciones" class="form-control">  </textarea>
                     </div>
                     <div class="form-check form-switch pt-3" data-bs-toggle="tooltip" data-bs-placement="top"
-                        title="Activa para cerrar la fecha con todos los partes del dia cargados o controlados">
+                        title="Activa esta opción para cerrar la fecha con todos los partes del dia cargados o controlados">
                         <input class="form-check-input" type="checkbox" role="switch" name="cerrado" id="cerrado">
                         <label class="form-check-label" for="cerrado">Cerrar fecha</label>
                     </div>
@@ -57,7 +57,7 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-@endpush
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -85,3 +85,4 @@
         calendar.render();
     });
 </script>
+@endpush
