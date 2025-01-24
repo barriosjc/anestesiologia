@@ -45,8 +45,8 @@ class ConsumoController extends Controller
         $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('cp_fec_desde', null);
         $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('cp_fec_hasta', null);
         $estado_id = $request->has('estado_id') ? $request->estado_id : session('cp_estado_id', null);
-        $fec_desde_adm = $request->has('submitInputs') ? $request->fec_desde_adm : session('cp_fec_desde_adm', null);
-        $fec_hasta_adm = $request->has('submitInputs') ? Carbon::parse($request->fec_hasta_adm)->addDay() : session('cp_fec_hasta_adm', null);
+        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : session('cp_fec_desde_adm', null);
+        $fec_hasta_adm = $request->has('fec_hasta_adm') ? $request->fec_hasta_adm : session('cp_fec_hasta_adm', null);
         $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('cp_nro_parte', null);
 
         $query = Parte_cab::vParteCab();
@@ -316,8 +316,8 @@ class ConsumoController extends Controller
         if (!empty($centro_id)) {
             $query->where('centro_id', '=', $centro_id);
         }
-        if ( !empty($rofesional_id)) {
-            $query->where('profesional_id', '=', $rofesional_id);
+        if ( !empty($profesional_id)) {
+            $query->where('profesional_id', '=', $profesional_id);
         }
         if ( !empty($estado_id)) {
             $query->where('estado_id', '=', $estado_id);

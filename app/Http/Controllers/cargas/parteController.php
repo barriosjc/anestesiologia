@@ -22,7 +22,6 @@ class ParteController extends Controller
 {
     public function filtrar(Request $request)
     {
-        // dd($request->all());
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
