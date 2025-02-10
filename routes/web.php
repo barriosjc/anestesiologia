@@ -99,6 +99,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicionEstados'])->name('consumo.rendiciones.estados');
             Route::post('consumos/rendicion/revalorizar', [ConsumoController::class, 'rendicionRevalorizar'])->name('consumo.rendiciones.revalorizar');
             Route::post('consumos/rendicion/agregar', [ConsumoController::class, 'rendicionAgregar'])->name('consumo.rendiciones.agregar');
+            Route::post('consumos/rendicion/agregarydif', [ConsumoController::class, 'agregarNuevoyDiferencia'])->name('consumo.rendiciones.agregarydiff');
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {

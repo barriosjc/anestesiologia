@@ -95,13 +95,13 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label class="small mb-1" for="nro_parte">Nro parte</label>
-                                    <input class="form-control form-control-sm" id="nro_parte"
-                                        name="nro_parte" type="number" min="0" step=1
-                                        max="999999999" placeholder="número"
+                                    <input class="form-control form-control-sm" id="nro_parte" name="nro_parte"
+                                        type="number" min="0" step=1 max="999999999" placeholder="número"
                                         value="{{ old('nro_parte', session('c_nro_parte')) }}" />
                                 </div>
                                 <div class="form-group col-md-2 d-flex align-items-end">
-                                    <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
+                                    <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm"
+                                        type="submit">Filtrar
                                         partes</button>
                                 </div>
                             </div>
@@ -145,14 +145,14 @@
                                                 <td>{{ $item->fec_prestacion }}</td>
                                                 <td>{{ $item->pac_nombre }}</td>
                                                 <td class="columna-extra">{{ $item->periodo }}
-                                                    <td >{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}
-                                                    </td>
+                                                <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}
+                                                </td>
                                                 <td>{{ $item->porcentaje }}</td>
                                                 <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
                                                 <td>
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        @if (!empty($item->observacion)) data-bs-title="{{ $item->observacion }}" @endif
-                                                        @if ($item->estado_id == 7) data-bs-title="{{ $item->periodo . ' / ' . $item->obs_refac }}" @endif
+                                                        {{-- @if (!empty($item->obs_refac)) data-bs-title="{{ $item->obsrefac }}" @endif --}}
+                                                        @if (!empty($item->obs_refac)) data-bs-title="{{ $item->periodo . ' / ' . $item->obs_refac }}" @endif
                                                         class="badge bg-{{ $item->estado_id == 4
                                                             ? 'primary'
                                                             : ($item->estado_id == 5
@@ -161,8 +161,10 @@
                                                                     ? 'warning'
                                                                     : ($item->estado_id == 7
                                                                         ? 'info'
-                                                                        : 'danger'))) }}">{{ $item->est_descripcion }}
-                                                        @if (!empty($item->observacion) or $item->estado_id == 7)
+                                                                    : ($item->estado_id == 8
+                                                                        ? 'secondary'
+                                                                        : 'danger')))) }}">{{ $item->est_descripcion }}
+                                                        @if (!empty($item->obs_refac))
                                                             <span class="badge text-bg-dark"> </span>
                                                         @endif
                                                     </span>
@@ -178,7 +180,7 @@
                                 </table>
                             </div>
 
-                            @if(!empty($partes))
+                            @if (!empty($partes))
                                 {!! $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                             @endif
 
@@ -237,46 +239,6 @@
                             </div>
                             <Hr>
                             <div class="row align-items-end pt-2">
-                                    <div class="form-group col-md-2">
-                                        <label class="small mb-1" for="estadoAgregar">Agregar nuevo consumo</label>
-                                        <select class="form-select form-select-sm" id="estadoAgregar" name="estadoAgregar">
-                                            <option value="">-- Seleccione --</option>
-                                            @foreach ($estados as $item)
-                                                <option value="{{ $item->id }}">
-                                                    {{ $item->descripcion }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div id="div_refac" class="form-group col-md-2">
-                                        <label class="small mb-1" for="periodoAgregar">Periodo</label>
-                                        <select class="form-select form-select-sm" id="periodoAgregar" name="periodoAgregar">
-                                            <option value="">-- Seleccione --</option>
-                                            @foreach ($periodos as $item)
-                                                <option value="{{ $item->nombre }}">
-                                                    {{ $item->nombre }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-5">
-                                        <label class="small mb-1" for="obsAgregar">Observaciones</label>
-                                        <textarea class="form-control form-control-sm" id="obsAgregar" name="obsAgregar" rows="1"
-                                            placeholder="Por que agrega neuvo consumo? "></textarea>
-                                    </div>
-                                    <div class="form-group col-md-2">
-                                        <label class="small mb-1" for="valorAgregar">Valor ($)</label>
-                                        <input type="text" class="form-control form-control-sm" id="valorAgregar"
-                                            name="valorAgregar">
-                                    </div>
-                                    <div class="col-md-1">
-                                        <button type="button" id="btnAgregar" class="btn btn-info btn-sm">
-                                            {{ __('Guardar') }}
-                                        </button>
-                                    </div>
-                            </div>
-                            <Hr>
-                            <div class="row align-items-end pt-2">
                                 <div id="div_revalorizar" class="form-group col-md-2">
                                     <label class="small mb-1" for="periodo_refac">Periodo a revalorizar</label>
                                     <select class="form-select form-select-sm" id="periodo_revalorizar"
@@ -297,6 +259,98 @@
                                 </div>
                             </div>
                         </form>
+                        <Hr>
+                        <div class="row align-items-end pt-2">
+                            <div class="form-group col-md-2">
+                                <label class="small mb-1" for="estadoAgregar">Agregar nuevo consumo</label>
+                                <select class="form-select form-select-sm" id="estadoAgregar" name="estadoAgregar">
+                                    <option value="">-- Seleccione --</option>
+                                    @foreach ($estados as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->descripcion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="div_refac" class="form-group col-md-2">
+                                <label class="small mb-1" for="periodoAgregar">Periodo</label>
+                                <select class="form-select form-select-sm" id="periodoAgregar" name="periodoAgregar">
+                                    <option value="">-- Seleccione --</option>
+                                    @foreach ($periodos as $item)
+                                        <option value="{{ $item->nombre }}">
+                                            {{ $item->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="small mb-1" for="obsAgregar">Observaciones</label>
+                                <textarea class="form-control form-control-sm" id="obsAgregar" name="obsAgregar" rows="1"
+                                    placeholder="Por que agrega neuvo consumo? "></textarea>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="small mb-1" for="valorAgregar">Valor ($)</label>
+                                <input type="text" class="form-control form-control-sm" id="valorAgregar"
+                                    name="valorAgregar">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" id="btnAgregar" class="btn btn-info btn-sm">
+                                    {{ __('Guardar') }}
+                                </button>
+                            </div>
+                        </div>
+                        <Hr>
+                        <div class="row align-items-end pt-2">
+                            <div class="form-group col-md-2">
+                                <label class="small mb-1" for="estadoAgregaryDiff">Nuevo consumo y diferencia</label>
+                                <select class="form-select form-select-sm" id="estadoAgregaryDiff"
+                                    name="estadoAgregaryDiff">
+                                    <option value="">-- Seleccione --</option>
+                                    @foreach ($estados as $item)
+                                        <option value="{{ $item->id }}">
+                                            {{ $item->descripcion }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="div_refac" class="form-group col-md-2">
+                                <label class="small mb-1" for="periodoAgregaryDiff">Periodo</label>
+                                <select class="form-select form-select-sm" id="periodoAgregaryDiff"
+                                    name="periodoAgregaryDiff">
+                                    <option value="">-- Seleccione --</option>
+                                    @foreach ($periodos as $item)
+                                        <option value="{{ $item->nombre }}">
+                                            {{ $item->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="small mb-1" for="obsAgregaryDiff">Observaciones</label>
+                                <textarea class="form-control form-control-sm" id="obsAgregaryDiff" name="obsAgregaryDiff" rows="1"
+                                    placeholder="Por que agrega neuvo consumo? "></textarea>
+                            </div>
+                            <div id="diff_refac" class="form-group col-md-1">
+                                <div>
+                                    <input type="radio" id="refacturarydiff" name="refacturaryDiff" value="refacturar" checked>
+                                    <label class="small mb-1" for="refacturar">Refacturar</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="auditoriaydiff" name="refacturaryDiff" value="auditoria">
+                                    <label class="small mb-1" for="auditoria">Auditoría</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label class="small mb-1" for="valorAgregar">Valor ($)</label>
+                                <input type="text" class="form-control form-control-sm" id="valorAgregaryDiff"
+                                    name="valorAgregar">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" id="btnAgregaryDiff" class="btn btn-info btn-sm">
+                                    {{ __('Guardar') }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {{-- {!! $partes->links() !!} --}}
@@ -501,12 +555,76 @@
                         valorAgregar: valorAgregar
                     },
                     success: function(response) {
-                        const alertDiv = '<div class="alert alert-success py-2">' + response.success + '</div>';
+                        const alertDiv = '<div class="alert alert-success py-2">' + response
+                            .success + '</div>';
                         $('#alert-container').html(alertDiv);
                     },
                     error: function(response) {
                         let errorMessages = '';
-                            console.log(response.responseJSON.error)
+                        console.log(response.responseJSON.error)
+                        if (response.responseJSON && response.responseJSON.errors) {
+                            for (const [field, messages] of Object.entries(response.responseJSON
+                                    .errors)) {
+                                errorMessages += "<li>" + messages + "</li>";
+                            }
+                        } else if (response.responseJSON.error) {
+                            errorMessages += "<li>" + response.responseJSON.error + "</li>";
+                        } else {
+                            errorMessages = 'Ocurrió un error inesperado.';
+                        }
+
+                        const alertDiv =
+                            '<div class="alert alert-danger py-2"><ul class="no-bullets">' +
+                            errorMessages + '</ul></div>';
+                        $('#alert-container').html(alertDiv);
+                    },
+                    complete: function() {
+                        const ytop = $('#alert-container').offset().top;
+                        window.scrollTo({
+                            top: ytop - 300,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // agregar nuevo consumo y diferencia
+            $('#btnAgregaryDiff').on('click', function() {
+                let selectedItems = [];
+                $('.ck_item:checked').each(function() {
+                    let consumo_det_id = $(this).val();
+                    let parte_id = $(this).data('parte-id');
+                    selectedItems.push({
+                        consumo_det_id: consumo_det_id,
+                        parte_id: parte_id
+                    });
+                });
+                let estadoAgregar = $('#estadoAgregaryDiff').val();
+                let periodoAgregar = $('#periodoAgregaryDiff').val();
+                let obsAgregar = $('#obsAgregaryDiff').val();
+                let valorAgregar = $('#valorAgregaryDiff').val();
+                let refacturar = $('input[name="refacturaryDiff"]:checked').val();
+
+                $.ajax({
+                    url: "{{ route('consumo.rendiciones.agregarydiff') }}",
+                    method: 'POST',
+                    data: {
+                        _token: token,
+                        selected_ids: selectedItems,
+                        estadoAgregar: estadoAgregar,
+                        periodoAgregar: periodoAgregar,
+                        obsAgregar: obsAgregar,
+                        valorAgregar: valorAgregar,
+                        refacturar: refacturar
+                    },
+                    success: function(response) {
+                        const alertDiv = '<div class="alert alert-success py-2">' + response
+                            .success + '</div>';
+                        $('#alert-container').html(alertDiv);
+                    },
+                    error: function(response) {
+                        let errorMessages = '';
+                        console.log(response.responseJSON.error)
                         if (response.responseJSON && response.responseJSON.errors) {
                             for (const [field, messages] of Object.entries(response.responseJSON
                                     .errors)) {
@@ -550,9 +668,9 @@
                 }
             };
 
-//             window.addEventListener('resize', () => {
-//     console.log('Se detectó un cambio en el tamaño de la ventana');
-// });
+            //             window.addEventListener('resize', () => {
+            //     console.log('Se detectó un cambio en el tamaño de la ventana');
+            // });
 
             window.addEventListener('resize', ajustarColumnas);
             const observer = new ResizeObserver(ajustarColumnas);
@@ -560,5 +678,4 @@
             ajustarColumnas();
         });
     </script>
-
 @endsection

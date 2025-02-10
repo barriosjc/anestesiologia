@@ -586,7 +586,7 @@ class ConsumoController extends Controller
         foreach ($selectedIds as $item) {
             $original = Consumo_det::where('id', $item['consumo_det_id'])
                 ->first();
-           
+
             $nuevo = $original->replicate();
             $nuevo->periodo = $request->input('periodoAgregar');
             $nuevo->estado_id = $request->input('estadoAgregar');
@@ -596,5 +596,67 @@ class ConsumoController extends Controller
         }
 
         return response()->json(['success' => "Se agregó el nuevo consunsumo a la rendición, recargue el formulario para ver los cambios."], 200);
+    }
+    
+    public function agregarNuevoyDiferencia(Request $request)
+    {
+        $this->validate($request, [
+            "selected_ids" => "required",
+            "periodoAgregar" => "required",
+            "estadoAgregar" => "required",
+            "valorAgregar" => "required",
+            "obsAgregar" => "required|max:250"
+        ]);
+
+        $selectedIds = $request->input('selected_ids');
+        if (count($selectedIds) <> 1) {
+            return response()->json(['error' => 'Para este proceso debe seleccionar solo (1) un consumo. '], 422);
+        }
+  
+        $estados = Estado::all();
+
+        foreach ($selectedIds as $item) {
+            //cambia el estado del consumo seleccionado a cancelado
+            $anulado = $estados->firstWhere('extra', 'anulado')->id;
+            $original = Consumo_det::where('id', $item['consumo_det_id'])
+                ->first();
+            $valor_diff = $original->valor - $request->input('valorAgregar');
+            if ($valor_diff < 0) {
+                return response()->json(['error' => 'El valor a agregar no puede ser mayor al valor original.'], 422);
+            }
+            $original->estado_id = $anulado;
+            $original->save();
+
+            //crea un nuevo consumo con los datos del original y los datos ingresados
+            $nuevo = $original->replicate();
+            $nuevo->periodo = $request->input('periodoAgregar');
+            $nuevo->estado_id = $request->input('estadoAgregar');
+            $nuevo->valor = $request->input('valorAgregar');
+            $nuevo->obs_refac = $request->input("obsAgregar");
+            $nuevo->save();
+
+            //crea un nuevo consumo con los datos del original y la diferecia
+            $estado_id = $request->input('refacturar') == 'refacturar' ?  
+                                $estados->firstWhere('extra', 'refacturar')->id :
+                                $estados->firstWhere('extra', 'auditoria')->id;
+            $diferencia = $original->replicate();
+            $diferencia->periodo = $this->incrementarMes($request->input('periodoAgregar'), 1);
+            $diferencia->estado_id = $estado_id;
+            $diferencia->valor = $valor_diff;
+            $diferencia->obs_refac = $request->input("obsAgregar");
+            $diferencia->save();
+        }
+
+        return response()->json(['success' => "Se agregó el nuevo consunsumo y diferencia a la rendición, recargue el formulario para ver los cambios."], 200);
+    }
+    
+    private function incrementarMes($dateString, $monthsToAdd) {
+        $date = DateTime::createFromFormat('Y/m', $dateString);
+        if (!$date) {
+            throw new Exception("Fecha no válida: $dateString");
+        }
+        $date->modify("+$monthsToAdd month");
+    
+        return $date->format('Y/m');
     }
 }
