@@ -14,6 +14,10 @@ class CreatePermissionTables extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('permissions')) {
+            return;
+        }
+        
         $tableNames = config('permission.table_names');
         $columnNames = config('permission.column_names');
         $teams = config('permission.teams');
