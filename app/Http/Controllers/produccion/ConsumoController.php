@@ -604,7 +604,7 @@ class ConsumoController extends Controller
             "selected_ids" => "required",
             "periodoAgregar" => "required",
             "estadoAgregar" => "required",
-            "valorAgregar" => "required",
+            "valorAgregar" => "required|numeric|max:999999999.99",
             "obsAgregar" => "required|max:250"
         ]);
 
