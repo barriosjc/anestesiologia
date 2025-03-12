@@ -150,6 +150,7 @@ class NomencladorController extends Controller
     {
         $codigo = str_replace("-", "", $request->input('codigo'));
         $descripcion = $request->input('descripcion');
+        $nom_padre_id = $request->input('nom_padre_id');
 
         $query = Nomenclador::query();
         if ($codigo) {
@@ -159,7 +160,9 @@ class NomencladorController extends Controller
         if ($descripcion) {
             $query->where('descripcion', 'like', '%' . $descripcion . '%');
         }
-
+        $query->where('nom_padre_id', $nom_padre_id);
+        $query->orderBy('descripcion', 'asc');
+        
         $results = $query->get();
         // $sql = $query->toSql();
         // $bindings = $query->getBindings();

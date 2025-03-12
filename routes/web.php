@@ -3,14 +3,16 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Utiles\UtilController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\entidades\CentroController;
 use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\entidades\PacienteController;
 // use App\Http\Controllers\seguridad\Usuario0Controller;
+use App\Http\Controllers\entidades\NomPadreController;
+use App\Http\Controllers\entidades\PacienteController;
 use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
 use App\Http\Controllers\entidades\CoberturaController;
@@ -29,6 +31,8 @@ Route::post('login/email', [ResetPasswordController::class, 'email'])->name('log
 
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/run-migration', [UtilController::class, 'runMigrationAndSeeder'])
+                ->middleware(['role:super-admin']);
     // Route::get('empresas/usuarios/combos', [ProfileController::class, 'usuarios_jefes'])->name('empresas.usuarios');
     Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
     Route::post('pasword/profile', [ProfileController::class, 'savePassword'])->name('profile.password.save');
@@ -69,6 +73,10 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
+            Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
+            Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
+            
+            // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
             Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
             
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');

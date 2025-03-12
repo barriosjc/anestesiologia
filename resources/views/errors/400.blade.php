@@ -22,7 +22,7 @@
                                 <div class="text-center mt-4">
                                     <img class="img-fluid p-4" src="assets/img/illustrations/400-error-bad-request.svg" alt="" />
                                     <p class="lead">Your client has issued a malformed or illegal request.</p>
-                                    <a class="text-arrow-icon" href="dashboard-1.html">
+                                    <a class="text-arrow-icon" href="main">
                                         <i class="ms-0 me-1" data-feather="arrow-left"></i>
                                         Return to Dashboard
                                     </a>

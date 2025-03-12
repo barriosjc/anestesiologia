@@ -98,6 +98,7 @@
                         value="{{ old('parte_cab_id', $parte_cab_id) }}">
                     <input type="hidden" name="valor_orig" id="valor_orig">
                     <input type="hidden" name="valor_total" id="valor_total">
+                    <input type="hidden" name="nom_padre_id" id="nom_padre_id" value="{{$nom_padre_id}}">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-2">
                             <label for="archivo">Periodo</label>
@@ -204,6 +205,7 @@
             document.getElementById('search').addEventListener('click', function() {
                 let codigo = document.getElementById('codigo').value;
                 let descripcion = document.getElementById('descripcion').value;
+                const nom_padre_id = document.getElementById('nom_padre_id').value;
 
                 if (codigo == "" && descripcion == "") {
                     return
@@ -217,7 +219,8 @@
                         },
                         body: JSON.stringify({
                             codigo: codigo,
-                            descripcion: descripcion
+                            descripcion: descripcion,
+                            nom_padre_id: nom_padre_id
                         })
                     })
                     .then(response => response.json())
@@ -301,11 +304,11 @@
                 let porcentajeInput = document.getElementById('porcentaje');
                 let porcentajeIni = parseFloat(porcentajeInput.value);
                 nomencladorSelect = document.getElementById('nomenclador_id');
-                selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
-                nomenclador_id = selectedNomencladorId.value
-                if (periodo == "" || nomenclador_id == "") {
+                if (periodo == "" || nomencladorSelect.options.length == 0) {
                     return
                 }
+                selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
+                nomenclador_id = selectedNomencladorId.value
 
                 return fetch('{{ route('consumos.valor.buscar') }}', {
                     method: 'POST',

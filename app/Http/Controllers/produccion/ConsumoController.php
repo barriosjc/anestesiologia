@@ -4,11 +4,12 @@ namespace App\Http\Controllers\produccion;
 
 use DateTime;
 use Exception;
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Centro;
 use App\Models\Estado;
 use App\Models\Listado;
 use App\Models\Periodo;
-use App\Models\Valores_cab;
 use App\Models\Paciente;
 use App\Models\Cobertura;
 use App\Models\Documento;
@@ -18,104 +19,41 @@ use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
 use App\Models\nomenclador;
 use App\Models\Profesional;
+use App\Models\Valores_cab;
+// use App\Exports\ProdProfCoberExport;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
-// use App\Exports\ProdProfCoberExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Repositories\ConsumoRepository;
 use App\Http\Controllers\produccion\ReportFactory;
-use App\Models\User;
-use Carbon\Carbon;
 
 // use PhpParser\Node\Stmt\TryCatch;
 
 class ConsumoController extends Controller
 {
+    protected $consumoRepository;
+
+    public function __construct(ConsumoRepository $consumoRepository)
+    {
+        $this->consumoRepository = $consumoRepository;
+    }
+
     public function parteFiltrar(Request $request)
     {
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('cp_cobertura_id', null);
-        $centro_id = $request->has('centro_id') ? $request->centro_id : session('cp_centro_id', null);
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('cp_profesional_id', null);
-        $nombre = $request->has('nombre') ? $request->nombre : session('cp_nombre', null);
-        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('cp_fec_desde', null);
-        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('cp_fec_hasta', null);
-        $estado_id = $request->has('estado_id') ? $request->estado_id : session('cp_estado_id', null);
-        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : session('cp_fec_desde_adm', null);
-        $fec_hasta_adm = $request->has('fec_hasta_adm') ? $request->fec_hasta_adm : session('cp_fec_hasta_adm', null);
-        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('cp_nro_parte', null);
-
-        $query = Parte_cab::vParteCab();
-        if (!empty($cobertura_id)) {
-            $query->where('cobertura_id', '=', $cobertura_id);
-        }
-        if (!empty($centro_id)) {
-            $query->where('centro_id', '=', $centro_id);
-        }
-        if (!empty($profesional_id)) {
-            $query->where('profesional_id', '=', $profesional_id);
-        }
-        if (!empty($estado_id)) {
-            $query->where('estado_id', '=', $estado_id);
-        }
-        if (!empty($nombre)) {
-            $query->where('paciente', 'like', "%".$nombre."%");
-        }
-        if (!empty($fec_desde)) {
-            $query->where('fec_prestacion_orig', '>=', $fec_desde);
-        }
-        if (!empty($fec_hasta)) {
-            $query->where('fec_prestacion_orig', '<=', $fec_hasta);
-        }
-        if (!empty($fec_desde_adm)) {
-            $query->where('created_at', '>=', $fec_desde_adm);
-        }
-        if (!empty($fec_hasta_adm)) {
-            $query->where('created_at', '<=', $fec_hasta_adm);
-        }
-        if (!empty($nro_parte)) {
-            $query->where('id', $nro_parte);
-        }
-        $partes = $query->orderBy('created_at', 'asc')
-                    ->paginate();
-
-                    // guardo el filtro en session
-        session()->put('cp_cobertura_id', $cobertura_id);
-        session()->put('cp_centro_id', $centro_id);
-        session()->put('cp_profesional_id', $profesional_id);
-        session()->put('cp_nombre', $nombre);
-        session()->put('cp_fec_desde', $fec_desde);
-        session()->put('cp_fec_hasta', $fec_hasta);
-        session()->put('cp_fec_desde_adm', $fec_desde_adm);
-        session()->put('cp_fec_hasta_adm', $fec_hasta_adm);
-        session()->put('cp_estado_id', $estado_id);
-        session()->put('cp_nro_parte', $nro_parte);
-
-// Ver la consulta SQL y los bindings
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
-        // dd($sql, $bindings);
+        $partes = $this->consumoRepository->filtrar($request);
 
         return view("consumo.partes", compact(
                     "partes",
                     "coberturas",
                     "centros",
                     "profesionales",
-                    "cobertura_id",
-                    "centro_id",
-                    "profesional_id",
-                    "nombre",
-                    "fec_desde",
-                    "fec_hasta",
-                    "estados",
-                    "estado_id",
-                    "fec_desde_adm",
-                    "fec_hasta_adm",
-                    "nro_parte"
+                    "estados"
                 ));
     }
 
@@ -123,18 +61,18 @@ class ConsumoController extends Controller
     {
         $partes_det = Parte_det::where("parte_cab_id", $id)->paginate(3);
         $documentos = Documento::where("tipo", "like", "%parte%")->get();
-        $nomenclador = nomenclador::get();
         $periodos = Periodo::orderby("nombre")->get();
         $parte_cab_id = $id;
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
         $observaciones = $data->observacion;
+        $nom_padre_id = Cobertura::where("id", $data->cobertura_id)->first()->nom_padre_id;
 
         $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion." / Obs: ".$observaciones;
 
-        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "nomenclador", "consumos", "cabecera"));
-    }
+        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "consumos", "cabecera", "nom_padre_id"));
+        }
     
     public function valorBuscar(Request $request)
     {
@@ -153,21 +91,12 @@ class ConsumoController extends Controller
                 'error' => 'Faltan id nomenclador'
             ], 400); // Devuelve un código de error 400 (Bad Request)
         }
-        $id = $request->id;
+   
         $parte_cab_id = $request->parte_cab_id;
-    
-        $id = $request->id;
-        $parte_cab_id = $request->parte_cab_id;
-        $parte_cab = Parte_cab::where("id", $parte_cab_id)->first();
-        $cobertura = cobertura::where("id", $parte_cab->cobertura_id)->first();
-        // $grupo = $cobertura->grupo;
-        $valores = Valores_cab::v_valores(
-            1,
-            $parte_cab->cobertura_id,
-            $parte_cab->centro_id,
-            $request->periodo,
-            $request->nomenclador_id
-        );
+        $parte_cab = $this->consumoRepository->parteBuscar($parte_cab_id);
+        $cobertura = $this->consumoRepository->coberturaBuscar($parte_cab->cobertura_id);
+        $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
+
         if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);
         }

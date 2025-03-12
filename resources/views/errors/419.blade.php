@@ -22,7 +22,7 @@
                                 <div class="text-center mt-4">
                                     <img class="img-fluid p-4" src="assets/img/illustrations/404-error.svg" alt="" />
                                     <p class="lead">No es posible acceder a la página solicitada.</p>
-                                    <a class="text-arrow-icon" href="{{route('planillas.index')}}">
+                                    <a class="text-arrow-icon" href="{{route('main')}}">
                                         <i class="ms-0 me-1" data-feather="arrow-left"></i>
                                         Veulve al planillero
                                     </a>

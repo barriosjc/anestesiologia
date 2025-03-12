@@ -40,9 +40,22 @@
                         @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                             <a class="nav-link" href="{{ route('coberturas.index') }}">Coberturas</a>
                         @endif
-                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                            <a class="nav-link" href="{{ route('coberturas.index') }}">Nomenclador</a>
-                        @endif
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
+                            data-bs-target="#pagesCollapseNomencladores" aria-expanded="false"
+                            aria-controls="pagesCollapseNomencladores">
+                            Nomencladores
+                            <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="pagesCollapseNomencladores" data-bs-parent="#accordionSidenavPagesMenu">
+                            <nav class="sidenav-menu-nested nav">
+                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                                    <a class="nav-link" href="{{ route('nom_padres.index', 'A') }}">Anestesiologia</a>
+                                @endif
+                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                                    <a class="nav-link" href="{{ route('nom_padres.index', 'G') }}">Prácticas y Estudios</a>
+                                @endif
+                            </nav>
+                        </div>
                         <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                             data-bs-target="#pagesCollapsePrecios" aria-expanded="false"
                             aria-controls="pagesCollapsePrecios">

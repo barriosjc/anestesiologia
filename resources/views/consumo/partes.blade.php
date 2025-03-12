@@ -23,7 +23,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
+                                                {{request('cobertura_id') == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -35,7 +35,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($centros as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $centro_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}</option>
+                                                {{ request('centro_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -46,7 +46,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($profesionales as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $profesional_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                                                {{ request('profesional_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -55,19 +55,19 @@
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="centro_id">Paciente</label>
                                     <input type="text" class="form-control form-control-sm" name="nombre"
-                                        value="{{ $nombre }}" placeholder="Nombre del paciente">
+                                        value="{{ request('nombre') }}" placeholder="Nombre del paciente">
                                 </div>
                             </div>
                             <div class="row pt-2">
                                 <div class="col-md-2">
                                     <label class="small mb-1" for="fec_desde">Fec. qx desde</label>
                                     <input class="form-control form-control-sm" id="fec_desde" name="fec_desde"
-                                        type="date" placeholder="Ingrese fecha desde" value="{{ $fec_desde }}" />
+                                        type="date" placeholder="Ingrese fecha desde" value="{{ request('fec_desde') }}" />
                                 </div>
                                 <div class="col-md-2">
                                     <label class="small mb-1" for="fec_hasta">Fec. qx hasta</label>
                                     <input class="form-control form-control-sm" id="fec_hasta" name="fec_hasta"
-                                        type="date" placeholder="Ingrese fecha hasta" value="{{ $fec_hasta }}" />
+                                        type="date" placeholder="Ingrese fecha hasta" value="{{ request('fec_hasta') }}" />
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label class="small mb-1" for="estado_id">Estados</label>
@@ -75,7 +75,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($estados as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ $estado_id == $item->id ? 'selected' : '' }}>{{ $item->descripcion }}
+                                                {{ request('estado_id') == $item->id ? 'selected' : '' }}>{{ $item->descripcion }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -83,12 +83,12 @@
                                 <div class="col-md-2">
                                     <label class="small mb-1" for="fec_desde_adm">Fec. carga desde</label>
                                     <input class="form-control form-control-sm" id="fec_desde_adm" name="fec_desde_adm"
-                                        type="date" placeholder="Ingrese fecha desde" value="{{ $fec_desde_adm }}" />
+                                        type="date" placeholder="Ingrese fecha desde" value="{{ request('fec_desde_adm') }}" />
                                 </div>
                                 <div class="col-md-2">
                                     <label class="small mb-1" for="fec_hasta_adm">Fec. carga hasta</label>
                                     <input class="form-control form-control-sm" id="fec_hasta_adm" name="fec_hasta_adm"
-                                        type="date" placeholder="Ingrese fecha hasta" value="{{ $fec_hasta_adm }}" />
+                                        type="date" placeholder="Ingrese fecha hasta" value="{{ request('fec_hasta_adm') }}" />
                                 </div>
                                 <div class="form-group col-md-2 d-flex align-items-end">
                                     <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm" type="submit">Filtrar
