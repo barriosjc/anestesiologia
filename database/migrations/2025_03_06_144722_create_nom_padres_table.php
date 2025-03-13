@@ -19,6 +19,7 @@ class CreateNomPadresTable extends Migration
             $table->string('nombre', 100);
             $table->char('tipo', 1);
             $table->timestamps();
+            $table->softDeletes();
             $table->engine = 'InnoDB';
         });
 

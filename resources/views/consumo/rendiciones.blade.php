@@ -110,7 +110,7 @@
             agregarConsumoConDiferencia: "{{ route('consumo.rendiciones.agregarydiff') }}",
         };
     </script>
-    <script src="{{ asset('js/rendiciones.js') }}"></script>
+    {{-- <script src="{{ asset('js/rendiciones.js') }}"></script> --}}
     <script src="{{ asset('js/rendiciones.js') }}"></script>
 {{-- 
     <script>

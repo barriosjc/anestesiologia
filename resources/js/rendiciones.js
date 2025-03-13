@@ -2,8 +2,6 @@ let token = document.querySelector('input[name="_token"]').value;
 
 $("#estadoCambio").on('change', function() {
     let value = $(this).val();
-    alert("cargo datos de js"); 
-    console.log('entro al js');
     // si se selecciona aRefactuar
     if (value === '7') {
         $("#div_refac").css('display', 'block');

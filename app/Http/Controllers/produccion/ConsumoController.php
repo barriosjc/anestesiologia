@@ -434,7 +434,8 @@ class ConsumoController extends Controller
                         $sepa = " ,";
                         continue;
                     }
-                    if ($nuevoEstado == "6" && in_array($est_actual, [1,2,3,4,6])) {
+                    // pagado
+                    if ($nuevoEstado == "6" && in_array($est_actual, [1,2,3,4,6,9,10])) {
                         $ids = $ids . $sepa . $item['parte_id'];
                         $sepa = " ,";
                         continue;

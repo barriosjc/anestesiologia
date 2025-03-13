@@ -85,7 +85,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('nomeclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
             Route::delete('nomenclador/valores/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valores.borrar');
             
-            Route::get('nomenclador/listas', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
+            Route::get('nomenclador/listas/{id?}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
             Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
             Route::delete('nomenclador/listas/borrar/{id}', [PreciosListasController::class, 'borrar'])->name('nomenclador.listas.borrar');
             Route::get('nomenclador/listas/filtrar', [PreciosListasController::class, 'filtrar'])->name('nomenclador.listas.filtrar');

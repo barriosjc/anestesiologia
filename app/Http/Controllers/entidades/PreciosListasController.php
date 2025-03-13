@@ -17,7 +17,7 @@ use App\Http\Controllers\Controller;
 
 class PreciosListasController extends Controller
 {
-    public function index()
+    public function index($tipo = null)
     {
         $listas = Valores_cab::with([
             'gerenciadora:id,nombre',
@@ -25,11 +25,17 @@ class PreciosListasController extends Controller
             'centro:id,nombre'
         ])
             ->whereHas('gerenciadora')
-            ->whereHas('cobertura')
+            ->whereHas('cobertura', function ($query) use ($tipo) {
+                if ($tipo != null) {
+                    $query->where('nom_padre_id', $tipo);
+                }
+            })
             ->whereHas('centro')
             ->paginate();
         $gerenciadoras = Gerenciadora::orderby("nombre")->get();
-        $coberturas = Cobertura::orderby("nombre")->get();
+        $coberturas = $tipo == null ? 
+                    Cobertura::orderby("nombre")->get() : 
+                    Cobertura::where('nom_padre_id', $tipo)->orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $periodos = Periodo::orderby("nombre")->get();
         $validated = ["gerenciadora_id" => null, "cobertura_id" => null,

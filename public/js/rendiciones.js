@@ -12,8 +12,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var token = document.querySelector('input[name="_token"]').value;
 $("#estadoCambio").on('change', function () {
   var value = $(this).val();
-  alert("cargo datos de js");
-  console.log('entro al js');
   // si se selecciona aRefactuar
   if (value === '7') {
     $("#div_refac").css('display', 'block');

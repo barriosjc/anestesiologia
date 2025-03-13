@@ -26,10 +26,10 @@
                                 <tbody>
                                     @foreach ($nomencladores as $item)
                                         <tr>
-                                            <td>{{ ++$item->id }}</td>
+                                            <td>{{ $item->id }}</td>
 											<td>{{ $item->nombre }}</td>
                                             <td>
-                                                <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.listas.listas') }}"><i class="fa fa-fw fa-eye"></i></a>
+                                                <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.listas.listas', $item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
