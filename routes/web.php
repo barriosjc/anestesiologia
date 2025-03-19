@@ -20,6 +20,7 @@ use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 use App\Http\Controllers\entidades\PreciosListasController;
 use App\Http\Controllers\entidades\PreciosValoresController;
+use App\Http\Controllers\entidades\NomPracticasEstudioController;
 
 // Auth::routes();
 Route::match(['get'], 'login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -74,7 +75,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
             Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
-            Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
             
             // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
             Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
@@ -91,6 +91,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/listas/filtrar', [PreciosListasController::class, 'filtrar'])->name('nomenclador.listas.filtrar');
             Route::get('nomenclador/listas/modificar/{id}', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
             Route::post('nomeclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
+
+            Route::get("practicas_estudios/index/{nom_padre_id}/{tipo}", [NomPracticasEstudioController::class, 'index'])->name('nom_practicas_estudios.index');
+            Route::get("practicas_estudios/create/{nom_padre_id}", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
+            Route::get("practicas_estudios/edit/{id}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
+            Route::post('practicas_estudios/store', [NomPracticasEstudioController::class, 'store'])->name('nom_practicas_estudios.store');
+            Route::delete('practicas_estudios/borrar/{id}', [NomPracticasEstudioController::class, 'destroy'])->name('nom_practicas_estudios.destroy');
+            
 
             // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');
             Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parteFiltrar'])->name('consumos.partes.filtrar');

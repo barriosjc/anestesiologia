@@ -19,7 +19,7 @@
                                 <thead class="thead">
                                     <tr>
                                         <th>Nro</th>
-										<th>Nombre</th>
+                                        <th>Nombre</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -27,9 +27,17 @@
                                     @foreach ($nomencladores as $item)
                                         <tr>
                                             <td>{{ $item->id }}</td>
-											<td>{{ $item->nombre }}</td>
+                                            <td>{{ $item->nombre }}</td>
                                             <td>
-                                                <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.listas.listas', $item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
+                                                @if ($item->tipo == 'a')
+                                                    <a class="btn btn-sm btn-primary "
+                                                        href="{{ route('nomenclador.listas.listas', $item->id) }}"><i
+                                                            class="fa fa-fw fa-eye"></i></a>
+                                                @else
+                                                    <a class="btn btn-sm btn-primary "
+                                                        href="{{ route('nom_practicas_estudios.index', [$item->id, $tipo]) }}"><i
+                                                            class="fa fa-fw fa-eye"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -38,12 +46,11 @@
                         </div>
                     </div>
                 </div>
-                @if(!empty($nomencladores))
-                {!! $nomencladores->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-            @endif
+                @if (!empty($nomencladores))
+                    {!! $nomencladores->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                @endif
             </div>
         </div>
     </div>
     <script src="{{ asset('js/util.js') }}"></script>
-
 @endsection

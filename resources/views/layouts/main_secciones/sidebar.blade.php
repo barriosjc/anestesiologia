@@ -52,7 +52,7 @@
                                     <a class="nav-link" href="{{ route('nom_padres.index', 'a') }}">Anestesiologia</a>
                                 @endif
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                                    <a class="nav-link" href="{{ route('nom_padres.index', 'g') }}">Prácticas y Estudios</a>
+                                    <a class="nav-link" href="{{ route('nom_padres.index', 'n') }}">Prácticas y Estudios</a>
                                 @endif
                             </nav>
                         </div>

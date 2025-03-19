@@ -19,6 +19,6 @@ class nomenclador extends Model
      *
      * @var array
      */
-    protected $fillable = ['cobertura_id', 'centro_id', 'valor', 'nivel', 'tipo'];
+    protected $fillable = ['organo_id', 'cobertura_id',  'codigo', 'descripcion', 'tipo'];
 
 }
