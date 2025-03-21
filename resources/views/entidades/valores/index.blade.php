@@ -12,18 +12,19 @@
                 <div class="card">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
+
                             <span id="card_title">
                                 {{ __('Valorización') }}
                             </span>
                             <div class="form-group float-right">
-                                <div class="btn btn-sm btn-success float-right">
-                                    <span>{{ __('Nuevo') }}</span>
-                                </div>
-                                <div class="btn btn-sm btn-primary llama_modal float-right" data-bs-toggle="modal"
-                                    title="Copiar una lista de precios de un grupo a un grupo existente." data-bs-toggle="tooltip"
-                                    data-bs-target="#nuevoModal">
+                                <div class="btn btn-sm btn-success float-right"  data-bs-toggle="modal"
+                                    data-bs-target="#nuevoModal"
+                                    title="Copiar una lista de precios de un grupo a un grupo existente." data-bs-toggle="tooltip">
                                     <span>{{ __('Copiar') }}</span>
                                 </div>
+                                <a href="{{ route('nomenclador.valores.listas') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                    {{ __('Nuevo') }}
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -93,7 +94,7 @@
                                                             <i class="far fa-trash-alt text-white"></i></button>
                                                     @else
                                                         <button type="button" class="btn btn-success btn-sm"
-                                                            title="Recover data" data-bs-toggle="tooltip">
+                                                            >
                                                             <i class="fa-solid fa-rotate-left"></i></button>
                                                     @endif
                                                 </form>

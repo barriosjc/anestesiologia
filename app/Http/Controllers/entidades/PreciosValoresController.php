@@ -18,11 +18,11 @@ class PreciosValoresController extends Controller
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $nivel = null;
 
-        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
+        return view("entidades.valores.index", compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
-    public function nuevo(Request $request)
+    public function guardarGrupo(Request $request)
     {
         $validate = $request->validate(
             [
@@ -87,12 +87,12 @@ class PreciosValoresController extends Controller
             ->paginate();
 
         // dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.nomenclador.valores", compact("valores", "niveles"))
+        return view("entidades.valores.index", compact("valores", "niveles"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
             ->with('nivel', $request->nivel);
     }
 
-    public function guardar(Request $request)
+    public function guardarValor(Request $request)
     {
         $validate = $request->validate([
             "valor" => "required",

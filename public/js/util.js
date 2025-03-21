@@ -189,14 +189,15 @@ function confirmDelete(id) {
     })
 }
 
-function confirmJob(msg, metodo) {
+function confirmJob(msg, metodo, correSubmit = true) {
+  console.log("entro", metodo);
   Swal.fire({
       title: msg,
       text: "Esta acción es irreversible.",
       icon: 'info', 
       showCancelButton: true,
       confirmButtonColor: '#17a2b8', 
-      cancelButtonColor: '##d33', 
+      cancelButtonColor: '#d33', 
       confirmButtonText: 'Sí, confirmar',
       cancelButtonText: 'Cancelar',
       background: '#e3f2fd', 
@@ -206,8 +207,12 @@ function confirmJob(msg, metodo) {
       }
   }).then((result) => {
       if (result.isConfirmed) {
-          // document.getElementById(metodo).submit();
-          window[metodo]();
+          if (correSubmit) {
+              document.getElementById(metodo).submit();
+          } else {
+              // en lugar de hacer submit se llama a una funcion de js, que hace una determinada cosa custom
+              window[metodo]();
+          }
       }
   })
 }

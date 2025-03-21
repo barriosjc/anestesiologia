@@ -77,26 +77,30 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
             
             // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
-            Route::post('nomeclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
+            Route::post('nomenclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
             
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
             Route::get('nomenclador/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
-            Route::post('nomeclador/valores/nuevos', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valores.nuevo');
-            Route::post('nomeclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
+            Route::post('nomenclador/valores/grupo/nuevo', [PreciosValoresController::class, 'nuevoGrupo'])->name('nomenclador.valores.grupo.nuevo');
+            Route::post('nomenclador/valor/guardar/valor', [PreciosValoresController::class, 'guardarValor'])->name('nomenclador.valores.guardar.valor');
             Route::delete('nomenclador/valores/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valores.borrar');
+            Route::get('nomenclador/valores/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valores.nuevo');
+            Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valores.guardar');
             
             Route::get('nomenclador/listas/{id?}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
             Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
             Route::delete('nomenclador/listas/borrar/{id}', [PreciosListasController::class, 'borrar'])->name('nomenclador.listas.borrar');
             Route::get('nomenclador/listas/filtrar', [PreciosListasController::class, 'filtrar'])->name('nomenclador.listas.filtrar');
             Route::get('nomenclador/listas/modificar/{id}', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
-            Route::post('nomeclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
+            Route::post('nomenclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
 
             Route::get("practicas_estudios/index/{nom_padre_id}/{tipo}", [NomPracticasEstudioController::class, 'index'])->name('nom_practicas_estudios.index');
-            Route::get("practicas_estudios/create/{nom_padre_id}", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
-            Route::get("practicas_estudios/edit/{id}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
+            Route::get("practicas_estudios/create/{nom_padre_id}/{tipo}", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
+            Route::get("practicas_estudios/edit/{id}/{tipo}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
             Route::post('practicas_estudios/store', [NomPracticasEstudioController::class, 'store'])->name('nom_practicas_estudios.store');
             Route::delete('practicas_estudios/borrar/{id}', [NomPracticasEstudioController::class, 'destroy'])->name('nom_practicas_estudios.destroy');
+            Route::get("practicas_estudios/values/{id}", [NomPracticasEstudioController::class, 'values'])->name('nom_practicas_estudios.values');
+            Route::post('practicas_estudios/restore/{id}', [NomPracticasEstudioController::class, 'restore'])->name('nom_practicas_estudios.restore');
             
 
             // Route::get('consumos/partes', [ConsumoController::class, 'partes'])->name('consumos.partes');

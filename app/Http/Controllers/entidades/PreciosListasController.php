@@ -41,7 +41,7 @@ class PreciosListasController extends Controller
         $validated = ["gerenciadora_id" => null, "cobertura_id" => null,
         "centro_id" => null, "periodo" => null, "grupo" => null];
 
-        return view("entidades.nomenclador.listas", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
+        return view("entidades.agrupador_lista.index", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
             ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
     }
 
@@ -52,7 +52,7 @@ class PreciosListasController extends Controller
         $niveles = Nomenclador::select('nivel')->distinct()->get();
         $nivel = null;
 
-        return view("entidades.nomenclador.valores", compact("valores", "niveles", "nivel"))
+        return view("entidades.valores.index", compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
@@ -64,7 +64,7 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
         $listas = new Valores_cab;
 
-        return view("entidades.nomenclador.create", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
+        return view("entidades.agrupador_lista.create", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
     public function modificar(int $id)
@@ -75,7 +75,7 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
         $listas = Valores_cab::where("id", $id)->first();
 // dd($listas);
-        return view("entidades.nomenclador.edit", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
+        return view("entidades.agrupador_lista.edit", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
     public function filtrar(Request $request,)
@@ -119,7 +119,7 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
 
 
-        return view("entidades.nomenclador.listas", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
+        return view("entidades.agrupador_lista.index", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
             ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());
     }
 

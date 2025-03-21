@@ -70,7 +70,7 @@
             </div>
         </div>
     </div>
-    <script>
+    {{-- <script>
         function confirmDelete(id) {
             Swal.fire({
                 title: '¿Confirma eliminar?',
@@ -87,6 +87,6 @@
                 }
             })
         }
-    </script>
+    </script> --}}
 
 @endsection

@@ -11,16 +11,16 @@
                             <span id="card_title">
                                 {{ __('Nomenclador de prácticas y estudios') }}
                             </span>
-
                             <div class="float-right">
                                 <a href="{{ route('nom_padres.index', $tipo) }}" title="Volver">
                                     <button class="btn btn-warning btn-sm float-right">
                                         <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                                     </button>
                                 </a>
-                                <a href="{{ route('nom_practicas_estudios.create', $nom_padre_id) }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                    {{ __('Nuevo') }}
-                                </a>
+                                <a href="{{ route('nom_practicas_estudios.create', [$nom_padre_id, $tipo]) }}" 
+                                    class="btn btn-primary btn-sm float-right" data-placement="left">
+                                     {{ __('Nuevo') }}
+                                 </a>
                             </div>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
-                                    <tr>
+                                    <tr><th>Id</th>
                                         <th>Padre</th>
 										<th>Código</th>
 										<th>descripción</th>
@@ -38,21 +38,32 @@
                                 <tbody>
                                     @foreach ($nom_practicas_estudios as $item)
                                         <tr>
+                                            <td>{{ $item->id }}</td>
                                             <td>{{ $item->nom_padre_id }}</td>
 											<td>{{ $item->codigo }}</td>
                                             <td>{{ $item->nombre }}</td>
                                             <td>
-                                                <form id="delete-form-{{ $item->id }}" action="{{ route('nom_practicas_estudios.destroy',$item->id) }}" method="POST">
-                                                    {{-- <a class="btn btn-sm btn-primary " href="{{ route('nom_practicas_estudios.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a> --}}
-                                                    <a class="btn btn-sm btn-success" href="{{ route('nom_practicas_estudios.edit',$item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
-                                                    @csrf
-                                                    @method('DELETE')
+                                                @if($item->deleted_at)
+                                                    <form id="restore_form_{{$item->id}}" action="{{ route('nom_practicas_estudios.restore', $item->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="button" class="btn btn-warning btn-sm " 
+                                                            title="Volver a poner activa práctica o estudio que esta borrada." data-bs-toggle="tooltip"
+                                                            onclick="confirmJob('¿Desea restaurar este registro?', 'restore_form_{{$item->id}}')">
+                                                            <i class="fas fa-undo-alt"></i></button>
+                                                    </form>
+                                                @else
+                                                    <form id="delete-form-{{ $item->id }}" action="{{ route('nom_practicas_estudios.destroy',$item->id) }}" method="POST">
+                                                        <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.valores.filtrar', ['nivel' => $item->codigo]) }}"><i class="fa fa-dollar-sign"></i></a>
+                                                        <a class="btn btn-sm btn-success" href="{{ route('nom_practicas_estudios.edit', [$item->id, $tipo]) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                        @csrf
+                                                        @method('DELETE')
 
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        title="Borrar práctica o estudio"
-                                                        onclick="confirmDelete({{ $item->id }})"><i
-                                                            class="far fa-trash-alt text-white"></i></button>
-                                                </form>
+                                                        <button type="button" class="btn btn-danger btn-sm"
+                                                            title="Borrar práctica o estudio"
+                                                            onclick="confirmDelete({{ $item->id }})"><i
+                                                                class="far fa-trash-alt text-white"></i></button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -67,23 +78,5 @@
             </div>
         </div>
     </div>
-    {{-- <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: '¿Confirma eliminar?',
-                text: "No podrás revertir esto!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-form-'+id).submit();
-                }
-            })
-        }
-    </script> --}}
 
 @endsection
