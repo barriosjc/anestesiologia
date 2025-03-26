@@ -7,16 +7,15 @@
                 <div class="card card-default">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <span class="card-title">{{ __('Crear') }} Nuevo valor </span>
-                        <a href="{{ route('nom_practicas_estudios.index', $nom_padre_id) }}" title="Volver">
+                        <a href="{{ route('nom_practicas_estudios.index', session('ses_nom_padre_id')) }}" title="Volver">
                             <button class="btn btn-warning btn-sm float-right">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                             </button>
                         </a>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('nomenclador.valores.guardar') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('nomenclador.valor.guardar') }}"  role="form" enctype="multipart/form-data">
                             @csrf
-
                             @include('entidades.valores.form')
 
                         </form>

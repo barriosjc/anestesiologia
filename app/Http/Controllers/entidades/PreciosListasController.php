@@ -78,7 +78,7 @@ class PreciosListasController extends Controller
         return view("entidades.agrupador_lista.edit", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 
-    public function filtrar(Request $request,)
+    public function filtrar(Request $request)
     {
         $validated = $request->validate([
             'gerenciadora_id' => 'nullable|integer|exists:gerenciadoras,id',

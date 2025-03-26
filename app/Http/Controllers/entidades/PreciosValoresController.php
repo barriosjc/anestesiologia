@@ -7,6 +7,8 @@ use App\Models\nomenclador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\nomValoresRequest;
+use App\Models\NomPracticasEstudio;
 use Exception;
 
 class PreciosValoresController extends Controller
@@ -85,36 +87,51 @@ class PreciosValoresController extends Controller
             ->orderBy('created_at', 'asc')
             ->withTrashed()
             ->paginate();
+        $nivel = $request->nivel;
 
-        // dd( $request->cobertura_id, $request->centro_id);
-        return view("entidades.valores.index", compact("valores", "niveles"))
+        return view("entidades.valores.index", compact("valores", "niveles", "nivel"))
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage())
             ->with('nivel', $request->nivel);
     }
 
-    public function guardarValor(Request $request)
+    public function nuevo(Request $request)
+    {
+        $nom_practicas_estudios = new NomPracticasEstudio;
+        $nivel = $request->nivel;
+
+        return view("entidades.valores.create", compact("nom_practicas_estudios", "nivel"));
+    }
+
+    // modifica solo el valor (precio) de un registro
+    public function modificar(Request $request)
     {
         $validate = $request->validate([
             "valor" => "required",
         ]);
 
-        if (strpos($request->valor, ',') !== false) {
-            // Formato europeo: eliminar puntos y reemplazar la coma por un punto
-            $valor_convertido = str_replace('.', '', $request->valor);
-            $valor_convertido = str_replace(',', '.', $valor_convertido);
-        } else {
-            // Formato estándar: no hacer nada
-            $valor_convertido = $request->valor;
-        }
-        if (!is_numeric($valor_convertido)) {
-            return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
-        }
-
-        $valores = valores::where("id", $request->valores_id)->first();
-        $valores->valor = $valor_convertido;
+        $valores = Valores::where("id", $request->valores_id)->first();
+        $valores->valor = $this->getValor($request->valor);
         $valores->save();
 
         return redirect()->back();
+    }
+
+    public function guardar(nomValoresRequest $request)
+    {
+        $validate = $request->validate->validate($request->rulesForStoreOne());
+
+        $validate["valor"] = $this->getValor($request->valor);
+
+        Valores::create($validate);
+        // Valores::create([
+        //     "nivel" => request()->nivel,
+        //     "valor" => $valor_convertido,
+        //     "grupo" => request()->grupo,
+        //     "aplica_pocent_adic" => request()->aplica_pocent_adic,
+        //     "tipo" => request()->tipo
+        // ]);
+
+        return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
     }
 
     public function borrar(int $id)
@@ -123,5 +140,22 @@ class PreciosValoresController extends Controller
         $valores->delete();
 
         return redirect()->back();
+    }
+
+    private function getValor($valor)
+    {
+        if (strpos($valor, ',') !== false) {
+            // Formato europeo: eliminar puntos y reemplazar la coma por un punto
+            $valor_convertido = str_replace('.', '', $valor);
+            $valor_convertido = str_replace(',', '.', $valor_convertido);
+        } else {
+            // Formato estándar: no hacer nada
+            $valor_convertido = $valor;
+        }
+        if (!is_numeric($valor_convertido)) {
+            return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
+        }
+
+        return $valor_convertido;
     }
 }

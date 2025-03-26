@@ -1,7 +1,5 @@
 <div class="box box-info padding-1">
     <div class="box-body">
-        <input type="hidden" name="nom_padre_id" value="{{ $nom_padre_id }}">
-        <input type="hidden" name="tipo" value="{{ $tipo }}">
         <input type="hidden" name="id" value="{{$nom_practicas_estudios->id}}">
         <div class="row gx-3 mb-3">
             <div class="col-md-3">

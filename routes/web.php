@@ -80,12 +80,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('nomenclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
             
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
-            Route::get('nomenclador/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
+            Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
             Route::post('nomenclador/valores/grupo/nuevo', [PreciosValoresController::class, 'nuevoGrupo'])->name('nomenclador.valores.grupo.nuevo');
-            Route::post('nomenclador/valor/guardar/valor', [PreciosValoresController::class, 'guardarValor'])->name('nomenclador.valores.guardar.valor');
-            Route::delete('nomenclador/valores/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valores.borrar');
-            Route::get('nomenclador/valores/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valores.nuevo');
-            Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valores.guardar');
+            Route::post('nomenclador/valores/guardar', [PreciosValoresController::class, 'guardarGrupo'])->name('nomenclador.valores.grupo.guardar');
+            Route::delete('nomenclador/valor/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valor.borrar');
+            Route::get('nomenclador/valor/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valor.nuevo');
+            Route::post('nomenclador/valor/modificar', [PreciosValoresController::class, 'modificar'])->name('nomenclador.valor.modificar');
+            Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
             
             Route::get('nomenclador/listas/{id?}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
             Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
@@ -94,9 +95,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/listas/modificar/{id}', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
             Route::post('nomenclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
 
-            Route::get("practicas_estudios/index/{nom_padre_id}/{tipo}", [NomPracticasEstudioController::class, 'index'])->name('nom_practicas_estudios.index');
-            Route::get("practicas_estudios/create/{nom_padre_id}/{tipo}", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
-            Route::get("practicas_estudios/edit/{id}/{tipo}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
+            Route::get("practicas_estudios/index/{nom_padre}", [NomPracticasEstudioController::class, 'index'])->name('nom_practicas_estudios.index');
+            Route::get("practicas_estudios/create", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
+            Route::get("practicas_estudios/edit/{id}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
             Route::post('practicas_estudios/store', [NomPracticasEstudioController::class, 'store'])->name('nom_practicas_estudios.store');
             Route::delete('practicas_estudios/borrar/{id}', [NomPracticasEstudioController::class, 'destroy'])->name('nom_practicas_estudios.destroy');
             Route::get("practicas_estudios/values/{id}", [NomPracticasEstudioController::class, 'values'])->name('nom_practicas_estudios.values');

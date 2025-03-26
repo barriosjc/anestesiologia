@@ -14,13 +14,14 @@ class NomPracticasEstudioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(int $nom_padre_id, string $tipo)
+    public function index(int $nom_padre_id)
     {
         $nom_practicas_estudios = NomPracticasEstudio::
-            withTrashed()->    
+            withTrashed()->
             with('nomPadre')->where('nom_padre_id', $nom_padre_id)->paginate(10);
+        session(['ses_nom_padre_id' => $nom_padre_id]);
 
-        return view('entidades.nom_practicas_estudios.index', compact('nom_practicas_estudios', 'nom_padre_id', 'tipo'));
+        return view('entidades.nom_practicas_estudios.index', compact('nom_practicas_estudios'));
     }
     
     /**
@@ -28,11 +29,11 @@ class NomPracticasEstudioController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(int $nom_padre_id, string $tipo)
+    public function create()
     {
         $nom_practicas_estudios = new NomPracticasEstudio();
 
-        return view('entidades.nom_practicas_estudios.create', compact('tipo', 'nom_padre_id', 'nom_practicas_estudios'));
+        return view('entidades.nom_practicas_estudios.create', compact('nom_practicas_estudios'));
     }
 
     /**
@@ -44,11 +45,11 @@ class NomPracticasEstudioController extends Controller
     public function store(StoreNomencladorRequest $request)
     {
         $validatedData = $request->validated();
-        $nomenclador = NomPracticasEstudio::updateOrCreate(['id' => $request['id']], $request->all());
-        $nom_padre_id = $nomenclador->nom_padre_id;
-        $tipo = $request['tipo'];
+        $validatedData['nom_padre_id'] = session('ses_nom_padre_id');
 
-        return redirect()->route('nom_practicas_estudios.index', [$nom_padre_id, $tipo])
+        $nomenclador = NomPracticasEstudio::updateOrCreate(['id' => $request['id']], $validatedData);
+
+        return redirect()->route('nom_practicas_estudios.index', session('ses_nom_padre_id'))
             ->with('success', 'Práctica o estudio creada correctamente.');
     }
 
@@ -58,12 +59,12 @@ class NomPracticasEstudioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(int $id, string $tipo)
+    public function edit(int $id)
     {
         $nom_practicas_estudios = NomPracticasEstudio::find($id);
-        $nom_padre_id = $nom_practicas_estudios->nom_padre_id;
+        // $nom_padre_id = $nom_practicas_estudios->nom_padre_id;
 
-        return view('entidades.nom_practicas_estudios.create', compact('tipo', 'nom_padre_id', 'nom_practicas_estudios'));
+        return view('entidades.nom_practicas_estudios.create', compact('nom_practicas_estudios'));
     }
 
     /**

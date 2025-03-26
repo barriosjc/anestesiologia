@@ -17,6 +17,8 @@ class NomPadreController extends Controller
     public function index(string $tipo)
     {
         $nomencladores = $this->nomPadreRepository->getByTipo($tipo);
-        return view('entidades.nom_padres.index', compact('nomencladores', 'tipo'));
+        session(['ses_nom_tipo' => $tipo]);
+
+        return view('entidades.nom_padres.index', compact('nomencladores'));
     }
 }

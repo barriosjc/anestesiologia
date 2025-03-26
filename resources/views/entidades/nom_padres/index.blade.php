@@ -34,7 +34,7 @@
                                                             class="fa fa-fw fa-eye"></i></a>
                                                 @else
                                                     <a class="btn btn-sm btn-primary "
-                                                        href="{{ route('nom_practicas_estudios.index', [$item->id, $tipo]) }}"><i
+                                                        href="{{ route('nom_practicas_estudios.index', $item->id) }}"><i
                                                             class="fa fa-fw fa-eye"></i></a>
                                                 @endif
                                             </td>

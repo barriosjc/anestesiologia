@@ -22,7 +22,7 @@
                                     title="Copiar una lista de precios de un grupo a un grupo existente." data-bs-toggle="tooltip">
                                     <span>{{ __('Copiar') }}</span>
                                 </div>
-                                <a href="{{ route('nomenclador.valores.listas') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('nomenclador.valor.nuevo', ['nivel' => $nivel]) }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                     {{ __('Nuevo') }}
                                 </a>
                             </div>
@@ -85,7 +85,7 @@
                                             </td>
                                             <td class="td-actions">
                                                 <form id="delete-form-{{ $item->id }}"
-                                                    action="{{ route('nomenclador.valores.borrar', $item->id) }}" method="POST">
+                                                    action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
                                                     @csrf
                                                     @if (empty($item->deleted_at))
                                                         @method('DELETE')
@@ -138,7 +138,7 @@
                     <h5 class="modal-title" id="valorModalLabel">Valor en $ o unidades</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('nomenclador.valores.guardar.valor') }}" method="POST">
+                <form action="{{ route('nomenclador.valor.guardar') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" name="valores_id" value="">

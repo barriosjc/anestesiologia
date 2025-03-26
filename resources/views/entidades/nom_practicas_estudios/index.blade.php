@@ -12,12 +12,12 @@
                                 {{ __('Nomenclador de prácticas y estudios') }}
                             </span>
                             <div class="float-right">
-                                <a href="{{ route('nom_padres.index', $tipo) }}" title="Volver">
+                                <a href="{{ route('nom_padres.index', session('ses_nom_tipo')) }}" title="Volver">
                                     <button class="btn btn-warning btn-sm float-right">
                                         <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                                     </button>
                                 </a>
-                                <a href="{{ route('nom_practicas_estudios.create', [$nom_padre_id, $tipo]) }}" 
+                                <a href="{{ route('nom_practicas_estudios.create') }}" 
                                     class="btn btn-primary btn-sm float-right" data-placement="left">
                                      {{ __('Nuevo') }}
                                  </a>
@@ -31,7 +31,7 @@
                                     <tr><th>Id</th>
                                         <th>Padre</th>
 										<th>Código</th>
-										<th>descripción</th>
+										<th>Nombre</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -53,8 +53,8 @@
                                                     </form>
                                                 @else
                                                     <form id="delete-form-{{ $item->id }}" action="{{ route('nom_practicas_estudios.destroy',$item->id) }}" method="POST">
-                                                        <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.valores.filtrar', ['nivel' => $item->codigo]) }}"><i class="fa fa-dollar-sign"></i></a>
-                                                        <a class="btn btn-sm btn-success" href="{{ route('nom_practicas_estudios.edit', [$item->id, $tipo]) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                        <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.valores.filtrar', ['nivel' => $item->codigo] ) }}"><i class="fa fa-dollar-sign"></i></a>
+                                                        <a class="btn btn-sm btn-success" href="{{ route('nom_practicas_estudios.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
                                                         @csrf
                                                         @method('DELETE')
 
