@@ -56,8 +56,10 @@ class PreciosListasController extends Controller
             ->with('i', (request()->input('page', 1) - 1) * $valores->perPage());
     }
 
-    public function nuevo(Request $request)
+    public function nuevo()
     {
+dd("paso por acas");
+
         $gerenciadoras = Gerenciadora::orderby("nombre")->get();
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
