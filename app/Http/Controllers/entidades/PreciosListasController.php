@@ -58,8 +58,6 @@ class PreciosListasController extends Controller
 
     public function nuevo()
     {
-dd("paso por acas");
-
         $gerenciadoras = Gerenciadora::orderby("nombre")->get();
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
@@ -76,7 +74,7 @@ dd("paso por acas");
         $centros = Centro::orderby("nombre")->get();
         $periodos = Periodo::orderby("nombre")->get();
         $listas = Valores_cab::where("id", $id)->first();
-// dd($listas);
+
         return view("entidades.agrupador_lista.edit", compact("gerenciadoras", "coberturas", "centros", "periodos", "listas"));
     }
 

@@ -17,7 +17,8 @@
                             </span>
 
                             <div class="float-right">
-                                <a href="{{ route('nomenclador.listas.nuevo') }}" class="btn btn-primary btn-sm float-right"
+                                <a href="{{ route('nomenclador.listas.nuevo') }}" 
+                                class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
                                     {{ __('Nuevo') }}
                                 </a>
@@ -26,7 +27,6 @@
                     </div>
                     <div class="card-body">
                             <form id="reportForm" action="{{ route('nomenclador.listas.filtrar') }}" method='GET'>
-                            @csrf
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label class="small mb-1" for="gerenciadora_id">Gerenciadoras</label>
@@ -34,7 +34,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($gerenciadoras as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ old('gerenciadora_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                                                {{ request('gerenciadora_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -45,7 +45,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ old('cobertura_id') == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
+                                                {{ request('cobertura_id') == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -56,7 +56,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($centros as $item)
                                             <option value="{{ $item->id }}"
-                                                {{ old('centro_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                                                {{ request('centro_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -67,7 +67,7 @@
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($periodos as $item)
                                             <option
-                                                value="{{ $item->nombre }}"{{ old('periodo') == $item->nombre ? 'selected' : '' }}>
+                                                value="{{ $item->nombre }}"{{ request('periodo') == $item->nombre ? 'selected' : '' }}>
                                                 {{ $item->nombre }} </option>
                                         @endforeach
                                     </select>
@@ -75,7 +75,7 @@
                                 <div class="form-group col-md-1">
                                     <label class="small mb-1" for="grupo">Grupo</label>
                                     <input type="text" class="form-control form-control-sm" name="grupo"
-                                        value="{{ old('grupo') }}">
+                                        value="{{ request('grupo') }}">
                                 </div>
                                 <div class="form-group col-md-1 d-flex align-items-end">
                                     <button id="submitInputs" class="btn btn-primary btn-sm" type="submit">
