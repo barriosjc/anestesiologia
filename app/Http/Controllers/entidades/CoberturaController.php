@@ -77,7 +77,7 @@ class CoberturaController extends Controller
     {
         $cobertura = Cobertura::find($id);
 
-        return view('entidades.cobertura.show', compact('Cobertura'));
+        return view('entidades.cobertura.show', compact('cobertura'));
     }
 
     /**

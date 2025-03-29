@@ -35,7 +35,9 @@ class StoreNomencladorRequest extends FormRequest
             'codigo' => [
                 'required',
                 'string',
-                Rule::unique('nom_practicas_estudios', 'codigo')->ignore($nomencladorId),
+                Rule::unique('nom_practicas_estudios', 'codigo')
+                    ->where('nom_padre_id', request('nom_padre_id'))
+                    ->ignore($nomencladorId),
             ],
         ];
     }

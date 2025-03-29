@@ -118,18 +118,12 @@ class PreciosValoresController extends Controller
 
     public function guardar(nomValoresRequest $request)
     {
-        $validate = $request->validate->validate($request->rulesForStoreOne());
+        $validate = $request->validate($request->rulesForStoreOne());
 
         $validate["valor"] = $this->getValor($request->valor);
-
+        $validate["aplica_pocent_adic"] = null;
+        
         Valores::create($validate);
-        // Valores::create([
-        //     "nivel" => request()->nivel,
-        //     "valor" => $valor_convertido,
-        //     "grupo" => request()->grupo,
-        //     "aplica_pocent_adic" => request()->aplica_pocent_adic,
-        //     "tipo" => request()->tipo
-        // ]);
 
         return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
     }

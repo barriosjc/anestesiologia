@@ -49,10 +49,8 @@
                         <div class="collapse" id="pagesCollapseNomencladores" data-bs-parent="#accordionSidenavPagesMenu">
                             <nav class="sidenav-menu-nested nav">
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                                    <a class="nav-link" href="{{ route('nom_padres.index', 'a') }}">Anestesiologia</a>
-                                @endif
-                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                                    <a class="nav-link" href="{{ route('nom_padres.index', 'n') }}">Prácticas y Estudios</a>
+                                    <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'a']) }}">Anestesiologia</a>
+                                    <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'n']) }}">Prácticas y Estudios</a>
                                 @endif
                             </nav>
                         </div>

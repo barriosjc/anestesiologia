@@ -17,4 +17,9 @@ class NomPadreRepository implements NomPadreRepositoryInterface
     {
         return $this->model->where('tipo', $tipo)->paginate(20);
     }
+
+    public function store($request)
+    {
+        $this->model->create($request->all());
+    }   
 }

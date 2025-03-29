@@ -15,7 +15,7 @@
                             <a href="{{ route('coberturas.update', $cobertura->id) }}" title="Edit Usuario"><button
                                     class="btn btn-primary btn-sm"><i class="far fa-edit"></i></button></a>
 
-                            <form method="POST" action="{{ route('coberturas.delete', $cemtro->id) }}" accept-charset="UTF-8"
+                            <form method="POST" action="{{ route('coberturas.destroy', $cobertura->id) }}" accept-charset="UTF-8"
                                 style="display:inline">
                                 {{ method_field('DELETE') }}
                                 {{ csrf_field() }}

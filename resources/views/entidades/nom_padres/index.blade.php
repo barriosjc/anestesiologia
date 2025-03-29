@@ -10,6 +10,11 @@
                             <span id="card_title">
                                 {{ __('Nomencladores') }}
                             </span>
+                            <div class="float-right">
+                                <a href="{{ route('nom_padres.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                  {{ __('Nuevo') }}
+                                </a>
+                              </div>
                         </div>
                     </div>
                     <div class="card-body">

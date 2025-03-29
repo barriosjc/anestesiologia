@@ -51,7 +51,7 @@
                                             <td>{{ $item->porcentaje_adic }}</td>
                                             <td>
                                                 <form id="delete-form-{{ $item->id }}" action="{{ route('coberturas.destroy',$item->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('coberturas.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a>
+                                                    {{-- <a class="btn btn-sm btn-primary " href="{{ route('coberturas.show',$item->id) }}"><i class="fa fa-fw fa-eye"></i></a> --}}
                                                     <a class="btn btn-sm btn-success" href="{{ route('coberturas.edit',$item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
                                                     @csrf
                                                     @method('DELETE')

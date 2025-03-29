@@ -74,7 +74,9 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
-            Route::get('/nomencladores/{tipo}', [NomPadreController::class, 'index'])->name('nom_padres.index');
+            Route::get('/nomencladores/listar', [NomPadreController::class, 'index'])->name('nom_padres.index');
+            Route::get('/nomencladores/create', [NomPadreController::class, 'create'])->name('nom_padres.create');
+            Route::post('/nomencladores/store', [NomPadreController::class, 'store'])->name('nom_padres.store');
             
             // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
             Route::post('nomenclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');

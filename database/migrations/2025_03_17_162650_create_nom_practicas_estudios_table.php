@@ -12,13 +12,14 @@ class CreateNomPracticasEstudiosTable extends Migration
             $table->id();
             $table->unsignedBigInteger('nom_padre_id');
             $table->string('nombre', 200);
-            $table->string('codigo', 10)->unique();
+            $table->string('codigo', 10);
             $table->softDeletes();
             $table->timestamps();
             $table->engine = 'InnoDB';
 
             // Relación con la tabla nom_padre
             $table->foreign('nom_padre_id')->references('id')->on('nom_padres')->onDelete('cascade');
+            $table->unique(['nom_padre_id', 'codigo']);
         });
     }
 

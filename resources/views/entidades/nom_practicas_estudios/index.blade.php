@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 @if(!empty($nom_practicas_estudios))
-                    {!! $nom_practicas_estudios->links() !!}
+                    {!! $nom_practicas_estudios->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                 @endif
             </div>
         </div>

@@ -10,6 +10,6 @@ class NomPadre extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['descripcion', 'tipo'];
+    protected $fillable = ['nombre', 'tipo'];
 
 }
