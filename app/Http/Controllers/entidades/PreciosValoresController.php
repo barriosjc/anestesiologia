@@ -5,7 +5,6 @@ namespace App\Http\Controllers\entidades;
 use App\Models\Valores;
 use App\Models\nomenclador;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\nomValoresRequest;
 use App\Models\NomPracticasEstudio;

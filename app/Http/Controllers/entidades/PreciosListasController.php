@@ -17,8 +17,9 @@ use App\Http\Controllers\Controller;
 
 class PreciosListasController extends Controller
 {
-    public function index($tipo = null)
+    public function index(int $nom_padre_id)
     {
+        $tipo = session('ses_nom_tipo');
         $listas = Valores_cab::with([
             'gerenciadora:id,nombre',
             'cobertura:id,sigla',
@@ -40,6 +41,7 @@ class PreciosListasController extends Controller
         $periodos = Periodo::orderby("nombre")->get();
         $validated = ["gerenciadora_id" => null, "cobertura_id" => null,
         "centro_id" => null, "periodo" => null, "grupo" => null];
+        session(['ses_nom_padre_id' => $nom_padre_id]);
 
         return view("entidades.agrupador_lista.index", compact("listas", "gerenciadoras", "coberturas", "centros", "periodos", "validated"))
             ->with('i', (request()->input('page', 1) - 1) * $listas->perPage());

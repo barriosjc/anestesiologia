@@ -63,7 +63,7 @@
                         <div class="collapse" id="pagesCollapsePrecios" data-bs-parent="#accordionSidenavPagesMenu">
                             <nav class="sidenav-menu-nested nav">
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                                    <a class="nav-link" href="{{ route('nomenclador.listas.listas') }}">Listas</a>
+                                    <a class="nav-link" href="{{ route('nomenclador.listas.listas', 0) }}">Listas</a>
                                 @endif
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                                     <a class="nav-link" href="{{ route('nomenclador.valores.listas') }}">Precios</a>

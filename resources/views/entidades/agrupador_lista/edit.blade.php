@@ -14,7 +14,7 @@
                 <div class="card card-default">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <span class="card-title">{{ __('Modificar') }} Listas de precios</span>
-                        <a href="{{ route('nomenclador.listas.listas') }}" title="Volver">
+                        <a href="{{ route('nomenclador.listas.listas', session('ses_nom_padre_id')) }}" title="Volver">
                             <button class="btn btn-warning btn-sm float-right">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                             </button>
