@@ -43,5 +43,10 @@ class Centro extends Model
     {
         return $this->hasMany(Valores_cab::class, 'centro_id');
     }
-    
+
+    public function presupuestosCab()
+    {
+        return $this->hasMany(PresupuestoCab::class, 'centro_id');
+    }
 }
+

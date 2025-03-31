@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class PresupuestoDet extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $table = 'presupuestos_det';
+    protected $fillable = ['presupuesto_cab_id', 'cobertura_id', 'nivel', 'codigo', 'porcentaje', 'valor', 'observaciones'];
+
+    // Relación inversa con PresupuestoCab (Cada detalle pertenece a un presupuesto)
+    public function presupuesto()
+    {
+        return $this->belongsTo(PresupuestoCab::class, 'presupuesto_cab_id');
+    }
+
+    // Relación con Cobertura
+    public function cobertura()
+    {
+        return $this->belongsTo(Cobertura::class, 'cobertura_id');
+    }
+}

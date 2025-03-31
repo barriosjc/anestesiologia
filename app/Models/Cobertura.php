@@ -39,4 +39,10 @@ class Cobertura extends Model
     {
         return $this->hasMany(Valores_cab::class, 'cobertura_id');
     }
+
+    public function presupuestosDet()
+    {
+        return $this->hasMany(PresupuestoDet::class, 'cobertura_id');
+    }
+
 }
