@@ -20,6 +20,8 @@ use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 use App\Http\Controllers\entidades\PreciosListasController;
 use App\Http\Controllers\entidades\PreciosValoresController;
+use App\Http\Controllers\entidades\PresupuestoCabController;
+use App\Http\Controllers\entidades\PresupuestoDetController;
 use App\Http\Controllers\entidades\NomPracticasEstudioController;
 
 // Auth::routes();
@@ -74,12 +76,12 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
-            Route::get('/nomencladores/listar', [NomPadreController::class, 'index'])->name('nom_padres.index');
-            Route::get('/nomencladores/create', [NomPadreController::class, 'create'])->name('nom_padres.create');
-            Route::post('/nomencladores/store', [NomPadreController::class, 'store'])->name('nom_padres.store');
+            Route::get('nomencladores/listar', [NomPadreController::class, 'index'])->name('nom_padres.index');
+            Route::get('nomencladores/create', [NomPadreController::class, 'create'])->name('nom_padres.create');
+            Route::post('nomencladores/store', [NomPadreController::class, 'store'])->name('nom_padres.store');
             
             // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
-            Route::post('nomenclador/valores/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
+            Route::post('nomenclador/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
             
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
             Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
@@ -89,6 +91,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/valor/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valor.nuevo');
             Route::post('nomenclador/valor/modificar', [PreciosValoresController::class, 'modificar'])->name('nomenclador.valor.modificar');
             Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
+            Route::get('nomenclador/valor/obtener', [PreciosValoresController::class, 'obtener'])->name('nomenclador.valor.obtener');
             
             Route::get('nomenclador/listas/creadas/{nom_padre}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
             Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
@@ -158,6 +161,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('permisos/{id}/usuarios', [permisosController::class, 'usuarios'])->name('permisos.usuarios');
             Route::get('permisos/{id}/roles/{rolid}/{tarea}', [permisosController::class, 'roles']);
             Route::get('permisos/{id}/roles', [permisosController::class, 'roles'])->name('permisos.grupos');
+        });
+
+        Route::group(['middleware' => ['permission:adm_presupuestos']], function () {
+            Route::resource('presupuestos/cab', PresupuestoCabController::class)->names('presupuestos.cab');
+            Route::get('presupuestos/payments', [PresupuestoCabController::class, 'payments'])->name('presupuestos.cab.payments');
+            Route::resource('presupuestos/{id}/det', PresupuestoDetController::class)->names('presupuestos.det');
         });
     });
 });

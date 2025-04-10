@@ -11,10 +11,25 @@ class PresupuestoCab extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'presupuestos_cab';
-    protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'observaciones', 'usuario_id'];
+    protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'profesional_id', 'observaciones', 'usuario_id', 'estado'];
 
-    // Relación con PresupuestoDet (Un presupuesto tiene muchos detalles)
-    public function detalles()
+    public function getPacienteAttribute()
+    {
+        $datos = [$this->nombre];
+    
+        if ($this->dni) {
+            $datos[] = $this->dni;
+        }
+    
+        if ($this->fecha_nac) {
+            $edad = now()->diffInYears($this->fecha_nac);
+            $datos[] = $edad;
+        }
+    
+        return implode(' - ', $datos);
+    }
+
+    public function presupuestosDet()
     {
         return $this->hasMany(PresupuestoDet::class, 'presupuesto_cab_id');
     }
@@ -32,7 +47,7 @@ class PresupuestoCab extends Model
     }
 
     // Relación con Usuario
-    public function usuario()
+    public function user()
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }

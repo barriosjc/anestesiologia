@@ -5,7 +5,6 @@
 @endsection
 
 @section('contenido')
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> --}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -26,7 +25,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover" id="table_data">
+                            <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
                                         <th>Nro</th>
@@ -76,8 +75,8 @@
         </div>
     </div>
     <script src="{{asset('js/util.js')}}"></script>
-    {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script> --}}
-    <script>
+
+    {{-- <script>
         $(document).ready( function () {
             //iniciar tabla enrriquesida
             $('#table_data').DataTable(
@@ -91,6 +90,6 @@
                 }
             );
         });
-    </script>
+    </script> --}}
 
 @endsection

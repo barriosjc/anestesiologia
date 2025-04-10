@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
-class permisos extends SpatiePermission
+class Permisos extends SpatiePermission
 {
 
     protected $casts = [

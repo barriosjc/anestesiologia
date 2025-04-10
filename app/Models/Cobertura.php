@@ -45,4 +45,8 @@ class Cobertura extends Model
         return $this->hasMany(PresupuestoDet::class, 'cobertura_id');
     }
 
+    public function nomPadres()
+    {
+        return $this->belongsToMany(NomPadre::class, 'cobertura_nom_padre', 'cobertura_id', 'nom_padre_id');
+    }
 }

@@ -14,17 +14,23 @@ class CreatePresupuestoCabsTable extends Migration
     public function up()
     {
         Schema::create('presupuestos_cab', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id')->autoIncrement();
             $table->date('fecha');
             $table->string('nombre');
             $table->date('fecha_nac')->nullable();
-            $table->string('dni', 20);
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
+            $table->string('dni', 20)->nullable;
+            $table->integer('centro_id');
+            $table->integer('profesional_id')->nullable();
             $table->text('observaciones')->nullable();
-            $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('usuario_id')->constrained('users')->onDelete('restrict');
+            $table->decimal('valor_dolar', 10, 2)->default(0);
+            $table->string('estado', 1)->default('I'); // I: ingresado, P:pagado, S:saldado
             $table->timestamps();
             $table->engine = 'InnoDB';
             $table->softDeletes();
+
+            $table->foreign('centro_id')->references('id')->on('centros')->onDelete('restrict');
+            $table->foreignId('profesional_id')->nullable()->constrained('profesionales')->nullOnDelete();
         });
     }
     

@@ -62,14 +62,14 @@ class ConsumoRepository
 
     public function valorBuscar($request, $parte_cab)
     {
-        $valores = Valores_cab::v_valores(
+        $valores = Valores_cab::vValores(
             1,
             $parte_cab->cobertura_id,
             $parte_cab->centro_id,
             $request->periodo,
             $request->nomenclador_id
         );
-
+dd("trae valores", $valores);
         return $valores;
     }
 

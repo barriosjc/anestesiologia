@@ -55,17 +55,22 @@ class Valores_cab extends Model
         return $this->belongsTo(Gerenciadora::class, 'gerenciadora_id');
     }
 
-    public static function v_valores(int $gerenciadora_id, int $cobertura_id, int $centro_id, string $periodo, string $nomenclador_id)
+    public static function vValores(
+        int $gerenciadora_id,
+        int $cobertura_id,
+        int $centro_id,
+        string $periodo,
+        string $codigo
+        )
     {
         $resu = Valores_cab::query()
-            ->select('nv.valor', 'n.nivel', 'nv.aplica_pocent_adic')
+            ->select('nv.valor', 'nv.nivel', 'nv.aplica_pocent_adic')
             ->join('nom_valores as nv', 'nv.grupo', 'nom_valores_cab.grupo')
-            ->join('nomenclador as n', 'n.nivel', 'nv.nivel')
-            ->where('gerenciadora_id', $gerenciadora_id)
-            ->where('cobertura_id', $cobertura_id)
-            ->where('centro_id', $centro_id)
-            ->where('periodo', $periodo)
-            ->where('n.id', $nomenclador_id)
+            ->where('nom_valores_cab.gerenciadora_id', $gerenciadora_id)
+            ->where('nom_valores_cab.cobertura_id', $cobertura_id)
+            ->where('nom_valores_cab.centro_id', $centro_id)
+            ->where('nom_valores_cab.periodo', $periodo)
+            ->where('nv.nivel', $codigo)
             ->first();
         // $sql = $resu->toSql();
         // $bindings = $resu->getBindings();

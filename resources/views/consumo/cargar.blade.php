@@ -23,7 +23,8 @@
                     </div>
                 @endif
                 <div class="alert alert-info" role="alert">
-                    {{$cabecera}}
+                    {{ "{$data->sigla} / {$data->centro} / {$data->profesional} / {$data->paciente} ({$data->edad}) / 
+                        {$data->fec_prestacion} / Obs: {$observaciones}" }}
                   </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover" id="tabla_data">
@@ -98,10 +99,10 @@
                         value="{{ old('parte_cab_id', $parte_cab_id) }}">
                     <input type="hidden" name="valor_orig" id="valor_orig">
                     <input type="hidden" name="valor_total" id="valor_total">
-                    <input type="hidden" name="nom_padre_id" id="nom_padre_id" value="{{$nom_padre_id}}">
+                    <input type="hidden" name="cobertura_id" id="cobertura_id" value="{{ $data->cobertura_id }}">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-2">
-                            <label for="archivo">Periodo</label>
+                            <label class="small mb-1" for="archivo">Periodo</label>
                             <select name="periodo" class="form-select periodo" id="periodo">
                                 <option value="">-- Seleccione --</option>
                                 @foreach ($periodos as $item)
@@ -112,7 +113,7 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="codigo">Procedimiento</label>
+                            <label class="small mb-1" for="codigo">Procedimiento</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="codigo" name="codigo"
                                     style="flex: 0 0 30%;" data-bs-toggle="tooltip"
@@ -126,18 +127,18 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <labe for="">Nomenclador</label>
+                            <label class="small mb-1" for="nomenclador_id">Nomenclador</label>
                                 <select name="nomenclador_id" class="form-select nomenclador_id" id="nomenclador_id">
                                     {{-- los items por js --}}
                                 </select>
                         </div>
                         <div class="col-md-1 pt-3">
-                            <label for="archivo">% </label>
+                            <label class="small mb-1" for="porcentaje">% </label>
                             <input type="text" class="form-control" id="porcentaje" name="porcentaje" required
                                 data-bs-toggle="tooltip" title="Debe ingresar un valor numérico." value=100>
                         </div>
                         <div class="col-md-2 pt-3">
-                            <label for="archivo">Valor ($)</label>
+                            <label class="small mb-1" for="total">Valor ($)</label>
                             <label class="form-control bg-light text-muted" id="total" name="total">0,00</label>
                         </div>
 
@@ -205,7 +206,7 @@
             document.getElementById('search').addEventListener('click', function() {
                 let codigo = document.getElementById('codigo').value;
                 let descripcion = document.getElementById('descripcion').value;
-                const nom_padre_id = document.getElementById('nom_padre_id').value;
+                const cobertura_id = document.getElementById('cobertura_id').value;
 
                 if (codigo == "" && descripcion == "") {
                     return
@@ -220,7 +221,7 @@
                         body: JSON.stringify({
                             codigo: codigo,
                             descripcion: descripcion,
-                            nom_padre_id: nom_padre_id
+                            cobertura_id: cobertura_id,
                         })
                     })
                     .then(response => response.json())
@@ -237,9 +238,11 @@
 
                         data.forEach(item => {
                             let option = document.createElement('option');
-                            option.value = item.id;
+                            // option.value = item.id;
+                            option.value = item.nivel === null ? item.codigo : item.nivel;
+                            option.setAttribute('data-nom_padre', item.nom_padre_id);
                             option.text =
-                                `${item.nivel} / ${item.codigo} / ${item.descripcion}`;
+                                `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
                             nomencladorSelect.appendChild(option);
                         });
 
@@ -296,7 +299,7 @@
                     mostrarValor();
                 }
             });
-
+            // ---------------------------------------------------------------------------------
             // funcion comun que se llama para mostrar el valor
             function mostrarValor() {
                 let parte_cab_id = document.getElementById('parte_cab_id').value;
@@ -308,7 +311,7 @@
                     return
                 }
                 selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
-                nomenclador_id = selectedNomencladorId.value
+                nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
 
                 return fetch('{{ route('consumos.valor.buscar') }}', {
                     method: 'POST',

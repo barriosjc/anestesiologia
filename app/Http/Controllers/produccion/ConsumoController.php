@@ -17,7 +17,7 @@ use App\Models\Parte_cab;
 use App\Models\Parte_det;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
-use App\Models\nomenclador;
+// use App\Models\Nomenclador;
 use App\Models\Profesional;
 use App\Models\Valores_cab;
 // use App\Exports\ProdProfCoberExport;
@@ -67,11 +67,9 @@ class ConsumoController extends Controller
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
         $observaciones = $data->observacion;
-        $nom_padre_id = Cobertura::where("id", $data->cobertura_id)->first()->nom_padre_id;
+        // $nom_padre_id = Cobertura::where("id", $data->cobertura_id)->first()->nom_padre_id;
 
-        $cabecera = $data->sigla ." / ".$data->centro." / ".$data->profesional ." / ".$data->paciente ." (".$data->edad.") / ".$data->fec_prestacion." / Obs: ".$observaciones;
-
-        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "consumos", "cabecera", "nom_padre_id"));
+        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "consumos", "data"));
         }
     
     public function valorBuscar(Request $request)
@@ -96,7 +94,7 @@ class ConsumoController extends Controller
         $parte_cab = $this->consumoRepository->parteBuscar($parte_cab_id);
         $cobertura = $this->consumoRepository->coberturaBuscar($parte_cab->cobertura_id);
         $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
-
+dd($valores->valor, $valores->aplica_pocent_adic);
         if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);
         }
@@ -115,6 +113,7 @@ class ConsumoController extends Controller
                 $porcentaje = $cobertura->porcentaje_adic;
             }
         }
+
         return response()->json(['valor' => $valor, 'porcentaje' => $porcentaje]);
     }
 
@@ -479,7 +478,7 @@ class ConsumoController extends Controller
             ->where('consumos_det_id', $item['consumo_det_id'])
             ->first();
            
-            $valores = Valores_cab::v_valores(
+            $valores = Valores_cab::vValores(
                 1,
                 $rendiciones->cobertura_id,
                 $rendiciones->centro_id,

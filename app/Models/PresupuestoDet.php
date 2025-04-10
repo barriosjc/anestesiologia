@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Cobertura;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PresupuestoDet extends Model
 {
@@ -14,7 +15,7 @@ class PresupuestoDet extends Model
     protected $fillable = ['presupuesto_cab_id', 'cobertura_id', 'nivel', 'codigo', 'porcentaje', 'valor', 'observaciones'];
 
     // Relación inversa con PresupuestoCab (Cada detalle pertenece a un presupuesto)
-    public function presupuesto()
+    public function presupuestoCab()
     {
         return $this->belongsTo(PresupuestoCab::class, 'presupuesto_cab_id');
     }

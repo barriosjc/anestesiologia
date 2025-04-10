@@ -79,12 +79,12 @@
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <label for="archivo">Nro. </label>
+                            <label class="small mb-1" for="archivo">Nro. </label>
                             <input type="text" class="form-control" id="nro_hoja" name="nro_hoja" required
                                 data-bs-toggle="tooltip" title="Debe ingresar un valor numérico.">
                         </div>
                         <div class="col-md-8">
-                            <label for="archivo">Seleccionar archivo:</label>
+                            <label class="small mb-1" for="archivo">Seleccionar archivo:</label>
                             <input type="file" class="form-control" id="archivo" name="archivo">
                         </div>
                     </div>

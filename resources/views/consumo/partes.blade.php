@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section('contenido')
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> --}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\entidades;
 
+use Exception;
 use App\Models\Centro;
+use App\Models\Periodo;
 use App\Models\Valores;
 use App\Models\Cobertura;
-use App\Models\nomenclador;
+use App\Models\Nomenclador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Periodo;
-use Exception;
+use App\Services\NomencladoresServices;
 
 class NomencladorController extends Controller
 {
@@ -114,30 +115,30 @@ class NomencladorController extends Controller
             ->with('nivel', $request->nivel);
     }
 
-    public function valor_guardar(Request $request)
-    {
-        $validate = $request->validate([
-            "valor"=> "required",
-        ]);
+    // public function valor_guardar(Request $request) //si se usa pasar a camelCase
+    // {
+    //     $validate = $request->validate([
+    //         "valor"=> "required",
+    //     ]);
 
-        if (strpos($request->valor, ',') !== false) {
-            // Formato europeo: eliminar puntos y reemplazar la coma por un punto
-            $valor_convertido = str_replace('.', '', $request->valor);
-            $valor_convertido = str_replace(',', '.', $valor_convertido);
-        } else {
-            // Formato estándar: no hacer nada
-            $valor_convertido = $request->valor;
-        }
-        if (!is_numeric($valor_convertido)) {
-            return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
-        }
+    //     if (strpos($request->valor, ',') !== false) {
+    //         // Formato europeo: eliminar puntos y reemplazar la coma por un punto
+    //         $valor_convertido = str_replace('.', '', $request->valor);
+    //         $valor_convertido = str_replace(',', '.', $valor_convertido);
+    //     } else {
+    //         // Formato estándar: no hacer nada
+    //         $valor_convertido = $request->valor;
+    //     }
+    //     if (!is_numeric($valor_convertido)) {
+    //         return redirect()->back()->withErrors(["error" => "Debe ingresar un número valido."]);
+    //     }
 
-        $valores = valores::where("id", $request->valores_id)->first();
-        $valores->valor = $valor_convertido;
-        $valores->save();
+    //     $valores = valores::where("id", $request->valores_id)->first();
+    //     $valores->valor = $valor_convertido;
+    //     $valores->save();
 
-        return redirect()->back();
-    }
+    //     return redirect()->back();
+    // }
 
     public function valoresBorrar(int $id)
     {
@@ -147,27 +148,40 @@ class NomencladorController extends Controller
         return redirect()->back();
     }
 
-    public function buscarCodDesc(Request $request)
+    public function buscarCodDesc(Request $request, NomencladoresServices $nomencladoresServices)
     {
-        $codigo = str_replace("-", "", $request->input('codigo'));
-        $descripcion = $request->input('descripcion');
-        $nom_padre_id = $request->input('nom_padre_id');
-
-        $query = Nomenclador::query();
-        if ($codigo) {
-            $query->where(DB::raw('REPLACE(codigo, "-", "")'), 'like', '%' . $codigo . '%');
+        $texto = $request->input('descripcion');
+        if ($request->input('codigo') != null) {
+            $texto = $request->input('codigo');
         }
+        $cobertura_id = $request->input('cobertura_id');
+        $results = $nomencladoresServices->buscar($texto, $cobertura_id);
 
-        if ($descripcion) {
-            $query->where('descripcion', 'like', '%' . $descripcion . '%');
-        }
-        $query->where('nom_padre_id', $nom_padre_id);
-        $query->orderBy('descripcion', 'asc');
-        
-        $results = $query->get();
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
-        // dd($sql,$bindings);
         return response()->json($results);
+
+        // $codigo = str_replace("-", "", $request->input('codigo'));
+        // $descripcion = $request->input('descripcion');
+        // $nom_padre_id = null;
+        // if ($request->has('nom_padre_id')){
+        //     $nom_padre_id = $request->input('nom_padre_id');
+        // } else {
+        //     if ($request->has('cobertura_id')){
+        //         $nom_padre_id = Cobertura::where('id', $request->input('cobertura_id'))->first()->nom_padred_id;
+        //     }
+        // }   
+
+        // $query = Nomenclador::query();
+        // if ($codigo) {
+        //     $query->where(DB::raw('REPLACE(codigo, "-", "")'), 'like', '%' . $codigo . '%');
+        // }
+
+        // if ($descripcion) {
+        //     $query->where('descripcion', 'like', '%' . $descripcion . '%');
+        // }
+        // $query->where('nom_padre_id', $nom_padre_id);
+        // $query->orderBy('descripcion', 'asc');
+        
+        // $results = $query->get();
+
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Centro;
 use App\Models\Periodo;
 use App\Models\Valores;
 use App\Models\Cobertura;
-use App\Models\nomenclador;
+use App\Models\Nomenclador;
 use App\Models\Valores_cab;
 use App\Models\Gerenciadora;
 use Illuminate\Http\Request;

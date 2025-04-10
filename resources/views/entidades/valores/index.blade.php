@@ -5,7 +5,6 @@
 @endsection
 
 @section('contenido')
-    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> --}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -112,8 +111,6 @@
             </div>
         </div>
     </div>
-    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
-    {{-- <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script> --}}
 
     <script>
         $(document).ready(function() {

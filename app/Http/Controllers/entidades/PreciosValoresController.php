@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\entidades;
 
 use App\Models\Valores;
-use App\Models\nomenclador;
+use App\Models\Nomenclador;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\nomValoresRequest;
 use App\Models\NomPracticasEstudio;
+use App\Services\NomencladoresServices;
 use Exception;
 
 class PreciosValoresController extends Controller
@@ -109,7 +110,7 @@ class PreciosValoresController extends Controller
         ]);
 
         $valores = Valores::where("id", $request->valores_id)->first();
-        $valores->valor = $this->getValor($request->valor);
+        $valores->valor = $this->getFormatValue($request->valor);
         $valores->save();
 
         return redirect()->back();
@@ -119,7 +120,7 @@ class PreciosValoresController extends Controller
     {
         $validate = $request->validate($request->rulesForStoreOne());
 
-        $validate["valor"] = $this->getValor($request->valor);
+        $validate["valor"] = $this->getFormatValue($request->valor);
         $validate["aplica_pocent_adic"] = null;
         
         Valores::create($validate);
@@ -135,7 +136,7 @@ class PreciosValoresController extends Controller
         return redirect()->back();
     }
 
-    private function getValor($valor)
+    private function getFormatValue($valor)
     {
         if (strpos($valor, ',') !== false) {
             // Formato europeo: eliminar puntos y reemplazar la coma por un punto
@@ -150,5 +151,11 @@ class PreciosValoresController extends Controller
         }
 
         return $valor_convertido;
+    }
+
+    public function obtener(request $request, NomencladoresServices $nomencladoresServices )
+    {
+        $nomenclador = $nomencladoresServices->buscar($request->nomenclador_id);
+    //    $valores = $request->nomenclador_id;
     }
 }

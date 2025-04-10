@@ -14,9 +14,9 @@ class CreatePresupuestoDetsTable extends Migration
     public function up()
     {
         Schema::create('presupuestos_det', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('presupuesto_cab_id')->constrained('presupuestos_cab')->onDelete('cascade'); // Relación con presupuestos_cab
-            $table->foreignId('cobertura_id')->constrained('coberturas')->onDelete('cascade');
+            $table->integer('id')->autoIncrement();
+            $table->integer('presupuesto_cab_id');
+            $table->integer('cobertura_id');
             $table->string('nivel');
             $table->string('codigo');
             $table->decimal('porcentaje', 5, 2);
@@ -25,6 +25,9 @@ class CreatePresupuestoDetsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->engine = 'InnoDB';
+
+            $table->foreign('presupuesto_cab_id')->references('id')->on('presupuestos_cab')->onDelete('restrict');
+            $table->foreign('cobertura_id')->references('id')->on('coberturas')->onDelete('restrict');
         });
         
     }

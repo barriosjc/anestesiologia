@@ -96,12 +96,28 @@
                     </nav>
                 </div>
             @endif
+            @if (Auth()->user()->hasPermissionTo('adm_presupuestos', 'web') || $super)
+            <a class="nav-link" href="{{ route('presupuestos.cab.index') }}">
+                <div class="nav-link-icon"><i class="fa-solid fa-file-medical"></i></div>
+                Presupuestos
+            </a>
+            @endif
+
 
             @role('super-admin')
                 <div class="sidenav-menu-heading">SEGURIDAD</div>
-                <a class="nav-link" href="{{ route('usuario.index') }}">ABM Usuarios</a>
-                <a class="nav-link" href="{{ route('permisos.index') }}">Permisos</a>
-                <a class="nav-link" href="{{ route('roles.index') }}">Perfiles</a>
+                <a class="nav-link" href="{{ route('usuario.index') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                    ABM Usuarios
+                </a>
+                <a class="nav-link" href="{{ route('permisos.index') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-key"></i></div>
+                    Permisos
+                </a>
+                <a class="nav-link" href="{{ route('roles.index') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-user-group"></i></div>
+                    Perfiles
+                </a>
             @endrole
             </div>
         </div>

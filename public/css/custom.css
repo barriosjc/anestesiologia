@@ -192,3 +192,11 @@
       /* Proporcional */
     }
   }
+
+  .s-red {
+    color: rgba(255, 0, 0, 0.5);
+    font-weight: bold;
+    padding-left: 5px;
+    font-family: cursive;
+    font-size: 14px;
+}
