@@ -39,4 +39,13 @@ class Gerenciadora extends Model
         return $this->hasMany(Valores_cab::class, 'gerenciadora_id');
     }
     
+    public function nomPadres()
+    {
+        return $this->belongsToMany(NomPadre::class, 'gerenciadoras_nom_padres', 'gerenciadora_id', 'nom_padre_id');
+    }
+    
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'gerenciadoras_users', 'gerenciadora_id', 'user_id');
+    }
 }

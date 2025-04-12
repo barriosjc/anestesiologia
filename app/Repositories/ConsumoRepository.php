@@ -69,7 +69,7 @@ class ConsumoRepository
             $request->periodo,
             $request->nomenclador_id
         );
-dd("trae valores", $valores);
+
         return $valores;
     }
 

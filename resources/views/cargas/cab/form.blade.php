@@ -2,10 +2,21 @@
     use Carbon\Carbon;
 @endphp
 <div class="box box-info padding-1">
+    @php( $parte_id = session('ses_parte_id') )
     <input type="hidden" name="parte_id" id="parte_id" value="{{old('parte_id', $parte_id)}}">
     <div class="box-body">
         <div class="row gx-3 mb-3">
-            <div class="col-md-8">
+            <div class="col-md-4">
+                <label class="small mb-1">Gerenciadora</label>
+                <select name="gerenciadora_id" class="form-select" id="gerenciadora_id" required>
+                    <option value=""> -- Seleccione --</option>
+                    @foreach ($gerenciadoras as $data)
+                        <option value="{{ $data->id }}" {{old('gerenciadora_id', $parte->gerenciadora_id) == $data->id ? 'selected' : ''}}>    
+                            {{ $data->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-4">
                 <label class="small mb-1">Centro</label>
                 <select name="centro_id" class="form-select" id="centro_id" required>
                     <option value=""> -- Seleccione --</option>
@@ -81,7 +92,6 @@
 
         <div class="box-footer mt20">
             <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
-            @php($parte_id = $parte_id ?? session('p_parte_id'))
             @if(!empty($parte_id))
                 <a href="{{route('partes_det.create', $parte_id)}}" class="btn btn-success">{{ __('Cargar detalle') }}</a>
             @endif

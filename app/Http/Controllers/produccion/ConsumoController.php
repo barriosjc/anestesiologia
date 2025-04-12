@@ -94,7 +94,7 @@ class ConsumoController extends Controller
         $parte_cab = $this->consumoRepository->parteBuscar($parte_cab_id);
         $cobertura = $this->consumoRepository->coberturaBuscar($parte_cab->cobertura_id);
         $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
-dd($valores->valor, $valores->aplica_pocent_adic);
+
         if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);
         }

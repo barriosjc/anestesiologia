@@ -154,8 +154,8 @@ class NomencladorController extends Controller
         if ($request->input('codigo') != null) {
             $texto = $request->input('codigo');
         }
-        $cobertura_id = $request->input('cobertura_id');
-        $results = $nomencladoresServices->buscar($texto, $cobertura_id);
+        $gerenciadora_id = $request->input('gerenciadora_id');
+        $results = $nomencladoresServices->buscar($texto, $gerenciadora_id);
 
         return response()->json($results);
 

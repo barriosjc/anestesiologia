@@ -30,7 +30,7 @@ class CreatePresupuestoCabsTable extends Migration
             $table->softDeletes();
 
             $table->foreign('centro_id')->references('id')->on('centros')->onDelete('restrict');
-            $table->foreignId('profesional_id')->nullable()->constrained('profesionales')->nullOnDelete();
+            $table->foreign('profesional_id')->references('id')->on('profesionales')->onDelete('restrict');
         });
     }
     

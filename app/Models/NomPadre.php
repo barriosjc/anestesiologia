@@ -16,5 +16,10 @@ class NomPadre extends Model
     {
         return $this->belongsToMany(Cobertura::class, 'cobertura_nom_padre', 'nom_padre_id', 'cobertura_id');
     }
+    
+    public function gerenciadoras()
+    {
+        return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_nom_padres', 'nom_padre_id', 'gerenciadora_id');
+    }
 
 }

@@ -64,7 +64,7 @@ class Valores_cab extends Model
         )
     {
         $resu = Valores_cab::query()
-            ->select('nv.valor', 'nv.nivel', 'nv.aplica_pocent_adic')
+            ->select('nv.valor', 'nv.nivel', 'nv.aplica_pocent_adic', 'nv.moneda')
             ->join('nom_valores as nv', 'nv.grupo', 'nom_valores_cab.grupo')
             ->where('nom_valores_cab.gerenciadora_id', $gerenciadora_id)
             ->where('nom_valores_cab.cobertura_id', $cobertura_id)
@@ -72,9 +72,17 @@ class Valores_cab extends Model
             ->where('nom_valores_cab.periodo', $periodo)
             ->where('nv.nivel', $codigo)
             ->first();
-        // $sql = $resu->toSql();
-        // $bindings = $resu->getBindings();
-        // dd($sql, $bindings, $resu->first());
+            
+            // $sql = $resu->toSql();
+            // $bindings = $resu->getBindings();
+            // dd($sql, $bindings, $resu->first());
+
+            if ($resu->moneda == 'UDS') {
+                $valDolar = Parametro::where('nombre', 'UDS')->first()->valor;
+                $resu->valor = round($resu->valor * $valDolar, 2);
+                    //  dd($valDolar, $resu);
+            }
+
         return $resu;
     }
 }

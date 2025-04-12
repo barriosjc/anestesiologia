@@ -14,8 +14,8 @@ use App\Models\Parte_cab;
 use App\Models\Parte_det;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ParteController extends Controller
@@ -27,19 +27,18 @@ class ParteController extends Controller
         $profesionales = Profesional::get();
         $estados = Estado::get();
         $users = User::get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('p_cobertura_id', null);
-        $centro_id = $request->has('centro_id') ? $request->centro_id : session('p_centro_id', null);
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('p_profesional_id', null);
-        $user_id = $request->has('user_id') ? $request->user_id : session('p_user_id', null);
-        $nombre = $request->has('nombre') ? $request->nombre : session('p_nombre', null);
-        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('p_nro_parte', null);
-        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : session('p_fec_desde', null);
-        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : session('p_fec_hasta', null);
-        $estado_id = $request->has('estado_id') ? $request->estado_id : session('p_estado_id', null);
-        $fec_desde_adm =  $request->has('submitInputs') ? $request->fec_desde_adm : session('p_fec_desde_adm', null);
-        $fec_hasta_adm =  $request->has('submitInputs') ? $request->fec_hasta_adm : session('p_fec_hasta_adm', null);
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
+        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
+        $user_id = $request->has('user_id') ? $request->user_id : null;
+        $nombre = $request->has('nombre') ? $request->nombre : null;
+        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : null;
+        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : null;
+        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : null;
+        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
+        $fec_desde_adm =  $request->has('submitInputs') ? $request->fec_desde_adm : null;
+        $fec_hasta_adm =  $request->has('submitInputs') ? $request->fec_hasta_adm : null;
 
-// dd( $fec_desde_adm,  $fec_hasta_adm);
         $query = Parte_cab::vParteCab();
         if (!empty($cobertura_id)) {
             $query->where('cobertura_id', '=', $cobertura_id);
@@ -77,20 +76,6 @@ class ParteController extends Controller
         $partes = $query->orderBy('created_at', 'asc')
                     ->paginate();
 
-        // guardo el filtro en session
-        session()->put('p_cobertura_id', $cobertura_id);
-        session()->put('p_centro_id', $centro_id);
-        session()->put('p_profesional_id', $profesional_id);
-        session()->put('p_nombre', $nombre);
-        session()->put('p_estado_id', $estado_id);
-        session()->put('p_user_id', $user_id);
-        session()->put('p_nro_parte', $nro_parte);
-        session()->put('p_fec_desde', $fec_desde);
-        session()->put('p_fec_hasta', $fec_hasta);
-        session()->put('p_fec_desde_adm', $fec_desde_adm);
-        session()->put('p_fec_hasta_adm', $fec_hasta_adm);
-        session()->put('p_nro_parte', $nro_parte);
-
         // Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
@@ -108,21 +93,20 @@ class ParteController extends Controller
 
     public function create()
     {
+        $gerenciadoras = Auth::user()->gerenciadoras;
         $centro_id = User::find(Auth()->user()->id)->centro_id;
-
         if ($centro_id) {
             $centros = Centro::where("id", $centro_id)->get();
         } else {
             $centros = Centro::orderby("nombre")->get();
         }
-        // dd($centros);
+        
         $paciente = new Paciente();
         $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $parte = new Parte_cab();
-        $parte_id = null;
 
-        return view('cargas.cab.create', compact('parte', 'centros', 'paciente', 'coberturas', 'profesionales', 'parte_id'));
+        return view('cargas.cab.create', compact('parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
 
     public function store(Request $request)
@@ -133,6 +117,7 @@ class ParteController extends Controller
             'centro_id' => 'required',
             'profesional_id' => 'required',
             'nombre' => 'required',
+            'gerenciadora_id' => 'required',
             'fec_nacimiento' => [
                 'required',
                 'date',
@@ -144,21 +129,6 @@ class ParteController extends Controller
                     }
                 },
             ],
-            // 'fec_prestacion' => ['required','date',
-            //     function ($attribute, $value, $fail) {
-            //         $year = explode('-', $value)[0];
-            //         $currentYear = date('Y');
-            //         if ($year < 1900 || $year > $currentYear) {
-            //             $fail("El campo fecha de prestación debe ser un año entre 1900 y $currentYear.");
-            //         }
-            //         $calendar = Calendar::where('fecha_ini', $value)
-            //                         ->where('user_id', Auth()->user()->id)
-            //                         ->exists();
-            //         if (! $calendar) {
-            //             $fail("Bloqueo de Carga !!! Primero debe tomar la fecha en el Calendario y luego cargar los partes de esa fecha.");
-            //         }
-            //     },
-            // ]
         ]);
 
         $paciente = Paciente::where('dni', $request->dni)->first();
@@ -179,6 +149,7 @@ class ParteController extends Controller
             $msg = "actualizado";
         }
         $parte->paciente_id = $paciente_id;
+        $parte->gerenciadora_id = $request->gerenciadora_id;
         $parte->centro_id = $request->centro_id;
         $parte->cobertura_id = $request->cobertura_id;
         $parte->profesional_id = $request->profesional_id;
@@ -189,19 +160,20 @@ class ParteController extends Controller
 
         return back()->withInput()
             ->with(['success' => "Se ha $msg la cabecera del parte correctamente, nro: {$parte->id}.",
-                    'parte_id' => $parte->id]);
+                    'ses_parte_id' => $parte->id]);
     }
 
     public function edit($id)
     {
+        $gerenciadoras = Auth::user()->gerenciadoras;
         $parte = Parte_cab::find($id);
         $paciente = Paciente::where('id', $parte->paciente_id)->first();
         $centros = Centro::orderby("nombre")->get();
         $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
-        $parte_id = $parte->id;
+        session(['ses_parte_id' => $parte->id]);
 
-        return view('cargas.cab.create', compact('parte', 'centros', 'paciente', 'coberturas', 'profesionales', 'parte_id'));
+        return view('cargas.cab.create', compact('parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
 
     public function destroy($id)
@@ -343,7 +315,6 @@ class ParteController extends Controller
             }
         }
         
-// dd($calendar);
         return view("cargas.calendar.index", compact('calendar'));
     }
 
@@ -378,7 +349,7 @@ class ParteController extends Controller
         if (!$calendar) {
             $calendar = new Calendar();
         }
-        // dd(Auth()->user()->id);
+        
         $calendar->user_id = Auth()->user()->id;
         $calendar->fecha_ini = $request->fecha;
         $calendar->observaciones = $request->observaciones;

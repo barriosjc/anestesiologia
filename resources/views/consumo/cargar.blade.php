@@ -99,7 +99,7 @@
                         value="{{ old('parte_cab_id', $parte_cab_id) }}">
                     <input type="hidden" name="valor_orig" id="valor_orig">
                     <input type="hidden" name="valor_total" id="valor_total">
-                    <input type="hidden" name="cobertura_id" id="cobertura_id" value="{{ $data->cobertura_id }}">
+                    <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{ $data->gerenciadora_id }}">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-2">
                             <label class="small mb-1" for="archivo">Periodo</label>
@@ -206,7 +206,7 @@
             document.getElementById('search').addEventListener('click', function() {
                 let codigo = document.getElementById('codigo').value;
                 let descripcion = document.getElementById('descripcion').value;
-                const cobertura_id = document.getElementById('cobertura_id').value;
+                const gerenciadora_id = document.getElementById('gerenciadora_id').value;
 
                 if (codigo == "" && descripcion == "") {
                     return
@@ -221,7 +221,7 @@
                         body: JSON.stringify({
                             codigo: codigo,
                             descripcion: descripcion,
-                            cobertura_id: cobertura_id,
+                            gerenciadora_id: gerenciadora_id,
                         })
                     })
                     .then(response => response.json())
