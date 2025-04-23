@@ -11,7 +11,8 @@ class PresupuestoCab extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'presupuestos_cab';
-    protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'profesional_id', 'observaciones', 'usuario_id', 'estado'];
+    protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'profesional_id', 
+        'observaciones', 'usuario_id', 'estado', 'valor_dolar'];
 
     public function getPacienteAttribute()
     {

@@ -7,6 +7,7 @@ use App\Http\Controllers\Utiles\UtilController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\entidades\CentroController;
+use App\Http\Controllers\entidades\ParametroController;
 use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -133,6 +134,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'profesionales' => ProfesionalController::class,
                     'centros' => CentroController::class,
                     'coberturas' => CoberturaController::class,
+                    'parametros' => ParametroController::class,
                 ]
             );
             Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargarDocum'])->name('profesional.cargar.documentacion');

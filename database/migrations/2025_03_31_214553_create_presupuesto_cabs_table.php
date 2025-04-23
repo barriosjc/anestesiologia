@@ -18,7 +18,7 @@ class CreatePresupuestoCabsTable extends Migration
             $table->date('fecha');
             $table->string('nombre');
             $table->date('fecha_nac')->nullable();
-            $table->string('dni', 20)->nullable;
+            $table->string('dni', 20)->nullable();
             $table->integer('centro_id');
             $table->integer('profesional_id')->nullable();
             $table->text('observaciones')->nullable();

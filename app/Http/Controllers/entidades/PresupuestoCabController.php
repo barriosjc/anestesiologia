@@ -8,6 +8,7 @@ use App\Models\PresupuestoCab;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PresupuestoCabRequest;
+use App\Models\Parametro;
 use App\Models\Profesional;
 
 class PresupuestoCabController extends Controller
@@ -21,11 +22,12 @@ class PresupuestoCabController extends Controller
 
     public function create()
     {
+        $uds = Parametro::where('nombre', 'UDS')->first()->valor;
         $centros = Centro::all();
         $profesionales = Profesional::orderBy('nombre')->get();
         $presupuestosCab = new PresupuestoCab();
 
-        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales'));
+        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales', 'uds')); 
     }
 
     public function edit(int $id)

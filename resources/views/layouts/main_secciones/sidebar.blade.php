@@ -70,6 +70,10 @@
                                 @endif
                             </nav>
                         </div>
+                        @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                            <a class="nav-link" href="{{ route('parametros.index') }}">Parametros</a>
+                        @endif
+                    </nav>
                 </div>
             @endrole
 

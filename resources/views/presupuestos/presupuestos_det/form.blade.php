@@ -1,4 +1,4 @@
-<form id="form_presupuesto" method="POST" action="{{ route('presupuestos.det.store') }}"  role="form" enctype="multipart/form-data">
+<form id="form_presupuesto" method="POST" action="{{ route('presupuestos.det.store', $presupuestosCab->id) }}"  role="form" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="valor_orig" id="valor_orig">
     <input type="hidden" name="valor_total" id="valor_total">
@@ -8,7 +8,7 @@
         <div class="row gx-3 mb-3">
             <div class="col-md-6">
                 <label class="small mb-1">Coberturas</label>
-                <select name="cobertura_id" class="select2 form-select form-select-2" id="cobertura_id" required>
+                <select name="cobertura_id" class="select2 form-select form-select-2" id="cobertura_id" >
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $data)
                         <option value="{{ $data->id }}">
@@ -51,7 +51,7 @@
             </div>
             <div class="col-md-1 pt-3">
                 <label class="small mb-1" for="archivo">% </label>
-                <input type="text" class="form-control" id="porcentaje" name="porcentaje" required
+                <input type="text" class="form-control" id="porcentaje" name="porcentaje" 
                     data-bs-toggle="tooltip" title="Debe ingresar un valor numérico." value=100>
             </div>
             <div class="col-md-2 pt-3">

@@ -9,7 +9,7 @@
             </div>
             <div class="col-md-4">
                 <label class="small mb-1">Centro</label><span class='s-red'>*</span>
-                <select name="centro_id" class="form-select" id="centro_id" required>
+                <select name="centro_id" class="form-select" id="centro_id" >
                     <option value=""> -- Seleccione --</option>
                     @foreach ($centros as $data)
                         <option value="{{ $data->id }}" {{old('centro_id', $presupuestosCab->centro_id) == $data->id ? 'selected' : ''}}>    
@@ -31,7 +31,7 @@
                 <label class="small mb-1" for="valor_dolar">Cotización Uds</label><span class='s-red'>*</span>
                 <input class="form-control" id="valor_dolar" name="valor_dolar" type="number"
                     data-bs-toggle="tooltip" step="0.01" min="0" 
-                    title="Para ingresar un valor correcto separar decimales con punto." value="{{ old('valor_dolar', $presupuestosCab->valor_dolar) }}" />
+                    title="Para ingresar un valor correcto separar decimales con punto." value="{{ old('valor_dolar', !empty($presupuestosCab->valor_dolar) ? $presupuestosCab->valor_dolar : $uds ) }}" />
             </div>
             <div class="col-md-6">
                 <label class="small mb-1" for="nombre">Nombre</label><span class='s-red'>*</span>
