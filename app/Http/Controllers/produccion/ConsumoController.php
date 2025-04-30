@@ -84,9 +84,9 @@ class ConsumoController extends Controller
                 'error' => 'Faltan id parte'
             ], 400); // Devuelve un código de error 400 (Bad Request)
         }
-        if (empty($request->nomenclador_id)) {
+        if (empty($request->nivel)) {
             return response()->json([
-                'error' => 'Faltan id nomenclador'
+                'error' => 'Faltan nivel'
             ], 400); // Devuelve un código de error 400 (Bad Request)
         }
    
@@ -124,6 +124,7 @@ class ConsumoController extends Controller
             "porcentaje" => "required|numeric|between:1,200",
             "valor_total" => "required|numeric|gt:0",
             "nomenclador_id" => "required",
+            "nom_padre_id" => "required",   
         ]);
 
         try {
@@ -141,6 +142,7 @@ class ConsumoController extends Controller
 
             $consumo_det = new Consumo_det;
             $consumo_det->consumo_cab_id = $consumo_cab->id;
+            $consumo_det->nom_padre_id = $request->nom_padre_id;
             $consumo_det->nomenclador_id = $request->nomenclador_id;
             $consumo_det->porcentaje = $request->porcentaje;
             $consumo_det->cantidad = 1;

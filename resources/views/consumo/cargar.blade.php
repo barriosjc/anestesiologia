@@ -99,6 +99,7 @@
                         value="{{ old('parte_cab_id', $parte_cab_id) }}">
                     <input type="hidden" name="valor_orig" id="valor_orig">
                     <input type="hidden" name="valor_total" id="valor_total">
+                    <input type="hidden" name="nom_padre_id" id="nom_padre_id">
                     <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{ $data->gerenciadora_id }}">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-2">
@@ -187,6 +188,12 @@
         var submitButton = document.getElementById('submitButton');
         if (submitButton) {        
             submitButton.addEventListener('click', function() {
+                const select = document.getElementById('nomenclador_id');
+                const selectedOption = select.options[select.selectedIndex];
+                const nomPadre = selectedOption.getAttribute('data-nom_padre');
+
+                document.getElementById('nom_padre_id').value = nomPadre;
+
                 document.getElementById('form_consumo').submit();
             });
         }
@@ -239,8 +246,9 @@
                         data.forEach(item => {
                             let option = document.createElement('option');
                             // option.value = item.id;
-                            option.value = item.nivel === null ? item.codigo : item.nivel;
+                            option.value = item.id;
                             option.setAttribute('data-nom_padre', item.nom_padre_id);
+                            option.setAttribute('data-nivel', item.nivel);
                             option.text =
                                 `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
                             nomencladorSelect.appendChild(option);
@@ -306,12 +314,13 @@
                 let periodo = document.getElementById('periodo').value;
                 let porcentajeInput = document.getElementById('porcentaje');
                 let porcentajeIni = parseFloat(porcentajeInput.value);
-                nomencladorSelect = document.getElementById('nomenclador_id');
+                let nomencladorSelect = document.getElementById('nomenclador_id');
                 if (periodo == "" || nomencladorSelect.options.length == 0) {
                     return
                 }
                 selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
                 nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
+                nivel = selectedNomencladorId.getAttribute('data-nivel');
 
                 return fetch('{{ route('consumos.valor.buscar') }}', {
                     method: 'POST',
@@ -321,7 +330,7 @@
                     },
                     body: JSON.stringify({
                         periodo: periodo, 
-                        nomenclador_id: nomenclador_id,
+                        nivel: nivel,
                         parte_cab_id: parte_cab_id
                     })
                 })
@@ -358,6 +367,7 @@
                 document.getElementById('valor_orig').value = '';
                 document.getElementById('total').textContent = '';
                 document.getElementById('valor_total').value = '';
+                document.getElementById('nom_padre_id').value = '';
             }
 
         });

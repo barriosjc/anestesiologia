@@ -67,7 +67,7 @@ class ConsumoRepository
             $parte_cab->cobertura_id,
             $parte_cab->centro_id,
             $request->periodo,
-            $request->nomenclador_id
+            $request->nivel
         );
 
         return $valores;
