@@ -49,4 +49,10 @@ class Cobertura extends Model
     {
         return $this->belongsToMany(NomPadre::class, 'cobertura_nom_padre', 'cobertura_id', 'nom_padre_id');
     }
+    
+    public function gerenciadoras()
+    {
+        return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_coberturas_nom_padres', 'cobertura_id', 'gerenciadora_id')
+                    ->withPivot('nom_padre_id');
+    }
 }

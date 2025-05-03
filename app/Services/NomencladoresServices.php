@@ -9,17 +9,16 @@ use App\Models\NomPracticasEstudio;
 
 class NomencladoresServices
 {
-    public function buscar(string $termino, int $gerenciadora_id)
+    public function buscar(string $termino, string $nom_padre_json)
     {
-        $nom_padres = Gerenciadora::find($gerenciadora_id)->nomPadres()->pluck('id')->toArray();
-
         // Nomenclador: nivel, descripcion
+        $nom_padre_array = json_decode($nom_padre_json, true);
         $nomencladores = Nomenclador::where(function($query) use ($termino) {
             $query->where('nivel', 'like', "%{$termino}%")
                   ->orWhere('codigo', 'like', "%{$termino}%")
                   ->orWhere('descripcion', 'like', "%{$termino}%");
         })
-        ->whereIn('nom_padre_id', $nom_padres)
+        ->whereIn('nom_padre_id', $nom_padre_array)
         ->get()
         ->map(function ($nomenclador) {
             return [
@@ -30,13 +29,12 @@ class NomencladoresServices
                 'nom_padre_id' => $nomenclador->nom_padre_id,
             ];
         });
-
         // PracticasEstudios: codigo, nombre
         $practicas = NomPracticasEstudio::where(function($query) use ($termino) {
             $query->where('codigo', 'like', "%{$termino}%")
                   ->orWhere('nombre', 'like', "%{$termino}%");
         })
-        ->whereIn('nom_padre_id', $nom_padres)
+        ->whereIn('nom_padre_id', $nom_padre_array)
         ->get()
         ->map(function ($practica) {
             return [

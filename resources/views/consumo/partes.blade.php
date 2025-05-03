@@ -105,7 +105,7 @@
                                         <th>Centro</th>
                                         <th>Profesional</th>
                                         <th>Paciente</th>
-                                        <th>Fecha</th>
+                                        <th>Fecha carga</th>
                                         <th>Cobertura</th>
                                         <th>Estado</th>
                                         <th>Docs</th>
@@ -169,7 +169,7 @@
         </div>
     </div>
     <script src="{{ asset('js/util.js') }}"></script>
-
+{{-- 
     <script>
         $(document).ready(function(){
             $('.select2').select2({
@@ -177,6 +177,6 @@
                 allowClear: true
             });
         });
-    </script>
+    </script> --}}
     
 @endsection

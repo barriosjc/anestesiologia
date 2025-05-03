@@ -39,7 +39,7 @@
                                         <th>Centro</th>
                                         <th>Profesional</th>
                                         <th>Paciente</th>
-                                        <th>Fecha</th>
+                                        <th>Fecha qx</th>
                                         <th>Cobertura</th>
                                         <th>Estado</th>
                                         <th style="width: 5%"><i class="fa-solid fa-paperclip"></i></th>
@@ -98,8 +98,13 @@
                         </div>
                     </div>
                 </div>
-                @if (!empty($partes))
+                {{-- @if (!empty($partes))
                     {!! $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
+                @endif --}}
+                @if ($partes->hasPages())
+                    <div class="mt-4">
+                        {{ $partes->links('vendor.pagination.bootstrap-4') }}
+                    </div>
                 @endif
             </div>
         </div>

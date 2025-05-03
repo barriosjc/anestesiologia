@@ -154,34 +154,10 @@ class NomencladorController extends Controller
         if ($request->input('codigo') != null) {
             $texto = $request->input('codigo');
         }
-        $gerenciadora_id = $request->input('gerenciadora_id');
-        $results = $nomencladoresServices->buscar($texto, $gerenciadora_id);
+        $nom_padre_json = $request->input('nom_padre_json');
+        $results = $nomencladoresServices->buscar($texto, $nom_padre_json);
 
         return response()->json($results);
-
-        // $codigo = str_replace("-", "", $request->input('codigo'));
-        // $descripcion = $request->input('descripcion');
-        // $nom_padre_id = null;
-        // if ($request->has('nom_padre_id')){
-        //     $nom_padre_id = $request->input('nom_padre_id');
-        // } else {
-        //     if ($request->has('cobertura_id')){
-        //         $nom_padre_id = Cobertura::where('id', $request->input('cobertura_id'))->first()->nom_padred_id;
-        //     }
-        // }   
-
-        // $query = Nomenclador::query();
-        // if ($codigo) {
-        //     $query->where(DB::raw('REPLACE(codigo, "-", "")'), 'like', '%' . $codigo . '%');
-        // }
-
-        // if ($descripcion) {
-        //     $query->where('descripcion', 'like', '%' . $descripcion . '%');
-        // }
-        // $query->where('nom_padre_id', $nom_padre_id);
-        // $query->orderBy('descripcion', 'asc');
-        
-        // $results = $query->get();
 
     }
 }

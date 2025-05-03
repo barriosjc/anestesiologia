@@ -22,75 +22,71 @@ class ParteController extends Controller
 {
     public function filtrar(Request $request)
     {
-        $coberturas = Cobertura::orderby("nombre")->get();
-        $centros = Centro::orderby("nombre")->get();
+        $coberturas = Cobertura::orderBy('nombre')->get();
+        $centros = Centro::orderBy('nombre')->get();
         $profesionales = Profesional::get();
         $estados = Estado::get();
         $users = User::get();
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
-        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
-        $user_id = $request->has('user_id') ? $request->user_id : null;
-        $nombre = $request->has('nombre') ? $request->nombre : null;
-        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : null;
-        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : null;
-        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : null;
-        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
-        $fec_desde_adm =  $request->has('submitInputs') ? $request->fec_desde_adm : null;
-        $fec_hasta_adm =  $request->has('submitInputs') ? $request->fec_hasta_adm : null;
-
+    
+        // Capturar todos los parámetros del filtro
+        $filtros = $request->only([
+            'cobertura_id', 'centro_id', 'profesional_id', 'user_id', 
+            'nombre', 'nro_parte', 'fec_desde', 'fec_hasta', 
+            'estado_id', 'fec_desde_adm', 'fec_hasta_adm'
+        ]);
+    
         $query = Parte_cab::vParteCab();
-        if (!empty($cobertura_id)) {
-            $query->where('cobertura_id', '=', $cobertura_id);
+    
+        if (!empty($filtros['cobertura_id'])) {
+            $query->where('cobertura_id', '=', $filtros['cobertura_id']);
         }
-        if (!empty($centro_id)) {
-            $query->where('centro_id', '=', $centro_id);
+        if (!empty($filtros['centro_id'])) {
+            $query->where('centro_id', '=', $filtros['centro_id']);
         }
-        if (!empty($profesional_id)) {
-            $query->where('profesional_id', '=', $profesional_id);
+        if (!empty($filtros['profesional_id'])) {
+            $query->where('profesional_id', '=', $filtros['profesional_id']);
         }
-        if (!empty($estado_id)) {
-            $query->where('estado_id', '=', $estado_id);
+        if (!empty($filtros['estado_id'])) {
+            $query->where('estado_id', '=', $filtros['estado_id']);
         }
-        if (!empty($user_id)) {
-            $query->where('user_id', '=', $user_id);
+        if (!empty($filtros['user_id'])) {
+            $query->where('user_id', '=', $filtros['user_id']);
         }
-        if (!empty($nombre)) {
-            $query->where('paciente', 'like', "%".$nombre."%");
+        if (!empty($filtros['nombre'])) {
+            $query->where('paciente', 'like', '%' . $filtros['nombre'] . '%');
         }
-        if (!empty($fec_desde)) {
-            $query->where('fec_prestacion_orig', '>=', $fec_desde);
+        if (!empty($filtros['fec_desde'])) {
+            $query->where('fec_prestacion_orig', '>=', $filtros['fec_desde']);
         }
-        if (!empty($fec_hasta)) {
-            $query->where('fec_prestacion_orig', '<=', $fec_hasta);
+        if (!empty($filtros['fec_hasta'])) {
+            $query->where('fec_prestacion_orig', '<=', $filtros['fec_hasta']);
         }
-        if (!empty($fec_desde_adm)) {
-            $query->where('created_at', '>=', $fec_desde_adm);
+        if (!empty($filtros['fec_desde_adm'])) {
+            $query->where('created_at', '>=', $filtros['fec_desde_adm']);
         }
-        if (!empty($fec_hasta_adm)) {
-            $query->where('created_at', '<=', Carbon::parse($fec_hasta_adm)->addDay()->format('Y-m-d'));
+        if (!empty($filtros['fec_hasta_adm'])) {
+            $query->whereDate('created_at', '<=', $filtros['fec_hasta_adm'] ? 
+                Carbon::parse($filtros['fec_hasta_adm'])->endOfDay() : null);
         }
-        if (!empty($nro_parte)) {
-            $query->where('id', '=', $nro_parte);
+        if (!empty($filtros['nro_parte'])) {
+            $query->where('id', '=', $filtros['nro_parte']);
         }
+    
         $partes = $query->orderBy('created_at', 'asc')
-                    ->paginate();
-
-        // Ver la consulta SQL y los bindings
-// $sql = $query->toSql();
-// $bindings = $query->getBindings();
-// dd($request, $sql, $bindings);
-
-        return view("cargas.cab.parte", compact(
-            "partes",
-            "coberturas",
-            "centros",
-            "users",
-            "estados",
-            "profesionales"
+            ->paginate(10)
+            ->appends($filtros); // Usar los filtros extraídos
+    
+        return view('cargas.cab.parte', compact(
+            'partes',
+            'coberturas',
+            'centros',
+            'users',
+            'estados',
+            'profesionales',
+            'filtros' // Pasar los filtros a la vista
         ));
     }
-
+    
     public function create()
     {
         $gerenciadoras = Auth::user()->gerenciadoras;

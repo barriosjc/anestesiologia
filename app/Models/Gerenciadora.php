@@ -48,4 +48,10 @@ class Gerenciadora extends Model
     {
         return $this->belongsToMany(User::class, 'gerenciadoras_users', 'gerenciadora_id', 'user_id');
     }
+ 
+    public function coberturas()
+    {
+        return $this->belongsToMany(Cobertura::class, 'gerenciadoras_coberturas_nom_padres', 'gerenciadora_id', 'cobertura_id')
+                    ->withPivot('nom_padre_id');
+    }
 }

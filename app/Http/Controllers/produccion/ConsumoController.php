@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Repositories\ConsumoRepository;
 use App\Http\Controllers\produccion\ReportFactory;
+use App\Models\GerenciadoraCoberturaNomPadre;
 
 // use PhpParser\Node\Stmt\TryCatch;
 
@@ -66,11 +67,16 @@ class ConsumoController extends Controller
         $consumos = DB::table('v_consumos')->where("parte_cab_id", $id)->get();
         $soloConsulta = !in_array(Parte_cab::find($id)->estado_id, [3,4]);
         $data = DB::table('v_parte_cab')->find($id);
+        $array = GerenciadoraCoberturaNomPadre::where('gerenciadora_id', $data->gerenciadora_id)
+            ->where('cobertura_id', $data->cobertura_id)
+            ->pluck('nom_padre_id')
+            ->toArray();
+        $nom_padre_json = json_encode($array);
         $observaciones = $data->observacion;
-        // $nom_padre_id = Cobertura::where("id", $data->cobertura_id)->first()->nom_padre_id;
 
-        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", "parte_cab_id", "consumos", "data"));
-        }
+        return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", 
+                        "parte_cab_id", "consumos", "data", "nom_padre_json"));
+    }
     
     public function valorBuscar(Request $request)
     {
