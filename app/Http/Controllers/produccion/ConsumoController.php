@@ -17,10 +17,8 @@ use App\Models\Parte_cab;
 use App\Models\Parte_det;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
-// use App\Models\Nomenclador;
 use App\Models\Profesional;
 use App\Models\Valores_cab;
-// use App\Exports\ProdProfCoberExport;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -29,8 +27,6 @@ use App\Http\Controllers\Controller;
 use App\Repositories\ConsumoRepository;
 use App\Http\Controllers\produccion\ReportFactory;
 use App\Models\GerenciadoraCoberturaNomPadre;
-
-// use PhpParser\Node\Stmt\TryCatch;
 
 class ConsumoController extends Controller
 {
@@ -274,7 +270,8 @@ class ConsumoController extends Controller
             $query->where('parte_cab_id', '=', $nro_parte);
         }
         $partes = $query->orderBy('created_at', 'asc')
-            ->paginate();
+        ->paginate()
+        ->appends($request->all());
 
         session()->put('c_cobertura_id', $cobertura_id);
         session()->put('c_centro_id', $centro_id);
@@ -286,8 +283,8 @@ class ConsumoController extends Controller
         session()->put('c_periodo_gen', $periodo_gen);
         session()->put('c_nro_parte', $nro_parte);
             
-                    
-                    // Ver la consulta SQL y los bindings
+
+// Ver la consulta SQL y los bindings
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
 // dd($sql, $bindings);
@@ -487,7 +484,7 @@ class ConsumoController extends Controller
             ->first();
            
             $valores = Valores_cab::vValores(
-                1,
+                $rendiciones->gerenciadora_id,
                 $rendiciones->cobertura_id,
                 $rendiciones->centro_id,
                 $periodo,

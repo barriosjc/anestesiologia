@@ -7,7 +7,7 @@
                 <option value="">-- Seleccione --</option>
                 @foreach ($coberturas as $item)
                     <option value="{{ $item->id }}"
-                        {{ $cobertura_id == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
+                        {{ session('c_cobertura_id') == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
                     </option>
                 @endforeach
             </select>
@@ -19,7 +19,7 @@
                 <option value="">-- Seleccione --</option>
                 @foreach ($centros as $item)
                     <option value="{{ $item->id }}"
-                        {{ $centro_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                        {{ session('c_centro_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
                     </option>
                 @endforeach
             </select>
@@ -32,7 +32,7 @@
                 <option value="">-- Seleccione --</option>
                 @foreach ($profesionales as $item)
                     <option value="{{ $item->id }}"
-                        {{ $profesional_id == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
+                        {{ session('c_profesional_id') == $item->id ? 'selected' : '' }}>{{ $item->nombre }}
                     </option>
                 @endforeach
             </select>
@@ -41,26 +41,26 @@
         <div class="form-group col-md-3">
             <label class="small mb-1" for="nombre">Paciente</label>
             <input type="text" class="form-control form-control-sm" name="nombre"
-                value="{{ $nombre }}" placeholder="Nombre del paciente">
+                value="{{ session('c_nombre') }}" placeholder="Nombre del paciente">
         </div>
     </div>
     <div class="row pt-2">
         <div class="col-md-2">
             <label class="small mb-1" for="fec_desde">Fec. qx desde</label>
             <input class="form-control form-control-sm" id="fec_desde" name="fec_desde"
-                type="date" placeholder="Ingrese fecha desde" value="{{ $fec_desde }}" />
+                type="date" placeholder="Ingrese fecha desde" value="{{ session('c_fec_desde') }}" />
         </div>
         <div class="col-md-2">
             <label class="small mb-1" for="fec_hasta">Fec. qx hasta</label>
             <input class="form-control form-control-sm" id="fec_hasta" name="fec_hasta"
-                type="date" placeholder="Ingrese fecha hasta" value="{{ $fec_hasta }}" />
+                type="date" placeholder="Ingrese fecha hasta" value="{{ session('c_fec_hasta') }}" />
         </div>
         <div class="form-group col-md-2">
             <label class="small mb-1" for="estado_id">Estados</label>
             <select class="form-select form-select-sm" id="estado_id" name="estado_id">
                 <option value="">-- Seleccione --</option>
                 @foreach ($estados as $item)
-                    <option value="{{ $item->id }}"
+                    <option value="{{ session('c_item->id') }}"
                         {{ $estado_id == $item->id ? 'selected' : '' }}>
                         {{ $item->descripcion }}
                     </option>
@@ -72,7 +72,7 @@
             <select class="form-select form-select-sm" id="periodo_gen" name="periodo_gen">
                 <option value="">-- Seleccione --</option>
                 @foreach ($periodos as $item)
-                    <option value="{{ $item->nombre }}"
+                    <option value="{{ session('c_item->nombre') }}"
                         {{ $periodo_gen == $item->nombre ? 'selected' : '' }}>
                         {{ $item->nombre }}
                     </option>
@@ -83,7 +83,7 @@
             <label class="small mb-1" for="nro_parte">Nro parte</label>
             <input class="form-control form-control-sm" id="nro_parte" name="nro_parte"
                 type="number" min="0" step=1 max="999999999" placeholder="número"
-                value="{{ old('nro_parte', session('c_nro_parte')) }}" />
+                value="{{ session('c_nro_parte') }}" />
         </div>
         <div class="form-group col-md-2 d-flex align-items-end">
             <button id="submitInputs" name="submitInputs" class="btn btn-primary btn-sm"

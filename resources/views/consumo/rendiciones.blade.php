@@ -48,7 +48,12 @@
                                                             value="{{ $item->consumos_det_id }}">
                                                     </div>
                                                 </td>
-                                                <td>{{ $item->parte_cab_id }}</td>
+                                                <td>
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        data-bs-title="Prof: {{ $item->prof_nombre }} - Cobertura: {{ $item->cob_sigla }} - Centro: {{ $item->cen_nombre }}"
+                                                        class="badge bg-primary">{{ $item->parte_cab_id}}
+                                                    </span>
+                                                </td>
                                                 <td>{{ $item->fec_prestacion }}</td>
                                                 <td>{{ $item->pac_nombre }}</td>
                                                 <td class="columna-extra">{{ $item->periodo }}

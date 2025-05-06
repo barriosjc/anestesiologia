@@ -102,9 +102,10 @@
                     {!! $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
                 @endif --}}
                 @if ($partes->hasPages())
-                    <div class="mt-4">
+                    {{-- <div class="mt-4">
                         {{ $partes->links('vendor.pagination.bootstrap-4') }}
-                    </div>
+                    </div> --}}
+                    {{ $partes->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
                 @endif
             </div>
         </div>

@@ -41,7 +41,7 @@ class Gerenciadora extends Model
     
     public function nomPadres()
     {
-        return $this->belongsToMany(NomPadre::class, 'gerenciadoras_nom_padres', 'gerenciadora_id', 'nom_padre_id');
+        return $this->belongsToMany(NomPadre::class, 'gerenciadoras_coberturas_nom_padres', 'gerenciadora_id', 'nom_padre_id');
     }
     
     public function users()

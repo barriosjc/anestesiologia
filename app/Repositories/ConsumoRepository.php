@@ -12,12 +12,13 @@ class ConsumoRepository
 {
     public function filtrar($request)
     {
+        //este se usa en Auditoria carga
         $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
         $centro_id = $request->has('centro_id') ? $request->centro_id : null;
         $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
         $nombre = $request->has('nombre') ? $request->nombre : null;
-        $fec_desde = $request->has('submitInputs') ? $request->fec_desde : null;
-        $fec_hasta = $request->has('submitInputs') ? $request->fec_hasta : null;
+        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
+        $fec_hasta = $request->has('fec_desde') ? $request->fec_hasta : null;
         $estado_id = $request->has('estado_id') ? $request->estado_id : null;
         $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : null;
         $fec_hasta_adm = $request->has('fec_hasta_adm') ? $request->fec_hasta_adm : null;
@@ -55,7 +56,7 @@ class ConsumoRepository
             $query->where('id', $nro_parte);
         }
         $partes = $query->orderBy('created_at', 'asc')
-                    ->paginate();
+                        ->paginate();
 
         return $partes;
     }
@@ -63,7 +64,7 @@ class ConsumoRepository
     public function valorBuscar($request, $parte_cab)
     {
         $valores = Valores_cab::vValores(
-            1,
+            $parte_cab->gerenciadora_id,
             $parte_cab->cobertura_id,
             $parte_cab->centro_id,
             $request->periodo,

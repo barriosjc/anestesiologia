@@ -28,13 +28,16 @@ class ParteController extends Controller
         $estados = Estado::get();
         $users = User::get();
     
+        dd($request->all());
+        session(['form_parte' => $request->all()]);
+
         // Capturar todos los parámetros del filtro
         $filtros = $request->only([
             'cobertura_id', 'centro_id', 'profesional_id', 'user_id', 
             'nombre', 'nro_parte', 'fec_desde', 'fec_hasta', 
             'estado_id', 'fec_desde_adm', 'fec_hasta_adm'
         ]);
-    
+
         $query = Parte_cab::vParteCab();
     
         if (!empty($filtros['cobertura_id'])) {
