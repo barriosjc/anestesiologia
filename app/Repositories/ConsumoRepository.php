@@ -13,16 +13,16 @@ class ConsumoRepository
     public function filtrar($request)
     {
         //este se usa en Auditoria carga
-        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : null;
-        $centro_id = $request->has('centro_id') ? $request->centro_id : null;
-        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : null;
-        $nombre = $request->has('nombre') ? $request->nombre : null;
-        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : null;
-        $fec_hasta = $request->has('fec_desde') ? $request->fec_hasta : null;
-        $estado_id = $request->has('estado_id') ? $request->estado_id : null;
-        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : null;
-        $fec_hasta_adm = $request->has('fec_hasta_adm') ? $request->fec_hasta_adm : null;
-        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : null;
+        $cobertura_id = $request->has('cobertura_id') ? $request->cobertura_id : session('a_cobertura_id', null);
+        $centro_id = $request->has('centro_id') ? $request->centro_id : session('a_centro_id', null);
+        $profesional_id = $request->has('profesional_id') ? $request->profesional_id : session('a_profesional_id', null);
+        $nombre = $request->has('nombre') ? $request->nombre : session('a_nombre', null);
+        $fec_desde = $request->has('fec_desde') ? $request->fec_desde : session('a_fec_desde', null);
+        $fec_hasta = $request->has('fec_hasta') ? $request->fec_hasta : session('a_fec_hasta', null);
+        $estado_id = $request->has('estado_id') ? $request->estado_id : session('a_estado_id', null);
+        $fec_desde_adm = $request->has('fec_desde_adm') ? $request->fec_desde_adm : session('a_fec_desde_adm', null);
+        $fec_hasta_adm = $request->has('fec_hasta_adm') ? $request->fec_hasta_adm : session('a_fec_hasta_adm', null);
+        $nro_parte = $request->has('nro_parte') ? $request->nro_parte : session('a_nro_parte', null);
 
         $query = Parte_cab::vParteCab();
         if (!empty($cobertura_id)) {
@@ -58,6 +58,16 @@ class ConsumoRepository
         $partes = $query->orderBy('created_at', 'asc')
                         ->paginate();
 
+        session()->put('a_cobertura_id', $cobertura_id);
+        session()->put('a_centro_id', $centro_id);
+        session()->put('a_profesional_id', $profesional_id);
+        session()->put('a_nombre', $nombre);
+        session()->put('a_fec_desde', $fec_desde);
+        session()->put('a_fec_hasta', $fec_hasta);
+        session()->put('a_fec_desde_adm', $fec_desde_adm);
+        session()->put('a_fec_hasta_adm', $fec_hasta_adm);
+        session()->put('a_estado_id', $estado_id);
+        session()->put('a_nro_parte', $nro_parte);                
         return $partes;
     }
 

@@ -123,8 +123,9 @@ class ParteController extends Controller
         $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
         $parte = new Parte_cab();
+        $parte_id = null;
 
-        return view('cargas.cab.create', compact('parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
+        return view('cargas.cab.create', compact('parte_id', 'parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
 
     public function store(Request $request)
@@ -177,8 +178,7 @@ class ParteController extends Controller
         $parte->save();
 
         return back()->withInput()
-            ->with(['success' => "Se ha $msg la cabecera del parte correctamente, nro: {$parte->id}.",
-                    'ses_parte_id' => $parte->id]);
+            ->with(['success' => "Se ha $msg la cabecera del parte correctamente, nro: {$parte->id}."]);
     }
 
     public function edit($id)
@@ -189,9 +189,9 @@ class ParteController extends Controller
         $centros = Centro::orderby("nombre")->get();
         $coberturas = Cobertura::orderby("nombre")->get();
         $profesionales = Profesional::get();
-        session(['ses_parte_id' => $parte->id]);
-
-        return view('cargas.cab.create', compact('parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
+        $parte_id = $id;
+// dd($parte_id);
+        return view('cargas.cab.create', compact('parte_id', 'parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
 
     public function destroy($id)
