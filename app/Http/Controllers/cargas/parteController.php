@@ -127,7 +127,6 @@ class ParteController extends Controller
 
         return view('cargas.cab.create', compact('parte_id', 'parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -177,7 +176,7 @@ class ParteController extends Controller
         $parte->user_id = Auth()->user()->id;
         $parte->save();
 
-        return back()->withInput()
+        return back()->withInput(['parte_id' => $parte->id])
             ->with(['success' => "Se ha $msg la cabecera del parte correctamente, nro: {$parte->id}."]);
     }
 

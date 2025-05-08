@@ -2,8 +2,8 @@
     use Carbon\Carbon;
 @endphp
 <div class="box box-info padding-1">
-    {{-- @dd("desde el include",$parte_id) --}}
-    <input type="hidden" name="parte_id" id="parte_id" value="{{old('parte_id', $parte_id)}}">
+    @php($parte_id = old('parte_id', $parte_id))
+    <input type="hidden" name="parte_id" id="parte_id" value="{{$parte_id}}">
     <div class="box-body">
         <div class="row gx-3 mb-3">
             <div class="col-md-4">
