@@ -83,6 +83,7 @@ Route::group(['middleware' => 'auth'], function () {
             
             // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
             Route::post('nomenclador/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
+            Route::post('nomenclador/buscar/dos', [NomencladorController::class, 'buscarCodDesc2'])->name('nomenclador.buscar2.coddesc');
             
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
             Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');

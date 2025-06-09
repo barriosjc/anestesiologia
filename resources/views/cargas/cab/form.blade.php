@@ -62,7 +62,7 @@
         <!-- Form Row-->
         <div class="row gx-3 mb-3">
             <div class="col-md-6">
-                <label class="small mb-1">Coberturas</label>
+                <label for="cobertura_id" class="small mb-1">Coberturas</label>
                 <select name="cobertura_id" class="select2 form-select" id="cobertura_id" required>
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $data)
@@ -73,7 +73,7 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="small mb-1">Profesional</label>
+                <label for="profesional_id" class="small mb-1">Profesional</label>
                 <select name="profesional_id" class="form-select" id="profesional_id" required>
                     <option value=""> -- Seleccione --</option>
                     @foreach ($profesionales as $data)

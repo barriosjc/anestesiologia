@@ -199,4 +199,31 @@
     padding-left: 5px;
     font-family: cursive;
     font-size: 14px;
-}
+  }
+
+  /* General - Select2 normal */
+  .select2-container--default .select2-selection--single {
+    height: calc(2.375rem + 2px); /* form-select altura normal */
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    line-height: 1.5;
+    font-size: 1rem;
+  }
+
+  /* Select2 versión pequeña (form-select-sm) */
+  .select2-selection-sm {
+    height: calc(1.8125rem + 2px); /* form-select-sm altura */
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+  }
+
+  /* Otros ajustes */
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 1.5;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+  }

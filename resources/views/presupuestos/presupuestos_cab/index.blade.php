@@ -57,7 +57,7 @@
                                                     $total = $item->pagos->sum('importe');
                                                 @endphp
                                             @endif
-                                    
+
                                             <td>{{ $item->id }}</td>
                                             <td>{{ $item->centro->nombre }}</td>
                                             <td>{{ $item->fecha }}</td>
@@ -72,12 +72,18 @@
                                             </td>
                                             <td>
                                                 <form id="delete-form-{{ $item->id }}"
-                                                    action="{{ route('presupuestos.cab.destroy', $item->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " 
-                                                        href="{{ route('presupuestos.cab.payments',$item->id) }}">
+                                                    action="{{ route('presupuestos.cab.destroy', $item->id) }}"
+                                                    method="POST">
+                                                    <a class="btn btn-sm btn-primary " data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Cargar los pagos del presupuesto"
+                                                        href="{{ route('presupuestos.cab.payments', $item->id) }}">
                                                         <i class="fa fa-dollar-sign"></i>
+
                                                     </a>
-                                                    <a class="btn btn-sm btn-success"
+                                                    <a class="btn btn-sm btn-success" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Modificar los datos ingresados al presupuesto"
                                                         href="{{ route('presupuestos.cab.edit', $item->id) }}"><i
                                                             class="fa fa-fw fa-edit"></i>
                                                     </a>
@@ -85,7 +91,6 @@
                                                     @method('DELETE')
 
                                                     <button type="button" class="btn btn-danger btn-sm"
-                                                        title="Delete Usuario"
                                                         onclick="confirmDelete({{ $item->id }})"><i
                                                             class="far fa-trash-alt text-white"></i>
                                                     </button>

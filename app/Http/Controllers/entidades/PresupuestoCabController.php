@@ -8,6 +8,7 @@ use App\Models\PresupuestoCab;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PresupuestoCabRequest;
+use App\Models\Gerenciadora;
 use App\Models\Parametro;
 use App\Models\Profesional;
 
@@ -26,17 +27,19 @@ class PresupuestoCabController extends Controller
         $centros = Centro::all();
         $profesionales = Profesional::orderBy('nombre')->get();
         $presupuestosCab = new PresupuestoCab();
+        $gerenciadoras = Gerenciadora::all();
 
-        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales', 'uds')); 
+        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales', 'uds', 'gerenciadoras')); 
     }
 
     public function edit(int $id)
     {
         $centros = Centro::all();
+        $gerenciadoras = Gerenciadora::all();
         $profesionales = Profesional::orderBy('nombre')->get();
         $presupuestosCab = PresupuestoCab::find($id);
 
-        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales'));
+        return view('presupuestos.presupuestos_cab.create', compact('gerenciadoras', 'presupuestosCab', 'centros', 'profesionales'));
     }
 
     public function store(PresupuestoCabRequest $request)
@@ -52,6 +55,7 @@ class PresupuestoCabController extends Controller
             'profesional_id' => $request->profesional_id,
             'valor_dolar'    => $request->valor_dolar,
             'estado'         => 'I',
+            'gerenciadora_id'=> $request->gerenciadora_id,
         ]);
     
         return redirect()->route('presupuestos.det.create', ['id' => $presupuestosCab->id]);
