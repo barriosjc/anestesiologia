@@ -226,6 +226,7 @@ class ConsumoController extends Controller
 
     public function rendicionFiltrar(Request $request)
     {
+        // dd($request->all());
         $coberturas = Cobertura::orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $profesionales = Profesional::get();
@@ -248,10 +249,10 @@ class ConsumoController extends Controller
         if (!empty($centro_id)) {
             $query->where('centro_id', '=', $centro_id);
         }
-        if ( !empty($profesional_id)) {
+        if (!empty($profesional_id)) {
             $query->where('profesional_id', '=', $profesional_id);
         }
-        if ( !empty($estado_id)) {
+        if (!empty($estado_id)) {
             $query->where('estado_id', '=', $estado_id);
         }
         if (!empty($nombre)) {

@@ -35,7 +35,7 @@
                                             <td>
                                                 @if ($item->tipo == 'a')
                                                     <a class="btn btn-sm btn-primary "
-                                                        href="{{ route('nomenclador.listas.listas', $item->id) }}"><i
+                                                        href="{{ route('nomenclador.index', $item->id) }}"><i
                                                             class="fa fa-fw fa-eye"></i></a>
                                                 @else
                                                     <a class="btn btn-sm btn-primary "

@@ -33,6 +33,6 @@ class NomPadreController extends Controller
     {
         $this->nomPadreRepository->store($request);
 
-        return redirect()->route('nom_padres.index', session('ses_nom_tipo'));
+        return redirect()->route('entidades.nom_padres.index', session('ses_nom_tipo'));
     }
 }

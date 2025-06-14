@@ -60,8 +60,8 @@
             <select class="form-select form-select-sm" id="estado_id" name="estado_id">
                 <option value="">-- Seleccione --</option>
                 @foreach ($estados as $item)
-                    <option value="{{ session('c_item->id') }}"
-                        {{ $estado_id == $item->id ? 'selected' : '' }}>
+                    <option value="{{ $item->id }}"
+                        {{ session('c_estado_id') == $item->id ? 'selected' : '' }}>
                         {{ $item->descripcion }}
                     </option>
                 @endforeach
@@ -72,8 +72,8 @@
             <select class="form-select form-select-sm" id="periodo_gen" name="periodo_gen">
                 <option value="">-- Seleccione --</option>
                 @foreach ($periodos as $item)
-                    <option value="{{ session('c_item->nombre') }}"
-                        {{ $periodo_gen == $item->nombre ? 'selected' : '' }}>
+                    <option value="{{ $item->nombre }}"
+                        {{ session('c_periodo_gen') == $item->nombre ? 'selected' : '' }}>
                         {{ $item->nombre }}
                     </option>
                 @endforeach

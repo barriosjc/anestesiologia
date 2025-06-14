@@ -15,6 +15,27 @@ use App\Services\NomencladoresServices;
 
 class NomencladorController extends Controller
 {
+    public function index(int $id)
+    {
+        $nomenclador = Nomenclador:: where('nom_padre_id', $id)->paginate(20);
+
+        return view("entidades.nomenclador.index", compact("nomenclador"));
+    }
+
+    public function create(int $nom_padre_id)
+    {
+        $nomenclador = new Nomenclador();
+
+        return view("entidades.nomenclador.create", compact("nom_padre_id", "nomenclador"));
+    }
+
+    public function store(Request $request)
+    {
+        $nomenclador = Nomenclador::create($request->all());
+
+        return redirect()->route('entidades.nomneclador.index', $nomenclador->nom_padre_id);
+    }
+
     public function listas()
     {
         $valores = Valores::withTrashed()
@@ -170,23 +191,22 @@ class NomencladorController extends Controller
         $results = $nomencladoresServices->buscar($texto, $nom_padre_json, $generadora_id, $cobertura_id);
 
         return response()->json($results);
-
     }
 
-    public function buscarCodDesc2(Request $request, NomencladoresServices $nomencladoresServices)
-    {
-        $texto = $request->input('descripcion');
-        if ($request->input('codigo') != null) {
-            $texto = $request->input('codigo');
-        }
-        $nom_padre_json = null;
-        $generadora_id = $request->input('generadora_id');
-        $cobertura_id = $request->input('cobertura_id');
+    // public function buscarCodDesc2(Request $request, NomencladoresServices $nomencladoresServices)
+    // {
+    //     $texto = $request->input('descripcion');
+    //     if ($request->input('codigo') != null) {
+    //         $texto = $request->input('codigo');
+    //     }
+    //     $nom_padre_json = null;
+    //     $generadora_id = $request->input('generadora_id');
+    //     $cobertura_id = $request->input('cobertura_id');
 
-        $results = $nomencladoresServices->buscar($texto, $nom_padre_json, $generadora_id, $cobertura_id);
+    //     $results = $nomencladoresServices->buscar($texto, $nom_padre_json, $generadora_id, $cobertura_id);
 
-        return response()->json($results);
+    //     return response()->json($results);
 
-    }
+    // }
 
 }

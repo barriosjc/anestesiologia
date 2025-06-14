@@ -81,10 +81,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomencladores/create', [NomPadreController::class, 'create'])->name('nom_padres.create');
             Route::post('nomencladores/store', [NomPadreController::class, 'store'])->name('nom_padres.store');
             
-            // Route::get('nomencladores/anestisiologia', [NomencladorController::class, 'index'])->name('nomenclador.valores');
             Route::post('nomenclador/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
-            Route::post('nomenclador/buscar/dos', [NomencladorController::class, 'buscarCodDesc2'])->name('nomenclador.buscar2.coddesc');
-            
+            Route::get('nomenclador/lista/{nom_padre}', [NomencladorController::class, 'index'])->name('nomenclador.index');
+            Route::get('nomenclador/create/{nom_padre}', [NomencladorController::class, 'create'])->name('nomenclador.create');
+            Route::post('nomenclador/restore/{id}', [NomencladorController::class, 'restore'])->name('nomenclador.restore');
+            Route::delete('nomenclador/destroy/{id}', [NomencladorController::class, 'destroy'])->name('nomenclador.destroy');
+            Route::get('nomenclador/edit/{id}', [NomencladorController::class, ''])->name('nomenclador.edit');
+            Route::post('nomenclador/store', [NomencladorController::class, 'store'])->name('nomenclador.store');
+
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
             Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
             Route::post('nomenclador/valores/grupo/nuevo', [PreciosValoresController::class, 'nuevoGrupo'])->name('nomenclador.valores.grupo.nuevo');

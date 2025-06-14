@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\NomPadre;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,11 @@ class Nomenclador extends Model
      *
      * @var array
      */
-    protected $fillable = ['organo_id', 'cobertura_id',  'codigo', 'descripcion', 'tipo'];
+    protected $fillable = ['nom_padre_id', 'organo_id', 'cobertura_id',  'codigo', 'descripcion', 'tipo'];
+
+    public function nomPadre()
+    {
+        return $this->belongsTo(NomPadre::class, 'nom_padre_id');
+    }
 
 }
