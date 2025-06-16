@@ -86,7 +86,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/create/{nom_padre}', [NomencladorController::class, 'create'])->name('nomenclador.create');
             Route::post('nomenclador/restore/{id}', [NomencladorController::class, 'restore'])->name('nomenclador.restore');
             Route::delete('nomenclador/destroy/{id}', [NomencladorController::class, 'destroy'])->name('nomenclador.destroy');
-            Route::get('nomenclador/edit/{id}', [NomencladorController::class, ''])->name('nomenclador.edit');
+            Route::get('nomenclador/edit/{id}', [NomencladorController::class, 'edit'])->name('nomenclador.edit');
             Route::post('nomenclador/store', [NomencladorController::class, 'store'])->name('nomenclador.store');
 
             Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');

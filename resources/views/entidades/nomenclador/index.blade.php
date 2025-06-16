@@ -57,7 +57,9 @@
                                                 @else
                                                     <form id="delete-form-{{ $item->id }}" action="{{ route('nomenclador.destroy',$item->id) }}" method="POST">
                                                         <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.valores.filtrar', ['nivel' => $item->codigo] ) }}"><i class="fa fa-dollar-sign"></i></a>
-                                                        <a class="btn btn-sm btn-success" href="{{ route('nomenclador.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                        <a class="btn btn-sm btn-success" href="{{ route('nomenclador.edit', $item->id) }}"
+                                                            data-bs-toggle="tooltip" data-bs-title="Editar práctica"><i class="fa fa-fw fa-edit"></i>
+                                                        </a>
                                                         @csrf
                                                         @method('DELETE')
 

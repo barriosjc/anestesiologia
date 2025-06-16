@@ -20,7 +20,7 @@ class Nomenclador extends Model
      *
      * @var array
      */
-    protected $fillable = ['nom_padre_id', 'organo_id', 'cobertura_id',  'codigo', 'descripcion', 'tipo'];
+    protected $fillable = ['nom_padre_id', 'organo_id', 'cobertura_id',  'codigo', 'nivel', 'descripcion', 'tipo'];
 
     public function nomPadre()
     {

@@ -7,7 +7,7 @@
                 <div class="card card-default">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <span class="card-title">{{ __('Crear') }} Nomenclador </span>
-                        <a href="{{ route('nomenclador.index', $nom_padre_id) }}" title="Volver">
+                        <a href="{{ route('nomenclador.index', $nomenclador->nom_padre_id) }}" title="Volver">
                             <button class="btn btn-warning btn-sm float-right">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                             </button>

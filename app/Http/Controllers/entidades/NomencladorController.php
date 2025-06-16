@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\NomencladoresServices;
+use App\Http\Requests\SaveNomencladorRequest;
 
 class NomencladorController extends Controller
 {
@@ -25,17 +26,40 @@ class NomencladorController extends Controller
     public function create(int $nom_padre_id)
     {
         $nomenclador = new Nomenclador();
+        $nomenclador->nom_padre_id = $nom_padre_id;
 
-        return view("entidades.nomenclador.create", compact("nom_padre_id", "nomenclador"));
+        return view("entidades.nomenclador.create", compact("nomenclador"));
     }
 
-    public function store(Request $request)
+    public function store(SaveNomencladorRequest  $request)
     {
-        $nomenclador = Nomenclador::create($request->all());
+        if ($request->id) {
+            $nomenclador = Nomenclador::find($request->id);
+            $nomenclador->update($request->validated());
+        } else {
+            $nomenclador = Nomenclador::create($request->validated());
+        }
 
-        return redirect()->route('entidades.nomneclador.index', $nomenclador->nom_padre_id);
+        return redirect()->route('nomenclador.index', $nomenclador->nom_padre_id)
+            ->with('success', 'Registro creado correctamente.');
     }
 
+    public function edit(int $id)
+    {
+        $nomenclador = Nomenclador::find($id);
+
+        return view("entidades.nomenclador.edit", compact("nomenclador"));
+    }
+
+    public function destroy(int $id)
+    {
+        $nomenclador = Nomenclador::find($id);
+        $nom_padre_id = $nomenclador->nom_padre_id;
+        $nomenclador->delete();
+
+        return redirect()->route('nomenclador.index', $nom_padre_id)
+            ->with('success', 'Registro borrado correctamente.');
+    }
     public function listas()
     {
         $valores = Valores::withTrashed()
