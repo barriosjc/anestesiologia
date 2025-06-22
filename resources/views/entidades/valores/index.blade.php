@@ -16,9 +16,9 @@
                                 {{ __('Valorización') }}
                             </span>
                             <div class="form-group float-right">
-                                <div class="btn btn-sm btn-success float-right"  data-bs-toggle="modal"
-                                    data-bs-target="#nuevoModal"
-                                    title="Copiar una lista de precios de un grupo a un grupo existente." data-bs-toggle="tooltip">
+                                <div class="btn btn-sm btn-success float-right"  data-toggle="modal"
+                                    data-target="#nuevoModal" data-toggle="tooltip" 
+                                    title="Copiar de una lista de precios existente y crea una nueva Lista de precios con el grupo ingresado, este nuevo no debe existir." data-bs-toggle="tooltip">
                                     <span>{{ __('Copiar') }}</span>
                                 </div>
                                 <a href="{{ route('nomenclador.valor.nuevo', ['nivel' => $nivel]) }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
@@ -121,8 +121,12 @@
                 var valor = $(this).data('valor');
 
                 // Asigna los datos al campo hidden y al input del modal
-                $('#valorModal input[name="valores_id"]').val(id);
-                $('#valorModal input[name="valor"]').val(valor);
+                $('#valorModal input[name="id"]').val(id);
+                let valorFormateado = parseFloat(valor).toLocaleString('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                $('#valorModal input[name="valor"]').val(valorFormateado);
             });
         });
     </script>
@@ -132,19 +136,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="valorModalLabel">Valor en $ o unidades</h5>
+                    <h5 class="modal-title" id="valorModalLabel">$ o unidades, formato $: 1.200,50</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('nomenclador.valor.guardar') }}" method="POST">
+                <form action="{{ route('nomenclador.valor.precio.guardar') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" name="valores_id" value="">
-                        <label class="label-control">Valor</label>
-                        <input type="text" name="valor" class="form-control">
+                        <div class="input-group mb-3">
+                            <input type="hidden" name="id">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="basic-addon1">$</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Valor" 
+                                name="valor" aria-label="Valor" aria-describedby="basic-addon1">
+                          </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -157,7 +166,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Nueva Lista</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('nomenclador.valores.grupo.guardar') }}" method="POST">
                     @csrf
@@ -182,8 +191,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Crear</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Crear</button>
                     </div>
                 </form>
             </div>

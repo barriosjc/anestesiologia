@@ -6,21 +6,28 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            @php($data = $nomenclador->first())
+                        @php($data = $nomenclador->first())
+                    
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <span id="card_title">
-                                Nomenclador de anestesiología ( {{ $data->nomPadre->nombre  }} )
+                                Nomenclador de anestesiología ({{ $data->nomPadre->nombre }})
                             </span>
-                            <div class="float-right">
-                                <a href="{{ route('nom_padres.index', $data->nom_padre_id) }}" title="Volver">
-                                    <button class="btn btn-warning btn-sm float-right">
-                                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
+                    
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <form action="{{ route('nomenclador.index', $data->nom_padre_id) }}" method="GET" class="d-flex">
+                                    <input type="text" name="text" class="form-control form-control-sm" placeholder="Buscar..." value="{{ request('text') }}">
+                                    <button type="submit" class="btn btn-sm btn-success ms-2">
+                                        <i class="bi bi-search"></i> Buscar
                                     </button>
+                                </form>
+                    
+                                <a href="{{ route('nom_padres.index', $data->nom_padre_id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                                 </a>
-                                <a href="{{ route('nomenclador.create', $data->nom_padre_id) }}" 
-                                    class="btn btn-primary btn-sm float-right" data-placement="left">
-                                     {{ __('Nuevo') }}
-                                 </a>
+                    
+                                <a href="{{ route('nomenclador.create', $data->nom_padre_id) }}" class="btn btn-primary btn-sm">
+                                    {{ __('Nuevo') }}
+                                </a>
                             </div>
                         </div>
                     </div>

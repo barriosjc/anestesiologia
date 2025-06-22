@@ -2,6 +2,7 @@
     role="form" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{$presupuestosCab->gerenciadora_id}}">
+    <input type="hidden" name="centro_id" id="centro_id" value="{{$presupuestosCab->centro_id}}">
     <input type="hidden" name="valor_orig" id="valor_orig">
     <input type="hidden" name="valor_total" id="valor_total">
     <div class="card mt-3 p-3 border">
@@ -107,7 +108,6 @@
         document.getElementById('search').addEventListener('click', function() {
             let codigo = document.getElementById('codigo').value;
             let descripcion = document.getElementById('descripcion').value;
-            // const nom_padre_json = document.getElementById('nom_padre_json').value;
             const gerenciadora_id = document.getElementById('gerenciadora_id').value;
             const cobertura_id = document.getElementById('cobertura_id').value;
 
@@ -207,8 +207,10 @@
         // ---------------------------------------------------------------------------------
         // funcion comun que se llama para mostrar el valor
         function mostrarValor() {
-            let parte_cab_id = document.getElementById('parte_cab_id').value;
-            let periodo = document.getElementById('periodo').value;
+            const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+            const cobertura_id = document.getElementById('cobertura_id').value;
+            const centro_id = document.getElementById('centro_id').value;
+            const periodo = document.getElementById('periodo').value;
             let porcentajeInput = document.getElementById('porcentaje');
             let porcentajeIni = parseFloat(porcentajeInput.value);
             let nomencladorSelect = document.getElementById('nomenclador_id');
@@ -219,7 +221,7 @@
             nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
             nivel = selectedNomencladorId.getAttribute('data-nivel');
 
-            return fetch('{{ route('consumos.valor.buscar') }}', {
+            return fetch('{{ route('nomenclador.valores.traer.uno') }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -228,7 +230,9 @@
                 body: JSON.stringify({
                     periodo: periodo, 
                     nivel: nivel,
-                    parte_cab_id: parte_cab_id
+                    gerenciadora_id: gerenciadora_id,
+                    cobertura_id: cobertura_id,
+                    centro_id: centro_id
                 })
             })
             .then(response => {
@@ -243,14 +247,13 @@
                 return response.json(); // Convertir respuesta a JSON
             })
             .then(valueData => {
-                let porcentaje = porcentajeIni + valueData.porcentaje;
-                porcentajeInput.value = porcentaje;
-                let totalValue = valueData.valor * (porcentaje / 100);
+                porcentajeInput.value = 100;
+                let totalValue = valueData ;
                 let totalView = totalValue.toFixed(2);
                 totalView = totalView.replace('.', ',');
                 totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-                document.getElementById('valor_orig').value = valueData.valor;
+                document.getElementById('valor_orig').value = valueData;
                 document.getElementById('total').textContent = totalView;
                 document.getElementById('valor_total').value = totalValue.toFixed(2);
             })

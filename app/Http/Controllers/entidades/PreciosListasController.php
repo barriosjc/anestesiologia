@@ -34,9 +34,8 @@ class PreciosListasController extends Controller
             ->whereHas('centro')
             ->paginate();
         $gerenciadoras = Gerenciadora::orderby("nombre")->get();
-        $coberturas = $tipo == null ? 
-                    Cobertura::orderby("nombre")->get() : 
-                    Cobertura::where('nom_padre_id', $tipo)->orderby("nombre")->get();
+        $coberturas = Cobertura::orderby("nombre")->get(); 
+                    // Cobertura::where('nom_padre_id', $tipo)->orderby("nombre")->get();
         $centros = Centro::orderby("nombre")->get();
         $periodos = Periodo::orderby("nombre")->get();
         $validated = ["gerenciadora_id" => null, "cobertura_id" => null,

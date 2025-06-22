@@ -13,6 +13,7 @@ class NomencladoresServices
     public function buscar(string $termino, ?string $nom_padre_json, ?int $gerenciadora_id, ?int $cobertura_id): array
     {
         // Si se proporciona un ID de gerenciadora, obtener los nom_padre_id asociados
+        $array = [];
         if ($gerenciadora_id && $cobertura_id) {
             $array = GerenciadoraCoberturaNomPadre::where('gerenciadora_id', $gerenciadora_id)
             ->where('cobertura_id', $cobertura_id)
@@ -20,12 +21,10 @@ class NomencladoresServices
             ->toArray();
             $nom_padre_json = json_encode($array);
         }
-
         // Si no se proporciona nom_padre_json, usar el proporcionado
         if (empty($nom_padre_json)) {
             return [];
         }
-    
         // Nomenclador: nivel, descripcion
         $nom_padre_array = json_decode($nom_padre_json, true);
         $nomencladores = Nomenclador::where(function($query) use ($termino) {

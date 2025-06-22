@@ -28,4 +28,13 @@ class PresupuestoDetController extends Controller
 
         return view('presupuestos.presupuestos_det.create', compact('periodos', 'presupuestosCab', 'coberturas', 'presupuestosDet'));
     }
+
+    public function store(Request $request)
+    {
+        // seguir con esto , crear el validador y reemplazar el parametro
+        $presupuestosDet = new PresupuestoDet($request->all());
+        $presupuestosDet->save();
+
+        return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
+    }
 }

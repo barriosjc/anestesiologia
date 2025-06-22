@@ -16,12 +16,27 @@ use App\Http\Requests\SaveNomencladorRequest;
 
 class NomencladorController extends Controller
 {
-    public function index(int $id)
+    public function index(int $id, request $request)
     {
-        $nomenclador = Nomenclador:: where('nom_padre_id', $id)->paginate(20);
+        $text = null;
+        if ($request->has('text'))
+        {
+            $text = $request->text;
+        }
 
-        return view("entidades.nomenclador.index", compact("nomenclador"));
+        $nomenclador = Nomenclador::where('nom_padre_id', $id)
+            ->when($text, function ($query) use ($text) {
+                $query->where(function ($q) use ($text) {
+                    $q->where('codigo', 'like', "%{$text}%")
+                      ->orWhere('nivel', 'like', "%{$text}%")
+                      ->orWhere('descripcion', 'like', "%{$text}%");
+                });
+            })
+            ->paginate(20);
+    
+        return view("entidades.nomenclador.index", compact("nomenclador", "text"));
     }
+    
 
     public function create(int $nom_padre_id)
     {
@@ -60,6 +75,11 @@ class NomencladorController extends Controller
         return redirect()->route('nomenclador.index', $nom_padre_id)
             ->with('success', 'Registro borrado correctamente.');
     }
+
+    // public function Search(string $text){
+
+    // }
+    
     public function listas()
     {
         $valores = Valores::withTrashed()
@@ -196,7 +216,7 @@ class NomencladorController extends Controller
     public function buscarCodDesc(Request $request, NomencladoresServices $nomencladoresServices)
     {
         $cobertura_id = null;
-        $generadora_id = null;
+        $gerenciadora_id = null;
         $nom_padre_json = null;
         $texto = $request->input('descripcion');
         if ($request->input('codigo') != null) {
@@ -205,14 +225,13 @@ class NomencladorController extends Controller
         if ($request->has('nom_padre_json')) {
             $nom_padre_json = $request->input('nom_padre_json');
         }
-        if ($request->has('generadora_id')) {
-            $generadora_id = $request->input('generadora_id');
+        if ($request->has('gerenciadora_id')) {
+            $gerenciadora_id = $request->input('gerenciadora_id');
         }
         if ($request->has('cobertura_id')) {
             $cobertura_id = $request->input('cobertura_id');
         }
-
-        $results = $nomencladoresServices->buscar($texto, $nom_padre_json, $generadora_id, $cobertura_id);
+        $results = $nomencladoresServices->buscar($texto, $nom_padre_json, $gerenciadora_id, $cobertura_id);
 
         return response()->json($results);
     }

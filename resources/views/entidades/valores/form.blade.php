@@ -1,5 +1,6 @@
 <div class="box box-info padding-1">
     <div class="box-body">
+        <input type="hidden" name="aplica_pocent_adic" value=0>
         <div class="row gx-3 mb-3">
             <div class="col-md-3">
                 <label class="small mb-1" for="grupo">Grupo</label>
@@ -7,15 +8,14 @@
                     value="{{ old('grupo', $nom_practicas_estudios->grupo) }}" />
             </div>
             <div class="col-md-3">
-                <input type="hidden" name="nivel" value="{{ old('nivel', $nivel) }}">
-                <label class="small mb-1" for="nivel">Nivel o Código</label>
-                <div class="form-control" id="nivel" name="nivel" type="text" style="background-color:#e9ecef">
-                    {{ old('nivel', $nivel) }}</div>
+                <label class="small mb-1" for="nivel">nivel</label>
+                <input class="form-control" id="nivel" name="nivel" type="text" placeholder="Ingrese nivel"
+                    value="{{ old('nivel', $nom_practicas_estudios->nivel) }}" />
             </div>
         </div>
         <div class="row gx-3 mt-3">
             <div class="col-md-3">
-                <label class="small mb-1" for="tipo">Tipo</label>
+                <label class="small mb-1" for="tipo">Tipo (1:$ / 2:un)</label>
                 <input class="form-control" id="tipo" name="tipo" type="text"
                     placeholder="Ingrese tipo de práctica" value="{{ old('tipo', $nom_practicas_estudios->tipo) }}" />
             </div>

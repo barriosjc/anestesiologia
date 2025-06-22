@@ -7,7 +7,9 @@ use App\Models\Nomenclador;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\nomValoresRequest;
+use App\Mail\registerMailable;
 use App\Models\NomPracticasEstudio;
+use App\Models\Valores_cab;
 use App\Services\NomencladoresServices;
 use Exception;
 
@@ -64,7 +66,8 @@ class PreciosValoresController extends Controller
                 );
             }
 
-            return redirect()->back();
+            return redirect()->back()
+                ->with('success', 'La operación se ha completado exitosamente.');
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -119,13 +122,22 @@ class PreciosValoresController extends Controller
     public function guardar(nomValoresRequest $request)
     {
         $validate = $request->validate($request->rulesForStoreOne());
-
-        $validate["valor"] = $this->getFormatValue($request->valor);
         $validate["aplica_pocent_adic"] = null;
         
         Valores::create($validate);
 
         return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
+    }
+
+    public function valorGuardar(nomValoresRequest $request)
+    {
+        $validate = $request->validate($request->rulesForUpdateValue());
+        $valor = floatval(str_replace(',', '.', str_replace('.', '', $request->valor)));
+        $valores = Valores::where("id", $request->id)->first();
+        $valores->update(["valor" => $valor]);
+
+        return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
+
     }
 
     public function borrar(int $id)
@@ -134,6 +146,29 @@ class PreciosValoresController extends Controller
         $valores->delete();
 
         return redirect()->back();
+    }
+
+    public function traerUno(Request $request)
+    {
+        $grupo = null;
+        $valor = 0;
+        $valoresCab = Valores_cab::where("gerenciadora_id", $request->gerenciadora_id)
+            ->where("cobertura_id", $request->cobertura_id)
+            ->where("centro_id", $request->centro_id)
+            ->where("periodo", $request->periodo)
+            ->first();
+        if ($valoresCab) {
+            $grupo = $valoresCab->grupo;
+            $valores = Valores::where("grupo", $grupo)
+                ->where("nivel", $request->nivel)
+                ->where("tipo", 1)
+                ->first();
+            if ($valores) {
+                $valor = $valores->valor;
+            }
+        }
+
+        return response()->json($valor);
     }
 
     private function getFormatValue($valor)
@@ -153,9 +188,9 @@ class PreciosValoresController extends Controller
         return $valor_convertido;
     }
 
-    public function obtener(request $request, NomencladoresServices $nomencladoresServices )
-    {
-        $nomenclador = $nomencladoresServices->buscar($request->nomenclador_id);
-    //    $valores = $request->nomenclador_id;
-    }
+    // public function obtener(request $request, NomencladoresServices $nomencladoresServices )
+    // {
+    //     $nomenclador = $nomencladoresServices->buscar($request->nomenclador_id, null, null, null);
+    // //    $valores = $request->nomenclador_id;
+    // }
 }

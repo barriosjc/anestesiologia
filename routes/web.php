@@ -97,7 +97,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/valor/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valor.nuevo');
             Route::post('nomenclador/valor/modificar', [PreciosValoresController::class, 'modificar'])->name('nomenclador.valor.modificar');
             Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
-            Route::get('nomenclador/valor/obtener', [PreciosValoresController::class, 'obtener'])->name('nomenclador.valor.obtener');
+            Route::post('nomenclador/valor/precio/guardar', [PreciosValoresController::class, 'valorGuardar'])->name('nomenclador.valor.precio.guardar');
+            Route::post('nomenclador/valores/traer/uno', [PreciosValoresController::class, 'traerUno'])->name('nomenclador.valores.traer.uno');
             
             Route::get('nomenclador/listas/creadas/{nom_padre}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
             Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');

@@ -136,14 +136,20 @@
                 </div>
                 <form action="{{ route('nomenclador.valores.guardar.valor') }}" method="POST">
                     @csrf
-                    <div class="modal-body">
+                    {{-- <div class="modal-body">
                         <input type="hidden" name="valores_id" value="">
                         <label class="label-control">Valor</label>
                         <input type="text" name="valor" class="form-control">
+                    </div> --}}
+                    <div class="input-group mb-3">
+                        <input type="hidden" name="valores_id" value="">
+                        <span class="input-group-text" id="basic-addon1">$</span>
+                        <input type="text" class="form-control" placeholder="Precio" 
+                            name="valor" aria-label="Precio" aria-describedby="basic-addon1">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>
