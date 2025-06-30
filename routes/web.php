@@ -7,16 +7,16 @@ use App\Http\Controllers\Utiles\UtilController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\entidades\CentroController;
-use App\Http\Controllers\entidades\ParametroController;
 use App\Http\Controllers\seguridad\ProfileController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-// use App\Http\Controllers\seguridad\Usuario0Controller;
 use App\Http\Controllers\entidades\NomPadreController;
+// use App\Http\Controllers\seguridad\Usuario0Controller;
 use App\Http\Controllers\entidades\PacienteController;
 use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
 use App\Http\Controllers\entidades\CoberturaController;
+use App\Http\Controllers\entidades\ParametroController;
 use App\Http\Controllers\entidades\NomencladorController;
 use App\Http\Controllers\entidades\ProfesionalController;
 use App\Http\Controllers\entidades\PreciosListasController;
@@ -24,6 +24,7 @@ use App\Http\Controllers\entidades\PreciosValoresController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
 use App\Http\Controllers\entidades\PresupuestoDetController;
 use App\Http\Controllers\entidades\NomPracticasEstudioController;
+use App\Http\Controllers\entidades\GerenciadoraCoberturaPadreController;
 
 // Auth::routes();
 Route::match(['get'], 'login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -141,8 +142,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'centros' => CentroController::class,
                     'coberturas' => CoberturaController::class,
                     'parametros' => ParametroController::class,
+                    'gerenciadora_cobertura_padre' => GerenciadoraCoberturaPadreController::class
                 ]
             );
+            Route::get('coberturas/buscar/datos', [CoberturaController::class, 'buscar'])->name('coberturas.buscar');
+
             Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargarDocum'])->name('profesional.cargar.documentacion');
             Route::post('profesional/documentacion/guardar', [ProfesionalController::class, 'guardarDocum'])->name('profesional.guardar.documentacion');
             Route::delete('profesional/documentacion/borrar/{id}', [ProfesionalController::class, 'borrarDocum'])->name('profesional.borrar.documentacion');

@@ -23,6 +23,11 @@ class NomPadre extends Model
         return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_nom_padres', 'nom_padre_id', 'gerenciadora_id');
     }
     
+    // public function gerenciadorasCoberturasNomPadres()
+    // {
+    //     return $this->belongsToMany(GerenciadoraCoberturaNomPadre::class, 'gerenciadoras_coberturas_nom_padres', 'nom_padre_id', 'gerenciadora_id');
+    // }
+    
     public function nomencladores()
     {
         return $this->hasMany(Nomenclador::class, 'nom_padre_id');

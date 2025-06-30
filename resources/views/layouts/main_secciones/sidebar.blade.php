@@ -8,13 +8,13 @@
     <div class="sidenav-menu">
         <div class="nav accordion" id="accordionSidenav">
             <div class="sidenav-menu-heading">AUDITORIA</div>
-                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                    <a class="nav-link" href="{{ route('consumos.partes.filtrar') }}">
-                        <div class="nav-link-icon"><i class="fa-regular fa-eye"></i></div>
-                        Auditoria carga
-                    </a>
-                @endif
-                @role('super-admin')
+            @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                <a class="nav-link" href="{{ route('consumos.partes.filtrar') }}">
+                    <div class="nav-link-icon"><i class="fa-regular fa-eye"></i></div>
+                    Auditoria carga
+                </a>
+            @endif
+            @role('super-admin')
                 <a class="nav-link" href="{{ route('consumo.rendiciones.filtrar') }}">
                     <div class="nav-link-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
                     Generar Rendiciones
@@ -49,8 +49,10 @@
                         <div class="collapse" id="pagesCollapseNomencladores" data-bs-parent="#accordionSidenavPagesMenu">
                             <nav class="sidenav-menu-nested nav">
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
-                                    <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'a']) }}">Anestesiologia</a>
-                                    <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'n']) }}">Prácticas y Estudios</a>
+                                    <a class="nav-link"
+                                        href="{{ route('nom_padres.index', ['tipo' => 'a']) }}">Anestesiologia</a>
+                                    <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'n']) }}">Prácticas y
+                                        Estudios</a>
                                 @endif
                             </nav>
                         </div>
@@ -62,6 +64,9 @@
                         </a>
                         <div class="collapse" id="pagesCollapsePrecios" data-bs-parent="#accordionSidenavPagesMenu">
                             <nav class="sidenav-menu-nested nav">
+                                @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
+                                    <a class="nav-link" href="{{ route('gerenciadora_cobertura_padre.index') }}">Gerenciadoras Coberturas ..</a>
+                                @endif
                                 @if (Auth()->user()->hasPermissionTo('adm_consumos', 'web') || $super)
                                     <a class="nav-link" href="{{ route('nomenclador.listas.listas', 0) }}">Listas</a>
                                 @endif
@@ -101,10 +106,10 @@
                 </div>
             @endif
             @if (Auth()->user()->hasPermissionTo('adm_presupuestos', 'web') || $super)
-            <a class="nav-link" href="{{ route('presupuestos.cab.index') }}">
-                <div class="nav-link-icon"><i class="fa-solid fa-file-medical"></i></div>
-                Presupuestos
-            </a>
+                <a class="nav-link" href="{{ route('presupuestos.cab.index') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-file-medical"></i></div>
+                    Presupuestos
+                </a>
             @endif
 
 
@@ -123,22 +128,23 @@
                     Perfiles
                 </a>
             @endrole
-            </div>
         </div>
+    </div>
 
-        {{-- Sidenav Footer --}}
-        <div class="sidenav-footer">
-            <div class="sidenav-footer-content">
-                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i data-feather="log-out"></i>
-                    {{ __('Logout') }}
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-                <div class="sidenav-footer-subtitle">Usuario :<strong> {{ auth()->user()->name }}</strong>
-                    {{-- <div class="fw-bold">{{ auth()->user()->name }}</div> --}}
-                </div>
+    {{-- Sidenav Footer --}}
+    <div class="sidenav-footer">
+        <div class="sidenav-footer-content">
+            <a class="dropdown-item" href="{{ route('logout') }}"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i data-feather="log-out"></i>
+                {{ __('Logout') }}
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+            <div class="sidenav-footer-subtitle">Usuario :<strong> {{ auth()->user()->name }}</strong>
+                {{-- <div class="fw-bold">{{ auth()->user()->name }}</div> --}}
             </div>
         </div>
-    </nav>
+    </div>
+</nav>

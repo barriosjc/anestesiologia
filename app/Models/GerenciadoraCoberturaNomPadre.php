@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\NomPadre;
+use App\Models\Cobertura;
+use App\Models\Gerenciadora;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

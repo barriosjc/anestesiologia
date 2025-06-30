@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\NomPadre;
 use App\Models\Valores_cab;
+use App\Models\Gerenciadora;
+use App\Models\PresupuestoDet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 

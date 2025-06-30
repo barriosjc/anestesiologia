@@ -73,12 +73,12 @@ class CoberturaController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        $cobertura = Cobertura::find($id);
+    // public function show($id)
+    // {
+    //     $cobertura = Cobertura::find($id);
 
-        return view('entidades.cobertura.show', compact('cobertura'));
-    }
+    //     return view('entidades.cobertura.show', compact('cobertura'));
+    // }
 
     /**
      * Show the form for editing the specified resource.
@@ -135,5 +135,15 @@ class CoberturaController extends Controller
 
         return redirect()->route('coberturas.index')
             ->with('success', 'Cobertura borrado correctamente.');
+    }
+
+    public function buscar(Request $request)
+    {
+        $text = $request->text;
+        $coberturas = Cobertura::where('nombre', 'like', "%{$text}%")
+            ->whereOr('sigla', 'like', "%{$text}%")
+            ->get();
+
+            return view('entidades.cobertura.index', compact('coberturas'));
     }
 }

@@ -32,6 +32,10 @@ class PresupuestoDetController extends Controller
     public function store(Request $request)
     {
         // seguir con esto , crear el validador y reemplazar el parametro
+        // queda cargar documentacion 
+        // cargar pagos
+        // cargar presupuesto a cargar el parte
+        
         $presupuestosDet = new PresupuestoDet($request->all());
         $presupuestosDet->save();
 

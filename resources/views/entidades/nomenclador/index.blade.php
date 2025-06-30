@@ -14,13 +14,15 @@
                             </span>
                     
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <form action="{{ route('nomenclador.index', $data->nom_padre_id) }}" method="GET" class="d-flex">
-                                    <input type="text" name="text" class="form-control form-control-sm" placeholder="Buscar..." value="{{ request('text') }}">
-                                    <button type="submit" class="btn btn-sm btn-success ms-2">
-                                        <i class="bi bi-search"></i> Buscar
-                                    </button>
-                                </form>
-                    
+                                <form action="{{ route('nomenclador.index', $data->nom_padre_id) }}" method="GET">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" name="text" class="form-control" 
+                                               placeholder="Buscar..." value="{{ request('text') }}">
+                                        <button type="submit" class="btn btn-outline-success" type="button">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </form>                    
                                 <a href="{{ route('nom_padres.index', $data->nom_padre_id) }}" class="btn btn-warning btn-sm">
                                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                                 </a>
