@@ -16,9 +16,7 @@
                     <div class="card-body">
                         <form method="POST" action="{{ route('presupuestos.cab.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
-
                             @include('presupuestos.presupuestos_cab.form')
-
                         </form>
                     </div>
                 </div>

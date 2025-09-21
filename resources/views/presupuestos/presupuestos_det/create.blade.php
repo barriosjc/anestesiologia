@@ -9,7 +9,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ "Detalle del presupuesto - $presupuestosCab->fecha - $presupuestosCab->nombre" }}
+                                {{ "Detalle del presupuesto - {$presupuestosCab->fecha} - {$presupuestosCab->nombre}" }}
                             </span>
                             <div class="float-right">
                                 <a href="{{ route('presupuestos.cab.create', ['id' => $presupuestosCab->id]) }}" title="Volver">
@@ -48,9 +48,9 @@
                                                             <i class="fas fa-undo-alt"></i></button>
                                                     </form>
                                                 @else --}}
-                                                    <form id="delete-form-{{ $item->id }}" action="{{ route('presupuestos.det.destroy',$item->id) }}" method="POST">
+                                                    <form id="delete-form-{{ $item->id }}" action="{{ route('presupuestos.det.destroy',[$item->presupuesto_cab_id,$item->id]) }}" method="POST">
                                                         {{-- <a class="btn btn-sm btn-primary " href="{{ route('nomenclador.valores.filtrar', ['nivel' => $item->codigo] ) }}"><i class="fa fa-dollar-sign"></i></a> --}}
-                                                        <a class="btn btn-sm btn-success" href="{{ route('presupuestos.det.edit', $item->id) }}"><i class="fa fa-fw fa-edit"></i></a>
+                                                        {{-- <a class="btn btn-sm btn-success" href="{{ route('presupuestos.det.edit', [$item->presupuesto_cab_id,$item->id]) }}"><i class="fa fa-fw fa-edit"></i></a> --}}
                                                         @csrf
                                                         @method('DELETE')
 

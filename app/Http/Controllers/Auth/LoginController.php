@@ -97,7 +97,6 @@ class LoginController extends Controller
         //     return redirect()->route('profile.password');
         // }
 
-
         return redirect()->route('main');
     }
 

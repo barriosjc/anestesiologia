@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "íº€ Optimizando Laravel..."
+echo "ï¿½ï¿½ï¿½ Optimizando Laravel..."
 
 php artisan config:clear
 php artisan cache:clear

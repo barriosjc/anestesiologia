@@ -1,13 +1,15 @@
 <form id="form_presupuesto" method="POST" action="{{ route('presupuestos.det.store', $presupuestosCab->id) }}"
     role="form" enctype="multipart/form-data">
-    @csrf
+    @csrf-
+    <input type="hidden" name="nom_padre_json" id="nom_padre_json">
+    <input type="hidden" name="nom_padre_id" id="nom_padre_id">
     <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{$presupuestosCab->gerenciadora_id}}">
     <input type="hidden" name="centro_id" id="centro_id" value="{{$presupuestosCab->centro_id}}">
     <input type="hidden" name="valor_orig" id="valor_orig">
-    <input type="hidden" name="valor_total" id="valor_total">
+    <input type="hidden" name="valor" id="valor">
     <div class="card mt-3 p-3 border">
         <div class="card-body">
-            <input type="hidden" name="presupuestocabid" value="{{ $presupuestosCab->id }}">
+            <input type="hidden" name="presupuesto_cab_id" value="{{ $presupuestosCab->id }}">
             <div class="row gx-3 mb-3">
                 <div class="col-md-6">
                     <label class="small mb-1">Coberturas</label>
@@ -192,7 +194,7 @@
             totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
             document.getElementById('total').textContent = totalView;
-            document.getElementById('valor_total').value = totalValue.toFixed(2);
+            document.getElementById('valor').value = totalValue.toFixed(2);
 
         });
 
@@ -255,7 +257,9 @@
 
                 document.getElementById('valor_orig').value = valueData;
                 document.getElementById('total').textContent = totalView;
-                document.getElementById('valor_total').value = totalValue.toFixed(2);
+                // document.getElementById("valor_total").value = totalView;
+                document.getElementById('valor').value = totalValue.toFixed(2);
+                console.log('Valor total:', totalValue.toFixed(2));
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);
@@ -266,7 +270,7 @@
         function limpiarCampos() {
             document.getElementById('valor_orig').value = '';
             document.getElementById('total').textContent = '';
-            document.getElementById('valor_total').value = '';
+            document.getElementById('valor').value = '';
             document.getElementById('nom_padre_id').value = '';
         }
 

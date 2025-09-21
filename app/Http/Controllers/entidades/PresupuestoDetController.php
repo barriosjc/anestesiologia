@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ConsumoDetRequest;
 use App\Models\GerenciadoraCoberturaNomPadre;
 
 class PresupuestoDetController extends Controller
@@ -29,16 +30,21 @@ class PresupuestoDetController extends Controller
         return view('presupuestos.presupuestos_det.create', compact('periodos', 'presupuestosCab', 'coberturas', 'presupuestosDet'));
     }
 
-    public function store(Request $request)
+    public function store(ConsumoDetRequest $request)
     {
-        // seguir con esto , crear el validador y reemplazar el parametro
-        // queda cargar documentacion 
-        // cargar pagos
-        // cargar presupuesto a cargar el parte
-        
+
         $presupuestosDet = new PresupuestoDet($request->all());
         $presupuestosDet->save();
 
         return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
+    }
+
+    public function destroy($presupuestoCabId, $id)
+    {
+        $presupuestosDet = PresupuestoDet::findOrFail($id);
+        $presupuestosDet->delete();
+
+        return redirect()->route('presupuestos.det.create', ['presupuestosCabId' => $presupuestoCabId])
+            ->with('success', 'El registro ha sido eliminado exitosamente.');
     }
 }
