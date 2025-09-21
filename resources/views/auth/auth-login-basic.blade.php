@@ -10,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>SAADA</title>
+        <title>MediNexus</title>
         {{-- <link href="css/styles.css" rel="stylesheet" /> --}}
         {{-- <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" /> --}}
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/js/all.min.js"
@@ -37,7 +37,7 @@
                                             </div>
                                             <div class="col-lg-6 d-flex align-items-center justify-content-center">
                                                     <img class="dropdown-user-img" style="height:51px;width:110px"
-                                                        src="{{  asset("img\logo_grande.png") }}" />
+                                                        src="{{  asset("img\logo_medinexus_transparente.png") }}" />
                                             </div>
                                         </div>
                                     </div>

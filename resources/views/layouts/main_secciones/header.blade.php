@@ -8,7 +8,7 @@
         <h6 class="dropdown-header d-flex align-items-center">
             <a href="{{ route('main') }}">
                 <img style="height:51px;width:110px" class="dropdown-user-img" 
-                    src="{{ asset("img\logo_grande.jpg") }}"  />
+                    src="{{ asset("img\logo_medinexus_transparente.jpg") }}"  />
             </a> 
         </h6>
 
