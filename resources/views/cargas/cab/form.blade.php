@@ -6,7 +6,7 @@
     <input type="hidden" name="parte_id" id="parte_id" value="{{$parte_id}}">
     <div class="box-body">
         <div class="row gx-3 mb-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="small mb-1">Gerenciadora</label>
                 <select name="gerenciadora_id" class="form-select" id="gerenciadora_id" required>
                     <option value=""> -- Seleccione --</option>
@@ -16,7 +16,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="small mb-1">Centro</label>
                 <select name="centro_id" class="form-select" id="centro_id" required>
                     <option value=""> -- Seleccione --</option>
@@ -26,11 +26,17 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-4">
-                <label class="small mb-1" for="fec_prestacion">Fecha cirugía</label>
-                <input class="form-control" id="fec_prestacion" name="fec_prestacion" type="date"
+            <div class="col-md-3">
+                <label class="small mb-1" for="fec_prestacion">Fecha cirugía inicio</label>
+                <input class="form-control" id="fec_prestacion" name="fec_prestacion" type="datetime-local"
                     placeholder="Ingrese Fecha de nacimiento"
-                    value="{{ old('fec_prestacion', Carbon::parse($parte->fec_prestacion)->format('Y-m-d')) }}" />
+                    value="{{ old('fec_prestacion', $parte->fec_prestacion_input) }}" />
+            </div>
+            <div class="col-md-3">
+                <label class="small mb-1" for="fec_prestacion_fin">Fecha cirugía fin</label>
+                <input class="form-control" id="fec_prestacion_fin" name="fec_prestacion_fin" type="datetime-local"
+                    placeholder="Ingrese Fecha de nacimiento"
+                    value="{{ old('fec_prestacion_fin', $parte->fec_prestacion_fin_input) }}" />
             </div>
         </div>
         <div class="row gx-3 mb-3">

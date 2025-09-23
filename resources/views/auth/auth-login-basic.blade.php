@@ -36,8 +36,8 @@
                                                 <h5 class="fw-light my-4">¡Te damos la bienvenida!</h5>
                                             </div>
                                             <div class="col-lg-6 d-flex align-items-center justify-content-center">
-                                                    <img class="dropdown-user-img" style="height:51px;width:110px"
-                                                        src="{{  asset("img\logo_medinexus_transparente.png") }}" />
+                                                    <img class="dropdown-user-img" style="height:65px;width:130px"
+                                                        src="{{  asset("img/logomedinexustransparente.png") }}" />
                                             </div>
                                         </div>
                                     </div>

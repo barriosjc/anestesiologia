@@ -182,196 +182,198 @@
 
     </section>
 
-    <script>
-        //submit para guardar los datos
-        // let nomenclador_id = null;
-        // let parte_cab_id = null;
-        var submitButton = document.getElementById('submitButton');
-        if (submitButton) {        
-            submitButton.addEventListener('click', function() {
-                const select = document.getElementById('nomenclador_id');
-                const selectedOption = select.options[select.selectedIndex];
-                const nomPadre = selectedOption.getAttribute('data-nom_padre');
+    @push('scripts')
+        <script>
+            //submit para guardar los datos
+            // let nomenclador_id = null;
+            // let parte_cab_id = null;
+            var submitButton = document.getElementById('submitButton');
+            if (submitButton) {        
+                submitButton.addEventListener('click', function() {
+                    const select = document.getElementById('nomenclador_id');
+                    const selectedOption = select.options[select.selectedIndex];
+                    const nomPadre = selectedOption.getAttribute('data-nom_padre');
 
-                document.getElementById('nom_padre_id').value = nomPadre;
+                    document.getElementById('nom_padre_id').value = nomPadre;
 
-                document.getElementById('form_consumo').submit();
-            });
-        }
+                    document.getElementById('form_consumo').submit();
+                });
+            }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            let token = document.querySelector('input[name="_token"]').value;
-            
-            // calcula el valor al cambiar el periodo
-            document.getElementById('periodo').addEventListener('change', function() {
-                let selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value) {
-                    mostrarValor();
+            document.addEventListener('DOMContentLoaded', function() {
+                let token = document.querySelector('input[name="_token"]').value;
+                
+                // calcula el valor al cambiar el periodo
+                document.getElementById('periodo').addEventListener('change', function() {
+                    let selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.value) {
+                        mostrarValor();
+                    }
+                });
+
+                // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
+                document.getElementById('search').addEventListener('click', function() {
+                    let codigo = document.getElementById('codigo').value;
+                    let descripcion = document.getElementById('descripcion').value;
+                    const nom_padre_json = document.getElementById('nom_padre_json').value;
+                    // const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+
+                    if (codigo == "" && descripcion == "") {
+                        return
+                    }
+                    // busca en el nomenclador, puede traer uno o varios
+                    fetch('{{ route('nomenclador.buscar.coddesc') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token
+                            },
+                            body: JSON.stringify({
+                                codigo: codigo,
+                                descripcion: descripcion,
+                                nom_padre_json: nom_padre_json,   
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            let nomencladorSelect = document.getElementById('nomenclador_id');
+                            nomencladorSelect.innerHTML = '';
+                            const count = data.length;
+
+                            // Handle the options in the select
+                            if (count > 1) {
+                                nomencladorSelect.innerHTML =
+                                    '<option value="">-- Seleccione una --</option>';
+                            }
+
+                            data.forEach(item => {
+                                let option = document.createElement('option');
+                                // option.value = item.id;
+                                option.value = item.id;
+                                option.setAttribute('data-nom_padre', item.nom_padre_id);
+                                option.setAttribute('data-nivel', item.nivel);
+                                option.text =
+                                    `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
+                                nomencladorSelect.appendChild(option);
+                            });
+
+                            if (count === 1) {
+                                mostrarValor()
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+
+                // Add event listeners to clear inputs on focus
+                const clearInput = function() {
+                    codigo.value = '';
+                    descripcion.value = '';
+                };
+
+                codigo.addEventListener('focus', clearInput);
+                descripcion.addEventListener('focus', clearInput);
+
+                //validar que no se pueda ingresar un porcentaje > 100
+                let porcentajeInput = document.getElementById('porcentaje');
+                let porcentajeValue = parseFloat(porcentajeInput.value);
+
+                if (porcentajeValue > 100) {
+                    porcentajeInput.value = 100;
                 }
-            });
 
-            // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
-            document.getElementById('search').addEventListener('click', function() {
-                let codigo = document.getElementById('codigo').value;
-                let descripcion = document.getElementById('descripcion').value;
-                const nom_padre_json = document.getElementById('nom_padre_json').value;
-                // const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+                //modifica total si cambia porcentaje
+                document.getElementById('porcentaje').addEventListener('input', function() {
+                    let porcentajeInput = document.getElementById('porcentaje');
+                    let porcentajeValue = parseFloat(porcentajeInput.value);
+                    let valorOrig = parseFloat(document.getElementById('valor_orig').value);
 
-                if (codigo == "" && descripcion == "") {
-                    return
-                }
-                // busca en el nomenclador, puede traer uno o varios
-                fetch('{{ route('nomenclador.buscar.coddesc') }}', {
+                    if (porcentajeValue > 200) {
+                        porcentajeInput.value = 100;
+                        porcentajeValue = 100;
+                    }
+
+                    let totalValue = valorOrig * (porcentajeValue / 100);
+                    let totalView = totalValue.toFixed(2);
+                    totalView = totalView.replace('.', ',');
+                    totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                    document.getElementById('total').textContent = totalView;
+                    document.getElementById('valor_total').value = totalValue.toFixed(2);
+
+                });
+
+
+                // aca selecciono una practica del combo
+                document.getElementById('nomenclador_id').addEventListener('change', function() {
+                    let selectedOption = this.options[this.selectedIndex];
+                    if (selectedOption.value) {
+                        mostrarValor();
+                    }
+                });
+                // ---------------------------------------------------------------------------------
+                // funcion comun que se llama para mostrar el valor
+                function mostrarValor() {
+                    let parte_cab_id = document.getElementById('parte_cab_id').value;
+                    let periodo = document.getElementById('periodo').value;
+                    let porcentajeInput = document.getElementById('porcentaje');
+                    let porcentajeIni = parseFloat(porcentajeInput.value);
+                    let nomencladorSelect = document.getElementById('nomenclador_id');
+                    if (periodo == "" || nomencladorSelect.options.length == 0) {
+                        return
+                    }
+                    selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
+                    nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
+                    nivel = selectedNomencladorId.getAttribute('data-nivel');
+
+                    return fetch('{{ route('consumos.valor.buscar') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': token
                         },
                         body: JSON.stringify({
-                            codigo: codigo,
-                            descripcion: descripcion,
-                            nom_padre_json: nom_padre_json,   
+                            periodo: periodo, 
+                            nivel: nivel,
+                            parte_cab_id: parte_cab_id
                         })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        let nomencladorSelect = document.getElementById('nomenclador_id');
-                        nomencladorSelect.innerHTML = '';
-                        const count = data.length;
-
-                        // Handle the options in the select
-                        if (count > 1) {
-                            nomencladorSelect.innerHTML =
-                                '<option value="">-- Seleccione una --</option>';
+                    .then(response => {
+                        if (!response.ok) {
+                            // Si no es exitoso, manejar error
+                            return response.json().then(errorData => {
+                                // console.error(errorData.error);
+                                limpiarCampos(); // Llama a la función para limpiar los campos
+                                throw new Error(errorData.error);
+                            });
                         }
-
-                        data.forEach(item => {
-                            let option = document.createElement('option');
-                            // option.value = item.id;
-                            option.value = item.id;
-                            option.setAttribute('data-nom_padre', item.nom_padre_id);
-                            option.setAttribute('data-nivel', item.nivel);
-                            option.text =
-                                `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
-                            nomencladorSelect.appendChild(option);
-                        });
-
-                        if (count === 1) {
-                            mostrarValor()
-                        }
+                        return response.json(); // Convertir respuesta a JSON
                     })
-                    .catch(error => console.error('Error:', error));
-            });
+                    .then(valueData => {
+                        let porcentaje = porcentajeIni + valueData.porcentaje;
+                        porcentajeInput.value = porcentaje;
+                        let totalValue = valueData.valor * (porcentaje / 100);
+                        let totalView = totalValue.toFixed(2);
+                        totalView = totalView.replace('.', ',');
+                        totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-            // Add event listeners to clear inputs on focus
-            const clearInput = function() {
-                codigo.value = '';
-                descripcion.value = '';
-            };
-
-            codigo.addEventListener('focus', clearInput);
-            descripcion.addEventListener('focus', clearInput);
-
-            //validar que no se pueda ingresar un porcentaje > 100
-            let porcentajeInput = document.getElementById('porcentaje');
-            let porcentajeValue = parseFloat(porcentajeInput.value);
-
-            if (porcentajeValue > 100) {
-                porcentajeInput.value = 100;
-            }
-
-            //modifica total si cambia porcentaje
-            document.getElementById('porcentaje').addEventListener('input', function() {
-                let porcentajeInput = document.getElementById('porcentaje');
-                let porcentajeValue = parseFloat(porcentajeInput.value);
-                let valorOrig = parseFloat(document.getElementById('valor_orig').value);
-
-                if (porcentajeValue > 200) {
-                    porcentajeInput.value = 100;
-                    porcentajeValue = 100;
-                }
-
-                let totalValue = valorOrig * (porcentajeValue / 100);
-                let totalView = totalValue.toFixed(2);
-                totalView = totalView.replace('.', ',');
-                totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-                document.getElementById('total').textContent = totalView;
-                document.getElementById('valor_total').value = totalValue.toFixed(2);
-
-            });
-
-
-            // aca selecciono una practica del combo
-            document.getElementById('nomenclador_id').addEventListener('change', function() {
-                let selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value) {
-                    mostrarValor();
-                }
-            });
-            // ---------------------------------------------------------------------------------
-            // funcion comun que se llama para mostrar el valor
-            function mostrarValor() {
-                let parte_cab_id = document.getElementById('parte_cab_id').value;
-                let periodo = document.getElementById('periodo').value;
-                let porcentajeInput = document.getElementById('porcentaje');
-                let porcentajeIni = parseFloat(porcentajeInput.value);
-                let nomencladorSelect = document.getElementById('nomenclador_id');
-                if (periodo == "" || nomencladorSelect.options.length == 0) {
-                    return
-                }
-                selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
-                nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
-                nivel = selectedNomencladorId.getAttribute('data-nivel');
-
-                return fetch('{{ route('consumos.valor.buscar') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token
-                    },
-                    body: JSON.stringify({
-                        periodo: periodo, 
-                        nivel: nivel,
-                        parte_cab_id: parte_cab_id
+                        document.getElementById('valor_orig').value = valueData.valor;
+                        document.getElementById('total').textContent = totalView;
+                        document.getElementById('valor_total').value = totalValue.toFixed(2);
                     })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // Si no es exitoso, manejar error
-                        return response.json().then(errorData => {
-                            // console.error(errorData.error);
-                            limpiarCampos(); // Llama a la función para limpiar los campos
-                            throw new Error(errorData.error);
-                        });
-                    }
-                    return response.json(); // Convertir respuesta a JSON
-                })
-                .then(valueData => {
-                    let porcentaje = porcentajeIni + valueData.porcentaje;
-                    porcentajeInput.value = porcentaje;
-                    let totalValue = valueData.valor * (porcentaje / 100);
-                    let totalView = totalValue.toFixed(2);
-                    totalView = totalView.replace('.', ',');
-                    totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                    });
+                }
 
-                    document.getElementById('valor_orig').value = valueData.valor;
-                    document.getElementById('total').textContent = totalView;
-                    document.getElementById('valor_total').value = totalValue.toFixed(2);
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud:', error);
-                });
-            }
+                // Función para limpiar los campos en caso de error
+                function limpiarCampos() {
+                    document.getElementById('valor_orig').value = '';
+                    document.getElementById('total').textContent = '';
+                    document.getElementById('valor_total').value = '';
+                    document.getElementById('nom_padre_id').value = '';
+                }
 
-            // Función para limpiar los campos en caso de error
-            function limpiarCampos() {
-                document.getElementById('valor_orig').value = '';
-                document.getElementById('total').textContent = '';
-                document.getElementById('valor_total').value = '';
-                document.getElementById('nom_padre_id').value = '';
-            }
-
-        });
-    </script>
+            });
+        </script>
+    @endpush
 @endsection

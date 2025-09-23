@@ -7,7 +7,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>{{ config('app.name', 'Medi Nexus') }}</title>
-    <link rel="icon" type="image/x-icon" href="{{asset('logo_medinexus_imagen.png')}}" />
+    <link rel="icon" type="image/x-icon" href="{{asset('img/logomedinexustransparente.png')}}" />
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">

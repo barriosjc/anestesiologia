@@ -97,16 +97,19 @@
         @include('cargas.cab.partials.cambio_estado')
 
     </section>
-    <script src="{{ asset('js/util.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            // Manejar la apertura del modal
-            $(document).on('click', '.llama_modal', function() {
-                var parteCabId = $(this).data('id');
-                var observaciones = $(this).data("observaciones");
-                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
-                document.querySelector('textarea[name="observaciones"]').value = observaciones;
+
+    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
+                // Manejar la apertura del modal
+                $(document).on('click', '.llama_modal', function() {
+                    var parteCabId = $(this).data('id');
+                    var observaciones = $(this).data("observaciones");
+                    document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
+                    document.querySelector('textarea[name="observaciones"]').value = observaciones;
+                });
             });
-        });
-    </script>
+        </script>
+    @endpush
     @endsection

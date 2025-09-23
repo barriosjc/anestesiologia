@@ -104,19 +104,22 @@
         </div>
         <div id="error-container"></div>
     </div>
-    <script src="{{ asset('js/util.js') }}"></script>
-    <script>
-        // Define un objeto global con todas las rutas
-        window.routes = {
-            revalorizar: "{{ route('consumo.rendiciones.revalorizar') }}",
-            cambiarEstado: "{{ route('consumo.rendiciones.estados') }}",
-            agregarConsumo: "{{ route('consumo.rendiciones.agregar') }}",
-            agregarConsumoConDiferencia: "{{ route('consumo.rendiciones.agregarydiff') }}",
-        };
-    </script>
-    {{-- <script src="{{ asset('js/rendiciones.js') }}"></script> --}}
-    <script src="{{ asset('js/rendiciones.js') }}"></script>
-{{-- 
+    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
+    @push('scripts')
+        <script>
+            // Define un objeto global con todas las rutas
+            window.routes = {
+                revalorizar: "{{ route('consumo.rendiciones.revalorizar') }}",
+                cambiarEstado: "{{ route('consumo.rendiciones.estados') }}",
+                agregarConsumo: "{{ route('consumo.rendiciones.agregar') }}",
+                agregarConsumoConDiferencia: "{{ route('consumo.rendiciones.agregarydiff') }}",
+            };
+        </script>
+        {{-- <script src="{{ asset('js/rendiciones.js') }}"></script> --}}
+        <script src="{{ asset('js/rendiciones.js') }}"></script>
+    @endpush
+    
+        {{-- 
     <script>
         let token = document.querySelector('input[name="_token"]').value;
 

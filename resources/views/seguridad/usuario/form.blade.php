@@ -32,9 +32,9 @@
         </select>
 
         <div class="form-check form-switch pt-3">
-            <input class="form-check-input" type="checkbox" role="switch" name="blanquear" id="blanquear" >
+            <input class="form-check-input" type="checkbox" role="switch" name="blanquear" id="blanquear">
             <label class="form-check-label" for="blanquear">Blanquear clave</label>
-          </div>
+        </div>
     </div>
 </div>
 
@@ -43,45 +43,47 @@
     <button class="btn btn-primary" type="submit">Guardar</button>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        var rolesSelect = $('#perfil_id');
-        rolesSelect.empty();
+@push('scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var rolesSelect = $('#perfil_id');
+            rolesSelect.empty();
 
-        const lroles = '{{ $perfiles_user }}';
-        $.ajax({
-            url: "{{ route('roles.json') }}",
-            type: 'GET',
-            data: null,
-            dataType: 'json',
-            success: function(response) {
-                $.each(response.data, function(key, value) {
-                    rolesSelect.append("<option value='" + value.id + "'" +
-                        (lroles.includes(value.id) ? 'selected' : '') +
-                        ">" + value.name + "</option>");
-                });
-            },
-            error: function(response) {
-                alert(response.messagge);
-            }
+            const lroles = '{{ $perfiles_user }}';
+            $.ajax({
+                url: "{{ route('roles.json') }}",
+                type: 'GET',
+                data: null,
+                dataType: 'json',
+                success: function(response) {
+                    $.each(response.data, function(key, value) {
+                        rolesSelect.append("<option value='" + value.id + "'" +
+                            (lroles.includes(value.id) ? 'selected' : '') +
+                            ">" + value.name + "</option>");
+                    });
+                },
+                error: function(response) {
+                    alert(response.messagge);
+                }
+            });
+
+            $("a").removeClass("active  ms-0");
+            $("#perfil").addClass("active  ms-0");
         });
+    </script>
 
-        $("a").removeClass("active  ms-0");
-        $("#perfil").addClass("active  ms-0");
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#perfil_id').select2({
+                theme: 'bootstrap-5'
+            });
 
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#perfil_id').select2({
-            theme: 'bootstrap-5'
+            // for (let index = 0; index < $.length; index++) {
+            //   const element = array[index];
+
+            // }
+
         });
-
-        // for (let index = 0; index < $.length; index++) {
-        //   const element = array[index];
-
-        // }
-
-    });
-</script>
+    </script>
+@endpush

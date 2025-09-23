@@ -3,7 +3,7 @@
             @php($readonly = false)
         @endif
         <div class="col-xl-4">
-            <form method="POST" action="{{ route('profile.foto') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('profile.foto') }}" enctype="multipart/form-data" id="formreadonly">
                 @csrf
                 <input type="hidden" name="id" value="{{ old('user_id', $user->id) }}" />
                 <!-- Profile picture card-->
@@ -64,25 +64,27 @@
         </div>
     </div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
+    @push('scripts')
+        <script type="text/javascript">
+            $(document).ready(function() {
 
-            $("a").removeClass("active  ms-0");
-            $("#perfil").addClass("active  ms-0");
+                $("a").removeClass("active  ms-0");
+                $("#perfil").addClass("active  ms-0");
 
-            if ({{ isset($readonly) ? true : false }}) {
-                var formulario = document.getElementById("formreadonly");
-                var campos = formulario.getElementsByTagName("input");
-                for (var i = 0; i < campos.length; i++) {
-                    campos[i].readOnly = true;
+                if ({{ isset($readonly) ? true : false }}) {
+                    var formulario = document.getElementById("formreadonly");
+                    var campos = formulario.getElementsByTagName("input");
+                    for (var i = 0; i < campos.length; i++) {
+                        campos[i].readOnly = true;
+                    }
+                    var campos = formulario.getElementsByTagName("button");
+                    for (var i = 0; i < campos.length; i++) {
+                        campos[i].style.display = "none";
+                    }
+
+                    document.getElementById("foto").disabled = true;
                 }
-                var campos = formulario.getElementsByTagName("button");
-                for (var i = 0; i < campos.length; i++) {
-                    campos[i].style.display = "none";
-                }
 
-                document.getElementById("foto").disabled = true;
-            }
-
-        });
-    </script>
+            });
+        </script>
+    @endpush

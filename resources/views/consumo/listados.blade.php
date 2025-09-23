@@ -140,21 +140,23 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/util.js') }}"></script>
+    {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
+                $('[data-bs-toggle="tooltip"]').tooltip();
 
-    <script>
-        $(document).ready(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip();
-
-            $('.select2-multiple').select2({
-                placeholder: "Select options",
-                allowClear: true
+                $('.select2-multiple').select2({
+                    placeholder: "Select options",
+                    allowClear: true
+                });
+                
+                $('#cobertura_id').select2({
+                    placeholder: "-- Seleccione --",
+                    allowClear: true
+                });
             });
-            
-            $('#cobertura_id').select2({
-                placeholder: "-- Seleccione --",
-                allowClear: true
-            });
-        });
-    </script>
+        </script>
+    @endpush
 @endsection
+

@@ -114,26 +114,28 @@
     {{-- modales --}}
     @include('cargas.cab.partials.cambio_estado')
 
-    <script src="{{ asset('js/util.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            // Inicializar tooltips
-            $('[data-bs-toggle="tooltip"]').tooltip({
-                html: true
-            });
+    @push('scripts')
+        {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
+        <script>
+            $(document).ready(function() {
+                // Inicializar tooltips
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    html: true
+                });
 
-            $('.select2').select2({
-                placeholder: "-- Seleccione --",
-                allowClear: true
-            });
+                $('.select2').select2({
+                    placeholder: "-- Seleccione --",
+                    allowClear: true
+                });
 
-            // Manejar la apertura del modal
-            $(document).on('click', '.llama_modal', function() {
-                var parteCabId = $(this).data('id');
-                var observaciones = $(this).data('observaciones')
-                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
-                document.querySelector('textarea[name="observaciones"]').value = observaciones;
+                // Manejar la apertura del modal
+                $(document).on('click', '.llama_modal', function() {
+                    var parteCabId = $(this).data('id');
+                    var observaciones = $(this).data('observaciones')
+                    document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
+                    document.querySelector('textarea[name="observaciones"]').value = observaciones;
+                });
             });
-        });
-    </script>
+        </script>
+    @endpush
 @endsection

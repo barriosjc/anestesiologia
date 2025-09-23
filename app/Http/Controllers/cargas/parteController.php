@@ -15,6 +15,7 @@ use App\Models\Parte_det;
 use App\Models\Profesional;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ParteRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -127,28 +128,8 @@ class ParteController extends Controller
 
         return view('cargas.cab.create', compact('parte_id', 'parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
-    public function store(Request $request)
+    public function store(ParteRequest $request)
     {
-        $validated = $request->validate([
-            'dni' => 'required|string|max:20',
-            'cobertura_id' => 'required',
-            'centro_id' => 'required',
-            'profesional_id' => 'required',
-            'nombre' => 'required',
-            'gerenciadora_id' => 'required',
-            'fec_nacimiento' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    $year = explode('-', $value)[0];
-                    $currentYear = date('Y');
-                    if ($year < 1900 || $year > $currentYear) {
-                        $fail("El campo fecha de nacimiento debe ser un año entre 1900 y $currentYear.");
-                    }
-                },
-            ],
-        ]);
-
         $paciente = Paciente::where('dni', $request->dni)->first();
         if (empty($paciente)) {
             $paciente = new Paciente();
@@ -173,6 +154,7 @@ class ParteController extends Controller
         $parte->profesional_id = $request->profesional_id;
         $parte->observaciones = $request->observaciones;
         $parte->fec_prestacion = $request->fec_prestacion;
+        $parte->fec_prestacion_fin = $request->fec_prestacion_fin;
         $parte->user_id = Auth()->user()->id;
         $parte->save();
 
