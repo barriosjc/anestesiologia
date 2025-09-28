@@ -259,6 +259,8 @@ class ParteController extends Controller
     public function calendar()
     {
         $calendario = Calendar::all();
+        $color = #deb728ff;
+        $textColor = #000000;
         $calendar = [];
         foreach ($calendario as $item) {
             $name = "";
@@ -273,7 +275,8 @@ class ParteController extends Controller
                 ['color' => '#bbbb55', 'forecolor' => '#000000'],
             ];
         
-            $name = User::where('id', $item->user_id)->first()->name;
+            // $name = User::where('id', $item->user_id)->first()->name;
+            $name = User::find($item->user_id)?->name ?? 'Sin nombre';
             $users = User::role('administrativo')->orderby('id')->get();
             foreach ($users as $key => $user) {
                 if ($user->id == $item->user_id) {
@@ -335,7 +338,7 @@ class ParteController extends Controller
 
         if ($request->has('cancelar') && $request->cancelar == 'on')
         {
-            $partes = Parte_cab::where('fecha_prestacion', $request->fecha)->exists();
+            $partes = Parte_cab::where('fec_prestacion', $request->fecha)->exists();
             if ($partes) {
                 return redirect()->route('partes_cab.calendar')
                     ->withErrors(['error' => 'No es posible cancelar la fecha porque tiene parte(s) cargada(s).']);

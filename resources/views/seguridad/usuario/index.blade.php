@@ -135,9 +135,9 @@
                                     </tbody>
                                 </table>
                                 {{-- <div class="pagination-wrapper"> {!! $user->appends(['search' => Request::get('search')])->render() !!} </div> --}}
-                                @if(!empty($user))
+                                {{-- @if(!empty($user))
                                     {!! $user->appends(request()->query())->links('vendor.pagination.bootstrap-4') !!}
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
                     </div>

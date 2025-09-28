@@ -32,10 +32,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{-- @dd($presupuestosDet) --}}
                                     @foreach ($presupuestosDet as $item)
                                         <tr>
                                             <td>{{ $item->cobertura->nombre }}</td>
-                                            <td>{{ $item->prestación }}</td>
+                                            <td>{{ $item->descripcion }}</td>
 											<td>{{ $item->porcentaje }}</td>
                                             <td>{{ $item->valor }}</td>
                                             <td>

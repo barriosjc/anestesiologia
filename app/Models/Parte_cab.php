@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class parte_cab
@@ -42,12 +43,49 @@ class Parte_cab extends Model
         , 'gerenciadora_id'
         , 'centro_id'
         , 'paciente_id'
-        , 'fecha_prestacion'
+        , 'fec_prestacion'
+        , 'fec_prestacion_fin'
         , 'prestador_id'
         , 'profesional_id'
         , 'observacion'
     ];
-        
+    
+    protected $dates = ['fec_prestacion', 'fec_prestacion_fin'];
+
+    // Accessor para el input de fecha de prestación (formato para datetime-local)
+    public function getFecPrestacionInputAttribute()
+    {
+        return $this->fec_prestacion ? $this->fec_prestacion->format('Y-m-d\TH:i') : null;
+    }
+    
+    // Accessor para el input de fecha de prestación fin (formato para datetime-local)
+    public function getFecPrestacionFinInputAttribute()
+    {
+        return $this->fec_prestacion_fin ? $this->fec_prestacion_fin->format('Y-m-d\TH:i') : null;
+    }
+    
+    // Accessor para mostrar las fechas en formato dd/mm/yyyy H:i
+    public function getFecPrestacionFormattedAttribute()
+    {
+        return $this->fec_prestacion ? $this->fec_prestacion->format('d/m/Y H:i') : null;
+    }
+    
+    public function getFecPrestacionFinFormattedAttribute()
+    {
+        return $this->fec_prestacion_fin ? $this->fec_prestacion_fin->format('d/m/Y H:i') : null;
+    }
+    
+    // Mutators para guardar las fechas (opcional, Laravel ya maneja datetime-local bien)
+    public function setFecPrestacionAttribute($value)
+    {
+        $this->attributes['fec_prestacion'] = $value ? Carbon::parse($value) : null;
+    }
+    
+    public function setFecPrestacionFinAttribute($value)
+    {
+        $this->attributes['fec_prestacion_fin'] = $value ? Carbon::parse($value) : null;
+    }
+    
     public static function vParteCab()
     {
         $query = DB::table('v_parte_cab')

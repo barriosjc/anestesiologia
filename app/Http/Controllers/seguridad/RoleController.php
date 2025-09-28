@@ -127,7 +127,7 @@ class RoleController extends Controller
                         ->with('flash_message', 'Role deleted successfully');
     }
 
-    public function usuarios(int $rolid, int $usuid = null, string $tarea = '')
+    public function usuarios(int $rolid, $usuid = 0, string $tarea = '')
     {
 
         $rol = role::find($rolid);
@@ -157,8 +157,8 @@ class RoleController extends Controller
                 )
                 ->join('model_has_roles as mr', 'mr.model_id', 'users.id')
                 ->where('mr.role_id', '=', $rol->id)
-                ->simplepaginate(5);
-                // ->get();
+                ->get();
+                // ->simplepaginate(5);
                 
 //        $user = $rol->users()->simplepaginate(5);
         $users = DB::table('users')
@@ -175,7 +175,8 @@ class RoleController extends Controller
                 'deleted_at'
             )
             ->whereNotIn('id', DB::table('model_has_roles')->select('model_id')->where('role_id', '=', $rolid))
-            ->simplepaginate(5);
+            ->get();
+            // ->simplepaginate(5);
         $esabm = false;
         $titulo = 'asignados al rol  ->   ' . strtoupper($rol->name);
         $padre = "roles";
@@ -184,7 +185,7 @@ class RoleController extends Controller
         return view('seguridad.usuario.index', compact('padre', 'rolid', 'user', 'users', 'esabm', 'titulo'));
     }
 
-    public function permisos(int $rolid, int $perid = null, string $tarea = '')
+    public function permisos(int $rolid, int $perid, string $tarea = '')
     {
 
         $rol = role::find($rolid);

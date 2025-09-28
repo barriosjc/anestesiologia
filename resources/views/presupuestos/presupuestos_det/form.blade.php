@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-2 pt-3">
                     <label class="small mb-1" for="archivo">Valor ($)</label>
-                    <label class="form-control bg-light text-muted" id="total" name="total">0,00</label>
+                    <input type="text" class="form-control" id="total" name="total" value="0,00" disabled/>
                 </div>
             </div>
             <div class="row gx-3 mb-3">
@@ -96,6 +96,21 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        const selectCobertura = document.getElementById("cobertura_id");
+        const inputTotal = document.getElementById("total");
+
+        function toggleInput() {
+            if (selectCobertura.value === "75") {
+                inputTotal.removeAttribute("disabled");
+            } else {
+                inputTotal.setAttribute("disabled", true);
+                inputTotal.value = "0,00"; 
+            }
+        }
+        // toggleInput();
+
+        selectCobertura.addEventListener("change", toggleInput);
+        // ------------------------------------------------------------------------
         let token = document.querySelector('input[name="_token"]').value;
         
         // calcula el valor al cambiar el periodo
@@ -193,7 +208,7 @@
             totalView = totalView.replace('.', ',');
             totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-            document.getElementById('total').textContent = totalView;
+            // document.getElementById('total').value = totalView;
             document.getElementById('valor').value = totalValue.toFixed(2);
 
         });
@@ -256,10 +271,9 @@
                 totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
                 document.getElementById('valor_orig').value = valueData;
-                document.getElementById('total').textContent = totalView;
-                // document.getElementById("valor_total").value = totalView;
+                document.getElementById('total').value = totalView;
                 document.getElementById('valor').value = totalValue.toFixed(2);
-                console.log('Valor total:', totalValue.toFixed(2));
+                // console.log('Valor total:', totalValue.toFixed(2));
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);
@@ -269,7 +283,7 @@
         // Función para limpiar los campos en caso de error
         function limpiarCampos() {
             document.getElementById('valor_orig').value = '';
-            document.getElementById('total').textContent = '';
+            document.getElementById('total').value = '';
             document.getElementById('valor').value = '';
             document.getElementById('nom_padre_id').value = '';
         }
