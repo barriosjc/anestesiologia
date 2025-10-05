@@ -1,6 +1,6 @@
 <form id="form_presupuesto" method="POST" action="{{ route('presupuestos.det.store', $presupuestosCab->id) }}"
     role="form" enctype="multipart/form-data">
-    @csrf-
+    @csrf
     <input type="hidden" name="nom_padre_json" id="nom_padre_json">
     <input type="hidden" name="nom_padre_id" id="nom_padre_id">
     <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{$presupuestosCab->gerenciadora_id}}">
@@ -120,6 +120,13 @@
                 mostrarValor();
             }
         });
+        
+        // cambio el valor a mano y actualizo los hiddens
+        document.getElementById('total').addEventListener('change', function() {
+            let total = document.getElementById('total').value;
+            document.getElementById('valor_orig').value = total;
+            document.getElementById('valor').value = total;
+        });
 
         // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
         document.getElementById('search').addEventListener('click', function() {
@@ -218,6 +225,8 @@
         document.getElementById('nomenclador_id').addEventListener('change', function() {
             let selectedOption = this.options[this.selectedIndex];
             if (selectedOption.value) {
+                let nomPadre = selectedOption.getAttribute('data-nom_padre');
+                document.getElementById('nom_padre_id').value = nomPadre;
                 mostrarValor();
             }
         });

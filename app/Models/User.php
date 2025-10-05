@@ -7,6 +7,7 @@ use App\Models\Centro;
 use App\Models\Calendar;
 use App\Models\Gerenciadora;
 use App\Models\PresupuestoCab;
+use App\Models\PresupuestoPago;
 use Laravel\Sanctum\HasApiTokens;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
@@ -75,5 +76,10 @@ class User extends Authenticatable
     public function gerenciadoras()
     {
         return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_users', 'user_id', 'gerenciadora_id');
+    }
+    
+    public function presupuestosPago()
+    {
+        return $this->hasMany(PresupuestoPago::class, 'usuario_id');
     }
 }

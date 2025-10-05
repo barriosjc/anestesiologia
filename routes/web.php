@@ -23,6 +23,7 @@ use App\Http\Controllers\entidades\PreciosListasController;
 use App\Http\Controllers\entidades\PreciosValoresController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
 use App\Http\Controllers\entidades\PresupuestoDetController;
+use App\Http\Controllers\entidades\PresupuestoPagosController;
 use App\Http\Controllers\entidades\NomPracticasEstudioController;
 use App\Http\Controllers\entidades\GerenciadoraCoberturaPadreController;
 
@@ -177,8 +178,9 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['middleware' => ['permission:adm_presupuestos']], function () {
             Route::resource('presupuestos/cab', PresupuestoCabController::class)->names('presupuestos.cab');
-            Route::get('presupuestos/payments', [PresupuestoCabController::class, 'payments'])->name('presupuestos.cab.payments');
             Route::resource('presupuestos/{id}/det', PresupuestoDetController::class)->names('presupuestos.det');
+            Route::resource('presupuestos/{id}/pagos', PresupuestoPagosController::class)->names('presupuestos.pagos');
+            Route::get('presupuestos/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
         });
     });
 });

@@ -48,7 +48,6 @@ class PresupuestoDetController extends Controller
 
     public function store(ConsumoDetRequest $request)
     {
-
         $presupuestosDet = new PresupuestoDet($request->all());
         $presupuestosDet->save();
 

@@ -40,7 +40,7 @@
                                         <th>Usuario</th>
                                         <th>Total</th>
                                         <th>Estado</th>
-                                        <th style="width: 15%"></th>
+                                        <th style="width: 17%"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,7 +64,7 @@
                                             <td>{{ $item->paciente }}</td>
                                             <td>{{ $item->profesional?->nombre }}</td>
                                             <td>{{ $item->user->name }}</td>
-                                            <td>{{ $item->id }}</td>
+                                            <td>{{ number_format($item->total ?? 0, 2, ',', '.') }}</td>
                                             <td>
                                                 <span class="badge rounded-pill {{ $estados[$item->estado]['clase'] }}">
                                                     {{ $estados[$item->estado]['texto'] }}
@@ -77,7 +77,7 @@
                                                     <a class="btn btn-sm btn-primary " data-bs-toggle="tooltip"
                                                         data-bs-placement="top"
                                                         data-bs-title="Cargar los pagos del presupuesto"
-                                                        href="{{ route('presupuestos.cab.payments', $item->id) }}">
+                                                        href="{{ route('presupuestos.pagos.create', $item->id) }}">
                                                         <i class="fa fa-dollar-sign"></i>
 
                                                     </a>
@@ -86,6 +86,13 @@
                                                         data-bs-title="Modificar los datos ingresados al presupuesto"
                                                         href="{{ route('presupuestos.cab.edit', $item->id) }}"><i
                                                             class="fa fa-fw fa-edit"></i>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-secondary" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="Genera un pdf del presupuesto"
+                                                        href="{{ route('presupuestos.cab.print', $item->id) }}"
+                                                        target="_blank">
+                                                        <i class="fa fa-fw fa-print"></i>
                                                     </a>
                                                     @csrf
                                                     @method('DELETE')
