@@ -185,7 +185,7 @@ class RoleController extends Controller
         return view('seguridad.usuario.index', compact('padre', 'rolid', 'user', 'users', 'esabm', 'titulo'));
     }
 
-    public function permisos(int $rolid, int $perid, string $tarea = '')
+    public function permisos(int $rolid, int|string $perid, string $tarea = '')
     {
 
         $rol = role::find($rolid);

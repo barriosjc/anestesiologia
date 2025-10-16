@@ -31,7 +31,7 @@
 
     <tr>
         <td><strong>Paciente:</strong> {{ $presupuesto->paciente }}</td>
-        <td><strong>Profesional:</strong> {{ $presupuesto->user->name ?? '---' }}</td>
+        <td><strong>Profesional:</strong> {{ $presupuesto->profesional->nombre ?? '---' }}</td>
     </tr>
 
     <tr>

@@ -52,4 +52,9 @@ class PresupuestoCab extends Model
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
+
+    public function profesional()
+    {
+        return $this->belongsTo(Profesional::class, 'profesional_id');
+    }
 }
