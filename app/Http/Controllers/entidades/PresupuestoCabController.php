@@ -6,24 +6,23 @@ use App\Models\Centro;
 use App\Models\Parametro;
 use App\Models\Profesional;
 use App\Models\Gerenciadora;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PresupuestoCabRequest;
 
 class PresupuestoCabController extends Controller
 {
-public function index()
-{
-    $presupuestosCab = PresupuestoCab::withSum('presupuestosDet as total', 'valor')
-        ->paginate(10);
+    public function index()
+    {
+        $presupuestosCab = DB::table('v_presupuestos_cab')->paginate(10);
 
-    return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab'));
-}
-
+        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab'));
+    }
 
     public function create()
     {
@@ -108,5 +107,10 @@ public function index()
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="presupuesto_'.$presupuesto->id.'.pdf"');
+    }
+
+    public function partes(int $id)
+    {
+        $presupuesto = 
     }
 }

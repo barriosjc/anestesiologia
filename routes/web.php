@@ -140,7 +140,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('profesionales', [ProfesionalController::class, 'store'])->name('profesionales.store');
             Route::get('profesionales/{profesionale}', [ProfesionalController::class, 'show'])->name('profesionales.show');
             Route::get('profesionales/{profesionale}/edit', [ProfesionalController::class, 'edit'])->name('profesionales.edit');
-            Route::put('profesionales/{profesionale}', [ProfesionalController::class, 'update'])->name('profesionales.update');
+            Route::match(['put', 'patch'], 'profesionales/{profesionale}', [ProfesionalController::class, 'update'])->name('profesionales.update');
             Route::delete('profesionales/{profesionale}', [ProfesionalController::class, 'destroy'])->name('profesionales.destroy');
 
             // Rutas expandidas de centros
@@ -149,7 +149,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('centros', [CentroController::class, 'store'])->name('centros.store');
             Route::get('centros/{centro}', [CentroController::class, 'show'])->name('centros.show');
             Route::get('centros/{centro}/edit', [CentroController::class, 'edit'])->name('centros.edit');
-            Route::put('centros/{centro}', [CentroController::class, 'update'])->name('centros.update');
+            Route::match(['put', 'patch'], 'centros/{centro}', [CentroController::class, 'update'])->name('centros.update');
             Route::delete('centros/{centro}', [CentroController::class, 'destroy'])->name('centros.destroy');
 
             // Rutas expandidas de coberturas
@@ -158,7 +158,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('coberturas', [CoberturaController::class, 'store'])->name('coberturas.store');
             Route::get('coberturas/{cobertura}', [CoberturaController::class, 'show'])->name('coberturas.show');
             Route::get('coberturas/{cobertura}/edit', [CoberturaController::class, 'edit'])->name('coberturas.edit');
-            Route::put('coberturas/{cobertura}', [CoberturaController::class, 'update'])->name('coberturas.update');
+            Route::match(['put', 'patch'], 'coberturas/{cobertura}', [CoberturaController::class, 'update'])->name('coberturas.update');
             Route::delete('coberturas/{cobertura}', [CoberturaController::class, 'destroy'])->name('coberturas.destroy');
             Route::get('coberturas/buscar/datos', [CoberturaController::class, 'buscar'])->name('coberturas.buscar');
 
@@ -168,7 +168,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('parametros', [ParametroController::class, 'store'])->name('parametros.store');
             Route::get('parametros/{parametro}', [ParametroController::class, 'show'])->name('parametros.show');
             Route::get('parametros/{parametro}/edit', [ParametroController::class, 'edit'])->name('parametros.edit');
-            Route::put('parametros/{parametro}', [ParametroController::class, 'update'])->name('parametros.update');
+            Route::match(['put', 'patch'], 'parametros/{parametro}', [ParametroController::class, 'update'])->name('parametros.update');
             Route::delete('parametros/{parametro}', [ParametroController::class, 'destroy'])->name('parametros.destroy');
 
             // Rutas expandidas de gerenciadora_cobertura_padre
@@ -177,7 +177,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('gerenciadora_cobertura_padre', [GerenciadoraCoberturaPadreController::class, 'store'])->name('gerenciadora_cobertura_padre.store');
             Route::get('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'show'])->name('gerenciadora_cobertura_padre.show');
             Route::get('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}/edit', [GerenciadoraCoberturaPadreController::class, 'edit'])->name('gerenciadora_cobertura_padre.edit');
-            Route::put('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'update'])->name('gerenciadora_cobertura_padre.update');
+            Route::match(['put', 'patch'], 'gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'update'])->name('gerenciadora_cobertura_padre.update');
             Route::delete('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'destroy'])->name('gerenciadora_cobertura_padre.destroy');
 
             Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargarDocum'])->name('profesional.cargar.documentacion');
@@ -193,7 +193,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('usuario', [UsuarioController::class, 'store'])->name('usuario.store');
             Route::get('usuario/{usuario}', [UsuarioController::class, 'show'])->name('usuario.show');
             Route::get('usuario/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuario.edit');
-            Route::put('usuario/{usuario}', [UsuarioController::class, 'update'])->name('usuario.update');
+            Route::match(['put', 'patch'], 'usuario/{usuario}', [UsuarioController::class, 'update'])
+    		->name('usuario.update');
             Route::delete('usuario/{usuario}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
 
             // Rutas expandidas de roles
@@ -202,7 +203,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
             Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
             Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-            Route::put('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+            Route::match(['put', 'patch'], 'roles/{role}', [RoleController::class, 'update'])->name('roles.update');
             Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
             // Rutas expandidas de permisos
@@ -211,7 +212,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('permisos', [PermisosController::class, 'store'])->name('permisos.store');
             Route::get('permisos/{permiso}', [PermisosController::class, 'show'])->name('permisos.show');
             Route::get('permisos/{permiso}/edit', [PermisosController::class, 'edit'])->name('permisos.edit');
-            Route::put('permisos/{permiso}', [PermisosController::class, 'update'])->name('permisos.update');
+            Route::match(['put', 'patch'], 'permisos/{permiso}', [PermisosController::class, 'update'])->name('permisos.update');
             Route::delete('permisos/{permiso}', [PermisosController::class, 'destroy'])->name('permisos.destroy');
 
             Route::get('usuario/{id}/roles/{rolid}/{tarea}', [UsuarioController::class, 'roles']);
@@ -237,9 +238,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('presupuestos/cab', [PresupuestoCabController::class, 'store'])->name('presupuestos.cab.store');
             Route::get('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'show'])->name('presupuestos.cab.show');
             Route::get('presupuestos/cab/{cab}/edit', [PresupuestoCabController::class, 'edit'])->name('presupuestos.cab.edit');
-            Route::put('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'update'])->name('presupuestos.cab.update');
+            Route::match(['put', 'patch'], 'presupuestos/cab/{cab}', [PresupuestoCabController::class, 'update'])->name('presupuestos.cab.update');
             Route::delete('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'destroy'])->name('presupuestos.cab.destroy');
-            Route::get('presupuestos/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
+            Route::get('presupuestos/cab/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
+            Route::get('presupuestos/cab/{id}/partes', [PresupuestoCabController::class, 'partes'])->name('presupuestos.cab.partes');
 
             // Rutas expandidas de presupuestos det
             Route::get('presupuestos/{id}/det', [PresupuestoDetController::class, 'index'])->name('presupuestos.det.index');
@@ -247,7 +249,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('presupuestos/{id}/det', [PresupuestoDetController::class, 'store'])->name('presupuestos.det.store');
             Route::get('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'show'])->name('presupuestos.det.show');
             Route::get('presupuestos/{id}/det/{det}/edit', [PresupuestoDetController::class, 'edit'])->name('presupuestos.det.edit');
-            Route::put('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'update'])->name('presupuestos.det.update');
+            Route::match(['put', 'patch'], 'presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'update'])->name('presupuestos.det.update');
             Route::delete('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'destroy'])->name('presupuestos.det.destroy');
 
             // Rutas expandidas de presupuestos pagos
@@ -256,7 +258,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('presupuestos/{id}/pagos', [PresupuestoPagosController::class, 'store'])->name('presupuestos.pagos.store');
             Route::get('presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'show'])->name('presupuestos.pagos.show');
             Route::get('presupuestos/{id}/pagos/{pago}/edit', [PresupuestoPagosController::class, 'edit'])->name('presupuestos.pagos.edit');
-            Route::put('presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'update'])->name('presupuestos.pagos.update');
+            Route::match(['put', 'patch'], 'presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'update'])->name('presupuestos.pagos.update');
             Route::delete('presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'destroy'])->name('presupuestos.pagos.destroy');
         });
     });
@@ -273,5 +275,5 @@ Route::get('/check-routes', function () {
 // Limpiar cache
 Route::get('/limpiar-cache', function () {
     Artisan::call('optimize:clear');
-    return 'Caché limpiada correctamente ✅';
+    return 'Cach� limpiada correctamente ?';
 });

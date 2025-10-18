@@ -24,7 +24,9 @@
                         $estados = [
                             'I' => ['texto' => 'Ingresado', 'clase' => 'bg-secondary'],
                             'P' => ['texto' => 'Pagado', 'clase' => 'bg-success'],
-                            'S' => ['texto' => 'Saldado', 'clase' => 'bg-primary'],
+                            'C' => ['texto' => 'Cancelado', 'clase' => 'bg-danger'],
+                            'O' => ['texto' => 'Cobrado', 'clase' => 'bg-info'],
+                            'F' => ['texto' => 'Facturado', 'clase' => 'bg-primary'],
                         ];
                     @endphp
                     <div class="card-body">
@@ -39,14 +41,15 @@
                                         <th>Profesional</th>
                                         <th>Usuario</th>
                                         <th>Total</th>
+                                        <th>Pagado</th>
                                         <th>Estado</th>
-                                        <th style="width: 17%"></th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($presupuestosCab as $item)
                                         <tr>
-                                            @php
+                                            {{-- @php
                                                 $total = 0;
                                                 foreach ($item->presupuestosDet as $det) {
                                                     $total += $det->importe;
@@ -56,15 +59,16 @@
                                                 @php
                                                     $total = $item->pagos->sum('importe');
                                                 @endphp
-                                            @endif
+                                            @endif --}}
 
                                             <td>{{ $item->id }}</td>
-                                            <td>{{ $item->centro->nombre }}</td>
+                                            <td>{{ $item->centro }}</td>
                                             <td>{{ $item->fecha }}</td>
-                                            <td>{{ $item->paciente }}</td>
-                                            <td>{{ $item->profesional?->nombre }}</td>
-                                            <td>{{ $item->user->name }}</td>
-                                            <td>{{ number_format($item->total ?? 0, 2, ',', '.') }}</td>
+                                            <td>{{ $item->nombre }}</td>
+                                            <td>{{ $item->profesional }}</td>
+                                            <td>{{ $item->usuario }}</td>
+                                            <td>{{ number_format($item->total_presupuesto ?? 0, 2, ',', '.') }}</td>
+                                            <td>{{ number_format($item->total_pagado ?? 0, 2, ',', '.') }}</td>
                                             <td>
                                                 <span class="badge rounded-pill {{ $estados[$item->estado]['clase'] }}">
                                                     {{ $estados[$item->estado]['texto'] }}
@@ -73,34 +77,65 @@
                                             <td>
                                                 <form id="delete-form-{{ $item->id }}"
                                                     action="{{ route('presupuestos.cab.destroy', $item->id) }}"
-                                                    method="POST">
-                                                    <a class="btn btn-sm btn-primary " data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Cargar los pagos del presupuesto"
-                                                        href="{{ route('presupuestos.pagos.create', $item->id) }}">
-                                                        <i class="fa fa-dollar-sign"></i>
-
-                                                    </a>
-                                                    <a class="btn btn-sm btn-success" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Modificar los datos ingresados al presupuesto"
-                                                        href="{{ route('presupuestos.cab.edit', $item->id) }}"><i
-                                                            class="fa fa-fw fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-sm btn-secondary" data-bs-toggle="tooltip"
-                                                        data-bs-placement="top"
-                                                        data-bs-title="Genera un pdf del presupuesto"
-                                                        href="{{ route('presupuestos.cab.print', $item->id) }}"
-                                                        target="_blank">
-                                                        <i class="fa fa-fw fa-print"></i>
-                                                    </a>
+                                                    method="POST" style="display: inline;">
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        onclick="confirmDelete({{ $item->id }})"><i
-                                                            class="far fa-trash-alt text-white"></i>
-                                                    </button>
+                                                    <!-- Dropdown con tres puntos -->
+                                                    <div class="dropdown d-inline">
+                                                        <button class="btn btn-sm btn-gray" type="button"
+                                                            id="dropdownMenuButton{{ $item->id }}"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            data-bs-title="Acciones">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+
+                                                        <ul class="dropdown-menu"
+                                                            aria-labelledby="dropdownMenuButton{{ $item->id }}">
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.pagos.create', $item->id) }}">
+                                                                    <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.edit', $item->id) }}">
+                                                                    <i class="fa fa-fw fa-edit me-2"></i> Editar
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.print', $item->id) }}"
+                                                                    target="_blank">
+                                                                    <i class="fa fa-fw fa-print me-2"></i> Imprimir PDF
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.print', $item->id) }}">
+                                                                    <i class="fas fa-hand-holding-usd me-2"></i> Marcar
+                                                                    como pagado
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.partes', $item->id) }}">
+                                                                    <i class="fas fa-coins me-2"></i> Generar parte
+                                                                </a>
+                                                            </li>                                                            
+                                                            <li>
+                                                                <hr class="dropdown-divider">
+                                                            </li>
+                                                            <li>
+                                                                <button type="button" class="dropdown-item text-danger"
+                                                                    onclick="confirmDelete({{ $item->id }})">
+                                                                    <i class="far fa-trash-alt me-2"></i> Eliminar
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                 </form>
                                             </td>
                                         </tr>
