@@ -12,7 +12,8 @@ class PresupuestoDet extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'presupuestos_det';
-    protected $fillable = ['presupuesto_cab_id', 'cobertura_id', 'nivel', 'nom_padre_id', 'nomenclador_id', 'porcentaje', 'valor', 'observaciones'];
+    protected $fillable = ['presupuesto_cab_id', 'cobertura_id', 'nivel', 'nom_padre_id', 'nomenclador_id', 
+                        'porcentaje', 'valor', 'observaciones', 'periodo'];
 
     // Relación inversa con PresupuestoCab (Cada detalle pertenece a un presupuesto)
     public function presupuestoCab()

@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PresupuestoCabRequest;
+use App\Models\Consumo_cab;
+use App\Models\Consumo_det;
+use App\Models\Paciente;
+use App\Models\Parte_cab;
 
 class PresupuestoCabController extends Controller
 {
@@ -111,6 +115,45 @@ class PresupuestoCabController extends Controller
 
     public function partes(int $id)
     {
-        $presupuesto = 
+        $presup_det = PresupuestoDet::where('presupuesto_cab_id', $id)
+                    ->orderBy('cobertura_id', 'asc')
+                    ->get();
+
+        foreach ($presup_det as $item) {
+            $presupuesto = PresupuestoCab::where('id', $id)->first();
+            $paciente = Paciente::firstOrCreate(
+                ['dni' => $presupuesto->dni],
+                ['nombre' => $presupuesto->nombre, 'fec_nacimiento' => $presupuesto->fecha_nac]
+            );
+            $parte = new Parte_cab();
+            $parte->profesional_id = $presupuesto->profesional_id;
+            $parte->paciente_id =  $paciente->id;
+            $parte->gerenciadora_id = $presupuesto->gerenciadora_id;
+            $parte->cobertura_id = $item->cobertura_id;
+            $parte->centro_id = $presupuesto->centro_id;
+            $parte->fec_presentacion = $presupuesto->fecha;
+            $parte->fec_presentacion_fin = $presupuesto->fecha;
+            $parte->user_id = $presupuesto->usuario_id;
+            $parte->observaciones = $presupuesto->observaciones;
+            $parte->estado_id = 1;
+            $parte->save();
+
+            $consumo = new Consumo_cab();
+            $consumo->parte_cab_id = $parte->id;
+            $consumo->user_id = $parte->user_id;
+            $consumo->save();
+
+            $cons_det = new Consumo_det();
+            $cons_det->consumo_cab_id = $consumo->id;
+            $cons_det->nomenclador_id = $presup_det->nomenclador_id;
+            $cons_det->porcentaje = $presup_det->porcentaje;
+            $cons_det->cantidad = 1;
+            $cons_det->valor = $presup_det->valor;
+            $cons_det->periodo = $presup_det->periodo;
+            $cons_det->estado_id = 1;
+            $cons_det->obs_refac = $presup_det->observaciones;
+            $cons_det->nom_padre_id =$presup_det->nom_padre_id;
+            $cons_det->save();
+        }
     }
 }
