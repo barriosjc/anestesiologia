@@ -31,7 +31,7 @@ class Paciente extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'cuil', 'telefono', 'fec_nacimiento'];
+    protected $fillable = ['nombre', 'cuil', 'telefono', 'fec_nacimiento', 'dni'];
     
     
     //formato para mostrar en los inputs
