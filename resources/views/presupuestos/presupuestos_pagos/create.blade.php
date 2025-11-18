@@ -9,7 +9,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ "Pagos del presupuesto - {$presupuestosCab->fecha} - {$presupuestosCab->nombre} -  {$presupuestosCab->valor}" }}
+                                {{ "Pagos del presupuesto - {$presupuestosCab->id} - {$presupuestosCab->fecha} - {$presupuestosCab->nombre} -  {$presupuestosCab->valor}" }}
                             </span>
                             <div class="float-right">
                                 <a href="{{ route('presupuestos.cab.edit', $presupuestosCab->id) }}" title="Volver">

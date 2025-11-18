@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\entidades;
 
+use App\Models\User;
 use App\Models\Centro;
 use App\Models\Paciente;
 use App\Models\Parametro;
-use App\Models\Parte_cab;
 // use Illuminate\Http\Request;
+use App\Models\Parte_cab;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
 use App\Models\Profesional;
@@ -15,6 +16,7 @@ use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Client\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -24,9 +26,13 @@ class PresupuestoCabController extends Controller
 {
     public function index()
     {
+        $centros = Centro::all();
+        $profesionales = Profesional::orderBy('nombre')->get();
+        $gerenciadoras = Gerenciadora::all();
+        $usuarios = User::all();
         $presupuestosCab = DB::table('v_presupuestos_cab')->paginate(10);
 
-        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab'));
+        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab', 'centros', 'profesionales', 'gerenciadoras', 'usuarios'));
     }
 
     public function create()
@@ -46,6 +52,9 @@ class PresupuestoCabController extends Controller
         $gerenciadoras = Gerenciadora::all();
         $profesionales = Profesional::orderBy('nombre')->get();
         $presupuestosCab = PresupuestoCab::find($id);
+        if (empty($presupuestosCab)) {
+            return redirect()->back()->with(["error" => "No es posible editar un presupuesto dado de baja."]);
+        }
 
         return view('presupuestos.presupuestos_cab.create', compact('gerenciadoras', 'presupuestosCab', 'centros', 'profesionales'));
     }
@@ -73,7 +82,7 @@ class PresupuestoCabController extends Controller
     {
         $presupuesto->update($request->validated());
 
-        return redirect()->route('presupuestos.index')->with('success', 'Presupuesto actualizado correctamente.');
+        return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto actualizado correctamente.');
     }
 
     public function destroy(int $id)
@@ -176,7 +185,7 @@ class PresupuestoCabController extends Controller
         }
 
         // Retornar algo al finalizar exitosamente
-        return redirect()->back()->with('success', 'Partes creados correctamente. Nro de parte generado: '.$parte->id);
+        return redirect()->back()->with('success', 'Partes creados correctamente. Nro de parte generado: ' . $parte->id);
     }
 
     private function validateCab($presupuesto)
@@ -216,5 +225,74 @@ class PresupuestoCabController extends Controller
         }
 
         return true; // Retornar true si la validación pasa
+    }
+
+    public function pagado($id)
+    {
+        $presupuestosCab = PresupuestoCab::where('id', $id)->first();
+        $presupuestosCab->estado = "p";
+        $presupuestosCab->save();
+
+        return redirect()->back();
+    }
+
+    public function filtrar(Request $request)
+    {
+        $query = PresupuestoCab::query();
+
+        // Aplicar filtros
+        if ($request->filled('centro')) {
+            $query->where('centro', $request->centro);
+        }
+
+        if ($request->filled('nombre')) {
+            $query->where('nombre', 'like', "'%{$request->nombre}%'");
+        }
+
+        if ($request->filled('profesional')) {
+            $query->where('profesional', $request->profesional);
+        }
+
+        if ($request->filled('usuario')) {
+            $query->where('usuario', $request->usuario);
+        }
+
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha', '>=', $request->fecha_desde);
+        }
+
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha', '<=', $request->fecha_hasta);
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Obtener resultados paginados
+        $presupuestosCab = $query->orderBy('fecha', 'desc')->paginate(15);
+
+        // Obtener datos únicos para los selects (sin filtrar)
+        $centros = PresupuestoCab::distinct()->pluck('centro')->sort();
+        $nombres = PresupuestoCab::distinct()->pluck('nombre')->sort();
+        $profesionales = PresupuestoCab::distinct()->pluck('profesional')->sort();
+        $usuarios = PresupuestoCab::distinct()->pluck('usuario')->sort();
+
+        // Estados (asumiendo que ya los tienes definidos)
+        $estados = [
+            'pendiente' => ['texto' => 'Pendiente', 'clase' => 'bg-warning'],
+            'pagado' => ['texto' => 'Pagado', 'clase' => 'bg-success'],
+            'cancelado' => ['texto' => 'Cancelado', 'clase' => 'bg-danger'],
+            // Agrega más estados según necesites
+        ];
+
+        return view('presupuestos.cab.index', compact(
+            'presupuestosCab',
+            'centros',
+            'nombres',
+            'profesionales',
+            'usuarios',
+            'estados'
+        ));
     }
 }

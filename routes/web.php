@@ -242,6 +242,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'destroy'])->name('presupuestos.cab.destroy');
             Route::get('presupuestos/cab/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
             Route::get('presupuestos/cab/{id}/partes', [PresupuestoCabController::class, 'partes'])->name('presupuestos.cab.partes');
+            Route::get('presupuestos/cab/{id}/pagado', [PresupuestoCabController::class, 'pagado'])->name('presupuestos.cab.pagado');
+            Route::get('presupuestos/cab/filtrar', [PresupuestoCabController::class, 'filtrar'])->name('presupuestos.cab.filtrar');
 
             // Rutas expandidas de presupuestos det
             Route::get('presupuestos/{id}/det', [PresupuestoDetController::class, 'index'])->name('presupuestos.det.index');

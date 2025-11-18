@@ -12,7 +12,7 @@ class PresupuestoPagosController extends Controller
     public function create(int $id)
     {
         $pagos = PresupuestoPago::where('presupuesto_cab_id', $id)->get();
-        $presupuestosCab = PresupuestoCab::find($id)->first();
+        $presupuestosCab = PresupuestoCab::where('id', $id)->first();
 
         return view('presupuestos.presupuestos_pagos.create', compact('pagos', 'presupuestosCab'));
     }
