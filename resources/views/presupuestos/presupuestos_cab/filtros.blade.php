@@ -1,4 +1,4 @@
-<form action="{{ route('presupuestos.cab.index') }}" method="GET">
+<form action="{{ route('presupuestos.cab.filtrar') }}" method="GET">
     <div class="row g-3">
         <!-- Filtro por Centro -->
         <div class="col-md-3">

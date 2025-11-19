@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Models\Centro;
 use App\Models\Paciente;
 use App\Models\Parametro;
-// use Illuminate\Http\Request;
 use App\Models\Parte_cab;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
@@ -16,7 +15,7 @@ use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -238,7 +237,8 @@ class PresupuestoCabController extends Controller
 
     public function filtrar(Request $request)
     {
-        $query = PresupuestoCab::query();
+        // $query = PresupuestoCab::query();
+        $query = DB::table('v_presupuestos_cab');
 
         // Aplicar filtros
         if ($request->filled('centro')) {
@@ -246,7 +246,7 @@ class PresupuestoCabController extends Controller
         }
 
         if ($request->filled('nombre')) {
-            $query->where('nombre', 'like', "'%{$request->nombre}%'");
+            $query->where('nombre', 'like', "%{$request->nombre}%");
         }
 
         if ($request->filled('profesional')) {
@@ -272,12 +272,10 @@ class PresupuestoCabController extends Controller
         // Obtener resultados paginados
         $presupuestosCab = $query->orderBy('fecha', 'desc')->paginate(15);
 
-        // Obtener datos únicos para los selects (sin filtrar)
-        $centros = PresupuestoCab::distinct()->pluck('centro')->sort();
-        $nombres = PresupuestoCab::distinct()->pluck('nombre')->sort();
-        $profesionales = PresupuestoCab::distinct()->pluck('profesional')->sort();
-        $usuarios = PresupuestoCab::distinct()->pluck('usuario')->sort();
-
+        $centros = Centro::get();
+        $profesionales = Profesional::orderBy('nombre')->get();
+        $gerenciadoras = Gerenciadora::orderBy('nombre')->get();
+        $usuarios = User::get();
         // Estados (asumiendo que ya los tienes definidos)
         $estados = [
             'pendiente' => ['texto' => 'Pendiente', 'clase' => 'bg-warning'],
@@ -286,13 +284,7 @@ class PresupuestoCabController extends Controller
             // Agrega más estados según necesites
         ];
 
-        return view('presupuestos.cab.index', compact(
-            'presupuestosCab',
-            'centros',
-            'nombres',
-            'profesionales',
-            'usuarios',
-            'estados'
-        ));
+        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab', 'centros', 'profesionales', 'gerenciadoras', 'usuarios'));
+
     }
 }
