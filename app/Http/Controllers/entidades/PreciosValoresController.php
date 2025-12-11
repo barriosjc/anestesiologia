@@ -133,7 +133,7 @@ class PreciosValoresController extends Controller
     {
         $validate = $request->validate($request->rulesForUpdateValue());
         $valor = floatval(str_replace(',', '.', str_replace('.', '', $request->valor)));
-        $valores = Valores::where("id", $request->id)->first();
+        $valores = Valores::where("id", $request->hidden_valor_id)->first();
         $valores->update(["valor" => $valor]);
 
         return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');

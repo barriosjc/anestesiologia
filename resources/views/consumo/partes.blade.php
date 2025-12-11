@@ -175,14 +175,16 @@
         </div>
     </div>
     {{-- <script src="{{ asset('js/util.js') }}"></script> --}}
-{{-- 
-    <script>
-        $(document).ready(function(){
-            $('.select2').select2({
-                placeholder: "-- Seleccione --",
-                allowClear: true
+
+    @push('scripts')
+        <script>
+            $(document).ready(function(){
+                $('.select2').select2({
+                    placeholder: "-- Seleccione --",
+                    allowClear: true
+                });
             });
-        });
-    </script> --}}
-    
+        </script>
+    @endpush
+
 @endsection

@@ -158,7 +158,7 @@ class PresupuestoCabController extends Controller
                 $parte->fec_prestacion_fin = $presupuesto->fecha;
                 $parte->user_id = $presupuesto->usuario_id;
                 $parte->observaciones = $presupuesto->observaciones;
-                $parte->estado_id = 1;
+                $parte->estado_id = 4;
                 $parte->save();
 
                 $consumo = new Consumo_cab();
@@ -177,7 +177,7 @@ class PresupuestoCabController extends Controller
             $cons_det->cantidad = 1;
             $cons_det->valor = $item->valor;
             $cons_det->periodo = $item->periodo;
-            $cons_det->estado_id = 1;
+            $cons_det->estado_id = 4;
             $cons_det->obs_refac = $item->observaciones;
             $cons_det->nom_padre_id = $item->nom_padre_id;
             $cons_det->save();
@@ -222,7 +222,6 @@ class PresupuestoCabController extends Controller
                 ->withInput()
                 ->with('error', 'Hay campos obligatorios vacíos en la cabecera.');
         }
-
         return true; // Retornar true si la validación pasa
     }
 
@@ -242,7 +241,7 @@ class PresupuestoCabController extends Controller
 
         // Aplicar filtros
         if ($request->filled('centro')) {
-            $query->where('centro', $request->centro);
+            $query->where('centro_id', $request->centro);
         }
 
         if ($request->filled('nombre')) {
@@ -250,11 +249,11 @@ class PresupuestoCabController extends Controller
         }
 
         if ($request->filled('profesional')) {
-            $query->where('profesional', $request->profesional);
+            $query->where('profesional_id', $request->profesional);
         }
 
         if ($request->filled('usuario')) {
-            $query->where('usuario', $request->usuario);
+            $query->where('usuario_id', $request->usuario);
         }
 
         if ($request->filled('fecha_desde')) {

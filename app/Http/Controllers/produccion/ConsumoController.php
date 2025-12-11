@@ -481,15 +481,15 @@ class ConsumoController extends Controller
     
         foreach ($selectedIds as $item) {
             $rendiciones = DB::table('v_rendiciones')
-            ->where('consumos_det_id', $item['consumo_det_id'])
-            ->first();
+                ->where('consumos_det_id', $item['consumo_det_id'])
+                ->first();
            
             $valores = Valores_cab::vValores(
                 $rendiciones->gerenciadora_id,
                 $rendiciones->cobertura_id,
                 $rendiciones->centro_id,
                 $periodo,
-                $rendiciones->nomenclador_id
+                $rendiciones->nivel
             );
 
             if (!empty($valores)) {

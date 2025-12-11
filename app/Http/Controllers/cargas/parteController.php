@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ParteRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Traits\HasRoles;
 
 class ParteController extends Controller
 {
@@ -331,7 +332,7 @@ class ParteController extends Controller
             ]);
 
         $calendar = Calendar::where('fecha_ini', $request->fecha)->first();
-        if ($calendar && $calendar->user_id <> Auth()->user()->id) {
+        if ($calendar && $calendar->user_id <> Auth()->user()->id && ! Auth()->user()->hasRole('super-admin')) {
             return redirect()->route('partes_cab.calendar')
                 ->withErrors(['error' => 'No es posible modificar el calendario de otro usuario.']);
         }
@@ -350,9 +351,9 @@ class ParteController extends Controller
 
         if (!$calendar) {
             $calendar = new Calendar();
+            $calendar->user_id = Auth()->user()->id;
         }
         
-        $calendar->user_id = Auth()->user()->id;
         $calendar->fecha_ini = $request->fecha;
         $calendar->observaciones = $request->observaciones;
         $calendar->cerrado = $request->cerrado == 'on' ? 1 : 0  ;

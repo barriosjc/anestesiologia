@@ -18,6 +18,9 @@ class NomPadreController extends Controller
     public function index(Request $request)
     {
         $tipo = $request->has('tipo') ? $request->tipo : session('ses_nom_tipo');
+        if(empty($tipo)) {
+            $tipo = 1;
+        }
         session(['ses_nom_tipo' => $tipo]);
         $nomencladores = $this->nomPadreRepository->getByTipo(session('ses_nom_tipo'));
 

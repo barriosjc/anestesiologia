@@ -69,6 +69,7 @@ function revalorizarPartesJS() {
   });
 }
 ;
+window.revalorizarPartesJS = revalorizarPartesJS;
 $(document).ready(function () {
   $('[data-bs-toggle="tooltip"]').tooltip();
   $('.select2').select2({

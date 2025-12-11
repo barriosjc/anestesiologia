@@ -16,12 +16,12 @@
                                 {{ __('Valorización') }}
                             </span>
                             <div class="form-group float-right">
-                                <div class="btn btn-sm btn-success float-right"  data-toggle="modal"
-                                    data-target="#nuevoModal" data-toggle="tooltip" 
+                                <div class="btn btn-sm btn-success float-right"  data-bs-toggle="modal"
+                                    data-bs-target="#nuevoModal" data-toggle="tooltip" 
                                     title="Copiar de una lista de precios existente y crea una nueva Lista de precios con el grupo ingresado, este nuevo no debe existir." data-bs-toggle="tooltip">
                                     <span>{{ __('Copiar') }}</span>
                                 </div>
-                                <a href="{{ route('nomenclador.valor.nuevo', ['nivel' => $nivel]) }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('nomenclador.valor.nuevo') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                     {{ __('Nuevo') }}
                                 </a>
                             </div>
@@ -112,24 +112,6 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            // Maneja el clic en el botón que abre el modal
-            $('.llama_modal').on('click', function() {
-                // Obtiene los datos del botón
-                var id = $(this).data('id');
-                var valor = $(this).data('valor');
-
-                // Asigna los datos al campo hidden y al input del modal
-                $('#valorModal input[name="id"]').val(id);
-                let valorFormateado = parseFloat(valor).toLocaleString('es-AR', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                $('#valorModal input[name="valor"]').val(valorFormateado);
-            });
-        });
-    </script>
 
     {{-- modales --}}
     <div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true">
@@ -143,7 +125,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="input-group mb-3">
-                            <input type="hidden" name="id">
+                            <input type="hidden" name="hidden_valor_id">
                             <div class="input-group-prepend">
                               <span class="input-group-text" id="basic-addon1">$</span>
                             </div>
@@ -199,3 +181,29 @@
         </div>
     </div>
 @endsection
+
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // Maneja el clic en el botón que abre el modal
+            $('.llama_modal').on('click', function() {
+                var id = $(this).data('id');
+                var valor = $(this).data('valor');
+
+                console.log("ID recibido:", id);
+
+                // Cargar en el hidden correcto
+                $('#valorModal input[name="hidden_valor_id"]').val(id);
+                
+                // Asigna los datos al campo hidden y al input del modal
+                $('#valorModal input[name="id"]').val(id);
+                let valorFormateado = parseFloat(valor).toLocaleString('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                $('#valorModal input[name="valor"]').val(valorFormateado);
+            });
+        });
+    </script>
+@endpush

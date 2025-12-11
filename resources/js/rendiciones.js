@@ -59,6 +59,8 @@ function revalorizarPartesJS() {
     })
 };
 
+window.revalorizarPartesJS = revalorizarPartesJS;
+
 $(document).ready(function() {
     $('[data-bs-toggle="tooltip"]').tooltip();
 

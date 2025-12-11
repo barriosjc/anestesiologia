@@ -6,7 +6,7 @@
             <select name="centro" id="centro" class="form-select form-select-sm">
                 <option value="">Todos los centros</option>
                 @foreach ($centros as $centro)
-                    <option value="{{ $centro->id }}" {{ request('centro') == $centro ? 'selected' : '' }}>
+                    <option value="{{ $centro->id }}" {{ request('centro') == $centro->nombre ? 'selected' : '' }}>
                         {{ $centro->nombre }}
                     </option>
                 @endforeach
@@ -26,8 +26,8 @@
             <select name="profesional" id="profesional" class="form-select form-select-sm">
                 <option value="">Todos los profesionales</option>
                 @foreach ($profesionales as $profesional)
-                    <option value="{{ $profesional }}" {{ request('profesional') == $profesional ? 'selected' : '' }}>
-                        {{ $profesional }}
+                    <option value="{{ $profesional->id }}" {{ request('profesional') == $profesional->nombre ? 'selected' : '' }}>
+                        {{ $profesional->nombre }}
                     </option>
                 @endforeach
             </select>
@@ -39,8 +39,8 @@
             <select name="usuario" id="usuario" class="form-select form-select-sm">
                 <option value="">Todos los usuarios</option>
                 @foreach ($usuarios as $usuario)
-                    <option value="{{ $usuario }}" {{ request('usuario') == $usuario ? 'selected' : '' }}>
-                        {{ $usuario }}
+                    <option value="{{ $usuario->id }}" {{ request('usuario') == $usuario->name ? 'selected' : '' }}>
+                        {{ $usuario->name }}
                     </option>
                 @endforeach
             </select>

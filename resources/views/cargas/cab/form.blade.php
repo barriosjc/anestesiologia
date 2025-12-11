@@ -69,7 +69,7 @@
         <div class="row gx-3 mb-3">
             <div class="col-md-6">
                 <label for="cobertura_id" class="small mb-1">Coberturas</label>
-                <select name="cobertura_id" class="select2 form-select" id="cobertura_id" required>
+                <select name="cobertura_id" class="select2 form-select" id="cobertura_id">
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $data)
                         <option value="{{ $data->id }}" {{old('cobertura_id', $parte->cobertura_id) == $data->id ? 'selected' : ''}}>
