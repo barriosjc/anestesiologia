@@ -2,31 +2,32 @@
 
 namespace App\Http\Controllers\produccion;
 
-use DateTime;
-use Exception;
-use Carbon\Carbon;
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\produccion\ReportFactory;
 use App\Models\Centro;
-use App\Models\Estado;
-use App\Models\Listado;
-use App\Models\Periodo;
-use App\Models\Paciente;
 use App\Models\Cobertura;
-use App\Models\Documento;
-use App\Models\Parte_cab;
-use App\Models\Parte_det;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
-use App\Models\Profesional;
-use App\Models\Valores_cab;
-use Illuminate\Http\Request;
-use InvalidArgumentException;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Repositories\ConsumoRepository;
-use App\Http\Controllers\produccion\ReportFactory;
+use App\Models\Documento;
+use App\Models\Estado;
 use App\Models\GerenciadoraCoberturaNomPadre;
+use App\Models\Listado;
+use App\Models\Paciente;
+use App\Models\Parte_cab;
+use App\Models\Parte_det;
+use App\Models\Periodo;
+use App\Models\Profesional;
+use App\Models\User;
+use App\Models\Valores_cab;
+use App\Repositories\ConsumoRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use DateTime;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use Log;
 
 class ConsumoController extends Controller
 {
@@ -96,6 +97,19 @@ class ConsumoController extends Controller
         $parte_cab = $this->consumoRepository->parteBuscar($parte_cab_id);
         $cobertura = $this->consumoRepository->coberturaBuscar($parte_cab->cobertura_id);
         $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
+
+            // DEBUG: Agregar log temporal
+$nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
+
+\Log::info('Buscando valor con:', [
+    'nivel' => $nivel,
+    'nivel_original' => $request->nivel
+]);
+    
+    $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
+    
+    // DEBUG: Ver qué retorna
+    Log::info('Valores encontrados:', ['valores' => $valores]);
 
         if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);

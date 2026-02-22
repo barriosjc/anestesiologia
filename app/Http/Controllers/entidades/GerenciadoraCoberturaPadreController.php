@@ -7,6 +7,7 @@ use App\Models\Cobertura;
 use App\Models\GerenciadoraCoberturaNomPadre;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Validation\Rule;
 
 /**
  * Class CoberturaController
@@ -34,8 +35,11 @@ class GerenciadoraCoberturaPadreController extends Controller
      */
     public function create()
     {
-        $coberturas = new Cobertura;
-        return view('entidades.gerenciadora_cobertura_padre.create', compact('coberturas'));
+        $coberturas = Cobertura::get();
+        $gerenciadoras = Gerenciadora::get();
+        $gerenciadora_cobertura_padre = new GerenciadoraCoberturaNomPadre();
+
+        return view('entidades.gerenciadora_cobertura_padre.create', compact('coberturas', 'gerenciadoras', 'gerenciadora_cobertura_padre'));
     }
 
     /**
@@ -46,19 +50,69 @@ class GerenciadoraCoberturaPadreController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'gerenciadora_id' => 'required|int',
-            'cobertura_id' => 'required|int',
-            'nom_nombre_id' => 'required|int',
-        ]);
+        $validated = $request->validate(
+            [
+                'gerenciadora_id' => 'required|integer',
+                'cobertura_id'    => 'required|integer',
+                'nom_padre_id'    => [
+                    'required',
+                    'integer',
+                    Rule::unique('gerenciadoras_coberturas_nom_padres')
+                        ->where(
+                            fn($query) => $query
+                                ->where('gerenciadora_id', $request->gerenciadora_id)
+                                ->where('cobertura_id', $request->cobertura_id)
+                        ),
+                ],
+            ],
+            [
+                'nom_padre_id.unique' =>
+                'Ya existe una relación con la misma Gerenciadora, Cobertura y Nomenclador Padre que se cargó anteriormente.',
+            ]
+        );
 
-        $erenciadoraCoberturaNomPadre = new GerenciadoraCoberturaNomPadre;
-        $erenciadoraCoberturaNomPadre->save($validated);
-        
-        // return redirect()->route('GerenciadoraCoberturaNomPadre.index')
-        //     ->with('success', 'Cobertura creado correctamente.');
+        $gerenciadoraCoberturaNomPadre = new GerenciadoraCoberturaNomPadre;
+        $gerenciadoraCoberturaNomPadre->gerenciadora_id = $validated['gerenciadora_id'];
+        $gerenciadoraCoberturaNomPadre->cobertura_id = $validated['cobertura_id'];
+        $gerenciadoraCoberturaNomPadre->nom_padre_id = $validated['nom_padre_id'];
+        $gerenciadoraCoberturaNomPadre->save();
 
         return back()->with('success', 'Cobertura creado correctamente.');
+    }
+
+
+    public function update(Request $request, int $id)
+    {
+        $validated = $request->validate(
+            [
+                'gerenciadora_id' => 'required|integer',
+                'cobertura_id'    => 'required|integer',
+                'nom_padre_id'    => [
+                    'required',
+                    'integer',
+                    Rule::unique('gerenciadoras_coberturas_nom_padres')
+                        ->where(
+                            fn($query) => $query
+                                ->where('gerenciadora_id', $request->gerenciadora_id)
+                                ->where('cobertura_id', $request->cobertura_id)
+                        )
+                        ->ignore($id),
+                ],
+            ],
+            [
+                'nom_padre_id.unique' =>
+                'Ya existe una relación con la misma Gerenciadora, Cobertura y Nomenclador Padre que se cargó anteriormente.',
+            ]
+        );
+
+        $gerenciadoraCoberturaNomPadre = GerenciadoraCoberturaNomPadre::findOrFail($id);
+        $gerenciadoraCoberturaNomPadre->gerenciadora_id = $validated['gerenciadora_id'];
+        $gerenciadoraCoberturaNomPadre->cobertura_id    = $validated['cobertura_id'];
+        $gerenciadoraCoberturaNomPadre->nom_padre_id    = $validated['nom_padre_id'];
+        $gerenciadoraCoberturaNomPadre->save();
+
+        return redirect()->route('gerenciadora_cobertura_padre.index')
+            ->with('success', 'GerenciadoraCoberturaNomPadre actualizado correctamente.');
     }
 
     /**
@@ -69,32 +123,11 @@ class GerenciadoraCoberturaPadreController extends Controller
      */
     public function edit($id)
     {
-        $gerenciadora_cobertura_padre = GerenciadoraCoberturaNomPadre::find($id);
+        $coberturas = Cobertura::get();
+        $gerenciadoras = Gerenciadora::get();
+        $gerenciadora_cobertura_padre = GerenciadoraCoberturaNomPadre::where('id', $id)->first();
 
-        return view('entidades.gerenciadora_cobertura_padre.edit', compact('gerenciadora_cobertura_padre'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Cobertura $cobertura
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, int $id)
-    {
-        $validated = $request->validate([
-            'gerenciadora_id' => 'required|int',
-            'cobertura_id' => 'required|int',
-            'nom_nombre_id' => 'required|int',
-        ]);
-        
-        $gerenciadoraCoberturaNomPadre = GerenciadoraCoberturaNomPadre::find($id);
-        $gerenciadoraCoberturaNomPadre->save($validated);
-
-
-        return redirect()->route('gerenciadoraCoberturaNomPadre.index')
-            ->with('success', 'GerenciadoraCoberturaNomPadre actualizado correctamente.');
+        return view('entidades.gerenciadora_cobertura_padre.edit', compact('coberturas', 'gerenciadoras', 'gerenciadora_cobertura_padre'));
     }
 
     /**
@@ -104,9 +137,9 @@ class GerenciadoraCoberturaPadreController extends Controller
      */
     public function destroy($id)
     {
-        GerenciadoraCoberturaNomPadre::find($id)->delete();
+        GerenciadoraCoberturaNomPadre::where('id', $id)->delete();
 
-        return redirect()->route('GerenciadoraCoberturaNomPadre.index')
+        return redirect()->route('gerenciadora_cobertura_padre.index')
             ->with('success', 'GerenciadoraCoberturaNomPadre borrado correctamente.');
     }
 

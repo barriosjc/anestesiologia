@@ -24,7 +24,7 @@
                         <form method="POST" action="{{ route('gerenciadora_cobertura_padre.update', $gerenciadora_cobertura_padre->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
-
+                            <input type="hidden" name="id" value="{{$gerenciadora_cobertura_padre->id}}">
                             @include('entidades.gerenciadora_cobertura_padre.form')
 
                         </form>

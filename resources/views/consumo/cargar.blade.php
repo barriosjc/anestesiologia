@@ -221,6 +221,7 @@
                     if (codigo == "" && descripcion == "") {
                         return
                     }
+                    console.log(codigo, descripcion, nom_padre_json);
                     // busca en el nomenclador, puede traer uno o varios
                     fetch('{{ route('nomenclador.buscar.coddesc') }}', {
                             method: 'POST',
@@ -318,17 +319,25 @@
                     let porcentajeInput = document.getElementById('porcentaje');
                     let porcentajeIni = parseFloat(porcentajeInput.value);
                     let nomencladorSelect = document.getElementById('nomenclador_id');
+                    
                     if (periodo == "" || nomencladorSelect.options.length == 0) {
                         return
                     }
+                    
                     selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
-                    nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
+                    nomenclador_id = selectedNomencladorId.value
                     nivel = selectedNomencladorId.getAttribute('data-nivel');
+
+                    console.log('=== INICIANDO BÚSQUEDA ===');
+                    console.log('Periodo:', periodo);
+                    console.log('Nivel:', nivel);
+                    console.log('Parte CAB ID:', parte_cab_id);
 
                     return fetch('{{ route('consumos.valor.buscar') }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json; charset=UTF-8',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': token
                         },
                         body: JSON.stringify({
@@ -338,33 +347,43 @@
                         })
                     })
                     .then(response => {
+                        console.log('Response status:', response.status);
+                        console.log('Response ok:', response.ok);
+                        
                         if (!response.ok) {
-                            // Si no es exitoso, manejar error
                             return response.json().then(errorData => {
-                                // console.error(errorData.error);
-                                limpiarCampos(); // Llama a la función para limpiar los campos
+                                console.error('ERROR DATA:', errorData);
+                                limpiarCampos();
                                 throw new Error(errorData.error);
                             });
                         }
-                        return response.json(); // Convertir respuesta a JSON
+                        return response.json();
                     })
                     .then(valueData => {
+                        console.log('=== DATOS RECIBIDOS ===');
+                        console.log('Value Data completo:', valueData);
+                        console.log('Valor:', valueData.valor);
+                        console.log('Porcentaje:', valueData.porcentaje);
+                        
                         let porcentaje = porcentajeIni + valueData.porcentaje;
                         porcentajeInput.value = porcentaje;
                         let totalValue = valueData.valor * (porcentaje / 100);
                         let totalView = totalValue.toFixed(2);
                         totalView = totalView.replace('.', ',');
                         totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        
+                        console.log('Porcentaje final:', porcentaje);
+                        console.log('Total calculado:', totalValue);
 
                         document.getElementById('valor_orig').value = valueData.valor;
                         document.getElementById('total').textContent = totalView;
                         document.getElementById('valor_total').value = totalValue.toFixed(2);
                     })
                     .catch(error => {
-                        console.error('Error en la solicitud:', error);
+                        console.error('=== ERROR CAPTURADO ===');
+                        console.error('Error:', error);
                     });
                 }
-
                 // Función para limpiar los campos en caso de error
                 function limpiarCampos() {
                     document.getElementById('valor_orig').value = '';

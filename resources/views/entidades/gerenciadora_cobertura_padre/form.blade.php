@@ -1,13 +1,12 @@
 <div class="box box-info padding-1">
     <div class="box-body">
-        <input type="hidden" name="id" value="{{$gerenciadora_cobertura_padre->id}}">
         <div class="row gx-3 mb-3">
             <div class="col-md-4">
                 <label class="small mb-1">Gerenciadora</label>
                 <select name="gerenciadora_id" class="form-select" id="gerenciadora_id" required>
                     <option value=""> -- Seleccione --</option>
                     @foreach ($gerenciadoras as $data)
-                        <option value="{{ $data->id }}" {{old('gerenciadora_id', $parte->gerenciadora_id) == $data->id ? 'selected' : ''}}>    
+                        <option value="{{ $data->id }}" {{old('gerenciadora_id', $gerenciadora_cobertura_padre->gerenciadora_id) == $data->id ? 'selected' : ''}}>    
                             {{ $data->nombre }}</option>
                     @endforeach
                 </select>
@@ -16,10 +15,9 @@
                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
                 <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
                     <option value="">-- Seleccione --</option>
-                    @foreach ($coberturas as $item)
-                        <option value="{{ $item->id }}"
-                            {{ session('c_cobertura_id') == $item->id ? 'selected' : '' }}>{{ $item->sigla }}
-                        </option>
+                    @foreach ($coberturas as $data)
+                        <option value="{{ $data->id }}" {{old('cobertura_id', $gerenciadora_cobertura_padre->cobertura_id) == $data->id ? 'selected' : ''}}>     
+                                {{ $data->sigla }}</option>
                     @endforeach
                 </select>
             </div>
