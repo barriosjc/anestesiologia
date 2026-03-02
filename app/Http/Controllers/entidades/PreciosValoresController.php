@@ -142,10 +142,20 @@ class PreciosValoresController extends Controller
 
     public function borrar(int $id)
     {
-        $valores = Valores::find($id);
-        $valores->delete();
+        // Buscamos el registro incluyendo los que están en la papelera
+        $valores = Valores::withTrashed()->findOrFail($id);
 
-        return redirect()->back();
+        if ($valores->trashed()) {
+            // Si está borrado, lo restauramos
+            $valores->restore();
+            $mensaje = "Registro restaurado con éxito.";
+        } else {
+            // Si no está borrado, lo eliminamos (Soft Delete)
+            $valores->delete();
+            $mensaje = "Registro enviado a la papelera.";
+        }
+
+        return redirect()->back()->with('message', $mensaje);
     }
 
     public function traerUno(Request $request)

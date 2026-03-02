@@ -18,7 +18,7 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('nomenclador.store', $nomenclador->id) }}"  role="form" enctype="multipart/form-data">
-                            {{ method_field('PATCH') }}
+                            {{-- {{ method_field('PATCH') }} --}}
                             @csrf
                             @include('entidades.nomenclador.form')
 

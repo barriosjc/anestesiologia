@@ -94,7 +94,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
             Route::post('nomenclador/valores/grupo/nuevo', [PreciosValoresController::class, 'nuevoGrupo'])->name('nomenclador.valores.grupo.nuevo');
             Route::post('nomenclador/valores/guardar', [PreciosValoresController::class, 'guardarGrupo'])->name('nomenclador.valores.grupo.guardar');
-            Route::delete('nomenclador/valor/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valor.borrar');
+            //se cambio a post porque borra y restaura
+            Route::post('nomenclador/valor/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valor.borrar');
             Route::get('nomenclador/valor/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valor.nuevo');
             Route::post('nomenclador/valor/modificar', [PreciosValoresController::class, 'modificar'])->name('nomenclador.valor.modificar');
             Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');

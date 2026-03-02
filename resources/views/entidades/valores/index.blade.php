@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header py-2">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
@@ -28,30 +28,36 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="reportForm" action="{{ route('nomenclador.valores.filtrar') }}" method='GET'>
-                            {{-- @csrf --}}
-                            <div class="row">
+                        <form id="reportForm" action="{{ route('nomenclador.valores.filtrar') }}" method="GET">
+                            <div class="row align-items-end">
+
                                 <div class="col-md-3">
-                                    <label class="small mb-1" for="grupo">Grupo</label>
-                                    <input class="form-control" id="grupo" name="grupo" type="text" placeholder="grupo"
-                                        value="{{ old('grupo') }}" />
+                                    <label class="form-label small" for="grupo">Grupo</label>
+                                    <input class="form-control" id="grupo" name="grupo" type="text"
+                                        placeholder="grupo" value="{{ old('grupo') }}" />
                                 </div>
-                                <div class="form-group col-md-3">
-                                    <label for="nivel">Nivel</label>
+
+                                <div class="col-md-3">
+                                    <label class="form-label small" for="nivel">Nivel</label>
                                     <select class="form-select" id="nivel" name="nivel">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($niveles as $item)
-                                            <option value="{{ $item->nivel }}" {{$nivel == $item->nivel ? 'selected' : ''}}>{{ $item->nivel }}</option>
+                                            <option value="{{ $item->nivel }}"
+                                                {{ $nivel == $item->nivel ? 'selected' : '' }}>
+                                                {{ $item->nivel }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3 d-flex align-items-end">
-                                    <button id="submitInputs" class="btn btn-primary" type="submit">Filtrar Listas</button>
+                                <div class="col-md-3">
+                                    <button id="submitInputs" class="btn btn-primary">
+                                        Filtrar Listas
+                                    </button>
                                 </div>
+
                             </div>
                         </form>
-
 
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="table_data">
@@ -83,20 +89,24 @@
                                                 </div><span> $ {{ number_format((float) $item->valor, 2, ',', '.')  }}</span>
                                             </td>
                                             <td class="td-actions">
-                                                <form id="delete-form-{{ $item->id }}"
-                                                    action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
-                                                    @csrf
                                                     @if (empty($item->deleted_at))
-                                                        @method('DELETE')
-                                                        <button type="button" class="btn btn-danger btn-sm"
-                                                            onclick="confirmDelete({{ $item->id }})">
-                                                            <i class="far fa-trash-alt text-white"></i></button>
+                                                        <form id="delete-form-{{ $item->id }}"
+                                                            action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
+                                                            @csrf
+                                                                {{-- @method('DELETE')  se cambia la ruta a post --}}
+                                                                <button type="button" class="btn btn-danger btn-sm"
+                                                                    onclick="confirmDelete({{ $item->id }})">
+                                                                    <i class="far fa-trash-alt text-white"></i></button>
+                                                        </form>
                                                     @else
-                                                        <button type="button" class="btn btn-success btn-sm"
-                                                            >
-                                                            <i class="fa-solid fa-rotate-left"></i></button>
+                                                        <form id="restore_form_{{ $item->id }}"
+                                                            action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
+                                                            @csrf
+                                                                <button type="button" class="btn btn-success btn-sm"
+                                                                    onclick="confirmJob('¿Desea restaurar este registro?', 'restore_form_{{$item->id}}')">
+                                                                    <i class="fa-solid fa-rotate-left"></i></button>
+                                                        </form>
                                                     @endif
-                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -14,6 +14,8 @@ class SaveNomencladorRequest extends FormRequest
 
     public function rules(): array
     {
+        $nomencladorId = $this->request->get('id');
+
         return [
             'nom_padre_id' => 'required|exists:nom_padres,id',
             'organo_id' => 'nullable|exists:nom_organos,id',
@@ -24,7 +26,7 @@ class SaveNomencladorRequest extends FormRequest
                 'string',
                 Rule::unique('nomenclador')->where(function ($query) {
                     return $query->where('nom_padre_id', $this->nom_padre_id);
-                }),
+                })->ignore($nomencladorId),
             ],
         ];
     }

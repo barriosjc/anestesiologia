@@ -27,4 +27,6 @@ class Nomenclador extends Model
         return $this->belongsTo(NomPadre::class, 'nom_padre_id');
     }
 
+    
+
 }
