@@ -1,0 +1,328 @@
+-- c2660308_anest.v_consumos source
+
+create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_consumos` as
+select
+    `cc`.`id` as `consumos_cab_id`,
+    `cc`.`parte_cab_id` as `parte_cab_id`,
+    `cd`.`estado_id` as `estado_id`,
+    `cc`.`user_id` as `user_id`,
+    `cc`.`created_at` as `created_at`,
+    `cc`.`updated_at` as `updated_at`,
+    `cc`.`deleted_at` as `deleted_at`,
+    `cd`.`id` as `id`,
+    `cd`.`nomenclador_id` as `nomenclador_id`,
+    `cd`.`porcentaje` as `porcentaje`,
+    `cd`.`cantidad` as `cantidad`,
+    `cd`.`valor` as `valor`,
+    `cd`.`obs_refac` as `observaciones`,
+    `np`.`codigo` as `codigo`,
+    `np`.`nivel` as `nivel`,
+    `np`.`descripcion` as `nom_descripcion`,
+    `e`.`descripcion` as `est_descripcion`
+from
+    (((`c2660308_anest`.`consumos_cab` `cc`
+join `c2660308_anest`.`consumos_det` `cd` on
+    (`cc`.`id` = `cd`.`consumo_cab_id`))
+join `c2660308_anest`.`estados` `e` on
+    (`e`.`id` = `cd`.`estado_id`))
+join (
+    select
+        `n`.`id` as `id`,
+        `n`.`nom_padre_id` as `nom_padre_id`,
+        `n`.`codigo` as `codigo`,
+        `n`.`nivel` as `nivel`,
+        `n`.`descripcion` as `descripcion`
+    from
+        `c2660308_anest`.`nomenclador` `n`
+union all
+    select
+        `p`.`id` as `id`,
+        `p`.`nom_padre_id` as `nom_padre_id`,
+        `p`.`codigo` as `codigo`,
+        `p`.`codigo` as `codigo`,
+        `p`.`nombre` as `nombre`
+    from
+        `c2660308_anest`.`nom_practicas_estudios` `p`) `np` on
+    (`np`.`id` = `cd`.`nomenclador_id`))
+where
+    `cc`.`deleted_at` is null
+    and `cd`.`deleted_at` is null;
+
+------------------------------------------------------------------------------------------
+
+-- c2660308_anest.v_parte_cab source
+
+create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_parte_cab` as
+select
+    `cab`.`id` as `id`,
+    `cab`.`gerenciadora_id` as `gerenciadora_id`,
+    `cab`.`profesional_id` as `profesional_id`,
+    `cab`.`paciente_id` as `paciente_id`,
+    `cab`.`cobertura_id` as `cobertura_id`,
+    `cab`.`centro_id` as `centro_id`,
+    `cab`.`observaciones` as `observacion`,
+    `cab`.`user_id` as `user_id`,
+    `cab`.`estado_id` as `estado_id`,
+    `cab`.`created_at` as `created_at`,
+    `cab`.`deleted_at` as `deleted_at`,
+    `cab`.`updated_at` as `updated_at`,
+    date_format(`cab`.`fec_prestacion`, '%d/%m/%Y') as `fec_prestacion`,
+    date_format(`cab`.`fec_prestacion_fin`, '%d/%m/%Y') as `fec_prestacion_fin`,
+    `cab`.`fec_prestacion` as `fec_prestacion_orig`,
+    `prof`.`nombre` as `profesional`,
+    `cen`.`nombre` as `centro`,
+    `pac`.`nombre` as `paciente`,
+    date_format(`pac`.`fec_nacimiento`, '%d/%m/%Y') as `fec_nacimiento`,
+    `pac`.`fec_nacimiento` as `fec_nacimiento_orig`,
+    `us`.`name` as `name`,
+    `us`.`email` as `email`,
+    timestampdiff(year, `pac`.`fec_nacimiento`, curdate()) as `edad`,
+    `cob`.`nombre` as `cobertura`,
+    `cob`.`sigla` as `sigla`,
+    `est`.`descripcion` as `est_descripcion`,
+    `est`.`id` as `est_id`,
+    (
+    select
+        count(0)
+    from
+        `c2660308_anest`.`partes_det` `det`
+    where
+        `det`.`parte_cab_id` = `cab`.`id`
+        and `det`.`deleted_at` is null) as `cantidad`
+from
+    ((((((`c2660308_anest`.`partes_cab` `cab`
+join `c2660308_anest`.`users` `us` on
+    (`us`.`id` = `cab`.`user_id`))
+join `c2660308_anest`.`estados` `est` on
+    (`est`.`id` = `cab`.`estado_id`))
+join `c2660308_anest`.`profesionales` `prof` on
+    (`prof`.`id` = `cab`.`profesional_id`))
+join `c2660308_anest`.`centros` `cen` on
+    (`cen`.`id` = `cab`.`centro_id`))
+join `c2660308_anest`.`pacientes` `pac` on
+    (`pac`.`id` = `cab`.`paciente_id`))
+join `c2660308_anest`.`coberturas` `cob` on
+    (`cob`.`id` = `cab`.`cobertura_id`))
+where
+    `cab`.`deleted_at` is null;
+
+------------------------------------------------------------------------------------------
+
+-- c2660308_anest.v_presupuestos_cab source
+
+create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_presupuestos_cab` as
+select
+    `pc`.`id` as `id`,
+    `pc`.`fecha` as `fecha`,
+    `pc`.`nombre` as `nombre`,
+    `pc`.`fecha_nac` as `fecha_nac`,
+    `pc`.`dni` as `dni`,
+    `pc`.`centro_id` as `centro_id`,
+    `c`.`nombre` as `centro`,
+    `pc`.`profesional_id` as `profesional_id`,
+    `p`.`nombre` as `profesional`,
+    `pc`.`observaciones` as `observaciones`,
+    `pc`.`usuario_id` as `usuario_id`,
+    `u`.`name` as `usuario`,
+    `pc`.`valor_dolar` as `valor_dolar`,
+    `pc`.`estado` as `estado_original`,
+    `pc`.`parte_cab_id` as `parte_cab_id`,
+    `pc`.`created_at` as `created_at`,
+    `pc`.`updated_at` as `updated_at`,
+    `pc`.`deleted_at` as `deleted_at`,
+    `pc`.`gerenciadora_id` as `gerenciadora_id`,
+    case
+        when `pc`.`deleted_at` is not null then 'C'
+        when `pc`.`parte_cab_id` is not null then 'F'
+        when `pc`.`estado` = 'p' then 'P'
+        when `pp`.`total_pagado` > 0 then 'O'
+        else 'I'
+    end collate utf8mb4_unicode_ci as `estado`,
+    coalesce(`pp`.`total_pagado`, 0) as `total_pagado`,
+    coalesce(`pd`.`total_presupuesto`, 0) as `total_presupuesto`
+from
+    (((((`c2660308_anest`.`presupuestos_cab` `pc`
+left join `c2660308_anest`.`centros` `c` on
+    (`c`.`id` = `pc`.`centro_id`))
+left join `c2660308_anest`.`profesionales` `p` on
+    (`p`.`id` = `pc`.`profesional_id`))
+left join `c2660308_anest`.`users` `u` on
+    (`u`.`id` = `pc`.`usuario_id`))
+left join (
+    select
+        `c2660308_anest`.`presupuestos_pagos`.`presupuesto_cab_id` as `presupuesto_cab_id`,
+        sum(`c2660308_anest`.`presupuestos_pagos`.`valor`) as `total_pagado`
+    from
+        `c2660308_anest`.`presupuestos_pagos`
+    where
+        `c2660308_anest`.`presupuestos_pagos`.`deleted_at` is null
+    group by
+        `c2660308_anest`.`presupuestos_pagos`.`presupuesto_cab_id`) `pp` on
+    (`pp`.`presupuesto_cab_id` = `pc`.`id`))
+left join (
+    select
+        `c2660308_anest`.`presupuestos_det`.`presupuesto_cab_id` as `presupuesto_cab_id`,
+        sum(`c2660308_anest`.`presupuestos_det`.`valor`) as `total_presupuesto`
+    from
+        `c2660308_anest`.`presupuestos_det`
+    where
+        `c2660308_anest`.`presupuestos_det`.`deleted_at` is null
+    group by
+        `c2660308_anest`.`presupuestos_det`.`presupuesto_cab_id`) `pd` on
+    (`pd`.`presupuesto_cab_id` = `pc`.`id`));
+
+------------------------------------------------------------------------------------------
+
+-- c2660308_anest.v_rendicion_agrupxnivel source
+
+create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_rendicion_agrupxnivel` as
+select
+    `con`.`parte_cab_id` as `parte_cab_id`,
+    `con`.`cantidad` as `cantidad`,
+    `con`.`periodo` as `periodo`,
+    `con`.`niveles` as `niveles`,
+    `con`.`valor` as `valor`,
+    `pc`.`id` as `id`,
+    `pc`.`profesional_id` as `profesional_id`,
+    `pc`.`paciente_id` as `paciente_id`,
+    `pc`.`cobertura_id` as `cobertura_id`,
+    `pc`.`centro_id` as `centro_id`,
+    `pc`.`fec_prestacion` as `fec_prestacion_orig`,
+    date_format(`pc`.`fec_prestacion`, '%d/%m/%Y') as `fec_prestacion`,
+    `pc`.`user_id` as `user_id`,
+    `pc`.`observaciones` as `observaciones`,
+    `pc`.`estado_id` as `estado_id`,
+    `pc`.`created_at` as `created_at`,
+    `pc`.`updated_at` as `updated_at`,
+    `pc`.`deleted_at` as `deleted_at`,
+    `pr`.`nombre` as `prof_nombre`,
+    concat(`pa`.`dni`, '/', `pa`.`nombre`, ' (', timestampdiff(year, `pa`.`fec_nacimiento`, curdate()), ')') as `pac_nombre`,
+    `co`.`nombre` as `cob_nombre`,
+    `co`.`sigla` as `cob_sigla`,
+    `ce`.`nombre` as `cen_nombre`
+from
+    ((((((
+    select
+        `cc`.`parte_cab_id` as `parte_cab_id`,
+        `cd`.`cantidad` as `cantidad`,
+        `cd`.`periodo` as `periodo`,
+        group_concat(coalesce(`n`.`nivel`, `np`.`codigo`) order by coalesce(`n`.`nivel`, `np`.`codigo`) asc separator ', ') as `niveles`,
+        sum(`cd`.`valor`) as `valor`
+    from
+        (((`c2660308_anest`.`consumos_det` `cd`
+    join `c2660308_anest`.`consumos_cab` `cc` on
+        (`cc`.`id` = `cd`.`consumo_cab_id`))
+    left join `c2660308_anest`.`nomenclador` `n` on
+        (`cd`.`nomenclador_id` = `n`.`id` and `cd`.`nom_padre_id` = `n`.`nom_padre_id`))
+    left join `c2660308_anest`.`nom_practicas_estudios` `np` on
+        (`cd`.`nomenclador_id` = `np`.`id` and `cd`.`nom_padre_id` = `np`.`nom_padre_id`))
+    where
+        `cd`.`deleted_at` is null
+    group by
+        `cd`.`consumo_cab_id`,
+        `cd`.`cantidad`,
+        `cd`.`periodo`) `con`
+join `c2660308_anest`.`partes_cab` `pc` on
+    (`pc`.`id` = `con`.`parte_cab_id`))
+join `c2660308_anest`.`profesionales` `pr` on
+    (`pr`.`id` = `pc`.`profesional_id`))
+join `c2660308_anest`.`pacientes` `pa` on
+    (`pa`.`id` = `pc`.`paciente_id`))
+join `c2660308_anest`.`coberturas` `co` on
+    (`co`.`id` = `pc`.`cobertura_id`))
+join `c2660308_anest`.`centros` `ce` on
+    (`ce`.`id` = `pc`.`centro_id`))
+where
+    `pc`.`deleted_at` is null;
+
+------------------------------------------------------------------------------------------
+
+-- c2660308_anest.v_rendiciones source
+
+create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_rendiciones` as
+select
+    `sel`.`id` as `parte_cab_id`,
+    `sel`.`profesional_id` as `profesional_id`,
+    `sel`.`paciente_id` as `paciente_id`,
+    `sel`.`cobertura_id` as `cobertura_id`,
+    `sel`.`centro_id` as `centro_id`,
+    `sel`.`fec_prestacion` as `fec_prestacion_orig`,
+    date_format(`sel`.`fec_prestacion`, '%d/%m/%Y') as `fec_prestacion`,
+    `sel`.`user_id` as `user_id`,
+    `sel`.`observaciones` as `observaciones`,
+    `sel`.`created_at` as `created_at`,
+    `sel`.`updated_at` as `updated_at`,
+    `sel`.`deleted_at` as `deleted_at`,
+    `sel`.`prof_nombre` as `prof_nombre`,
+    `sel`.`pac_nombre` as `pac_nombre`,
+    `sel`.`dni` as `dni`,
+    `sel`.`fec_nacimiento` as `fec_nacimiento`,
+    `sel`.`cob_nombre` as `cob_nombre`,
+    `sel`.`cob_sigla` as `cob_sigla`,
+    `sel`.`cen_nombre` as `cen_nombre`,
+    `cc`.`id` as `consumo_id`,
+    `cd`.`id` as `consumos_det_id`,
+    `cd`.`nomenclador_id` as `nomenclador_id`,
+    `cd`.`nom_padre_id` as `nom_padre_id`,
+    `cd`.`porcentaje` as `porcentaje`,
+    `cd`.`valor` as `valor`,
+    `cd`.`periodo` as `periodo`,
+    `cd`.`obs_refac` as `obs_refac`,
+    `cd`.`estado_id` as `estado_id`,
+    coalesce(`n`.`codigo`, `np`.`codigo`) as `codigo`,
+    coalesce(`n`.`nivel`, `np`.`codigo`) as `nivel`,
+    coalesce(`n`.`descripcion`, `np`.`nombre`) as `nom_descripcion`,
+    `e`.`descripcion` as `est_descripcion`,
+    `sel`.`gerenciadora_id` as `gerenciadora_id`,
+    case
+        when `n`.`id` is not null then 'nomenclador'
+        when `np`.`id` is not null then 'practica'
+    end as `tipo_practica`
+from
+    (((((`c2660308_anest`.`consumos_cab` `cc`
+join `c2660308_anest`.`consumos_det` `cd` on
+    (`cc`.`id` = `cd`.`consumo_cab_id`))
+left join `c2660308_anest`.`nomenclador` `n` on
+    (`cd`.`nomenclador_id` = `n`.`id` and `cd`.`nom_padre_id` = `n`.`nom_padre_id`))
+left join `c2660308_anest`.`nom_practicas_estudios` `np` on
+    (`cd`.`nomenclador_id` = `np`.`id` and `cd`.`nom_padre_id` = `np`.`nom_padre_id`))
+join `c2660308_anest`.`estados` `e` on
+    (`cd`.`estado_id` = `e`.`id`))
+left join (
+    select
+        `pc`.`id` as `id`,
+        `pc`.`profesional_id` as `profesional_id`,
+        `pc`.`paciente_id` as `paciente_id`,
+        `pc`.`cobertura_id` as `cobertura_id`,
+        `pc`.`centro_id` as `centro_id`,
+        `pc`.`fec_prestacion` as `fec_prestacion`,
+        `pc`.`user_id` as `user_id`,
+        `pc`.`observaciones` as `observaciones`,
+        `pc`.`estado_id` as `estado_id`,
+        `pc`.`created_at` as `created_at`,
+        `pc`.`updated_at` as `updated_at`,
+        `pc`.`deleted_at` as `deleted_at`,
+        `pr`.`nombre` as `prof_nombre`,
+        concat(`pa`.`dni`, '/', `pa`.`nombre`, ' (', timestampdiff(year, `pa`.`fec_nacimiento`, curdate()), ')') as `pac_nombre`,
+        `pa`.`dni` as `dni`,
+        `pa`.`fec_nacimiento` as `fec_nacimiento`,
+        `co`.`nombre` as `cob_nombre`,
+        `co`.`sigla` as `cob_sigla`,
+        `ce`.`nombre` as `cen_nombre`,
+        `pc`.`gerenciadora_id` as `gerenciadora_id`
+    from
+        ((((`c2660308_anest`.`partes_cab` `pc`
+    join `c2660308_anest`.`profesionales` `pr` on
+        (`pr`.`id` = `pc`.`profesional_id`))
+    join `c2660308_anest`.`pacientes` `pa` on
+        (`pa`.`id` = `pc`.`paciente_id`))
+    join `c2660308_anest`.`coberturas` `co` on
+        (`co`.`id` = `pc`.`cobertura_id`))
+    join `c2660308_anest`.`centros` `ce` on
+        (`ce`.`id` = `pc`.`centro_id`))) `sel` on
+    (`sel`.`id` = `cc`.`parte_cab_id`))
+where
+    `sel`.`deleted_at` is null
+    and `cd`.`deleted_at` is null;
+
+    

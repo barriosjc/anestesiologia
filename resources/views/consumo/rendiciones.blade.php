@@ -60,7 +60,7 @@
                                                 <td>{{ $item->nivel . '/' . $item->codigo . '/' . $item->nom_descripcion }}
                                                 </td>
                                                 <td>{{ $item->porcentaje }}</td>
-                                                <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
+                                                <td class="text-end">{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
                                                 <td>
                                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                         {{-- @if (!empty($item->obs_refac)) data-bs-title="{{ $item->obsrefac }}" @endif --}}

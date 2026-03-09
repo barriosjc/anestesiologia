@@ -101,15 +101,15 @@ class ConsumoController extends Controller
             // DEBUG: Agregar log temporal
 $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
 
-\Log::info('Buscando valor con:', [
-    'nivel' => $nivel,
-    'nivel_original' => $request->nivel
-]);
+// \Log::info('Buscando valor con:', [
+//     'nivel' => $nivel,
+//     'nivel_original' => $request->nivel
+// ]);
     
     $valores = $this->consumoRepository->valorBuscar($request, $parte_cab);
     
     // DEBUG: Ver qué retorna
-    Log::info('Valores encontrados:', ['valores' => $valores]);
+    // Log::info('Valores encontrados:', ['valores' => $valores]);
 
         if (empty($valores)) {
             return response()->json(['valor' => 0, 'porcentaje' => 0]);

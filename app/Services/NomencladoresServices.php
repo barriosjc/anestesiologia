@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Nomenclador;
-use App\Models\Gerenciadora;
-use App\Models\PracticasEstudios;
+// use App\Models\Gerenciadora;
+// use App\Models\PracticasEstudios;
 use App\Models\NomPracticasEstudio;
 use App\Models\GerenciadoraCoberturaNomPadre;
 
@@ -54,7 +54,7 @@ class NomencladoresServices
             return [
                 'id' => $practica->id,
                 'codigo' => $practica->codigo,
-                'nivel' => null,
+                'nivel' => $practica->codigo,
                 'descripcion' => $practica->nombre,
                 'nom_padre_id' => $practica->nom_padre_id,
             ];

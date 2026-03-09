@@ -221,7 +221,7 @@
                     if (codigo == "" && descripcion == "") {
                         return
                     }
-                    console.log(codigo, descripcion, nom_padre_json);
+                    // console.log("cod:",codigo, "desc:",descripcion, "nom_padre_json:",nom_padre_json);
                     // busca en el nomenclador, puede traer uno o varios
                     fetch('{{ route('nomenclador.buscar.coddesc') }}', {
                             method: 'POST',
@@ -347,8 +347,8 @@
                         })
                     })
                     .then(response => {
-                        console.log('Response status:', response.status);
-                        console.log('Response ok:', response.ok);
+                        // console.log('Response status:', response.status);
+                        // console.log('Response ok:', response.ok);
                         
                         if (!response.ok) {
                             return response.json().then(errorData => {
@@ -360,10 +360,10 @@
                         return response.json();
                     })
                     .then(valueData => {
-                        console.log('=== DATOS RECIBIDOS ===');
-                        console.log('Value Data completo:', valueData);
-                        console.log('Valor:', valueData.valor);
-                        console.log('Porcentaje:', valueData.porcentaje);
+                        // console.log('=== DATOS RECIBIDOS ===');
+                        // console.log('Value Data completo:', valueData);
+                        // console.log('Valor:', valueData.valor);
+                        // console.log('Porcentaje:', valueData.porcentaje);
                         
                         let porcentaje = porcentajeIni + valueData.porcentaje;
                         porcentajeInput.value = porcentaje;
@@ -372,8 +372,8 @@
                         totalView = totalView.replace('.', ',');
                         totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         
-                        console.log('Porcentaje final:', porcentaje);
-                        console.log('Total calculado:', totalValue);
+                        // console.log('Porcentaje final:', porcentaje);
+                        // console.log('Total calculado:', totalValue);
 
                         document.getElementById('valor_orig').value = valueData.valor;
                         document.getElementById('total').textContent = totalView;

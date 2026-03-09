@@ -19,7 +19,13 @@ class PreciosValoresController extends Controller
     {
         $valores = Valores::withTrashed()
             ->paginate();
-        $niveles = Nomenclador::select('nivel')->distinct()->get();
+        $niveles = Nomenclador::select('nivel')
+            ->distinct()
+            ->union(
+                NomPracticasEstudio::select('codigo as nivel')
+                    ->distinct()
+            )
+            ->get();
         $nivel = 1;
 
         return view("entidades.valores.index", compact("valores", "niveles", "nivel"))
