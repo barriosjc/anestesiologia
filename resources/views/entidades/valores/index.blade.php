@@ -68,6 +68,7 @@
                                         <th>Nivel</th>
                                         <th>Tipo</th>
                                         <th>Valor</th>
+                                        <th>Moneda</tr>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -88,6 +89,7 @@
                                                     <i class="fa-regular fa-pen-to-square icon-small"></i>
                                                 </div><span> $ {{ number_format((float) $item->valor, 2, ',', '.')  }}</span>
                                             </td>
+                                            <td>{{ $item->moneda }}</td>
                                             <td class="td-actions">
                                                     @if (empty($item->deleted_at))
                                                         <form id="delete-form-{{ $item->id }}"

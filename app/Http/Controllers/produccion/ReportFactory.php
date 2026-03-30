@@ -17,6 +17,8 @@ class ReportFactory
                 return new ReportTypeDetallexProfesional();
             case 3:
                 return new ReportTypeProduccionAdministrativos();
+            case 4:
+                return new ReportTypePresupuestoEstados();
             default:
                 throw new Exception('El reporte seleccionado no esta disponible para generar actualmente.');
         }

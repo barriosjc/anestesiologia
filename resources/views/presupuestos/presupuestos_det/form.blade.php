@@ -1,10 +1,10 @@
-<form id="form_presupuesto" method="POST" action="{{ route('presupuestos.det.store', $presupuestosCab->id) }}"
-    role="form" enctype="multipart/form-data">
+<form id="form_presupuesto" method="POST" role="form" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="nom_padre_json" id="nom_padre_json">
     <input type="hidden" name="nom_padre_id" id="nom_padre_id">
-    <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{$presupuestosCab->gerenciadora_id}}">
-    <input type="hidden" name="centro_id" id="centro_id" value="{{$presupuestosCab->centro_id}}">
+    <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{ $presupuestosCab->gerenciadora_id }}">
+    <input type="hidden" name="centro_id" id="centro_id" value="{{ $presupuestosCab->centro_id }}">
+    <input type="hidden" name="valor_dolar" id="valor_dolar" value="{{ $presupuestosCab->valor_dolar }}">
     <input type="hidden" name="valor_orig" id="valor_orig">
     <input type="hidden" name="valor" id="valor">
     <div class="card mt-3 p-3 border">
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-2 pt-3">
                     <label class="small mb-1" for="archivo">Valor ($)</label>
-                    <input type="text" class="form-control" id="total" name="total" value="0,00" disabled/>
+                    <input type="text" class="form-control" id="total" name="total" value="0,00" disabled />
                 </div>
             </div>
             <div class="row gx-3 mb-3">
@@ -73,230 +73,273 @@
                         placeholder="Se recomienda no ingresar prácticas a realizar aquí, solo observaciones."></textarea>
                 </div>
             </div>
-            <div class="box-footer mt20">
-                <button type="submit" id="submitButton" class="btn btn-primary">{{ __('Guardar') }}</button>
+            <div class="row gx-3 mb-3">
+                <div class="col-md-1">
+                    <button type="button" id="submitButton" class="btn btn-primary">{{ __('Guardar') }}</button>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnImprimir" class="btn btn-success">{{ __('Imprimir') }}</button>
+                </div>
             </div>
         </div>
     </div>
 </form>
 
 @push('scripts')
-<script>
-    var submitButton = document.getElementById('submitButton');
-    if (submitButton) {        
-        submitButton.addEventListener('click', function() {
+    <script>
+        const form = document.getElementById('form_presupuesto');
+        const routeGuardar = "{{ route('presupuestos.det.store', $presupuestosCab->id) }}";
+        const routeImprimir = "{{ route('presupuestos.cab.print', $presupuestosCab->id) }}";
+
+        function setNomPadre() {
             const select = document.getElementById('nomenclador_id');
+            if (!select || select.options.length === 0 || select.selectedIndex === -1) {
+                return;
+            }
             const selectedOption = select.options[select.selectedIndex];
-            const nomPadre = selectedOption.getAttribute('data-nom_padre');
-
-            document.getElementById('nom_padre_id').value = nomPadre;
-
-            document.getElementById('form_consumo').submit();
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectCobertura = document.getElementById("cobertura_id");
-        const inputTotal = document.getElementById("total");
-
-        function toggleInput() {
-            if (selectCobertura.value === "75") {
-                inputTotal.removeAttribute("disabled");
-            } else {
-                inputTotal.setAttribute("disabled", true);
-                inputTotal.value = "0,00"; 
+            if (selectedOption) {
+                const nomPadre = selectedOption.getAttribute('data-nom_padre');
+                document.getElementById('nom_padre_id').value = nomPadre ?? '';
             }
         }
-        // toggleInput();
 
-        selectCobertura.addEventListener("change", toggleInput);
-        // ------------------------------------------------------------------------
-        let token = document.querySelector('input[name="_token"]').value;
-        
-        // calcula el valor al cambiar el periodo
-        document.getElementById('periodo').addEventListener('change', function() {
-            let selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                mostrarValor();
+        const submitButton = document.getElementById('submitButton');
+        if (submitButton) {
+            submitButton.addEventListener('click', function() {
+                const nomencladorSelect = document.getElementById('nomenclador_id');
+                const periodo = document.getElementById('periodo').value;
+                const cobertura = document.getElementById('cobertura_id').value;
+
+                if (periodo === '') {
+                    alert('Debe seleccionar un período.');
+                    return;
+                }
+                if (cobertura === '') {
+                    alert('Debe seleccionar una cobertura.');
+                    return;
+                }
+                if (!nomencladorSelect || nomencladorSelect.options.length === 0 || nomencladorSelect.value === '') {
+                    alert('Debe seleccionar un nomenclador.');
+                    return;
+                }
+
+                setNomPadre();
+                form.action = routeGuardar;
+                form.submit();
+            });
+        }
+
+        const btnImprimir = document.getElementById('btnImprimir');
+        if (btnImprimir) {
+            btnImprimir.addEventListener('click', function() {
+                window.open(routeImprimir, '_blank');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectCobertura = document.getElementById("cobertura_id");
+            const inputTotal = document.getElementById("total");
+
+            function toggleInput() {
+                if (selectCobertura.value === "75") {
+                    inputTotal.removeAttribute("disabled");
+                } else {
+                    inputTotal.setAttribute("disabled", true);
+                    inputTotal.value = "0,00";
+                }
             }
-        });
-        
-        // cambio el valor a mano y actualizo los hiddens
-        document.getElementById('total').addEventListener('change', function() {
-            let total = document.getElementById('total').value;
-            document.getElementById('valor_orig').value = total;
-            document.getElementById('valor').value = total;
-        });
 
-        // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
-        document.getElementById('search').addEventListener('click', function() {
-            let codigo = document.getElementById('codigo').value;
-            let descripcion = document.getElementById('descripcion').value;
-            const gerenciadora_id = document.getElementById('gerenciadora_id').value;
-            const cobertura_id = document.getElementById('cobertura_id').value;
+            selectCobertura.addEventListener("change", toggleInput);
 
-            if (codigo == "" && descripcion == "") {
-                return
-            }
-            // busca en el nomenclador, puede traer uno o varios
-            fetch('{{ route('nomenclador.buscar.coddesc') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token
-                    },
-                    body: JSON.stringify({
-                        codigo: codigo,
-                        descripcion: descripcion,
-                        gerenciadora_id: gerenciadora_id,
-                        cobertura_id: cobertura_id   
+            // ------------------------------------------------------------------------
+            let token = document.querySelector('input[name="_token"]').value;
+
+            // calcula el valor al cambiar el periodo
+            document.getElementById('periodo').addEventListener('change', function() {
+                let selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value) {
+                    mostrarValor();
+                }
+            });
+
+            // cambio el valor a mano y actualizo los hiddens
+            document.getElementById('total').addEventListener('change', function() {
+                let total = document.getElementById('total').value;
+                document.getElementById('valor_orig').value = total;
+                document.getElementById('valor').value = total;
+            });
+
+            // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
+            document.getElementById('search').addEventListener('click', function() {
+                let codigo = document.getElementById('codigo').value;
+                let descripcion = document.getElementById('descripcion').value;
+                const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+                const cobertura_id = document.getElementById('cobertura_id').value;
+
+                if (codigo == "" && descripcion == "") {
+                    return;
+                }
+
+                fetch('{{ route('nomenclador.buscar.coddesc') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({
+                            codigo: codigo,
+                            descripcion: descripcion,
+                            gerenciadora_id: gerenciadora_id,
+                            cobertura_id: cobertura_id
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    let nomencladorSelect = document.getElementById('nomenclador_id');
-                    nomencladorSelect.innerHTML = '';
-                    const count = data.length;
+                    .then(response => response.json())
+                    .then(data => {
+                        let nomencladorSelect = document.getElementById('nomenclador_id');
+                        nomencladorSelect.innerHTML = '';
+                        const count = data.length;
 
-                    // Handle the options in the select
-                    if (count > 1) {
-                        nomencladorSelect.innerHTML =
-                            '<option value="">-- Seleccione una --</option>';
-                    }
+                        if (count > 1) {
+                            nomencladorSelect.innerHTML =
+                                '<option value="">-- Seleccione una --</option>';
+                        }
 
-                    data.forEach(item => {
-                        let option = document.createElement('option');
-                        // option.value = item.id;
-                        option.value = item.id;
-                        option.setAttribute('data-nom_padre', item.nom_padre_id);
-                        option.setAttribute('data-nivel', item.nivel);
-                        option.text =
-                            `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
-                        nomencladorSelect.appendChild(option);
-                    });
+                        data.forEach(item => {
+                            let option = document.createElement('option');
+                            option.value = item.id;
+                            option.setAttribute('data-nom_padre', item.nom_padre_id);
+                            option.setAttribute('data-nivel', item.nivel);
+                            option.text =
+                                `${item.nivel !== null ? item.nivel + ' / ' : ''} ${item.codigo} / ${item.descripcion}`;
+                            nomencladorSelect.appendChild(option);
+                        });
 
-                    if (count === 1) {
-                        mostrarValor()
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
+                        if (count === 1) {
+                            mostrarValor();
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
 
-        // Add event listeners to clear inputs on focus
-        const clearInput = function() {
-            codigo.value = '';
-            descripcion.value = '';
-        };
+            // Limpiar inputs al hacer foco
+            const codigo = document.getElementById('codigo');
+            const descripcion = document.getElementById('descripcion');
 
-        codigo.addEventListener('focus', clearInput);
-        descripcion.addEventListener('focus', clearInput);
+            const clearInput = function() {
+                codigo.value = '';
+                descripcion.value = '';
+            };
 
-        //validar que no se pueda ingresar un porcentaje > 100
-        let porcentajeInput = document.getElementById('porcentaje');
-        let porcentajeValue = parseFloat(porcentajeInput.value);
+            codigo.addEventListener('focus', clearInput);
+            descripcion.addEventListener('focus', clearInput);
 
-        if (porcentajeValue > 100) {
-            porcentajeInput.value = 100;
-        }
-
-        //modifica total si cambia porcentaje
-        document.getElementById('porcentaje').addEventListener('input', function() {
+            // Validar que no se pueda ingresar un porcentaje > 100
             let porcentajeInput = document.getElementById('porcentaje');
             let porcentajeValue = parseFloat(porcentajeInput.value);
-            let valorOrig = parseFloat(document.getElementById('valor_orig').value);
 
-            if (porcentajeValue > 200) {
+            if (porcentajeValue > 100) {
                 porcentajeInput.value = 100;
-                porcentajeValue = 100;
             }
 
-            let totalValue = valorOrig * (porcentajeValue / 100);
-            let totalView = totalValue.toFixed(2);
-            totalView = totalView.replace('.', ',');
-            totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // Modifica total si cambia porcentaje
+            document.getElementById('porcentaje').addEventListener('input', function() {
+                let porcentajeInput = document.getElementById('porcentaje');
+                let porcentajeValue = parseFloat(porcentajeInput.value);
+                let valorOrig = parseFloat(document.getElementById('valor_orig').value);
 
-            // document.getElementById('total').value = totalView;
-            document.getElementById('valor').value = totalValue.toFixed(2);
-
-        });
-
-
-        // aca selecciono una practica del combo
-        document.getElementById('nomenclador_id').addEventListener('change', function() {
-            let selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                let nomPadre = selectedOption.getAttribute('data-nom_padre');
-                document.getElementById('nom_padre_id').value = nomPadre;
-                mostrarValor();
-            }
-        });
-        // ---------------------------------------------------------------------------------
-        // funcion comun que se llama para mostrar el valor
-        function mostrarValor() {
-            const gerenciadora_id = document.getElementById('gerenciadora_id').value;
-            const cobertura_id = document.getElementById('cobertura_id').value;
-            const centro_id = document.getElementById('centro_id').value;
-            const periodo = document.getElementById('periodo').value;
-            let porcentajeInput = document.getElementById('porcentaje');
-            let porcentajeIni = parseFloat(porcentajeInput.value);
-            let nomencladorSelect = document.getElementById('nomenclador_id');
-            if (periodo == "" || nomencladorSelect.options.length == 0) {
-                return
-            }
-            selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
-            nomenclador_id = selectedNomencladorId.value //modifique para guardar el nivel o codigo, con este valor busco $
-            nivel = selectedNomencladorId.getAttribute('data-nivel');
-
-            return fetch('{{ route('nomenclador.valores.traer.uno') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token
-                },
-                body: JSON.stringify({
-                    periodo: periodo, 
-                    nivel: nivel,
-                    gerenciadora_id: gerenciadora_id,
-                    cobertura_id: cobertura_id,
-                    centro_id: centro_id
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    // Si no es exitoso, manejar error
-                    return response.json().then(errorData => {
-                        // console.error(errorData.error);
-                        limpiarCampos(); // Llama a la función para limpiar los campos
-                        throw new Error(errorData.error);
-                    });
+                if (porcentajeValue > 200) {
+                    porcentajeInput.value = 100;
+                    porcentajeValue = 100;
                 }
-                return response.json(); // Convertir respuesta a JSON
-            })
-            .then(valueData => {
-                porcentajeInput.value = 100;
-                let totalValue = valueData ;
+
+                let totalValue = valorOrig * (porcentajeValue / 100);
                 let totalView = totalValue.toFixed(2);
                 totalView = totalView.replace('.', ',');
                 totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-                document.getElementById('valor_orig').value = valueData;
-                document.getElementById('total').value = totalView;
                 document.getElementById('valor').value = totalValue.toFixed(2);
-                // console.log('Valor total:', totalValue.toFixed(2));
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
             });
-        }
 
-        // Función para limpiar los campos en caso de error
-        function limpiarCampos() {
-            document.getElementById('valor_orig').value = '';
-            document.getElementById('total').value = '';
-            document.getElementById('valor').value = '';
-            document.getElementById('nom_padre_id').value = '';
-        }
+            // Selecciono una practica del combo
+            document.getElementById('nomenclador_id').addEventListener('change', function() {
+                let selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value) {
+                    let nomPadre = selectedOption.getAttribute('data-nom_padre');
+                    document.getElementById('nom_padre_id').value = nomPadre;
+                    mostrarValor();
+                }
+            });
 
-    });
-</script>
+            // ---------------------------------------------------------------------------------
+            // Función común que se llama para mostrar el valor
+            function mostrarValor() {
+                const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+                const cobertura_id = document.getElementById('cobertura_id').value;
+                const centro_id = document.getElementById('centro_id').value;
+                const periodo = document.getElementById('periodo').value;
+                let porcentajeInput = document.getElementById('porcentaje');
+                let nomencladorSelect = document.getElementById('nomenclador_id');
+
+                if (periodo == "" || nomencladorSelect.options.length == 0) {
+                    return;
+                }
+
+                let selectedNomencladorId = nomencladorSelect.options[nomencladorSelect.selectedIndex];
+                let nomenclador_id = selectedNomencladorId.value;
+                let nivel = selectedNomencladorId.getAttribute('data-nivel');
+
+                return fetch('{{ route('nomenclador.valores.traer.uno') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': token
+                        },
+                        body: JSON.stringify({
+                            periodo: periodo,
+                            nivel: nivel,
+                            gerenciadora_id: gerenciadora_id,
+                            cobertura_id: cobertura_id,
+                            centro_id: centro_id
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(errorData => {
+                                limpiarCampos();
+                                throw new Error(errorData.error);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(valueData => {
+                        let totalValue = valueData.valor;
+                        const valorDolar = parseFloat(document.getElementById('valor_dolar').value) || 1;
+                        const moneda     = valueData.moneda;
+                        if (moneda === 'USD') {
+                            totalValue = totalValue * valorDolar;
+                        }
+                        porcentajeInput.value = 100;
+                        let totalView = totalValue.toFixed(2);
+                        totalView = totalView.replace('.', ',');
+                        totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                        document.getElementById('valor_orig').value = valueData;
+                        document.getElementById('total').value = totalView;
+                        document.getElementById('valor').value = totalValue.toFixed(2);
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud:', error);
+                    });
+            }
+
+            // Función para limpiar los campos en caso de error
+            function limpiarCampos() {
+                document.getElementById('valor_orig').value = '';
+                document.getElementById('total').value = '';
+                document.getElementById('valor').value = '';
+                document.getElementById('nom_padre_id').value = '';
+            }
+
+        });
+    </script>
 @endpush

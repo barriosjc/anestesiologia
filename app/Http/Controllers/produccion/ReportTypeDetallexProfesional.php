@@ -68,7 +68,7 @@ class ReportTypeDetallexProfesional implements ReportStrategy
             $query->where('centro_id', '=', $request->centro_id);
         }
         if ($request->has('nombre') && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%" . $request->nombre . "%");
+            $query->where('pac_nombre', 'like', "%" . $request->nombre . "%");
         }
 
         if ($request->has('estados') && !empty($request->estados)) {

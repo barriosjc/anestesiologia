@@ -41,7 +41,8 @@ class nomValoresRequest extends FormRequest
             "valor" => "required",
             "grupo" => "required",
             "aplica_pocent_adic" => "required",
-            "tipo" => "required"
+            "tipo" => "required",
+            "moneda" => "required"
         ];
     }
 

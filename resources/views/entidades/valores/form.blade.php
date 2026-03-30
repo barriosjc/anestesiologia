@@ -24,12 +24,17 @@
                 <input class="form-control" id="valor" name="valor" type="text" placeholder="Ingrese valor"
                     value="{{ old('valor', $nom_practicas_estudios->valor) }}" />
             </div>
+            {{-- Moneda agregada --}}
+            <div class="col-md-3">
+                <label class="small mb-1" for="moneda">Moneda</label>
+                <select class="form-select" id="moneda" name="moneda">
+                    <option value="ARS"
+                        {{ old('moneda', $nom_practicas_estudios->moneda) == 'ARS' ? 'selected' : '' }}>ARS</option>
+                    <option value="USD"
+                        {{ old('moneda', $nom_practicas_estudios->moneda) == 'USD' ? 'selected' : '' }}>USD</option>
+                </select>
+            </div>
             <input type="hidden" name="aplica_porcent_adic">
-            {{-- <div class="col-md-3">
-                <label class="small mb-1" for="aplica_porcent_adic">aplica porcentaje adic</label>
-                <input class="form-control" id="aplica_porcent_adic" name="aplica_porcent_adic" type="text"
-                    placeholder="" value="{{ old('aplica_porcent_adic', $nom_practicas_estudios->aplica_porcent_adic) }}" />
-            </div> --}}
         </div>
     </div>
     <hr />

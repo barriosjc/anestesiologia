@@ -67,7 +67,8 @@ class PreciosValoresController extends Controller
                     'valor' => $registro->valor + ($request->porcentaje * $registro->valor / 100),
                     'grupo' => $request->grupo_n,
                     'aplica_pocent_adic' => $registro->aplica_pocent_adic,
-                    'tipo' => $registro->tipo
+                    'tipo' => $registro->tipo,
+                    'moneda' => $request->moneda
                     ]
                 );
             }
@@ -168,6 +169,7 @@ class PreciosValoresController extends Controller
     {
         $grupo = null;
         $valor = 0;
+        $moneda = "ARS";
         $valoresCab = Valores_cab::where("gerenciadora_id", $request->gerenciadora_id)
             ->where("cobertura_id", $request->cobertura_id)
             ->where("centro_id", $request->centro_id)
@@ -181,10 +183,15 @@ class PreciosValoresController extends Controller
                 ->first();
             if ($valores) {
                 $valor = $valores->valor;
+                $moneda = $valores->moneda;
             }
         }
 
-        return response()->json($valor);
+        return response()->json([
+                                'valor' => $valor,
+                                'grupo' => $grupo,
+                                'moneda' => $moneda
+                                ]);
     }
 
     private function getFormatValue($valor)
