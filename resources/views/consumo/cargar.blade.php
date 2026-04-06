@@ -102,6 +102,7 @@
                     <input type="hidden" name="nom_padre_json" id="nom_padre_json" value="{{ $nom_padre_json }}">
                     <input type="hidden" name="nom_padre_id" id="nom_padre_id">
                     <input type="hidden" name="gerenciadora_id" id="gerenciadora_id" value="{{ $data->gerenciadora_id }}">
+                    <input type="hidden" name="cobertura_id" id="cobertura_id" value="{{ $data->cobertura_id }}">
                     <div class="row gx-3 mb-3">
                         <div class="col-md-2">
                             <label class="small mb-1" for="archivo">Periodo</label>
@@ -216,7 +217,8 @@
                     let codigo = document.getElementById('codigo').value;
                     let descripcion = document.getElementById('descripcion').value;
                     const nom_padre_json = document.getElementById('nom_padre_json').value;
-                    // const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+                    const gerenciadora_id = document.getElementById('gerenciadora_id').value;
+                    const cobertura_id = document.getElementById('cobertura_id').value;
 
                     if (codigo == "" && descripcion == "") {
                         return
@@ -232,7 +234,9 @@
                             body: JSON.stringify({
                                 codigo: codigo,
                                 descripcion: descripcion,
-                                nom_padre_json: nom_padre_json,   
+                                nom_padre_json: nom_padre_json,  
+                                gerenciadora_id: gerenciadora_id,
+                                cobertura_id: cobertura_id 
                             })
                         })
                         .then(response => response.json())

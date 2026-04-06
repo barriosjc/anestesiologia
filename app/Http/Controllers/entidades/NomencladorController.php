@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Services\NomencladoresServices;
 use App\Http\Requests\SaveNomencladorRequest;
+use App\Models\NomPadre;
 
 class NomencladorController extends Controller
 {
@@ -23,6 +24,7 @@ class NomencladorController extends Controller
         {
             $text = $request->text;
         }
+        $nomPadre = NomPadre::find($id); 
 
         $nomenclador = Nomenclador::where('nom_padre_id', $id)
             ->when($text, function ($query) use ($text) {
@@ -34,7 +36,7 @@ class NomencladorController extends Controller
             })
             ->paginate(20);
     
-        return view("entidades.nomenclador.index", compact("nomenclador", "text"));
+        return view("entidades.nomenclador.index", compact("nomenclador", "text", "nomPadre"));
     }
     
 

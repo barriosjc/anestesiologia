@@ -6,15 +6,13 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        @php($data = $nomenclador->first())
-                    
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <span id="card_title">
-                                Nomenclador de anestesiología ({{ $data->nomPadre->nombre }})
+                                Nomenclador de anestesiología ({{ $nomPadre->nombre }})
                             </span>
                     
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <form action="{{ route('nomenclador.index', $data->nom_padre_id) }}" method="GET">
+                                <form action="{{ route('nomenclador.index', $nomPadre->id) }}" method="GET">
                                     <div class="input-group input-group-sm">
                                         <input type="text" name="text" class="form-control" 
                                                placeholder="Buscar..." value="{{ request('text') }}">
@@ -23,11 +21,11 @@
                                         </button>
                                     </div>
                                 </form>                    
-                                <a href="{{ route('nom_padres.index', $data->nom_padre_id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('nom_padres.index', $nomPadre->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
                                 </a>
                     
-                                <a href="{{ route('nomenclador.create', $data->nom_padre_id) }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('nomenclador.create', $nomPadre->id) }}" class="btn btn-primary btn-sm">
                                     {{ __('Nuevo') }}
                                 </a>
                             </div>
