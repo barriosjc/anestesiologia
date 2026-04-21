@@ -95,20 +95,27 @@
                                                     <ul class="dropdown-menu"
                                                         aria-labelledby="dropdownMenuButton{{ $item->id }}">
                                                         <li>
-                                                            <a class="dropdown-item"
+                                                            {{-- <a class="dropdown-item"
                                                                 href="{{ route('presupuestos.pagos.create', $item->id) }}">
+                                                                <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
+                                                            </a> --}}
+                                                            <a class="dropdown-item" 
+                                                                    href="{{ route('presupuestos.pagos.create', $item->id) }}" 
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Cargar los pagos que hacen los pacientes">
                                                                 <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
                                                             </a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item"
-                                                                href="{{ route('presupuestos.cab.edit', $item->id) }}">
+                                                                href="{{ route('presupuestos.cab.edit', $item->id) }}"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Editar presupuesto">
                                                                 <i class="fa fa-fw fa-edit me-2"></i> Editar
                                                             </a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item"
                                                                 href="{{ route('presupuestos.cab.print', $item->id) }}"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir presupuesto en formato pdf"
                                                                 target="_blank">
                                                                 <i class="fa fa-fw fa-print me-2"></i> Imprimir PDF
                                                             </a>
@@ -118,7 +125,8 @@
                                                             method="GET" style="display: inline;">
                                                             <li>
                                                                 <button type="button" class="dropdown-item"
-                                                                    onclick="confirmJob('¿Desea marcar este presupuesto como pagado al anestesiólogo?', 'pago_form_{{ $item->id }}')">
+                                                                    onclick="confirmJob('¿Desea marcar este presupuesto como pagado al anestesiólogo?', 'pago_form_{{ $item->id }}')"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Marcar como pagado al anestesiólogo">
                                                                     <i class="fas fa-hand-holding-usd me-2"></i> Marcar
                                                                     como pagado
                                                                 </button>
@@ -127,7 +135,8 @@
 
                                                         <li>
                                                             <a class="dropdown-item"
-                                                                href="{{ route('presupuestos.cab.partes', $item->id) }}">
+                                                                    href="{{ route('presupuestos.cab.partes', $item->id) }}"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Genera el parte para facturar a la institución">
                                                                 <i class="fas fa-coins me-2"></i> Generar parte
                                                             </a>
                                                         </li>

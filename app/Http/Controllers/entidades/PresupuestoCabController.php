@@ -167,6 +167,7 @@ class PresupuestoCabController extends Controller
                 $consumo->save();
 
                 $presupuesto->parte_cab_id = $parte->id;
+                $presupuesto->estado_id = 'F';
                 $presupuesto->save();
             }
 
@@ -228,7 +229,7 @@ class PresupuestoCabController extends Controller
     public function pagado($id)
     {
         $presupuestosCab = PresupuestoCab::where('id', $id)->first();
-        $presupuestosCab->estado = "p";
+        $presupuestosCab->estado = "P";
         $presupuestosCab->save();
 
         return redirect()->back();
@@ -278,7 +279,7 @@ class PresupuestoCabController extends Controller
         // Estados (asumiendo que ya los tienes definidos)
         $estados = [
             'pendiente' => ['texto' => 'Pendiente', 'clase' => 'bg-warning'],
-            'pagado' => ['texto' => 'Pagado', 'clase' => 'bg-success'],
+            'pagado'    => ['texto' => 'Pagado', 'clase'    => 'bg-success'],
             'cancelado' => ['texto' => 'Cancelado', 'clase' => 'bg-danger'],
             // Agrega más estados según necesites
         ];

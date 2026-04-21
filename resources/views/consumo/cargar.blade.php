@@ -9,7 +9,7 @@
                     <!-- Modal -->
                     <div class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal"
                                 data-bs-target="#valorModal" data-id="{{ $parte_cab_id}}">
-                        Observar el parte
+                        Cambiar estado
                     </div>
                     <a href="{{ route('consumos.partes.filtrar') }}" class="btn btn-info btn-sm" data-placement="left">
                         Volver
@@ -169,6 +169,17 @@
                         @csrf
                         <div class="modal-body">
                             <input type="hidden" name="id" value="{{$parte_cab_id}}">
+                            <label class="label-control" for="estado_id">Estados</label>
+                            <select class="form-select form-select-sm" id="estado_cambio" name="estado_cambio">
+                                <option value="">-- Seleccione --</option>
+                                @foreach ($estados as $item)
+                                    {{-- @if($item->id == 3 || $item->id == 9) --}}
+                                        <option value="{{ $item->id }}" 
+                                                    {{ $data->estado_id == $item->id ? 'selected' : '' }}> 
+                                            {{ $item->descripcion }} </option>
+                                    {{-- @endif --}}
+                                @endforeach
+                            </select>
                             <label class="label-control">Observaciones</label>
                             <textarea rows="4" name="observaciones" class="form-control"> {{ $observaciones }} </textarea>
                         </div>

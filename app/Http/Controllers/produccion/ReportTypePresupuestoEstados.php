@@ -34,7 +34,7 @@ class ReportTypePresupuestoEstados implements ReportStrategy
 
     public function generate(Request $request)
     {
-        $datos = PresupuestoCab::with(['profesional', 'centro', 'presupuestosDet'])
+        $datos = PresupuestoCab::with(['profesional', 'centro', 'presupuestosDet.cobertura'])
                     ->whereBetween('fecha', [$request->fec_desde, $request->fec_hasta]);
         $this->applyCommonFilters($datos, $request);
 
@@ -56,8 +56,10 @@ class ReportTypePresupuestoEstados implements ReportStrategy
         if ($request->has('profesional_id') && !empty($request->profesional_id)) {
             $query->where('profesional_id', '=', $request->profesional_id);
         }
-        if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+         if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
+            $query->whereHas('presupuestosDet', function ($q) use ($request) {
+                $q->where('cobertura_id', $request->cobertura_id);
+            });
         }
         if ($request->has('centro_id') && !empty($request->centro_id)) {
             $query->where('centro_id', '=', $request->centro_id);
@@ -65,18 +67,10 @@ class ReportTypePresupuestoEstados implements ReportStrategy
         if ($request->has('nombre') && !empty($request->nombre)) {
             $query->where('paciente', 'like', "%" . $request->nombre . "%");
         }
-        // $selectedEstados = $request->input('estados');
-        // if (!empty($selectedEstados)) {
-        //     if (count($selectedEstados) > 0) {
-        //         $query->where(function ($query) use ($selectedEstados) {
-        //             foreach ($selectedEstados as $estadoId) {
-        //                 $query->orWhere('estado_id', $estadoId);
-        //             }
-        //         });
-        //     } else {
-        //         $query->where('estado_id', $selectedEstados[0]);
-        //     }
-        // }
+        if ($request->has('estado_presupuesto') && !empty($request->estado_presupuesto)) {
+            $query->where('estado', '=', $request->estado_presupuesto);
+        }
+
 // $sql = $query->toSql();
 // $bindings = $query->getBindings();
 // dd("segundo reporte",$sql, $bindings);

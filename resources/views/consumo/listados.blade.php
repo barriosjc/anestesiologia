@@ -91,6 +91,18 @@
                                     <input class="form-control form-control-sm" id="fec_hasta" name="fec_hasta"
                                         type="date" placeholder="Ingrese fecha hasta" value="{{ old('fec_hasta') }}" />
                                 </div>
+                                <div class="col-md-2">
+                                    <label class="small mb-1" for="fec_desde">Estado presupuesto</label>
+                                    <select name="estado_presupuesto" class="form-select form-select-sm">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach($estadosPresupuesto as $key => $texto)
+                                            {{-- {{ strtoupper($presupuesto->estado) == $key ? 'selected' : '' }} --}}
+                                            <option value="{{ $key }}" >
+                                                {{ $texto }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="row pt-2">
                                 <div class="form-group col-md-3">

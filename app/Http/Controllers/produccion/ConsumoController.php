@@ -70,9 +70,10 @@ class ConsumoController extends Controller
             ->toArray();
         $nom_padre_json = json_encode($array);
         $observaciones = $data->observacion;
+        $estados = Estado::get();
 
         return view("consumo.cargar", compact("observaciones", "periodos", "soloConsulta", "partes_det", "documentos", 
-                        "parte_cab_id", "consumos", "data", "nom_padre_json"));
+                        "parte_cab_id", "consumos", "data", "nom_padre_json", "estados"));
     }
     
     public function valorBuscar(Request $request)
@@ -183,10 +184,9 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
     {
         $validate = $request->validate([
             "id" => "required",
-            "observaciones" => "required|max:255"
+            "observaciones" => "required|max:255",
+            "estado_cambio" => "required"
         ]);
-
-        $validate["estado_cambio"] = 2;
 
         $result = $this->cambiaEstado($validate);
     
@@ -203,6 +203,8 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
             "id" => "required",
             "estado_cambio" => "required",
             "observaciones" => "nullable|max:255"
+        ], [
+            "estado_cambio.required" => "¡Atención! La selección del estado es obligatoria."
         ]);
         
         $result = $this->cambiaEstado($validate);
@@ -218,15 +220,15 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
     {
         try {
             $parte = parte_cab::find($ingresos["id"]);
-            if (!($parte->estado_id == 1 || $parte->estado_id == 2 || $parte->estado_id == 9) && $ingresos['estado_cambio'] == 3) {
-                throw new \Exception('El estado no puede ser cambiado a "A liquidar" desde el estado actual.');
-            }
-            if (!($parte->estado_id == 1 || $parte->estado_id == 3) && $ingresos['estado_cambio'] == 2) {
-                throw new \Exception('El estado no puede ser cambiado a "Observado" desde el estado actual.');
-            }
-            if (!($parte->estado_id == 1 || $parte->estado_id == 2) && $ingresos['estado_cambio'] == 9) {
-                throw new \Exception('El estado no puede ser cambiado a "Con faltantes" desde el estado actual.');
-            }
+            // if (!($parte->estado_id == 1 || $parte->estado_id == 2 || $parte->estado_id == 9) && $ingresos['estado_cambio'] == 3) {
+            //     throw new \Exception('El estado no puede ser cambiado a "A liquidar" desde el estado actual.');
+            // }
+            // if (!($parte->estado_id == 1 || $parte->estado_id == 3 || $parte->estado_id == 4) && $ingresos['estado_cambio'] == 2) {
+            //     throw new \Exception('El estado no puede ser cambiado a "Observado" desde el estado actual.');
+            // }
+            // if (!($parte->estado_id == 1 || $parte->estado_id == 2 || $parte->estado_id == 4) && $ingresos['estado_cambio'] == 9) {
+            //     throw new \Exception('El estado no puede ser cambiado a "Con faltantes" desde el estado actual.');
+            // }
 
             $parte->observaciones = strip_tags($ingresos['observaciones']);
             $parte->estado_id = $ingresos['estado_cambio'];
@@ -356,8 +358,15 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
         $periodos = Periodo::orderby("nombre")->get();
         $listados = Listado::get();
         $users = User::get();
+        $estadosPresupuesto = [
+                        'I' => 'Ingresado',
+                        'P' => 'Pagado',
+                        'C' => 'Cancelado',
+                        'O' => 'Cobrado',
+                        'F' => 'Facturado',
+                    ];
         
-        return view("consumo.listados", compact("users", "periodos", "coberturas", "centros", "profesionales", "estados", "listados"));
+        return view("consumo.listados", compact("users", "periodos", "coberturas", "centros", "profesionales", "estados", "listados", "estadosPresupuesto"));
     }
 
     public function rendicionListar(Request $request)
@@ -394,7 +403,9 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
             $formato = $strategy->getFormat();
             $pdf = Pdf::loadView($viewName, $parametros)
                         ->setPaper($formato->getTamano(), $formato->getOrientacion());
+
             return $pdf->stream();
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->validator->errors())->withInput();
         } catch (\Exception $e) {

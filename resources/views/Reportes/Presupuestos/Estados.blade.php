@@ -99,33 +99,41 @@
 
                 <tbody>
                     @foreach ($profGroup as $presupuesto)
-
                         @php
                             $valorTotal = $presupuesto->presupuestosDet->sum('valor');
                         @endphp
-
                         <tr>
                             <td>{{ $presupuesto->id }}</td>
-                            <td>{{ $presupuesto->fecha }}</td>
+                            <td>{{ $presupuesto->fecha 
+                                    ? \Carbon\Carbon::parse($presupuesto->fecha)->format('d/m/Y') 
+                                    : '' }}
+                            </td>
                             <td>{{ $presupuesto->nombre }}</td>
                             <td class="text-end">{{ $presupuesto->dni }}</td>
-                            <td class="text-end">
+                            <td>
                                 {{ $presupuesto->fecha_nac 
                                     ? \Carbon\Carbon::parse($presupuesto->fecha_nac)->format('d/m/Y') 
                                     : '' }}
                             </td>
                             <td>
-                                {{ optional($presupuesto->presupuestosDet->first())->cobertura_id }}
+                                {{ optional(optional($presupuesto->presupuestosDet->first())->cobertura)->nombre }}
                             </td>
                             <td class="text-end">
                                 {{ number_format($valorTotal, 2, ',', '.') }}
                             </td>
-                            <td>{{ $presupuesto->estado }}</td>
+                            <td>
+                                @switch(strtoupper($presupuesto->estado))
+                                    @case('I') Ingresado @break
+                                    @case('P') Pagado @break
+                                    @case('C') Cancelado @break
+                                    @case('O') Cobrado @break
+                                    @case('F') Facturado @break
+                                    @default {{ $presupuesto->estado }}
+                                @endswitch
+                            </td>
                         </tr>
-
                     @endforeach
                 </tbody>
-
             </table>
         </div>
 

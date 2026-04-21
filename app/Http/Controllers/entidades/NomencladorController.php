@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\entidades;
 
-use Exception;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SaveNomencladorRequest;
 use App\Models\Centro;
-use App\Models\Periodo;
-use App\Models\Valores;
 use App\Models\Cobertura;
 use App\Models\Nomenclador;
+use App\Models\NomPadre;
+use App\Models\Periodo;
+use App\Models\Valores;
+use App\Services\NomencladoresServices;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Services\NomencladoresServices;
-use App\Http\Requests\SaveNomencladorRequest;
-use App\Models\NomPadre;
 
 class NomencladorController extends Controller
 {
@@ -35,7 +35,8 @@ class NomencladorController extends Controller
                 });
             })
             ->paginate(20);
-    
+        session()->put('ses_nom_padre_id', $nomPadre->id);
+
         return view("entidades.nomenclador.index", compact("nomenclador", "text", "nomPadre"));
     }
     
