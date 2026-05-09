@@ -28,6 +28,6 @@ class Listado extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'role_id'];
     
 }

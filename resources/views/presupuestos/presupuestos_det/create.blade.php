@@ -11,12 +11,22 @@
                             <span id="card_title">
                                 {{ "Detalle del presupuesto - {$presupuestosCab->fecha} - {$presupuestosCab->nombre}" }}
                             </span>
-                            <div class="float-right">
-                                <a href="{{ route('presupuestos.cab.edit', $presupuestosCab->id) }}" title="Volver">
-                                    <button class="btn btn-warning btn-sm float-right">
-                                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
-                                    </button>
+
+
+                            <div class="d-flex align-items-center gap-2 ms-auto">
+                                
+                                <a href="{{ route('presupuestos.cab.partes', $presupuestosCab->id) }}" 
+                                class="btn btn-primary btn-sm shadow-sm" 
+                                title="Crear parte">
+                                    <i class="fa fa-plus-circle me-2" aria-hidden="true"></i>   Crear parte
                                 </a>
+
+                                <a href="{{ route('presupuestos.cab.edit', $presupuestosCab->id) }}" 
+                                class="btn btn-warning btn-sm shadow-sm" 
+                                title="Volver">
+                                    <i class="fa fa-arrow-left me-2" aria-hidden="true"></i> Volver
+                                </a>
+
                             </div>
                         </div>
                     </div>

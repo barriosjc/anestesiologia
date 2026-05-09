@@ -39,9 +39,10 @@
                                             <td>{{ $item->nomPadre->nombre }}</td>
                                             <td>
                                                 @if($item->deleted_at)
-                                                    <form id="restore_form_{{$item->id}}" action="{{ route('gerenciadora_cobertura_padre.restore', $item->id) }}" method="POST">
+                                                    <form id="restore_form_{{$item->id}}" action="{{ route('gerenciadora_cobertura_padre.restore', $item->id) }}" 
+                                                        method="POST" style="display: inline;">
                                                         @csrf
-                                                        <button type="button" class="btn btn-warning btn-sm " 
+                                                        <button type="button" class="dropdown-item text-danger" 
                                                             title="Volver a poner activa práctica o estudio que esta borrada." data-bs-toggle="tooltip"
                                                             onclick="confirmJob('¿Desea restaurar este registro?', 'restore_form_{{$item->id}}')">
                                                             <i class="fas fa-undo-alt"></i></button>

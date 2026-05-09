@@ -172,10 +172,10 @@
 });
 
 // funcion para switalert comun para borrar
-function confirmDelete(id) {
+function confirmDelete(id, text = "Esta acción es irreversible.") {
     Swal.fire({
         title: '¿Confirma eliminar?',
-        text: "No podrás revertir esto!",
+        text: text,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -189,11 +189,10 @@ function confirmDelete(id) {
     })
 }
 
-function confirmJob(msg, metodo, correSubmit = true) {
-  console.log("entro", metodo);
+function confirmJob(msg, metodo, correSubmit = true, text = "Esta acción es irreversible.") {
   Swal.fire({
       title: msg,
-      text: "Esta acción es irreversible.",
+      text: text,
       icon: 'info', 
       showCancelButton: true,
       confirmButtonColor: '#17a2b8', 

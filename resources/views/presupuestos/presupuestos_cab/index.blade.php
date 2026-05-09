@@ -92,70 +92,80 @@
                                                         <i class="fas fa-ellipsis-v"></i>
                                                     </button>
 
-                                                    <ul class="dropdown-menu"
+                                                    <ul class="dropdown-menu border border-2 border-secondary shadow"
                                                         aria-labelledby="dropdownMenuButton{{ $item->id }}">
-                                                        <li>
-                                                            {{-- <a class="dropdown-item"
-                                                                href="{{ route('presupuestos.pagos.create', $item->id) }}">
-                                                                <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
-                                                            </a> --}}
-                                                            <a class="dropdown-item" 
-                                                                    href="{{ route('presupuestos.pagos.create', $item->id) }}" 
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Cargar los pagos que hacen los pacientes">
-                                                                <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('presupuestos.cab.edit', $item->id) }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Editar presupuesto">
-                                                                <i class="fa fa-fw fa-edit me-2"></i> Editar
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                href="{{ route('presupuestos.cab.print', $item->id) }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir presupuesto en formato pdf"
-                                                                target="_blank">
-                                                                <i class="fa fa-fw fa-print me-2"></i> Imprimir PDF
-                                                            </a>
-                                                        </li>
-                                                        <form id="pago_form_{{ $item->id }}"
-                                                            action="{{ route('presupuestos.cab.pagado', $item->id) }}"
-                                                            method="GET" style="display: inline;">
+                                                        @if($item->estado != 'C')
                                                             <li>
-                                                                <button type="button" class="dropdown-item"
-                                                                    onclick="confirmJob('¿Desea marcar este presupuesto como pagado al anestesiólogo?', 'pago_form_{{ $item->id }}')"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Marcar como pagado al anestesiólogo">
-                                                                    <i class="fas fa-hand-holding-usd me-2"></i> Marcar
-                                                                    como pagado
-                                                                </button>
+                                                                <a class="dropdown-item" 
+                                                                        href="{{ route('presupuestos.pagos.create', $item->id) }}" 
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Cargar los pagos que hacen los pacientes">
+                                                                    <i class="fa fa-dollar-sign me-2"></i> Cargar cobros
+                                                                </a>
                                                             </li>
-                                                        </form>
-
-                                                        <li>
-                                                            <a class="dropdown-item"
-                                                                    href="{{ route('presupuestos.cab.partes', $item->id) }}"
-                                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Genera el parte para facturar a la institución">
-                                                                <i class="fas fa-coins me-2"></i> Generar parte
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
-                                                        <form id="delete-form-{{ $item->id }}"
-                                                            action="{{ route('presupuestos.cab.destroy', $item->id) }}"
-                                                            method="POST" style="display: inline;">
-                                                            @csrf
-                                                            @method('DELETE')
                                                             <li>
-                                                                <button type="button" class="dropdown-item text-danger"
-                                                                    onclick="confirmDelete({{ $item->id }})">
-                                                                    <i class="far fa-trash-alt me-2"></i> Eliminar
-                                                                </button>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.edit', $item->id) }}"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Editar presupuesto">
+                                                                    <i class="fa fa-fw fa-edit me-2"></i> Editar
+                                                                </a>
                                                             </li>
-                                                        </form>
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('presupuestos.cab.print', $item->id) }}"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Imprimir presupuesto en formato pdf"
+                                                                    target="_blank">
+                                                                    <i class="fa fa-fw fa-print me-2"></i> Imprimir PDF
+                                                                </a>
+                                                            </li>
+                                                            <form id="pago_form_{{ $item->id }}"
+                                                                action="{{ route('presupuestos.cab.pagado', $item->id) }}"
+                                                                method="GET" style="display: inline;">
+                                                                <li>
+                                                                    <button type="button" class="dropdown-item"
+                                                                        onclick="confirmJob('¿Desea marcar este presupuesto como pagado al anestesiólogo?', 'pago_form_{{ $item->id }}')"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Marcar como pagado al anestesiólogo">
+                                                                        <i class="fas fa-hand-holding-usd me-2"></i> Marcar
+                                                                        como pagado
+                                                                    </button>
+                                                                </li>
+                                                            </form>
 
+                                                            <li>
+                                                                <a class="dropdown-item"
+                                                                        href="{{ route('presupuestos.cab.partes', $item->id) }}"
+                                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Genera el parte para facturar a la institución">
+                                                                    <i class="fas fa-coins me-2"></i> Generar parte
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <hr class="dropdown-divider">
+                                                            </li>
+                                                            <form id="delete-form-{{ $item->id }}"
+                                                                action="{{ route('presupuestos.cab.destroy', $item->id) }}"
+                                                                method="POST" style="display: inline;">
+                                                                @csrf
+                                                                {{-- @method('DELETE') --}}
+                                                                <li>
+                                                                    <button type="button" class="dropdown-item text-danger"
+                                                                        onclick="confirmDelete({{ $item->id }}, '')">
+                                                                        <i class="far fa-trash-alt me-2"></i> Eliminar
+                                                                    </button>
+                                                                </li>
+                                                            </form>
+                                                        @else
+                                                            <li>
+                                                                <form id="restore_form_{{ $item->id }}"
+                                                                    action="{{ route('presupuestos.cab.restaurar', $item->id) }}"
+                                                                    method="POST" style="display: inline;">
+                                                                    @csrf
+                                                                    <button type="button" class="dropdown-item text-danger"
+                                                                        data-id="{{ $item->id }}"
+                                                                        data-action="restore">
+                                                                        <i class="fas fa-history me-2"></i> Restaurar presupuesto
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        @endif    
                                                     </ul>
                                                 </div>
                                             </td>
@@ -173,3 +183,15 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-action="restore"]');
+            if (!btn) return;
+            
+            const id = btn.dataset.id;
+            confirmJob('¿Desea restaurar este registro?', 'restore_form_' + id, true, '');
+        });
+    </script>
+@endpush

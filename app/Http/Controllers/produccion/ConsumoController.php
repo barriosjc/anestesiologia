@@ -13,6 +13,7 @@ use App\Models\Estado;
 use App\Models\GerenciadoraCoberturaNomPadre;
 use App\Models\Listado;
 use App\Models\Paciente;
+use App\Models\Parametro;
 use App\Models\Parte_cab;
 use App\Models\Parte_det;
 use App\Models\Periodo;
@@ -25,9 +26,11 @@ use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Log;
+use PhpParser\Builder\Param;
 
 class ConsumoController extends Controller
 {
@@ -356,16 +359,20 @@ $nivel = mb_convert_encoding($request->nivel, 'UTF-8', 'UTF-8');
         $profesionales = Profesional::get();
         $estados = Estado::get();
         $periodos = Periodo::orderby("nombre")->get();
-        $listados = Listado::get();
-        $users = User::get();
+        $role_id = Parametro::where('nombre', 'listado_presupuesto')->first()->valor;
+        $user = Auth::user();
+        $listados = Listado::when(!$user->hasRole('super-admin'), function ($query) use ($user) {
+                $query->whereIn('role_id', $user->roles->pluck('id'));
+            })
+            ->get();
         $estadosPresupuesto = [
                         'I' => 'Ingresado',
-                        'P' => 'Pagado',
+                        'P' => 'Pagadkso',
                         'C' => 'Cancelado',
                         'O' => 'Cobrado',
                         'F' => 'Facturado',
                     ];
-        
+        $users = User::get();
         return view("consumo.listados", compact("users", "periodos", "coberturas", "centros", "profesionales", "estados", "listados", "estadosPresupuesto"));
     }
 

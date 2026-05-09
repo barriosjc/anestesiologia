@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers\entidades;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PresupuestoCabRequest;
 use App\Models\Centro;
+use App\Models\Consumo_cab;
+use App\Models\Consumo_det;
+use App\Models\Gerenciadora;
 use App\Models\Paciente;
 use App\Models\Parametro;
 use App\Models\Parte_cab;
-use App\Models\Consumo_cab;
-use App\Models\Consumo_det;
-use App\Models\Profesional;
-use App\Models\Gerenciadora;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
+use App\Models\Profesional;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\PresupuestoCabRequest;
 
 class PresupuestoCabController extends Controller
 {
@@ -87,9 +88,22 @@ class PresupuestoCabController extends Controller
     public function destroy(int $id)
     {
         $presupuesto = PresupuestoCab::findOrFail($id);
-        $presupuesto->delete();
+        $presupuesto->estado_anterior = $presupuesto->estado; // Guardar el estado actual antes de cambiarlo
+        $presupuesto->estado = 'C'; // Marcar como cancelado en lugar de eliminar
+        $presupuesto->save();
+        // $presupuesto->delete();
 
         return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto eliminado correctamente.');
+    }
+
+    public function restaurar(int $id)
+    {
+        $presupuesto = PresupuestoCab::findOrFail($id);
+        $presupuesto->estado = $presupuesto->estado_anterior; 
+        $presupuesto->save();
+        // $presupuesto->delete();
+
+        return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto restaurado correctamente.');
     }
 
     public function print(int $id)
@@ -167,7 +181,7 @@ class PresupuestoCabController extends Controller
                 $consumo->save();
 
                 $presupuesto->parte_cab_id = $parte->id;
-                $presupuesto->estado_id = 'F';
+                $presupuesto->estado = 'F';
                 $presupuesto->save();
             }
 
@@ -193,7 +207,7 @@ class PresupuestoCabController extends Controller
         if ($presupuesto->parte_cab_id !== null) {
             return redirect()
                 ->back()
-                ->with('error', 'Ya se ha generado el parte, datos de facturación para este presupuesto.');
+                ->with('error', 'Error: Ya se ha generado el parte anteriormnente para este presupuesto, no es posible generar otro parte.');
         }
 
         $validatorCab = Validator::make($presupuesto->toArray(), [
@@ -229,6 +243,9 @@ class PresupuestoCabController extends Controller
     public function pagado($id)
     {
         $presupuestosCab = PresupuestoCab::where('id', $id)->first();
+        if (! $presupuestosCab) {
+            return redirect()->back()->with('error', 'Presupuesto cancelado, no es posible cambiar estado a Pagado.');
+        }
         $presupuestosCab->estado = "P";
         $presupuestosCab->save();
 

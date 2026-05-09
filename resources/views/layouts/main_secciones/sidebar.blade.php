@@ -19,10 +19,12 @@
                     <div class="nav-link-icon"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
                     Generar Rendiciones
                 </a>
+            @endrole
                 <a class="nav-link" href="{{ route('consumo.rendiciones.listado') }}">
                     <div class="nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     Listados
                 </a>
+            @role('super-admin')
                 <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse"
                     data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
                     <div class="nav-link-icon"><i class="fa fa-key" aria-hidden="true"></i></div>
