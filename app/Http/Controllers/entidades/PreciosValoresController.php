@@ -7,10 +7,8 @@ use App\Models\Nomenclador;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\nomValoresRequest;
-use App\Mail\registerMailable;
 use App\Models\NomPracticasEstudio;
 use App\Models\Valores_cab;
-use App\Services\NomencladoresServices;
 use Exception;
 
 class PreciosValoresController extends Controller
@@ -144,7 +142,6 @@ class PreciosValoresController extends Controller
         $valores->update(["valor" => $valor]);
 
         return redirect()->back()->with('success', 'La operación se ha completado exitosamente.');
-
     }
 
     public function borrar(int $id)
@@ -211,9 +208,4 @@ class PreciosValoresController extends Controller
         return $valor_convertido;
     }
 
-    // public function obtener(request $request, NomencladoresServices $nomencladoresServices )
-    // {
-    //     $nomenclador = $nomencladoresServices->buscar($request->nomenclador_id, null, null, null);
-    // //    $valores = $request->nomenclador_id;
-    // }
 }

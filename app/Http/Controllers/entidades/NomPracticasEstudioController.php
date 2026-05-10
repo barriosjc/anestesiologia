@@ -101,4 +101,18 @@ class NomPracticasEstudioController extends Controller
 
         return view('entidades.nom_practicas_estudios.values', compact('listas'));
     }
+
+    public function buscar(Request $request)
+    {
+        $text = $request->text;
+        $nom_practicas_estudios = NomPracticasEstudio::query()
+            ->withTrashed()
+            ->with('nomPadre')
+            ->where('nom_padre_id', session('ses_nom_padre_id'))
+            ->where('codigo', 'like', "%{$text}%")
+            ->orWhere('nombre', 'like', "%{$text}%")
+            ->paginate(10);
+
+        return view('entidades.nom_practicas_estudios.index', compact('nom_practicas_estudios'));
+    }
 }

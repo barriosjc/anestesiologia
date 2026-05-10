@@ -147,7 +147,7 @@ class GerenciadoraCoberturaPadreController extends Controller
     {
         $text = $request->text;
         $gerenciadora_cobertura_padre = GerenciadoraCoberturaNomPadre::where('nombre', 'like', "%{$text}%")
-            ->whereOr('nombre', 'like', "%{$text}%")
+            ->orWhere('nombre', 'like', "%{$text}%")
             ->get();
 
         return view('entidades.gerenciadora_cobertura_padre.index', compact('gerenciadora_cobertura_padre'));

@@ -141,7 +141,7 @@ class CoberturaController extends Controller
     {
         $text = $request->text;
         $coberturas = Cobertura::where('nombre', 'like', "%{$text}%")
-            ->whereOr('sigla', 'like', "%{$text}%")
+            ->orWhere('sigla', 'like', "%{$text}%")
             ->get();
 
             return view('entidades.cobertura.index', compact('coberturas'));

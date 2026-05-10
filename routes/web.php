@@ -116,7 +116,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('practicas_estudios/borrar/{id}', [NomPracticasEstudioController::class, 'destroy'])->name('nom_practicas_estudios.destroy');
             Route::get("practicas_estudios/values/{id}", [NomPracticasEstudioController::class, 'values'])->name('nom_practicas_estudios.values');
             Route::post('practicas_estudios/restore/{id}', [NomPracticasEstudioController::class, 'restore'])->name('nom_practicas_estudios.restore');
-            
+            Route::get('practicas_estudios/buscar', [NomPracticasEstudioController::class, 'buscar'])->name('nom_practicas_estudios.buscar');
+
             Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parteFiltrar'])->name('consumos.partes.filtrar');
             Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
             Route::post('consumos/valor/buscar', [ConsumoController::class, 'valorBuscar'])->name('consumos.valor.buscar');

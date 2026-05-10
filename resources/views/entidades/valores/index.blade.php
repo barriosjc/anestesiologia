@@ -16,12 +16,19 @@
                                 {{ __('Valorización') }}
                             </span>
                             <div class="form-group float-right">
-                                <div class="btn btn-sm btn-success float-right"  data-bs-toggle="modal"
-                                    data-bs-target="#nuevoModal" data-toggle="tooltip" 
-                                    title="Copiar de una lista de precios existente y crea una nueva Lista de precios con el grupo ingresado, este nuevo no debe existir." data-bs-toggle="tooltip">
+                                <a href="{{ request('back', url()->previous()) }}" title="Volver">
+                                    <button class="btn btn-warning btn-sm float-right">
+                                        <i class="fa fa-arrow-left" aria-hidden="true"></i> Volver
+                                    </button>
+                                </a>
+                                <div class="btn btn-sm btn-success float-right" data-bs-toggle="modal"
+                                    data-bs-target="#nuevoModal" data-toggle="tooltip"
+                                    title="Copiar de una lista de precios existente y crea una nueva Lista de precios con el grupo ingresado, este nuevo no debe existir."
+                                    data-bs-toggle="tooltip">
                                     <span>{{ __('Copiar') }}</span>
                                 </div>
-                                <a href="{{ route('nomenclador.valor.nuevo') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('nomenclador.valor.nuevo') }}" class="btn btn-primary btn-sm float-right"
+                                    data-placement="left">
                                     {{ __('Nuevo') }}
                                 </a>
                             </div>
@@ -68,8 +75,9 @@
                                         <th>Nivel</th>
                                         <th>Tipo</th>
                                         <th>Valor</th>
-                                        <th>Moneda</tr>
-                                        <th></th>
+                                        <th>Moneda
+                                    </tr>
+                                    <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -87,28 +95,31 @@
                                                     data-bs-target="#valorModal" data-id="{{ $item->id }}"
                                                     data-valor="{{ $item->valor }}">
                                                     <i class="fa-regular fa-pen-to-square icon-small"></i>
-                                                </div><span> $ {{ number_format((float) $item->valor, 2, ',', '.')  }}</span>
+                                                </div><span> $
+                                                    {{ number_format((float) $item->valor, 2, ',', '.') }}</span>
                                             </td>
                                             <td>{{ $item->moneda }}</td>
                                             <td class="td-actions">
-                                                    @if (empty($item->deleted_at))
-                                                        <form id="delete-form-{{ $item->id }}"
-                                                            action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
-                                                            @csrf
-                                                                {{-- @method('DELETE')  se cambia la ruta a post --}}
-                                                                <button type="button" class="btn btn-danger btn-sm"
-                                                                    onclick="confirmDelete({{ $item->id }})">
-                                                                    <i class="far fa-trash-alt text-white"></i></button>
-                                                        </form>
-                                                    @else
-                                                        <form id="restore_form_{{ $item->id }}"
-                                                            action="{{ route('nomenclador.valor.borrar', $item->id) }}" method="POST">
-                                                            @csrf
-                                                                <button type="button" class="btn btn-success btn-sm"
-                                                                    onclick="confirmJob('¿Desea restaurar este registro?', 'restore_form_{{$item->id}}')">
-                                                                    <i class="fa-solid fa-rotate-left"></i></button>
-                                                        </form>
-                                                    @endif
+                                                @if (empty($item->deleted_at))
+                                                    <form id="delete-form-{{ $item->id }}"
+                                                        action="{{ route('nomenclador.valor.borrar', $item->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        {{-- @method('DELETE')  se cambia la ruta a post --}}
+                                                        <button type="button" class="btn btn-danger btn-sm"
+                                                            onclick="confirmDelete({{ $item->id }})">
+                                                            <i class="far fa-trash-alt text-white"></i></button>
+                                                    </form>
+                                                @else
+                                                    <form id="restore_form_{{ $item->id }}"
+                                                        action="{{ route('nomenclador.valor.borrar', $item->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        <button type="button" class="btn btn-success btn-sm"
+                                                            onclick="confirmJob('¿Desea restaurar este registro?', 'restore_form_{{ $item->id }}')">
+                                                            <i class="fa-solid fa-rotate-left"></i></button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -139,11 +150,11 @@
                         <div class="input-group mb-3">
                             <input type="hidden" name="hidden_valor_id">
                             <div class="input-group-prepend">
-                              <span class="input-group-text" id="basic-addon1">$</span>
+                                <span class="input-group-text" id="basic-addon1">$</span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Valor" 
-                                name="valor" aria-label="Valor" aria-describedby="basic-addon1">
-                          </div>
+                            <input type="text" class="form-control" placeholder="Valor" name="valor"
+                                aria-label="Valor" aria-describedby="basic-addon1">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
@@ -168,20 +179,20 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="small mb-1" for="grupo_c">Grupo a copiar</label>
-                                <input class="form-control" id="grupo_c" name="grupo_c" type="text" placeholder="grupo_c"
-                                    value="{{ old('grupo_c') }}" />
+                                <input class="form-control" id="grupo_c" name="grupo_c" type="text"
+                                    placeholder="grupo_c" value="{{ old('grupo_c') }}" />
                             </div>
                             <div class="col-md-4">
                                 <label class="small mb-1" for="grupo_n">Nuevo Grupo</label>
-                                <input class="form-control" id="grupo_n" name="grupo_n" type="text" placeholder="grupo_n"
-                                    value="{{ old('grupo_n') }}" />
+                                <input class="form-control" id="grupo_n" name="grupo_n" type="text"
+                                    placeholder="grupo_n" value="{{ old('grupo_n') }}" />
                             </div>
                             <div class="col-md-3">
                                 <label class="small mb-1" for="porcentaje">% incremento</label>
-                                <input class="form-control" id="porcentaje" name="porcentaje" type="text" placeholder="porcentaje"
-                                    title="Valor % permitido de -99 a 100" data-bs-toggle="tooltip"
-                                    value="{{ old('porcentaje') }}" />
-                            </div>  
+                                <input class="form-control" id="porcentaje" name="porcentaje" type="text"
+                                    placeholder="porcentaje" title="Valor % permitido de -99 a 100"
+                                    data-bs-toggle="tooltip" value="{{ old('porcentaje') }}" />
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -207,7 +218,7 @@
 
                 // Cargar en el hidden correcto
                 $('#valorModal input[name="hidden_valor_id"]').val(id);
-                
+
                 // Asigna los datos al campo hidden y al input del modal
                 $('#valorModal input[name="id"]').val(id);
                 let valorFormateado = parseFloat(valor).toLocaleString('es-AR', {
