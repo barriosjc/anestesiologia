@@ -8,7 +8,7 @@ use App\Http\Requests;
 use App\Models\Centro;
 use App\Models\Grupal;
 use Illuminate\Http\Request;
-use App\Mail\registerMailable;
+use App\Mail\RegisterMailable;
 use App\Exports\UsuariosExport;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -101,7 +101,7 @@ class UsuarioController extends Controller
             }
         }
         
-        // $correo = new registerMailable($user);
+        // $correo = new RegisterMailable($user);
         // Mail::send([], [], function ($message)  use ($request, $correo) {
         //     $message->to($request->email, $request->last_name)
         //         ->subject('Registro de usuario para ingreso al portal de reconocimientos !')

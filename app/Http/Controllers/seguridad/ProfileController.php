@@ -48,7 +48,7 @@ class ProfileController extends Controller
         $user->save();
         //envio de email
         // if ($es_nuevo) {
-        //     $correo = new registerMailable($user);
+        //     $correo = new RegisterMailable($user);
         //     Mail::send([], [], function ($message)  use ($request, $correo) {
         //         $message->to($request->email, $request->last_name)
         //             ->subject('Registro de usuario para ingreso a portal Clap!')

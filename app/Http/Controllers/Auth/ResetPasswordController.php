@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Mail\resetpasswordMaillable;
+use App\Mail\ResetpasswordMaillable;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Empresa;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class ResetPasswordController extends Controller
@@ -35,7 +33,7 @@ class ResetPasswordController extends Controller
             $user->cambio_password = 1;
             $user->save();
 
-            $correo = new resetpasswordMaillable($user, $clave);
+            $correo = new ResetpasswordMaillable($user, $clave);
             Mail::send([], [], function ($message) use ($user, $correo) {
                 $message->to($user->email, $user->name)
                     ->subject('Cambio de clave para ingreso al portal')

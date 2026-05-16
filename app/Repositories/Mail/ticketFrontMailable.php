@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ticketFrontMailable extends Mailable
+class TicketFrontMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
