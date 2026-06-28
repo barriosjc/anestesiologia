@@ -71,7 +71,8 @@
                                             <td>{{ number_format($item->total_presupuesto ?? 0, 2, ',', '.') }}</td>
                                             <td>{{ number_format($item->total_pagado ?? 0, 2, ',', '.') }}</td>
                                             <td>
-                                                <span class="badge rounded-pill {{ $estados[$item->estado]['clase'] }}">
+                                                <span class="badge rounded-pill {{ $estados[$item->estado]['clase'] }}"
+                                                    @if($item->estado == 'F') data-bs-toggle="tooltip" data-bs-placement="top" title="Parte Nro: {{ $item->parte_cab_id }}" @endif>
                                                     {{ $estados[$item->estado]['texto'] }}
                                                 </span>
                                             </td>

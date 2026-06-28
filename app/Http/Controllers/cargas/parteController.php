@@ -129,6 +129,7 @@ class ParteController extends Controller
 
         return view('cargas.cab.create', compact('parte_id', 'parte', 'gerenciadoras', 'centros', 'paciente', 'coberturas', 'profesionales'));
     }
+    
     public function store(ParteRequest $request)
     {
         $paciente = Paciente::where('dni', $request->dni)->first();

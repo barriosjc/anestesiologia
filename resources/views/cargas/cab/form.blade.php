@@ -30,13 +30,13 @@
                 <label class="small mb-1" for="fec_prestacion">Fecha cirugía inicio</label>
                 <input class="form-control" id="fec_prestacion" name="fec_prestacion" type="datetime-local"
                     placeholder="Ingrese Fecha de nacimiento"
-                    value="{{ old('fec_prestacion', $parte->fec_prestacion_input) }}" />
+                    value="{{ old('fec_prestacion', $parte->fec_prestacion_input) }}" required />
             </div>
             <div class="col-md-3">
                 <label class="small mb-1" for="fec_prestacion_fin">Fecha cirugía fin</label>
                 <input class="form-control" id="fec_prestacion_fin" name="fec_prestacion_fin" type="datetime-local"
                     placeholder="Ingrese Fecha de nacimiento"
-                    value="{{ old('fec_prestacion_fin', $parte->fec_prestacion_fin_input) }}" />
+                    value="{{ old('fec_prestacion_fin', $parte->fec_prestacion_fin_input) }}" required />
             </div>
         </div>
         <div class="row gx-3 mb-3">
@@ -55,13 +55,13 @@
             <div class="col-md-5">
                 <label class="small mb-1" for="nombre">Nombre y apellido/a</label>
                 <input class="form-control" id="nombre" name="nombre" 
-                    placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $paciente->nombre) }}" />
+                    placeholder="Ingrese su nombre y apellido" value="{{ old('nombre', $paciente->nombre) }}" required />
             </div>
             <div class="col-md-4">
                 <label class="small mb-1" for="fec_nacimiento">Fec. Nac.</label>
                 <input class="form-control" id="fec_nacimiento" name="fec_nacimiento" type="date"
                     placeholder="Ingrese Fecha de nacimiento"
-                    value="{{ old('fec_nacimiento', $paciente->fec_nacimiento) }}" />
+                    value="{{ old('fec_nacimiento', $paciente->fec_nacimiento) }}" required />
             </div>
         </div>
 
@@ -109,6 +109,14 @@
         $(document).ready(function() {
             $(document).ready(function() {
                 $('.select2').select2();
+            });
+
+            $('form').on('submit', function() {
+                var inicio = $('#fec_prestacion').val();
+                var fin = $('#fec_prestacion_fin').val();
+                if (inicio && !fin) {
+                    $('#fec_prestacion_fin').val(inicio);
+                }
             });
 
             $('#search-button').on('click', function() {

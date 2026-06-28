@@ -184,6 +184,7 @@ return [
         'year'                  => 'año',
         'fec_nacimiento'        => 'fecha de nacimiento',
         'fec_prestacion'        => 'fecha de prestacion',
+        'fec_prestacion_fin'    => 'fecha de prestacion final',
         'obs_refac'             => 'Observación a refacturar',
         'periodo_refac'         => 'Periodo a refacturar'
     ],

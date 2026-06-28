@@ -45,23 +45,12 @@ class ParteRequest extends FormRequest
                 },
             ],
             'fec_prestacion' => [
-                'nullable',
+                'required',
                 'date_format:Y-m-d\TH:i',
-                'required_with:fec_prestacion_fin',
-                // function ($attribute, $value, $fail) use ($request) {
-                //     if ($request->filled('fec_prestacion_fin')) {
-                //         $ini = Carbon::createFromFormat('Y-m-d\TH:i', $value);
-                //         $fin = Carbon::createFromFormat('Y-m-d\TH:i', $request->fec_prestacion_fin);
-                //         if ($ini->gt($fin)) {
-                //             $fail('La fecha de presentación debe ser anterior a la fecha de fin.');
-                //         }
-                //     }
-                // },
             ],
             'fec_prestacion_fin' => [
-                'nullable',
+                'required',
                 'date_format:Y-m-d\TH:i',
-                'required_with:fec_prestacion',
                 function ($attribute, $value, $fail) use ($request) {
                     if ($request->filled('fec_prestacion')) {
                         $ini = Carbon::createFromFormat('Y-m-d\TH:i', $request->fec_prestacion);
