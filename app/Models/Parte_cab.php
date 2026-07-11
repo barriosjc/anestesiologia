@@ -50,7 +50,10 @@ class Parte_cab extends Model
         , 'observacion'
     ];
     
-    protected $dates = ['fec_prestacion', 'fec_prestacion_fin'];
+    protected $casts = [
+        'fec_prestacion' => 'datetime',
+        'fec_prestacion_fin' => 'datetime',
+    ];
 
     // Accessor para el input de fecha de prestación (formato para datetime-local)
     public function getFecPrestacionInputAttribute()

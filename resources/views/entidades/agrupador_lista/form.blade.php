@@ -15,7 +15,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
+                <select class="form-select form-select-sm js-tomselect" id="cobertura_id" name="cobertura_id">
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $item)
                         <option value="{{ $item->id }}"
@@ -62,10 +62,10 @@
 
 @push('scripts')
 <script>
-    $(document).ready(function(){
-        $('.select2').select2({
-            placeholder: "-- Seleccione --",
-            allowClear: true
+    document.querySelectorAll('.js-tomselect').forEach(function(el) {
+        new TomSelect(el, {
+            allowEmptyOption: true,
+            placeholder: '-- Seleccione --',
         });
     });
 </script>

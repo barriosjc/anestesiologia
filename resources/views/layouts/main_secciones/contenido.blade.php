@@ -23,6 +23,7 @@
     </header> --}}
 
     @yield('contenido')
+    {{ $slot ?? '' }}
 
 
 {{-- </div> --}}

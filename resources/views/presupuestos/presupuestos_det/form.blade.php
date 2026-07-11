@@ -13,7 +13,7 @@
             <div class="row gx-3 mb-3">
                 <div class="col-md-6">
                     <label class="small mb-1">Coberturas</label>
-                    <select name="cobertura_id" class="select2 form-select form-select-2" id="cobertura_id"
+                    <select name="cobertura_id" class="js-tomselect form-select form-select-2" id="cobertura_id"
                         data-bs-placement="top"
                         data-bs-title="Si el paciente se realiaza alguno de los procedimientos bajo una cobertura indíquela, o seleccione 'Particular'.">
                         <option value="">-- Seleccione --</option>
@@ -137,6 +137,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.js-tomselect').forEach(function(el) {
+                new TomSelect(el, {
+                    allowEmptyOption: true,
+                    placeholder: '-- Seleccione --',
+                });
+            });
+
             const selectCobertura = document.getElementById("cobertura_id");
             const inputTotal = document.getElementById("total");
 

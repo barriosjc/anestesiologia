@@ -1,31 +1,32 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Utiles\UtilController;
-use App\Http\Controllers\cargas\ParteController;
-use App\Http\Controllers\seguridad\RoleController;
-use App\Http\Controllers\entidades\CentroController;
-use App\Http\Controllers\seguridad\ProfileController;
-use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\entidades\NomPadreController;
-use App\Http\Controllers\entidades\PacienteController;
-use App\Http\Controllers\produccion\ConsumoController;
-use App\Http\Controllers\seguridad\PermisosController;
+use App\Http\Controllers\cargas\ParteController;
+use App\Http\Controllers\entidades\CentroController;
 use App\Http\Controllers\entidades\CoberturaController;
-use App\Http\Controllers\entidades\ParametroController;
+use App\Http\Controllers\entidades\GerenciadoraCoberturaPadreController;
 use App\Http\Controllers\entidades\NomencladorController;
-use App\Http\Controllers\entidades\ProfesionalController;
+use App\Http\Controllers\entidades\NomPadreController;
+use App\Http\Controllers\entidades\NomPracticasEstudioController;
+use App\Http\Controllers\entidades\PacienteController;
+use App\Http\Controllers\entidades\ParametroController;
 use App\Http\Controllers\entidades\PreciosListasController;
 use App\Http\Controllers\entidades\PreciosValoresController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
 use App\Http\Controllers\entidades\PresupuestoDetController;
 use App\Http\Controllers\entidades\PresupuestoPagosController;
-use App\Http\Controllers\entidades\NomPracticasEstudioController;
-use App\Http\Controllers\entidades\GerenciadoraCoberturaPadreController;
+use App\Http\Controllers\entidades\ProfesionalController;
+use App\Http\Controllers\produccion\ConsumoController;
+use App\Http\Controllers\seguridad\PermisosController;
+use App\Http\Controllers\seguridad\ProfileController;
+use App\Http\Controllers\seguridad\RoleController;
+use App\Http\Controllers\seguridad\UsuarioController;
+use App\Http\Controllers\Utiles\UtilController;
+use App\Livewire\Partes\ParteCreate;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Auth::routes();
 Route::match(['get'], 'login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -60,17 +61,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('partes/calendar', [ParteController::class, 'calendar'])->name('partes_cab.calendar');
             Route::post('partes/calendar/guardar', [ParteController::class, 'calendarGuardar'])->name('partes_cab.calendar.guardar');
             
-            Route::get('partes/create', [ParteController::class, 'create'])->name('partes_cab.create');
-            Route::post('partes/store', [ParteController::class, 'store'])->name('partes_cab.store');
-            Route::delete('partes/delete/{id}', [ParteController::class, 'destroy'])->name('partes_cab.destroy');
-            Route::get('partes/edit/{id}', [ParteController::class, 'edit'])->name('partes_cab.edit');
-            Route::post('partes/datos/obtener', [ParteController::class, 'getData'])->name('partes_cab.obtener');
-            Route::get('partes/filtrar', [ParteController::class, 'filtrar'])->name('partes_cab.filtrar');
+            Route::get('partes/create', ParteCreate::class)->name('partes_cab.create');
+            Route::get('partes/edit/{id}', \App\Livewire\Partes\ParteCreate::class)->name('partes_cab.edit');
+            Route::get('partes/filtrar', \App\Livewire\Partes\ParteIndex::class)->name('partes_cab.filtrar');
 
-            Route::get('partes/det/create/{id}', [ParteController::class, 'createDet'])->name('partes_det.create');
-            Route::post('partes/det/store', [ParteController::class, 'storeDet'])->name('partes_det.store');
-            Route::delete('partes/det/delete/{id}', [ParteController::class, 'destroyDet'])->name('partes_det.destroy');
-            Route::get('partes/det/edit/{id}', [ParteController::class, 'edit_det'])->name('partes_det.edit');
+            Route::get('partes/det/create/{id}', \App\Livewire\Partes\ParteDetalle::class)->name('partes_det.create');
             Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
             
             Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
@@ -118,21 +113,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('practicas_estudios/restore/{id}', [NomPracticasEstudioController::class, 'restore'])->name('nom_practicas_estudios.restore');
             Route::get('practicas_estudios/buscar', [NomPracticasEstudioController::class, 'buscar'])->name('nom_practicas_estudios.buscar');
 
-            Route::get('consumos/partes/filtrar', [ConsumoController::class, 'parteFiltrar'])->name('consumos.partes.filtrar');
-            Route::get('consumos/cargar/{id}', [ConsumoController::class, 'cargar'])->name('consumos.cargar');
-            Route::post('consumos/valor/buscar', [ConsumoController::class, 'valorBuscar'])->name('consumos.valor.buscar');
-            Route::post('consumos/guardar', [ConsumoController::class, 'guardar'])->name('consumos.guardar');
-            Route::delete('consumos/borrar/{id}', [ConsumoController::class, 'destroy'])->name('consumos.borrar');
+            Route::get('consumos/partes/filtrar', \App\Livewire\Consumos\Partes\ConsumoPartesIndex::class)->name('consumos.partes.filtrar');
+            Route::get('consumos/cargar/{id}', \App\Livewire\Consumos\Cargar\ConsumoCargarIndex::class)->name('consumos.cargar');
             Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
 
-            Route::get('consumos/rendicion/filtrar', [ConsumoController::class, 'rendicionFiltrar'])->name('consumo.rendiciones.filtrar');
-            Route::post('consumos/rendicion/guardar', [ConsumoController::class, 'rendicionStore'])->name('consumo.rendiciones.store');
+            Route::get('consumos/rendicion/filtrar', \App\Livewire\Consumos\Rendiciones\RendicionesIndex::class)->name('consumo.rendiciones.filtrar');
             Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicionListado'])->name('consumo.rendiciones.listado');
             Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicionListar'])->name('consumo.rendiciones.listar');
-            Route::post('consumos/rendicion/estados', [ConsumoController::class, 'rendicionEstados'])->name('consumo.rendiciones.estados');
-            Route::post('consumos/rendicion/revalorizar', [ConsumoController::class, 'rendicionRevalorizar'])->name('consumo.rendiciones.revalorizar');
-            Route::post('consumos/rendicion/agregar', [ConsumoController::class, 'rendicionAgregar'])->name('consumo.rendiciones.agregar');
-            Route::post('consumos/rendicion/agregarydif', [ConsumoController::class, 'agregarNuevoyDiferencia'])->name('consumo.rendiciones.agregarydiff');
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {

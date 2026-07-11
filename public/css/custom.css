@@ -224,6 +224,28 @@
     border-radius: 0.2rem;
   }
 
+  /* General - Tom Select (reemplazo de select2 en selects de cobertura) */
+  .ts-wrapper,
+  .ts-wrapper .ts-control {
+    min-height: calc(2.375rem + 2px); /* misma altura que .form-select */
+  }
+  .ts-wrapper .ts-control {
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  /* Tom Select versión pequeña (form-select-sm) */
+  .ts-wrapper.form-select-sm,
+  .ts-wrapper.form-select-sm .ts-control {
+    min-height: calc(1.8125rem + 2px);
+  }
+  .ts-wrapper.form-select-sm .ts-control {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
   /* Otros ajustes */
   .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 1.5;

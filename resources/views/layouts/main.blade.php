@@ -23,12 +23,15 @@
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
 
-    <!-- Select2 -->
+    <!-- Select2 (usado por perfil_id y filtros multiples, pendiente de migracion) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
+    <!-- Tom Select (reemplazo de select2 sin dependencia de jQuery, usado en selects de coberturas) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
 
     <!-- Include base CSS (optional) -->
     <link href="{{ asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/custom.css') }}?v={{ filemtime(public_path('css/custom.css')) }}" rel="stylesheet" />
 </head>
 
 <body class="nav-fixed">
@@ -62,8 +65,11 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0"></script>
 
-    <!-- Select2 -->
+    <!-- Select2 (usado por perfil_id y filtros multiples, pendiente de migracion) -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
+
+    <!-- Tom Select -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
     <!-- SB Admin Scripts -->
     <script src="{{ asset('libs/sbadmin/js/scripts.js') }}"></script>

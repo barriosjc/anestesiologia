@@ -13,7 +13,7 @@
             </div>
             <div class="form-group col-md-3">
                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                <select class="form-select form-select-sm select2" id="cobertura_id" name="cobertura_id">
+                <select class="form-select form-select-sm js-tomselect" id="cobertura_id" name="cobertura_id">
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $data)
                         <option value="{{ $data->id }}" {{old('cobertura_id', $gerenciadora_cobertura_padre->cobertura_id) == $data->id ? 'selected' : ''}}>     
@@ -33,4 +33,15 @@
         <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        document.querySelectorAll('.js-tomselect').forEach(function(el) {
+            new TomSelect(el, {
+                allowEmptyOption: true,
+                placeholder: '-- Seleccione --',
+            });
+        });
+    </script>
+@endpush
 

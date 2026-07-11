@@ -172,7 +172,7 @@
 });
 
 // funcion para switalert comun para borrar
-function confirmDelete(id, text = "Esta acción es irreversible.") {
+function confirmDelete(id, text = "Esta acción es irreversible.", onConfirm = null) {
     Swal.fire({
         title: '¿Confirma eliminar?',
         text: text,
@@ -184,7 +184,11 @@ function confirmDelete(id, text = "Esta acción es irreversible.") {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById('delete-form-'+id).submit();
+            if (onConfirm) {
+                onConfirm();
+            } else {
+                document.getElementById('delete-form-'+id).submit();
+            }
         }
     })
 }
