@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\produccion;
+namespace App\Services\Reports;
 
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\produccion\ReportStrategy;
 use Illuminate\Support\Facades\Validator;
 
 class ReportTypeProduccionAdministrativos implements ReportStrategy
 {
-    public function validate(Request $request): array
+    public function validate(array $filtros): array
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($filtros, [
             "fec_desde_adm" => "required",
             "fec_hasta_adm" => "required",
             "user_id" => "nullable",
@@ -30,11 +27,11 @@ class ReportTypeProduccionAdministrativos implements ReportStrategy
         return $validator->validated();
     }
 
-    public function generate(Request $request)
+    public function generate(array $filtros)
     {
         $query = DB::table('v_parte_cab')
             ->select(DB::raw('name, DATE(created_at) as fecha, COUNT(*) as cantidad'))
-            ->whereBetween('created_at', [$request->fec_desde_adm, $request->fec_hasta_adm])
+            ->whereBetween('created_at', [$filtros['fec_desde_adm'], $filtros['fec_hasta_adm']])
             ->groupBy('name', DB::raw('DATE(created_at)'))
             ->get();
 

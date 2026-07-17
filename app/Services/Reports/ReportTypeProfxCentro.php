@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\produccion;
+namespace App\Services\Reports;
 
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\produccion\ReportStrategy;
 use Illuminate\Support\Facades\Validator;
 
 class ReportTypeProfxCentro implements ReportStrategy
 {
-    public function validate(Request $request): array
+    public function validate(array $filtros): array
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($filtros, [
             "reporte_id" => "required",
             "periodo_gen" => "required"
         ], [
@@ -29,11 +26,11 @@ class ReportTypeProfxCentro implements ReportStrategy
         return $validator->validated();
     }
 
-    public function generate(Request $request)
+    public function generate(array $filtros)
     {
         $query = DB::table('v_rendicion_agrupxnivel');
-        $query->where('periodo', '=', $request->periodo_gen);
-        $this->applyCommonFilters($query, $request);
+        $query->where('periodo', '=', $filtros['periodo_gen']);
+        $this->applyCommonFilters($query, $filtros);
         return $query->get();
     }
 
@@ -41,27 +38,27 @@ class ReportTypeProfxCentro implements ReportStrategy
     {
         return 'Reportes.Rendiciones.ProfFactxCentro';
     }
-    
+
     public function getFormat(): PdfFormat
     {
         return new PdfFormat(TamanoPapel::A4, Orientacion::LANDSCAPE);
     }
 
-    private function applyCommonFilters($query, $request)
+    private function applyCommonFilters($query, array $filtros)
     {
-        if ($request->has('profesional_id') && !empty($request->profesional_id)) {
-            $query->where('profesional_id', '=', $request->profesional_id);
+        if (!empty($filtros['profesional_id'] ?? null)) {
+            $query->where('profesional_id', '=', $filtros['profesional_id']);
         }
-        if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+        if (!empty($filtros['cobertura_id'] ?? null)) {
+            $query->where('cobertura_id', '=', $filtros['cobertura_id']);
         }
-        if ($request->has('centro_id') && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
+        if (!empty($filtros['centro_id'] ?? null)) {
+            $query->where('centro_id', '=', $filtros['centro_id']);
         }
-        if ($request->has('nombre') && !empty($request->nombre)) {
-            $query->where('paciente', 'like', "%" . $request->nombre . "%");
+        if (!empty($filtros['nombre'] ?? null)) {
+            $query->where('paciente', 'like', "%" . $filtros['nombre'] . "%");
         }
-        $selectedEstados = $request->input('estados');
+        $selectedEstados = $filtros['estados'] ?? null;
         if (!empty($selectedEstados)) {
             if (count($selectedEstados) > 0) {
                 $query->where(function ($query) use ($selectedEstados) {
@@ -73,8 +70,5 @@ class ReportTypeProfxCentro implements ReportStrategy
                 $query->where('estado_id', $selectedEstados[0]);
             }
         }
-// $sql = $query->toSql();
-// $bindings = $query->getBindings();
-// dd("segundo reporte",$sql, $bindings);
     }
 }

@@ -1,21 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\produccion;
+namespace App\Services\Reports;
 
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\produccion\ReportStrategy;
 use Illuminate\Support\Facades\Validator;
 
 class ReportTypeDetallexProfesional implements ReportStrategy
 {
-
-    public function validate(Request $request): array
+    public function validate(array $filtros): array
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($filtros, [
             "reporte_id" => "required",
             "profesional_id" => "nullable",
             "fec_desde" => "required|date",
@@ -34,13 +30,12 @@ class ReportTypeDetallexProfesional implements ReportStrategy
 
         return $validator->validated();
     }
-        
 
-    public function generate(Request $request)
+    public function generate(array $filtros)
     {
         $query = DB::table('v_rendiciones');
-        $query->whereBetween('fec_prestacion_orig', [$request->fec_desde, $request->fec_hasta]);
-        $this->applyCommonFilters($query, $request);
+        $query->whereBetween('fec_prestacion_orig', [$filtros['fec_desde'], $filtros['fec_hasta']]);
+        $this->applyCommonFilters($query, $filtros);
         $resu = $query->get();
 
         return $resu;
@@ -56,23 +51,23 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         return new PdfFormat(TamanoPapel::A4, Orientacion::LANDSCAPE);
     }
 
-    private function applyCommonFilters($query, $request)
+    private function applyCommonFilters($query, array $filtros)
     {
-        if ($request->has("profesional_id") && !empty($request->profesional_id)) {
-            $query->where('profesional_id', '=', $request->profesional_id);
+        if (!empty($filtros['profesional_id'] ?? null)) {
+            $query->where('profesional_id', '=', $filtros['profesional_id']);
         }
-        if ($request->has('cobertura_id') && !empty($request->cobertura_id)) {
-            $query->where('cobertura_id', '=', $request->cobertura_id);
+        if (!empty($filtros['cobertura_id'] ?? null)) {
+            $query->where('cobertura_id', '=', $filtros['cobertura_id']);
         }
-        if ($request->has('centro_id') && !empty($request->centro_id)) {
-            $query->where('centro_id', '=', $request->centro_id);
+        if (!empty($filtros['centro_id'] ?? null)) {
+            $query->where('centro_id', '=', $filtros['centro_id']);
         }
-        if ($request->has('nombre') && !empty($request->nombre)) {
-            $query->where('pac_nombre', 'like', "%" . $request->nombre . "%");
+        if (!empty($filtros['nombre'] ?? null)) {
+            $query->where('pac_nombre', 'like', "%" . $filtros['nombre'] . "%");
         }
 
-        if ($request->has('estados') && !empty($request->estados)) {
-            $selectedEstados = $request->input('estados');
+        if (!empty($filtros['estados'] ?? null)) {
+            $selectedEstados = $filtros['estados'];
             if (count($selectedEstados) > 0) {
                 $query->where(function ($query) use ($selectedEstados) {
                     foreach ($selectedEstados as $estadoId) {
@@ -80,13 +75,6 @@ class ReportTypeDetallexProfesional implements ReportStrategy
                     }
                 });
             }
-            // else {
-            //     $query->where('estado_id', $selectedEstados[0]);
-            // }
         }
-        // $sql = $query->toSql();
-// $bindings = $query->getBindings();
-// dd("primer listado",$sql, $bindings, $request);
-// dd( !empty($request->estados));
     }
 }

@@ -58,9 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('roles/combos/json', [RoleController::class, 'rolesJson'])->name('roles.json');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
-            Route::get('partes/calendar', [ParteController::class, 'calendar'])->name('partes_cab.calendar');
-            Route::post('partes/calendar/guardar', [ParteController::class, 'calendarGuardar'])->name('partes_cab.calendar.guardar');
-            
+            Route::get('partes/calendar', \App\Livewire\Cargas\CalendarIndex::class)->name('partes_cab.calendar');
+
             Route::get('partes/create', ParteCreate::class)->name('partes_cab.create');
             Route::get('partes/edit/{id}', \App\Livewire\Partes\ParteCreate::class)->name('partes_cab.edit');
             Route::get('partes/filtrar', \App\Livewire\Partes\ParteIndex::class)->name('partes_cab.filtrar');
@@ -118,8 +117,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
 
             Route::get('consumos/rendicion/filtrar', \App\Livewire\Consumos\Rendiciones\RendicionesIndex::class)->name('consumo.rendiciones.filtrar');
-            Route::get('consumos/rendicion/listado', [ConsumoController::class, 'rendicionListado'])->name('consumo.rendiciones.listado');
-            Route::post('consumos/rendicion/listado/generar', [ConsumoController::class, 'rendicionListar'])->name('consumo.rendiciones.listar');
+            Route::get('consumos/rendicion/listado', \App\Livewire\Reportes\ReportesForm::class)->name('consumo.rendiciones.listado');
+            Route::get('consumos/rendicion/listado/generar', [\App\Http\Controllers\produccion\ReporteDescargaController::class, 'stream'])->name('reportes.stream');
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {

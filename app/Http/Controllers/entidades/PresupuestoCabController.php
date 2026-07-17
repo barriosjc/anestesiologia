@@ -106,26 +106,10 @@ class PresupuestoCabController extends Controller
         return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto restaurado correctamente.');
     }
 
-    public function print(int $id)
+    public function print(int $id, \App\Repositories\PresupuestoDetalleRepository $presupuestoDetalleRepository)
     {
         $presupuesto = PresupuestoCab::with(['pagos', 'centro', 'user'])->findOrFail($id);
-        $query1 = PresupuestoDet::query()
-            ->join('nom_practicas_estudios as pe', function ($join) {
-                $join->on('presupuestos_det.nom_padre_id', '=', 'pe.nom_padre_id')
-                    ->on('presupuestos_det.nomenclador_id', '=', 'pe.id');
-            })
-            ->where('presupuestos_det.presupuesto_cab_id', $id)
-            ->select('presupuestos_det.*', 'pe.nombre as descripcion');
-
-        $query2 = PresupuestoDet::query()
-            ->join('nomenclador as n', function ($join) {
-                $join->on('presupuestos_det.nom_padre_id', '=', 'n.nom_padre_id')
-                    ->on('presupuestos_det.nomenclador_id', '=', 'n.id');
-            })
-            ->where('presupuestos_det.presupuesto_cab_id', $id)
-            ->select('presupuestos_det.*', 'n.descripcion as descripcion');
-        $detalles = $query1->unionAll($query2)->get();
-        $presupuesto->presupuestosDet = $detalles;
+        $presupuesto->presupuestosDet = $presupuestoDetalleRepository->detalleConDescripcion($id);
 
         $pdf = Pdf::loadView('presupuestos.presupuestos_cab.informe', compact('presupuesto'));
 
