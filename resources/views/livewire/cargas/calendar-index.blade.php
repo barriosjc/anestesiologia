@@ -9,7 +9,7 @@
                 eventContent: function(arg) {
                     return {
                         html: `
-                            <div style=\"white-space: normal; text-align: center;\">
+                            <div style='white-space: normal; text-align: center;'>
                                 <strong>${arg.event.title}</strong>
                             </div>
                         `
