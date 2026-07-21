@@ -14,32 +14,17 @@ use App\Models\Parte_cab;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use App\Models\Profesional;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PresupuestoCabController extends Controller
 {
-    public function index()
-    {
-        $centros = Centro::all();
-        $profesionales = Profesional::orderBy('nombre')->get();
-        $gerenciadoras = Gerenciadora::all();
-        $usuarios = User::all();
-        $presupuestosCab = DB::table('v_presupuestos_cab')->paginate(10);
-
-        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab', 'centros', 'profesionales', 'gerenciadoras', 'usuarios'));
-    }
-
     public function create()
     {
         $uds = Parametro::where('nombre', 'UDS')->first()->valor;
         $centros = Centro::all();
-        $profesionales = Profesional::orderBy('nombre')->get();
+        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
         $presupuestosCab = new PresupuestoCab();
         $gerenciadoras = Gerenciadora::all();
 
@@ -50,7 +35,7 @@ class PresupuestoCabController extends Controller
     {
         $centros = Centro::all();
         $gerenciadoras = Gerenciadora::all();
-        $profesionales = Profesional::orderBy('nombre')->get();
+        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
         $presupuestosCab = PresupuestoCab::find($id);
         if (empty($presupuestosCab)) {
             return redirect()->back()->with(["error" => "No es posible editar un presupuesto dado de baja."]);
@@ -83,27 +68,6 @@ class PresupuestoCabController extends Controller
         $presupuesto->update($request->validated());
 
         return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto actualizado correctamente.');
-    }
-
-    public function destroy(int $id)
-    {
-        $presupuesto = PresupuestoCab::findOrFail($id);
-        $presupuesto->estado_anterior = $presupuesto->estado; // Guardar el estado actual antes de cambiarlo
-        $presupuesto->estado = 'C'; // Marcar como cancelado en lugar de eliminar
-        $presupuesto->save();
-        // $presupuesto->delete();
-
-        return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto eliminado correctamente.');
-    }
-
-    public function restaurar(int $id)
-    {
-        $presupuesto = PresupuestoCab::findOrFail($id);
-        $presupuesto->estado = $presupuesto->estado_anterior; 
-        $presupuesto->save();
-        // $presupuesto->delete();
-
-        return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto restaurado correctamente.');
     }
 
     public function print(int $id, \App\Repositories\PresupuestoDetalleRepository $presupuestoDetalleRepository)
@@ -186,7 +150,7 @@ class PresupuestoCabController extends Controller
         return redirect()->back()->with('success', 'Partes creados correctamente. Nro de parte generado: ' . $parte->id);
     }
 
-    private function validateCab($presupuesto)
+    private function validateCab(PresupuestoCab $presupuesto)
     {
         if ($presupuesto->parte_cab_id !== null) {
             return redirect()
@@ -222,70 +186,5 @@ class PresupuestoCabController extends Controller
                 ->with('error', 'Hay campos obligatorios vacíos en la cabecera.');
         }
         return true; // Retornar true si la validación pasa
-    }
-
-    public function pagado($id)
-    {
-        $presupuestosCab = PresupuestoCab::where('id', $id)->first();
-        if (! $presupuestosCab) {
-            return redirect()->back()->with('error', 'Presupuesto cancelado, no es posible cambiar estado a Pagado.');
-        }
-        $presupuestosCab->estado = "P";
-        $presupuestosCab->save();
-
-        return redirect()->back();
-    }
-
-    public function filtrar(Request $request)
-    {
-        // $query = PresupuestoCab::query();
-        $query = DB::table('v_presupuestos_cab');
-
-        // Aplicar filtros
-        if ($request->filled('centro')) {
-            $query->where('centro_id', $request->centro);
-        }
-
-        if ($request->filled('nombre')) {
-            $query->where('nombre', 'like', "%{$request->nombre}%");
-        }
-
-        if ($request->filled('profesional')) {
-            $query->where('profesional_id', $request->profesional);
-        }
-
-        if ($request->filled('usuario')) {
-            $query->where('usuario_id', $request->usuario);
-        }
-
-        if ($request->filled('fecha_desde')) {
-            $query->whereDate('fecha', '>=', $request->fecha_desde);
-        }
-
-        if ($request->filled('fecha_hasta')) {
-            $query->whereDate('fecha', '<=', $request->fecha_hasta);
-        }
-
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
-        }
-
-        // Obtener resultados paginados
-        $presupuestosCab = $query->orderBy('fecha', 'desc')->paginate(15);
-
-        $centros = Centro::get();
-        $profesionales = Profesional::orderBy('nombre')->get();
-        $gerenciadoras = Gerenciadora::orderBy('nombre')->get();
-        $usuarios = User::get();
-        // Estados (asumiendo que ya los tienes definidos)
-        $estados = [
-            'pendiente' => ['texto' => 'Pendiente', 'clase' => 'bg-warning'],
-            'pagado'    => ['texto' => 'Pagado', 'clase'    => 'bg-success'],
-            'cancelado' => ['texto' => 'Cancelado', 'clase' => 'bg-danger'],
-            // Agrega más estados según necesites
-        ];
-
-        return view('presupuestos.presupuestos_cab.index', compact('presupuestosCab', 'centros', 'profesionales', 'gerenciadoras', 'usuarios'));
-
     }
 }

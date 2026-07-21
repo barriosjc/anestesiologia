@@ -221,27 +221,21 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['middleware' => ['permission:adm_presupuestos']], function () {
             // Rutas expandidas de presupuestos cab
-            Route::get('presupuestos/cab', [PresupuestoCabController::class, 'index'])->name('presupuestos.cab.index');
+            Route::get('presupuestos/cab', \App\Livewire\Presupuestos\PresupuestoIndex::class)->name('presupuestos.cab.index');
             Route::get('presupuestos/cab/create', [PresupuestoCabController::class, 'create'])->name('presupuestos.cab.create');
             Route::post('presupuestos/cab', [PresupuestoCabController::class, 'store'])->name('presupuestos.cab.store');
             Route::get('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'show'])->name('presupuestos.cab.show');
             Route::get('presupuestos/cab/{cab}/edit', [PresupuestoCabController::class, 'edit'])->name('presupuestos.cab.edit');
             Route::match(['put', 'patch'], 'presupuestos/cab/{cab}', [PresupuestoCabController::class, 'update'])->name('presupuestos.cab.update');
-            Route::post('presupuestos/cab/borrar/{cab}', [PresupuestoCabController::class, 'destroy'])->name('presupuestos.cab.destroy');
-            Route::post('presupuestos/cab/restaurar/{cab}', [PresupuestoCabController::class, 'restaurar'])->name('presupuestos.cab.restaurar');
             Route::get('presupuestos/cab/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
             Route::get('presupuestos/cab/{id}/partes', [PresupuestoCabController::class, 'partes'])->name('presupuestos.cab.partes');
-            Route::get('presupuestos/cab/{id}/pagado', [PresupuestoCabController::class, 'pagado'])->name('presupuestos.cab.pagado');
-            Route::get('presupuestos/cab/historia/filtrar', [PresupuestoCabController::class, 'filtrar'])->name('presupuestos.cab.filtrar');
 
             // Rutas expandidas de presupuestos det
             Route::get('presupuestos/{id}/det', [PresupuestoDetController::class, 'index'])->name('presupuestos.det.index');
-            Route::get('presupuestos/{id}/det/create', [PresupuestoDetController::class, 'create'])->name('presupuestos.det.create');
-            Route::post('presupuestos/{id}/det', [PresupuestoDetController::class, 'store'])->name('presupuestos.det.store');
+            Route::get('presupuestos/{id}/det/create', \App\Livewire\Presupuestos\PresupuestoDetIndex::class)->name('presupuestos.det.create');
             Route::get('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'show'])->name('presupuestos.det.show');
             Route::get('presupuestos/{id}/det/{det}/edit', [PresupuestoDetController::class, 'edit'])->name('presupuestos.det.edit');
             Route::match(['put', 'patch'], 'presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'update'])->name('presupuestos.det.update');
-            Route::delete('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'destroy'])->name('presupuestos.det.destroy');
 
             // Rutas expandidas de presupuestos pagos
             Route::get('presupuestos/{id}/pagos', [PresupuestoPagosController::class, 'index'])->name('presupuestos.pagos.index');
