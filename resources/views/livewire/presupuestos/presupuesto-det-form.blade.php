@@ -5,17 +5,24 @@
         valorOrig: $wire.entangle('valorOrig'),
         valorTotal: $wire.entangle('valorTotal'),
         totalFormateado() {
-            let v = parseFloat(this.valorOrig || 0) * (parseFloat(this.porcentaje || 0) / 100);
+            let orig = parseFloat(this.valorOrig);
+            if (isNaN(orig)) orig = 0;
+            let pct = parseFloat(this.porcentaje);
+            if (isNaN(pct)) pct = 0;
+            let v = orig * (pct / 100);
             let s = v.toFixed(2).replace('.', ',');
             return s.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         },
         recalcular() {
             let val = parseFloat(this.porcentaje);
+            if (isNaN(val)) val = 0;
             if (val > 200) {
                 this.porcentaje = 100;
                 val = 100;
             }
-            let v = parseFloat(this.valorOrig || 0) * (val / 100);
+            let orig = parseFloat(this.valorOrig);
+            if (isNaN(orig)) orig = 0;
+            let v = orig * (val / 100);
             this.valorTotal = parseFloat(v.toFixed(2));
         }
     }" x-init="if (parseFloat(porcentaje) > 100) { porcentaje = 100; } recalcular()" x-effect="recalcular()">
