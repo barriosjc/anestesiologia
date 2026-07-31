@@ -165,8 +165,12 @@
             // cambio el valor a mano y actualizo los hiddens
             document.getElementById('total').addEventListener('change', function() {
                 let total = document.getElementById('total').value;
-                document.getElementById('valor_orig').value = total;
-                document.getElementById('valor').value = total;
+                let totalNumeric = parseFloat(total.replace(/\./g, '').replace(',', '.'));
+                if (isNaN(totalNumeric)) {
+                    totalNumeric = 0;
+                }
+                document.getElementById('valor_orig').value = totalNumeric;
+                document.getElementById('valor').value = totalNumeric.toFixed(2);
             });
 
             // busca en el nomenclador, si es uno lo valoriza o carga el combo de practicas
@@ -323,7 +327,7 @@
                         totalView = totalView.replace('.', ',');
                         totalView = totalView.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-                        document.getElementById('valor_orig').value = valueData;
+                        document.getElementById('valor_orig').value = totalValue;
                         document.getElementById('total').value = totalView;
                         document.getElementById('valor').value = totalValue.toFixed(2);
                     })

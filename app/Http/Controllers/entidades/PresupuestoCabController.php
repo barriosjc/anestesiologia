@@ -282,6 +282,10 @@ class PresupuestoCabController extends Controller
             $query->whereDate('fecha', '<=', $request->fecha_hasta);
         }
 
+        if ($request->filled('nro_presupuesto')) {
+            $query->where('id', $request->nro_presupuesto);
+        }
+
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }

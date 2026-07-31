@@ -47,17 +47,24 @@
         </div>
 
         <!-- Filtro por Fecha Desde -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="fecha_desde" class="form-label">Fecha Desde</label>
             <input type="date" name="fecha_desde" id="fecha_desde" class="form-control form-control-sm"
                 value="{{ request('fecha_desde') }}">
         </div>
 
         <!-- Filtro por Fecha Hasta -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="fecha_hasta" class="form-label">Fecha Hasta</label>
             <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control form-control-sm"
                 value="{{ request('fecha_hasta') }}">
+        </div>
+
+        <!-- Filtro por Nro Presupuesto -->
+        <div class="col-md-2">
+            <label for="nro_presupuesto" class="form-label">Nro Presupuesto</label>
+            <input type="text" name="nro_presupuesto" id="nro_presupuesto" class="form-control form-control-sm"
+                value="{{ request('nro_presupuesto') }}">
         </div>
 
         <!-- Filtro por Estado -->
