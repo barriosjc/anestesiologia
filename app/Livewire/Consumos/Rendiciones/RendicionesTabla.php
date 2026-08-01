@@ -106,7 +106,7 @@ class RendicionesTabla extends Component
             $query->where('parte_cab_id', '=', $this->filtros['nro_parte']);
         }
 
-        return $query->orderBy('created_at', 'asc');
+        return $query->orderBy('consumos_det_id', 'desc');
     }
 
     /**
@@ -202,7 +202,7 @@ class RendicionesTabla extends Component
 
     public function paginationView()
     {
-        return 'vendor.pagination.bootstrap-4';
+        return 'livewire::bootstrap';
     }
 
     public function render()

@@ -1,18 +1,18 @@
 <div>
     @include('utiles.alerts')
 
-    <div class="table-responsive">
+    <div class="table-responsive overflow-visible">
         <table class="table table-striped table-hover" id="table_data">
             <thead class="thead">
                 <tr>
-                    <th>Nro</th>
+                    <th class="text-end">Nro</th>
                     <th>Centro</th>
                     <th>Fecha</th>
                     <th>Paciente</th>
                     <th>Profesional</th>
                     <th>Usuario</th>
-                    <th>Total</th>
-                    <th>Pagado</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">Pagado</th>
                     <th>Estado</th>
                     <th></th>
                 </tr>
@@ -20,14 +20,14 @@
             <tbody>
                 @foreach ($presupuestosCab as $item)
                     <tr wire:key="presupuesto-{{ $item->id }}">
-                        <td>{{ $item->id }}</td>
+                        <td class="text-end">{{ $item->id }}</td>
                         <td>{{ $item->centro }}</td>
                         <td>{{ $item->fecha }}</td>
                         <td>{{ $item->nombre }}</td>
                         <td>{{ $item->profesional }}</td>
                         <td>{{ $item->usuario }}</td>
-                        <td>{{ number_format($item->total_presupuesto ?? 0, 2, ',', '.') }}</td>
-                        <td>{{ number_format($item->total_pagado ?? 0, 2, ',', '.') }}</td>
+                        <td class="text-end">{{ number_format($item->total_presupuesto ?? 0, 2, ',', '.') }}</td>
+                        <td class="text-end">{{ number_format($item->total_pagado ?? 0, 2, ',', '.') }}</td>
                         <td>
                             <span class="badge rounded-pill {{ $estados[$item->estado]['clase'] }}"
                                 @if ($item->estado == 'F') data-bs-toggle="tooltip" data-bs-placement="top" title="Parte Nro: {{ $item->parte_cab_id }}" @endif>

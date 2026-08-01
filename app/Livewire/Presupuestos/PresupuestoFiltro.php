@@ -15,6 +15,7 @@ class PresupuestoFiltro extends Component
     public $usuario_id;
     public $fecha_desde;
     public $fecha_hasta;
+    public $numero;
     public $estado;
 
     public function mount()
@@ -25,12 +26,13 @@ class PresupuestoFiltro extends Component
         $this->usuario_id = session('pc_usuario_id');
         $this->fecha_desde = session('pc_fecha_desde');
         $this->fecha_hasta = session('pc_fecha_hasta');
+        $this->numero = session('pc_numero');
         $this->estado = session('pc_estado');
     }
 
     protected function filtroKeys()
     {
-        return ['centro_id', 'nombre', 'profesional_id', 'usuario_id', 'fecha_desde', 'fecha_hasta', 'estado'];
+        return ['centro_id', 'nombre', 'profesional_id', 'usuario_id', 'fecha_desde', 'fecha_hasta', 'numero', 'estado'];
     }
 
     public function aplicar()

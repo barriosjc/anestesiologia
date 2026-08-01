@@ -2,128 +2,15 @@
 
 namespace App\Http\Controllers\seguridad;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
-// use App\Models\Permission;
-use Spatie\Permission\Models\Permission;
 use App\Models\user;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 class PermisosController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        $keyword = $request->get('search');
-        $perPage = 5;
-        if (!empty($keyword)) {
-            $permisos = Permission::where(function ($query) use ($keyword) {
-                $query->where('name', 'LIKE', "%$keyword%")
-                    ->orWhere('guard_name', 'LIKE', "%$keyword%")
-                    ->get();
-            })
-                ->where("guard_name", "web")
-                ->orderBy('name', 'asc')
-                ->get();
-            // ->latest()->simplepaginate($perPage);
-        } else {
-            $permisos = Permission::where("guard_name", "web")
-                ->orderBy('id', 'DESC')
-                ->orderby('name', 'asc')
-                ->get();   //latest()->simplepaginate($perPage);
-        }
-        $esabm = true;
-
-        $padre = "permisos";
-
-        return view('seguridad.permisos.index', compact('permisos', 'esabm', 'padre'));
-
-            // ->with('i', ($request->input('page', 1) - 1) * 5);
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // $permission = Permission::get();
-        return view('seguridad.permisos.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-
-        $this->validate($request, [
-            'name' => 'required|max:255|unique:permissions,name',
-            'guard_name' => 'required|max:255'
-        ]);
-
-        $permisos = Permission::create([
-            'name' => $request->input('name'),
-            'guard_name' => $request->input('guard_name')
-        ]);
-        //$permisos->syncPermissions($request->input('permission'));
-        $esabm = true;
-
-        return redirect()->route('permisos.index', compact('esabm'))
-            ->with('flash_message', 'Permiso creado correctamente');
-    }
-
-    public function show($id)
-    {
-        $permisos = Permission::findOrfail($id);
-
-        return view('seguridad.permisos.show', compact('permisos'));
-    }
-
-    public function edit($id)
-    {
-        $permisos = Permission::findOrFail($id);
-
-        return view('seguridad.permisos.edit', compact('permisos'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
-            'name' => 'required|max:255|unique:permissions,name,' . $id,
-            'guard_name' => 'required|max:255',
-        ]);
-
-        $permisos = Permission::find($id);
-        $permisos->name = $request->input('name');
-        $permisos->guard_name = $request->input('guard_name');
-        $permisos->save();
-        $esabm = true;
-        //$permisos->syncPermissions($request->input('permission'));
-
-        return redirect()->route('permisos.index', compact('esabm'))
-            ->with('flash_message', 'Permiso modificado correctamente');
-    }
-
-    public function destroy($id)
-    {
-        // DB::table("roles")->where('id',$id)->delete();
-        Permission::find($id)->delete();
-
-        return redirect()->route('permisos.index')
-            ->with('flash_message', 'Permiso borrado correctamente');
-    }
-
     public function usuarios(Request $request, int $perid, int $usuid = null, string $tarea = '')
     {
 

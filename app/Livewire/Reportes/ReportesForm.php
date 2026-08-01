@@ -69,7 +69,7 @@ class ReportesForm extends Component
             'coberturas' => Cobertura::orderBy('nombre')->get(),
             'centros' => Centro::orderBy('nombre')->get(),
             'profesionales' => Profesional::orderBy('nombre')->get(),
-            'estados' => Estado::get(),
+            'listaEstados' => Estado::get(),
             'periodos' => Periodo::orderBy('nombre')->get(),
             'users' => User::get(),
             'listados' => Listado::when(!$user->hasRole('super-admin'), function ($query) use ($user) {

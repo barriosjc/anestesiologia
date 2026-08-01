@@ -3,19 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\cargas\ParteController;
-use App\Http\Controllers\entidades\CentroController;
-use App\Http\Controllers\entidades\CoberturaController;
-use App\Http\Controllers\entidades\GerenciadoraCoberturaPadreController;
-use App\Http\Controllers\entidades\NomencladorController;
-use App\Http\Controllers\entidades\NomPadreController;
-use App\Http\Controllers\entidades\NomPracticasEstudioController;
-use App\Http\Controllers\entidades\PacienteController;
-use App\Http\Controllers\entidades\ParametroController;
-use App\Http\Controllers\entidades\PreciosListasController;
-use App\Http\Controllers\entidades\PreciosValoresController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
-use App\Http\Controllers\entidades\PresupuestoDetController;
-use App\Http\Controllers\entidades\PresupuestoPagosController;
 use App\Http\Controllers\entidades\ProfesionalController;
 use App\Http\Controllers\produccion\ConsumoController;
 use App\Http\Controllers\seguridad\PermisosController;
@@ -24,6 +12,7 @@ use App\Http\Controllers\seguridad\RoleController;
 use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Utiles\UtilController;
 use App\Livewire\Partes\ParteCreate;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,7 +44,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
         Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
         Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
-        Route::get('roles/combos/json', [RoleController::class, 'rolesJson'])->name('roles.json');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
             Route::get('partes/calendar', \App\Livewire\Cargas\CalendarIndex::class)->name('partes_cab.calendar');
@@ -67,50 +55,22 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('partes/det/create/{id}', \App\Livewire\Partes\ParteDetalle::class)->name('partes_det.create');
             Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
             
-            Route::get('pacientes/buscar', [PacienteController::class, 'buscar'])->name('pacientes.buscar');
             Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
-            Route::get('nomencladores/listar', [NomPadreController::class, 'index'])->name('nom_padres.index');
-            Route::get('nomencladores/create', [NomPadreController::class, 'create'])->name('nom_padres.create');
-            Route::post('nomencladores/store', [NomPadreController::class, 'store'])->name('nom_padres.store');
-            
-            Route::post('nomenclador/buscar', [NomencladorController::class, 'buscarCodDesc'])->name('nomenclador.buscar.coddesc');
-            Route::get('nomenclador/lista/{nom_padre}', [NomencladorController::class, 'index'])->name('nomenclador.index');
-            Route::get('nomenclador/create/{nom_padre}', [NomencladorController::class, 'create'])->name('nomenclador.create');
-            Route::post('nomenclador/restore/{id}', [NomencladorController::class, 'restore'])->name('nomenclador.restore');
-            Route::delete('nomenclador/destroy/{id}', [NomencladorController::class, 'destroy'])->name('nomenclador.destroy');
-            Route::get('nomenclador/edit/{id}', [NomencladorController::class, 'edit'])->name('nomenclador.edit');
-            Route::post('nomenclador/store', [NomencladorController::class, 'store'])->name('nomenclador.store');
+            Route::get('nomencladores/listar', \App\Livewire\Nomencladores\NomPadreIndex::class)->name('nom_padres.index');
 
-            Route::get('nomenclador/valores/listas', [PreciosValoresController::class, 'index'])->name('nomenclador.valores.listas');
-            Route::get('nomenclador/valores/filtrar', [PreciosValoresController::class, 'filtrar'])->name('nomenclador.valores.filtrar');
-            Route::post('nomenclador/valores/grupo/nuevo', [PreciosValoresController::class, 'nuevoGrupo'])->name('nomenclador.valores.grupo.nuevo');
-            Route::post('nomenclador/valores/guardar', [PreciosValoresController::class, 'guardarGrupo'])->name('nomenclador.valores.grupo.guardar');
+            Route::get('nomenclador/lista/{nom_padre}', \App\Livewire\Nomencladores\NomencladorIndex::class)->name('nomenclador.index');
+
+            Route::get('nomenclador/valores/listas', \App\Livewire\Valores\ValoresIndex::class)->name('nomenclador.valores.listas');
+            Route::get('nomenclador/valores/filtrar', function (Request $request) {
+                return redirect()->route('nomenclador.valores.listas', $request->query());
+            })->name('nomenclador.valores.filtrar');
             //se cambio a post porque borra y restaura
-            Route::post('nomenclador/valor/borrar/{id}', [PreciosValoresController::class, 'borrar'])->name('nomenclador.valor.borrar');
-            Route::get('nomenclador/valor/nuevo', [PreciosValoresController::class, 'nuevo'])->name('nomenclador.valor.nuevo');
-            Route::post('nomenclador/valor/modificar', [PreciosValoresController::class, 'modificar'])->name('nomenclador.valor.modificar');
-            Route::post('nomenclador/valor/guardar', [PreciosValoresController::class, 'guardar'])->name('nomenclador.valor.guardar');
-            Route::post('nomenclador/valor/precio/guardar', [PreciosValoresController::class, 'valorGuardar'])->name('nomenclador.valor.precio.guardar');
-            Route::post('nomenclador/valores/traer/uno', [PreciosValoresController::class, 'traerUno'])->name('nomenclador.valores.traer.uno');
-            
-            Route::get('nomenclador/listas/creadas/{nom_padre}', [PreciosListasController::class, 'index'])->name('nomenclador.listas.listas');
-            Route::get('nomenclador/listas/nuevo', [PreciosListasController::class, 'nuevo'])->name('nomenclador.listas.nuevo');
-            Route::delete('nomenclador/listas/borrar/{id}', [PreciosListasController::class, 'borrar'])->name('nomenclador.listas.borrar');
-            Route::get('nomenclador/listas/filtrar', [PreciosListasController::class, 'filtrar'])->name('nomenclador.listas.filtrar');
-            Route::get('nomenclador/listas/modificar/{id}', [PreciosListasController::class, 'modificar'])->name('nomenclador.listas.modificar');
-            Route::post('nomenclador/lista/guardar', [PreciosListasController::class, 'guardar'])->name('nomenclador.lista.guardar');
+            Route::get('nomenclador/listas/creadas/{nom_padre}', \App\Livewire\Listas\AgrupadorListaIndex::class)->name('nomenclador.listas.listas');
 
-            Route::get("practicas_estudios/index/{nom_padre}", [NomPracticasEstudioController::class, 'index'])->name('nom_practicas_estudios.index');
-            Route::get("practicas_estudios/create", [NomPracticasEstudioController::class, 'create'])->name('nom_practicas_estudios.create');
-            Route::get("practicas_estudios/edit/{id}", [NomPracticasEstudioController::class, 'edit'])->name('nom_practicas_estudios.edit');
-            Route::post('practicas_estudios/store', [NomPracticasEstudioController::class, 'store'])->name('nom_practicas_estudios.store');
-            Route::delete('practicas_estudios/borrar/{id}', [NomPracticasEstudioController::class, 'destroy'])->name('nom_practicas_estudios.destroy');
-            Route::get("practicas_estudios/values/{id}", [NomPracticasEstudioController::class, 'values'])->name('nom_practicas_estudios.values');
-            Route::post('practicas_estudios/restore/{id}', [NomPracticasEstudioController::class, 'restore'])->name('nom_practicas_estudios.restore');
-            Route::get('practicas_estudios/buscar', [NomPracticasEstudioController::class, 'buscar'])->name('nom_practicas_estudios.buscar');
+            Route::get("practicas_estudios/index/{nom_padre}", \App\Livewire\Nomencladores\NomPracticaEstudioIndex::class)->name('nom_practicas_estudios.index');
 
             Route::get('consumos/partes/filtrar', \App\Livewire\Consumos\Partes\ConsumoPartesIndex::class)->name('consumos.partes.filtrar');
             Route::get('consumos/cargar/{id}', \App\Livewire\Consumos\Cargar\ConsumoCargarIndex::class)->name('consumos.cargar');
@@ -122,51 +82,11 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         Route::group(['middleware' => ['permission:adm_entidades']], function () {
-            // Rutas expandidas de profesionales
-            Route::get('profesionales', [ProfesionalController::class, 'index'])->name('profesionales.index');
-            Route::get('profesionales/create', [ProfesionalController::class, 'create'])->name('profesionales.create');
-            Route::post('profesionales', [ProfesionalController::class, 'store'])->name('profesionales.store');
-            Route::get('profesionales/{profesionale}', [ProfesionalController::class, 'show'])->name('profesionales.show');
-            Route::get('profesionales/{profesionale}/edit', [ProfesionalController::class, 'edit'])->name('profesionales.edit');
-            Route::match(['put', 'patch'], 'profesionales/{profesionale}', [ProfesionalController::class, 'update'])->name('profesionales.update');
-            Route::delete('profesionales/{profesionale}', [ProfesionalController::class, 'destroy'])->name('profesionales.destroy');
-
-            // Rutas expandidas de centros
-            Route::get('centros', [CentroController::class, 'index'])->name('centros.index');
-            Route::get('centros/create', [CentroController::class, 'create'])->name('centros.create');
-            Route::post('centros', [CentroController::class, 'store'])->name('centros.store');
-            Route::get('centros/{centro}', [CentroController::class, 'show'])->name('centros.show');
-            Route::get('centros/{centro}/edit', [CentroController::class, 'edit'])->name('centros.edit');
-            Route::match(['put', 'patch'], 'centros/{centro}', [CentroController::class, 'update'])->name('centros.update');
-            Route::delete('centros/{centro}', [CentroController::class, 'destroy'])->name('centros.destroy');
-
-            // Rutas expandidas de coberturas
-            Route::get('coberturas', [CoberturaController::class, 'index'])->name('coberturas.index');
-            Route::get('coberturas/create', [CoberturaController::class, 'create'])->name('coberturas.create');
-            Route::post('coberturas', [CoberturaController::class, 'store'])->name('coberturas.store');
-            Route::get('coberturas/{cobertura}', [CoberturaController::class, 'show'])->name('coberturas.show');
-            Route::get('coberturas/{cobertura}/edit', [CoberturaController::class, 'edit'])->name('coberturas.edit');
-            Route::match(['put', 'patch'], 'coberturas/{cobertura}', [CoberturaController::class, 'update'])->name('coberturas.update');
-            Route::delete('coberturas/{cobertura}', [CoberturaController::class, 'destroy'])->name('coberturas.destroy');
-            Route::get('coberturas/buscar/datos', [CoberturaController::class, 'buscar'])->name('coberturas.buscar');
-
-            // Rutas expandidas de parametros
-            Route::get('parametros', [ParametroController::class, 'index'])->name('parametros.index');
-            Route::get('parametros/create', [ParametroController::class, 'create'])->name('parametros.create');
-            Route::post('parametros', [ParametroController::class, 'store'])->name('parametros.store');
-            Route::get('parametros/{parametro}', [ParametroController::class, 'show'])->name('parametros.show');
-            Route::get('parametros/{parametro}/edit', [ParametroController::class, 'edit'])->name('parametros.edit');
-            Route::match(['put', 'patch'], 'parametros/{parametro}', [ParametroController::class, 'update'])->name('parametros.update');
-            Route::delete('parametros/{parametro}', [ParametroController::class, 'destroy'])->name('parametros.destroy');
-
-            // Rutas expandidas de gerenciadora_cobertura_padre
-            Route::get('gerenciadora_cobertura_padre', [GerenciadoraCoberturaPadreController::class, 'index'])->name('gerenciadora_cobertura_padre.index');
-            Route::get('gerenciadora_cobertura_padre/create', [GerenciadoraCoberturaPadreController::class, 'create'])->name('gerenciadora_cobertura_padre.create');
-            Route::post('gerenciadora_cobertura_padre', [GerenciadoraCoberturaPadreController::class, 'store'])->name('gerenciadora_cobertura_padre.store');
-            Route::get('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'show'])->name('gerenciadora_cobertura_padre.show');
-            Route::get('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}/edit', [GerenciadoraCoberturaPadreController::class, 'edit'])->name('gerenciadora_cobertura_padre.edit');
-            Route::match(['put', 'patch'], 'gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'update'])->name('gerenciadora_cobertura_padre.update');
-            Route::delete('gerenciadora_cobertura_padre/{gerenciadora_cobertura_padre}', [GerenciadoraCoberturaPadreController::class, 'destroy'])->name('gerenciadora_cobertura_padre.destroy');
+            Route::get('profesionales', \App\Livewire\Entidades\ProfesionalIndex::class)->name('profesionales.index');
+            Route::get('centros', \App\Livewire\Entidades\CentroIndex::class)->name('centros.index');
+            Route::get('coberturas', \App\Livewire\Entidades\CoberturaIndex::class)->name('coberturas.index');
+            Route::get('parametros', \App\Livewire\Entidades\ParametroIndex::class)->name('parametros.index');
+            Route::get('gerenciadora_cobertura_padre', \App\Livewire\Entidades\GerenciadoraCoberturaPadreIndex::class)->name('gerenciadora_cobertura_padre.index');
 
             Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargarDocum'])->name('profesional.cargar.documentacion');
             Route::post('profesional/documentacion/guardar', [ProfesionalController::class, 'guardarDocum'])->name('profesional.guardar.documentacion');
@@ -175,34 +95,11 @@ Route::group(['middleware' => 'auth'], function () {
         });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {
-            // Rutas expandidas de usuario
-            Route::get('usuario', [UsuarioController::class, 'index'])->name('usuario.index');
-            Route::get('usuario/create', [UsuarioController::class, 'create'])->name('usuario.create');
-            Route::post('usuario', [UsuarioController::class, 'store'])->name('usuario.store');
-            Route::get('usuario/{usuario}', [UsuarioController::class, 'show'])->name('usuario.show');
-            Route::get('usuario/{usuario}/edit', [UsuarioController::class, 'edit'])->name('usuario.edit');
-            Route::match(['put', 'patch'], 'usuario/{usuario}', [UsuarioController::class, 'update'])
-    		->name('usuario.update');
-            Route::delete('usuario/{usuario}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
+            Route::get('usuario', \App\Livewire\Seguridad\UsuarioIndex::class)->name('usuario.index');
+            Route::get('roles', \App\Livewire\Seguridad\RoleIndex::class)->name('roles.index');
+            Route::get('permisos', \App\Livewire\Seguridad\PermisoIndex::class)->name('permisos.index');
 
-            // Rutas expandidas de roles
-            Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
-            Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
-            Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
-            Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-            Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-            Route::match(['put', 'patch'], 'roles/{role}', [RoleController::class, 'update'])->name('roles.update');
-            Route::delete('roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
-
-            // Rutas expandidas de permisos
-            Route::get('permisos', [PermisosController::class, 'index'])->name('permisos.index');
-            Route::get('permisos/create', [PermisosController::class, 'create'])->name('permisos.create');
-            Route::post('permisos', [PermisosController::class, 'store'])->name('permisos.store');
-            Route::get('permisos/{permiso}', [PermisosController::class, 'show'])->name('permisos.show');
-            Route::get('permisos/{permiso}/edit', [PermisosController::class, 'edit'])->name('permisos.edit');
-            Route::match(['put', 'patch'], 'permisos/{permiso}', [PermisosController::class, 'update'])->name('permisos.update');
-            Route::delete('permisos/{permiso}', [PermisosController::class, 'destroy'])->name('permisos.destroy');
-
+            // Rutas de asignación (se mantienen con los controladores)
             Route::get('usuario/{id}/roles/{rolid}/{tarea}', [UsuarioController::class, 'roles']);
             Route::get('usuario/{id}/roles', [UsuarioController::class, 'roles'])->name('usuarios.grupos');
             Route::get('usuario/{id}/permisos/{perid}/{tarea}', [UsuarioController::class, 'permisos']);
@@ -222,29 +119,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['middleware' => ['permission:adm_presupuestos']], function () {
             // Rutas expandidas de presupuestos cab
             Route::get('presupuestos/cab', \App\Livewire\Presupuestos\PresupuestoIndex::class)->name('presupuestos.cab.index');
-            Route::get('presupuestos/cab/create', [PresupuestoCabController::class, 'create'])->name('presupuestos.cab.create');
-            Route::post('presupuestos/cab', [PresupuestoCabController::class, 'store'])->name('presupuestos.cab.store');
-            Route::get('presupuestos/cab/{cab}', [PresupuestoCabController::class, 'show'])->name('presupuestos.cab.show');
-            Route::get('presupuestos/cab/{cab}/edit', [PresupuestoCabController::class, 'edit'])->name('presupuestos.cab.edit');
-            Route::match(['put', 'patch'], 'presupuestos/cab/{cab}', [PresupuestoCabController::class, 'update'])->name('presupuestos.cab.update');
+            Route::get('presupuestos/cab/create', \App\Livewire\Presupuestos\PresupuestoCreate::class)->name('presupuestos.cab.create');
+            Route::get('presupuestos/cab/{id}/edit', \App\Livewire\Presupuestos\PresupuestoCreate::class)->name('presupuestos.cab.edit');
             Route::get('presupuestos/cab/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
             Route::get('presupuestos/cab/{id}/partes', [PresupuestoCabController::class, 'partes'])->name('presupuestos.cab.partes');
 
             // Rutas expandidas de presupuestos det
-            Route::get('presupuestos/{id}/det', [PresupuestoDetController::class, 'index'])->name('presupuestos.det.index');
             Route::get('presupuestos/{id}/det/create', \App\Livewire\Presupuestos\PresupuestoDetIndex::class)->name('presupuestos.det.create');
-            Route::get('presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'show'])->name('presupuestos.det.show');
-            Route::get('presupuestos/{id}/det/{det}/edit', [PresupuestoDetController::class, 'edit'])->name('presupuestos.det.edit');
-            Route::match(['put', 'patch'], 'presupuestos/{id}/det/{det}', [PresupuestoDetController::class, 'update'])->name('presupuestos.det.update');
 
             // Rutas expandidas de presupuestos pagos
-            Route::get('presupuestos/{id}/pagos', [PresupuestoPagosController::class, 'index'])->name('presupuestos.pagos.index');
-            Route::get('presupuestos/{id}/pagos/create', [PresupuestoPagosController::class, 'create'])->name('presupuestos.pagos.create');
-            Route::post('presupuestos/{id}/pagos', [PresupuestoPagosController::class, 'store'])->name('presupuestos.pagos.store');
-            Route::get('presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'show'])->name('presupuestos.pagos.show');
-            Route::get('presupuestos/{id}/pagos/{pago}/edit', [PresupuestoPagosController::class, 'edit'])->name('presupuestos.pagos.edit');
-            Route::match(['put', 'patch'], 'presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'update'])->name('presupuestos.pagos.update');
-            Route::delete('presupuestos/{id}/pagos/{pago}', [PresupuestoPagosController::class, 'destroy'])->name('presupuestos.pagos.destroy');
+            Route::get('presupuestos/{id}/pagos/create', \App\Livewire\Presupuestos\PresupuestoPagoIndex::class)->name('presupuestos.pagos.create');
         });
     });
 });

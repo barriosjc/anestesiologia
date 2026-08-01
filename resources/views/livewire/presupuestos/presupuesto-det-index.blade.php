@@ -32,8 +32,9 @@
                                 <tr>
                                     <th>Cobertura</th>
                                     <th>Prestación</th>
-                                    <th>%</th>
-                                    <th>SubTotal</th>
+                                    <th class="text-end">%</th>
+                                    <th class="text-end">SubTotal</th>
+                                    <th></th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -42,8 +43,15 @@
                                     <tr wire:key="presupuesto-det-{{ $item->id }}">
                                         <td>{{ $item->cobertura->nombre }}</td>
                                         <td>{{ $item->descripcion }}</td>
-                                        <td>{{ $item->porcentaje }}</td>
-                                        <td>{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
+                                        <td class="text-end">{{ $item->porcentaje }}</td>
+                                        <td class="text-end">{{ number_format((float) $item->valor, 2, ',', '.') }}</td>
+                                        <td class="text-center">
+                                            @if ($item->observaciones)
+                                                <span class="badge rounded-pill bg-warning text-dark" x-data
+                                                    x-init="new bootstrap.Tooltip($el)" data-bs-placement="top"
+                                                    data-bs-title="{{ $item->observaciones }}">Obs.</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             <button type="button" class="btn btn-danger btn-sm"
                                                 title="Borrar práctica o estudio"

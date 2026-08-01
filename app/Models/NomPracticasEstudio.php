@@ -20,6 +20,6 @@ class NomPracticasEstudio extends Model
 
     public function nomPadre()
     {
-        return $this->belongsTo(NomPadre::class, 'nom_padre');
+        return $this->belongsTo(NomPadre::class, 'nom_padre_id');
     }
 }

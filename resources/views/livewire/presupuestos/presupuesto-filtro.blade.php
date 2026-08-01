@@ -36,14 +36,19 @@
         </div>
     </div>
     <div class="row g-3 pt-2">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="small mb-1" for="fecha_desde">Fecha Desde</label>
             <input type="date" wire:model="fecha_desde" id="fecha_desde" class="form-control form-control-sm">
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="small mb-1" for="fecha_hasta">Fecha Hasta</label>
             <input type="date" wire:model="fecha_hasta" id="fecha_hasta" class="form-control form-control-sm">
+        </div>
+
+        <div class="col-md-2">
+            <label class="small mb-1" for="numero">Nro Presupuesto</label>
+            <input type="number" wire:model="numero" id="numero" class="form-control form-control-sm" min="1">
         </div>
 
         <div class="col-md-3">
@@ -56,9 +61,9 @@
             </select>
         </div>
 
-        <div class="col-md-3 d-flex align-items-end gap-1">
+        <div class="col-md-3 d-flex align-items-end justify-content-end gap-1 ms-auto">
             <button class="btn btn-primary btn-sm" type="submit">Filtrar</button>
-            <button class="btn btn-outline-secondary btn-sm" type="button" wire:click="limpiar" x-data
+            <button class="btn btn-warning btn-sm" type="button" wire:click="limpiar" x-data
                 x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Limpiar filtro">
                 <i class="fa-solid fa-eraser"></i> Borrar filtros
             </button>

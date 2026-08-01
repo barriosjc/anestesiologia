@@ -8,8 +8,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
-// use Illuminate\Support\Facades\Mail;
-
 class ProfileController extends Controller
 {
     public function __construct()
@@ -24,13 +22,6 @@ class ProfileController extends Controller
         return view('seguridad.usuario.perfil')->with(compact('user'));
     }
 
-    // public function nuevo()
-    // {
-    //     $user = new user();
-
-    //     return view('seguridad.usuario.perfil')->with(compact('user'));
-    // }
-
     public function save(request $request)
     {
         $validated = $request->validate([
@@ -39,23 +30,12 @@ class ProfileController extends Controller
         ]);
 
         $user = user::find($request->id);
-        // $validated['password'] = Hash::make('12345678');
-        // $validated['cambio_password'] = 1;
 
         foreach ($validated as $key => $value) {
             $user->$key = $value;
         }
         $user->save();
-        //envio de email
-        // if ($es_nuevo) {
-        //     $correo = new RegisterMailable($user);
-        //     Mail::send([], [], function ($message)  use ($request, $correo) {
-        //         $message->to($request->email, $request->last_name)
-        //             ->subject('Registro de usuario para ingreso a portal Clap!')
-        //             ->setBody($correo->render(), 'text/html');
-        //     });
-        // }
-        
+
         return back()
             ->withInput($request->input())
             ->with('success', 'Se guardó los datos del usuario en forma correcta.');
@@ -106,7 +86,7 @@ class ProfileController extends Controller
                 'required', 'string', 'max:20',
                 function ($attribute, $value, $fail) use ($request) {
                     $usuario = User::where('id', Auth()->user()->id)->first();
-                    if (!($usuario && Hash::make($value) != $usuario->password)) {
+                    if (!($usuario && Hash::check($value, $usuario->password))) {
                         $fail('La clave actual que ingreso es incorrecta.');
                     }
                 }

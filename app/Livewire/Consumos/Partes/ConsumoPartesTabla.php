@@ -38,7 +38,7 @@ class ConsumoPartesTabla extends Component
 
     public function paginationView()
     {
-        return 'vendor.pagination.bootstrap-4';
+        return 'livewire::bootstrap';
     }
 
     public function render()

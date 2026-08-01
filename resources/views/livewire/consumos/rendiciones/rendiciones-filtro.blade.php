@@ -87,10 +87,10 @@
             <input class="form-control form-control-sm" wire:model="nro_parte" type="number"
                 min="0" step=1 max="999999999" placeholder="número" />
         </div>
-        <div class="form-group col-md-1 d-flex align-items-end gap-1">
+        <div class="form-group col-md-1 d-flex align-items-end justify-content-end gap-1 ms-auto">
             <button class="btn btn-primary btn-sm" type="submit" x-data
                 x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Aplicar el filtro ingresado">Filtrar</button>
-            <button class="btn btn-outline-secondary btn-sm" type="button" wire:click="limpiar" x-data
+            <button class="btn btn-warning btn-sm" type="button" wire:click="limpiar" x-data
                 x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Limpiar filtro">
                 <i class="fa-solid fa-eraser"></i>
             </button>

@@ -31,6 +31,7 @@ class PresupuestoTabla extends Component
             'usuario_id' => session('pc_usuario_id'),
             'fecha_desde' => session('pc_fecha_desde'),
             'fecha_hasta' => session('pc_fecha_hasta'),
+            'numero' => session('pc_numero'),
             'estado' => session('pc_estado'),
         ];
     }
@@ -76,7 +77,7 @@ class PresupuestoTabla extends Component
 
     public function paginationView()
     {
-        return 'vendor.pagination.bootstrap-4';
+        return 'livewire::bootstrap';
     }
 
     public function render()
@@ -100,6 +101,9 @@ class PresupuestoTabla extends Component
         }
         if (!empty($this->filtros['fecha_hasta'])) {
             $query->whereDate('fecha', '<=', $this->filtros['fecha_hasta']);
+        }
+        if (!empty($this->filtros['numero'])) {
+            $query->where('id', $this->filtros['numero']);
         }
         if (!empty($this->filtros['estado'])) {
             $query->where('estado', $this->filtros['estado']);

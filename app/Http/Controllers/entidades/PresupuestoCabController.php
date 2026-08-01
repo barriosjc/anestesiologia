@@ -3,79 +3,23 @@
 namespace App\Http\Controllers\entidades;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PresupuestoCabRequest;
-use App\Models\Centro;
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
-use App\Models\Gerenciadora;
 use App\Models\Paciente;
-use App\Models\Parametro;
 use App\Models\Parte_cab;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
-use App\Models\Profesional;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PresupuestoCabController extends Controller
 {
-    public function create()
-    {
-        $uds = Parametro::where('nombre', 'UDS')->first()->valor;
-        $centros = Centro::all();
-        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
-        $presupuestosCab = new PresupuestoCab();
-        $gerenciadoras = Gerenciadora::all();
-
-        return view('presupuestos.presupuestos_cab.create', compact('presupuestosCab', 'centros', 'profesionales', 'uds', 'gerenciadoras'));
-    }
-
-    public function edit(int $id)
-    {
-        $centros = Centro::all();
-        $gerenciadoras = Gerenciadora::all();
-        $profesionales = Profesional::orderBy('nombre', 'asc')->get();
-        $presupuestosCab = PresupuestoCab::find($id);
-        if (empty($presupuestosCab)) {
-            return redirect()->back()->with(["error" => "No es posible editar un presupuesto dado de baja."]);
-        }
-
-        return view('presupuestos.presupuestos_cab.create', compact('gerenciadoras', 'presupuestosCab', 'centros', 'profesionales'));
-    }
-
-    public function store(PresupuestoCabRequest $request)
-    {
-        $presupuestosCab = PresupuestoCab::updateOrCreate(['id' => $request['id']], [
-            'fecha'            => $request->fecha,
-            'nombre'           => $request->nombre,
-            'fecha_nac' => $request->fecha_nac,
-            'dni'              => $request->dni,
-            'centro_id'        => $request->centro_id,
-            'observaciones'    => $request->observaciones,
-            'usuario_id'       => Auth::id(),
-            'profesional_id'   => $request->profesional_id,
-            'valor_dolar'      => $request->valor_dolar,
-            'estado'           => 'I',
-            'gerenciadora_id'  => $request->gerenciadora_id,
-        ]);
-
-        return redirect()->route('presupuestos.det.create', ['id' => $presupuestosCab->id]);
-    }
-
-    public function update(PresupuestoCabRequest $request, PresupuestoCab $presupuesto)
-    {
-        $presupuesto->update($request->validated());
-
-        return redirect()->route('presupuestos.cab.index')->with('success', 'Presupuesto actualizado correctamente.');
-    }
-
     public function print(int $id, \App\Repositories\PresupuestoDetalleRepository $presupuestoDetalleRepository)
     {
         $presupuesto = PresupuestoCab::with(['pagos', 'centro', 'user'])->findOrFail($id);
         $presupuesto->presupuestosDet = $presupuestoDetalleRepository->detalleConDescripcion($id);
 
-        $pdf = Pdf::loadView('presupuestos.presupuestos_cab.informe', compact('presupuesto'));
+        $pdf = Pdf::loadView('reportes.Presupuestos.Informe', compact('presupuesto'));
 
         //return $pdf->stream('presupuesto_'.$presupuesto->id.'.pdf');
         // Si querés que se descargue automáticamente:

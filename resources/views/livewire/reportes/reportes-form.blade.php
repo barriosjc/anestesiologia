@@ -71,7 +71,7 @@
                                         }
                                     }">
                                     <select x-ref="estadoSelect" class="form-select form-select-sm" multiple>
-                                        @foreach ($estados as $item)
+                                        @foreach ($listaEstados as $item)
                                             <option value="{{ $item->id }}" @selected(in_array($item->id, $estados))>{{ $item->descripcion }}</option>
                                         @endforeach
                                     </select>
