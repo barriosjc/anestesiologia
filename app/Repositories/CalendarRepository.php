@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Calendar;
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,7 +81,7 @@ class CalendarRepository
         }
 
         if (!empty($datos['cancelar'])) {
-            if (Parte_cab::where('fec_prestacion', $datos['fecha'])->exists()) {
+            if (ParteCab::where('fec_prestacion', $datos['fecha'])->exists()) {
                 return ['success' => false, 'mensaje' => 'No es posible cancelar la fecha porque tiene parte(s) cargada(s).'];
             }
             $calendar?->delete();

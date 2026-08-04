@@ -3,13 +3,14 @@
 namespace App\Repositories;
 
 use App\Models\PresupuestoDet;
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
+use Illuminate\Support\Collection;
 
 class PresupuestoDetalleRepository
 {
     public function buscarValor(int $gerenciadoraId, int $coberturaId, int $centroId, string $periodo, ?string $nivel)
     {
-        return Valores_cab::query()
+        return ValoresCab::query()
             ->select(['nv.valor', 'nv.nivel', 'nv.moneda'])
             ->join('nom_valores as nv', 'nv.grupo', '=', 'nom_valores_cab.grupo')
             ->where('nom_valores_cab.gerenciadora_id', $gerenciadoraId)
@@ -20,7 +21,7 @@ class PresupuestoDetalleRepository
             ->first();
     }
 
-    public function detalleConDescripcion(int $presupuestoCabId)
+    public function detalleConDescripcion(int $presupuestoCabId): Collection
     {
         $query1 = PresupuestoDet::query()
             ->join('nom_practicas_estudios as pe', 'presupuestos_det.nom_padre_id', '=', 'pe.nom_padre_id')

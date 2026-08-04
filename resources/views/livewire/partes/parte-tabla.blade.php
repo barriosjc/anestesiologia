@@ -56,9 +56,8 @@
                         </td>
                         <td>{{ $item->cantidad }}</td>
                         <td class="td-actions">
-                            <a class="btn btn-sm btn-info llama_modal" data-bs-toggle="modal"
-                                data-bs-target="#valorModal" data-id="{{ $item->id }}"
-                                data-observaciones="{{ $item->observacion }}"
+                            <a class="btn btn-sm btn-info"
+                                wire:click="abrirEstadoModal({{ $item->id }}, @js($item->observacion))"
                                 x-data x-init="new bootstrap.Tooltip($el)" data-bs-placement="top"
                                 data-bs-title="Cargado todo el parte, ahora para pasar: A liquidar, click aquí.">
                                 <i class="fa-solid fa-rotate-right"></i>
@@ -85,19 +84,19 @@
         {{ $partes->links() }}
     @endif
 
-    <div wire:ignore>
+    <div>
         @include('cargas.cab.partials.cambio_estado')
     </div>
 </div>
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            $(document).on('click', '.llama_modal', function() {
-                var parteCabId = $(this).data('id');
-                var observaciones = $(this).data('observaciones');
-                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
-                document.querySelector('textarea[name="observaciones"]').value = observaciones;
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('open-modal', (event) => {
+                new bootstrap.Modal(document.getElementById(event.modal)).show();
+            });
+            Livewire.on('close-modal', (event) => {
+                bootstrap.Modal.getInstance(document.getElementById(event.modal))?.hide();
             });
         });
     </script>

@@ -14,31 +14,31 @@ class NomPracticaEstudioIndex extends Component
 {
     use WithPagination;
 
-    public $nomPadreId;
-    public $search = '';
-    public $modalId;
-    public $codigo;
-    public $nombre;
+    public int $nomPadreId;
+    public string $search = '';
+    public ?int $modalId = null;
+    public ?string $codigo = null;
+    public ?string $nombre = null;
 
-    public function mount($nom_padre)
+    public function mount(int $nom_padre): void
     {
         $this->nomPadreId = $nom_padre;
         session(['ses_nom_padre_id' => $nom_padre]);
     }
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'codigo', 'nombre']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'nomPracticaModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $nomPractica = NomPracticasEstudio::withTrashed()->findOrFail($id);
 
@@ -49,7 +49,7 @@ class NomPracticaEstudioIndex extends Component
         $this->dispatch('open-modal', modal: 'nomPracticaModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'codigo' => [
@@ -90,7 +90,7 @@ class NomPracticaEstudioIndex extends Component
         session()->flash('success', 'Práctica o estudio creada correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         try {
             NomPracticasEstudio::findOrFail($id)->delete();
@@ -103,7 +103,7 @@ class NomPracticaEstudioIndex extends Component
         session()->flash('success', 'Práctica o estudio eliminada correctamente.');
     }
 
-    public function restaurar($id)
+    public function restaurar(int $id): void
     {
         try {
             NomPracticasEstudio::withTrashed()->findOrFail($id)->restore();
@@ -116,12 +116,12 @@ class NomPracticaEstudioIndex extends Component
         session()->flash('success', 'Registro restaurado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $nomPadre = NomPadre::findOrFail($this->nomPadreId);
 

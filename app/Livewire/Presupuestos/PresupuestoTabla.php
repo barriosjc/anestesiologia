@@ -20,9 +20,9 @@ class PresupuestoTabla extends Component
         'F' => ['texto' => 'Facturado', 'clase' => 'bg-primary'],
     ];
 
-    public $filtros = [];
+    public array $filtros = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->filtros = [
             'centro_id' => session('pc_centro_id'),
@@ -37,13 +37,13 @@ class PresupuestoTabla extends Component
     }
 
     #[On('filtros-aplicados')]
-    public function aplicarFiltros($filtros)
+    public function aplicarFiltros(array $filtros): void
     {
         $this->filtros = $filtros;
         $this->resetPage();
     }
 
-    public function destroy($id)
+    public function destroy(int $id): void
     {
         $presupuesto = PresupuestoCab::findOrFail($id);
         $presupuesto->estado_anterior = $presupuesto->estado;
@@ -53,7 +53,7 @@ class PresupuestoTabla extends Component
         session()->flash('success', 'Presupuesto eliminado correctamente.');
     }
 
-    public function restaurar($id)
+    public function restaurar(int $id): void
     {
         $presupuesto = PresupuestoCab::findOrFail($id);
         $presupuesto->estado = $presupuesto->estado_anterior;
@@ -62,7 +62,7 @@ class PresupuestoTabla extends Component
         session()->flash('success', 'Presupuesto restaurado correctamente.');
     }
 
-    public function pagado($id)
+    public function pagado(int $id): void
     {
         $presupuesto = PresupuestoCab::where('id', $id)->first();
         if (! $presupuesto) {
@@ -75,12 +75,30 @@ class PresupuestoTabla extends Component
         session()->flash('success', 'Presupuesto marcado como pagado correctamente.');
     }
 
-    public function paginationView()
+    public function generarPartes(int $id): void
+    {
+        $result = app(\App\Services\PresupuestoParteService::class)->generar($id);
+
+        if ($result['success']) {
+            session()->flash('success', $result['message']);
+
+            return;
+        }
+
+        if (! empty($result['message'])) {
+            $this->addError('generar', $result['message']);
+        }
+        foreach ($result['errors'] as $error) {
+            $this->addError('generar', $error);
+        }
+    }
+
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $query = DB::table('v_presupuestos_cab');
 

@@ -14,19 +14,13 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     
-    <!-- DataTables Bootstrap 5 CSS -->
-    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css" rel="stylesheet" crossorigin="anonymous">
-    
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
     
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
 
-    <!-- Select2 (usado por perfil_id y filtros multiples, pendiente de migracion) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
-
-    <!-- Tom Select (reemplazo de select2 sin dependencia de jQuery, usado en selects de coberturas) -->
+    <!-- Tom Select (usado en selects de coberturas/estados) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
 
     <!-- Include base CSS (optional) -->
@@ -49,24 +43,14 @@
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
     <!-- Bootstrap 5 Bundle (incluye Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js" crossorigin="anonymous"></script>
 
     <!-- Feather Icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0"></script>
-
-    <!-- Select2 (usado por perfil_id y filtros multiples, pendiente de migracion) -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.full.min.js"></script>
 
     <!-- Tom Select -->
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>

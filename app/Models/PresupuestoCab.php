@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PresupuestoCab extends Model
 {
@@ -14,7 +16,7 @@ class PresupuestoCab extends Model
     protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'profesional_id', 
         'observaciones', 'usuario_id', 'estado', 'valor_dolar', 'gerenciadora_id'];
 
-    public function getPacienteAttribute()
+    public function getPacienteAttribute(): string
     {
         $datos = [$this->nombre];
     
@@ -30,30 +32,30 @@ class PresupuestoCab extends Model
         return implode(' - ', $datos);
     }
 
-    public function presupuestosDet()
+    public function presupuestosDet(): HasMany
     {
         return $this->hasMany(PresupuestoDet::class, 'presupuesto_cab_id');
     }
 
     // Relación con PresupuestoPago (Un presupuesto tiene muchos pagos)
-    public function pagos()
+    public function pagos(): HasMany
     {
         return $this->hasMany(PresupuestoPago::class, 'presupuesto_cab_id');
     }
 
     // Relación con Centro
-    public function centro()
+    public function centro(): BelongsTo
     {
         return $this->belongsTo(Centro::class, 'centro_id');
     }
 
     // Relación con Usuario
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
 
-    public function profesional()
+    public function profesional(): BelongsTo
     {
         return $this->belongsTo(Profesional::class, 'profesional_id');
     }

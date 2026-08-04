@@ -1,15 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
 use App\Http\Controllers\entidades\ProfesionalController;
-use App\Http\Controllers\produccion\ConsumoController;
-use App\Http\Controllers\seguridad\PermisosController;
-use App\Http\Controllers\seguridad\ProfileController;
-use App\Http\Controllers\seguridad\RoleController;
-use App\Http\Controllers\seguridad\UsuarioController;
 use App\Http\Controllers\Utiles\UtilController;
 use App\Livewire\Partes\ParteCreate;
 use Illuminate\Http\Request;
@@ -18,19 +12,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Auth::routes();
-Route::match(['get'], 'login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login']);
+Route::get('login', \App\Livewire\Auth\Login::class)->name('login')->middleware('guest');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('login/restablecer', [ResetPasswordController::class, 'restablecer'])->name('login.restablecer');
-Route::post('login/email', [ResetPasswordController::class, 'email'])->name('login.email');
+Route::get('login/restablecer', \App\Livewire\Auth\ResetPassword::class)->name('login.restablecer')->middleware('guest');
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/run-migration', [UtilController::class, 'runMigrationAndSeeder'])
-                ->middleware(['role:super-admin']);
-    Route::get('password/profile', [ProfileController::class, 'password'])->name('profile.password');
-    Route::post('pasword/profile', [ProfileController::class, 'savePassword'])->name('profile.password.save');
+    // Route::get('/run-migration', [UtilController::class, 'runMigrationAndSeeder'])
+    //             ->middleware(['role:super-admin']);
+    Route::get('password/profile', \App\Livewire\Perfil\PerfilPassword::class)->name('profile.password');
 
     Route::middleware('IngresoInicialMiddleware')->group(function () {
         $guard = 'web';
@@ -40,10 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
         })->name('main');
 
         //perfil de usuario
-        Route::get('profile/{id}/editar', [ProfileController::class, 'index'])->name('profile');
-        Route::post('foto/profile/guardar', [ProfileController::class, 'foto'])->name('profile.foto');
-        Route::post('profile', [ProfileController::class, 'save'])->name('profile.save');
-        Route::get('profile/{id}/readonly', [ProfileController::class, 'readonly'])->name('profile.readonly');
+        Route::get('profile/{id}/editar', \App\Livewire\Perfil\PerfilIndex::class)->name('profile');
 
         Route::group(['middleware' => ['permission:adm_partes']], function () {
             Route::get('partes/calendar', \App\Livewire\Cargas\CalendarIndex::class)->name('partes_cab.calendar');
@@ -54,8 +42,6 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('partes/det/create/{id}', \App\Livewire\Partes\ParteDetalle::class)->name('partes_det.create');
             Route::get('partes/det/download/{id}', [ParteController::class, 'download'])->name('partes_det.download');
-            
-            Route::post('consumos/procesar', [ConsumoController::class, 'aProcesar'])->name('consumos.aprocesar');
         });
 
         Route::group(['middleware' => ['permission:adm_consumos']], function () {
@@ -74,7 +60,6 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('consumos/partes/filtrar', \App\Livewire\Consumos\Partes\ConsumoPartesIndex::class)->name('consumos.partes.filtrar');
             Route::get('consumos/cargar/{id}', \App\Livewire\Consumos\Cargar\ConsumoCargarIndex::class)->name('consumos.cargar');
-            Route::post('consumos/observar', [ConsumoController::class, 'observar'])->name('consumos.observar');
 
             Route::get('consumos/rendicion/filtrar', \App\Livewire\Consumos\Rendiciones\RendicionesIndex::class)->name('consumo.rendiciones.filtrar');
             Route::get('consumos/rendicion/listado', \App\Livewire\Reportes\ReportesForm::class)->name('consumo.rendiciones.listado');
@@ -88,9 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('parametros', \App\Livewire\Entidades\ParametroIndex::class)->name('parametros.index');
             Route::get('gerenciadora_cobertura_padre', \App\Livewire\Entidades\GerenciadoraCoberturaPadreIndex::class)->name('gerenciadora_cobertura_padre.index');
 
-            Route::get('profesional/documentacion/{id}', [ProfesionalController::class, 'cargarDocum'])->name('profesional.cargar.documentacion');
-            Route::post('profesional/documentacion/guardar', [ProfesionalController::class, 'guardarDocum'])->name('profesional.guardar.documentacion');
-            Route::delete('profesional/documentacion/borrar/{id}', [ProfesionalController::class, 'borrarDocum'])->name('profesional.borrar.documentacion');
+            Route::get('profesional/documentacion/{id}', \App\Livewire\Entidades\ProfesionalDocumentacion::class)->name('profesional.cargar.documentacion');
             Route::get('profesional/documentacion/download/{id}', [ProfesionalController::class, 'downloadDocum'])->name('profesional.download.documentacion');
         });
         
@@ -99,21 +82,15 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('roles', \App\Livewire\Seguridad\RoleIndex::class)->name('roles.index');
             Route::get('permisos', \App\Livewire\Seguridad\PermisoIndex::class)->name('permisos.index');
 
-            // Rutas de asignación (se mantienen con los controladores)
-            Route::get('usuario/{id}/roles/{rolid}/{tarea}', [UsuarioController::class, 'roles']);
-            Route::get('usuario/{id}/roles', [UsuarioController::class, 'roles'])->name('usuarios.grupos');
-            Route::get('usuario/{id}/permisos/{perid}/{tarea}', [UsuarioController::class, 'permisos']);
-            Route::get('usuario/{id}/permisos', [UsuarioController::class, 'permisos']);
+            // Rutas de asignación (componentes Livewire)
+            Route::get('usuario/{id}/roles', \App\Livewire\Seguridad\UsuarioRoles::class)->name('usuarios.grupos');
+            Route::get('usuario/{id}/permisos', \App\Livewire\Seguridad\UsuarioPermisos::class)->name('usuario.permisos');
 
-            Route::get('roles/{id}/permisos/{perid}/{tarea}', [RoleController::class, 'permisos']);
-            Route::get('roles/{id}/permisos', [RoleController::class, 'permisos']);
-            Route::get('roles/{id}/usuarios/{usuid}/{tarea}', [RoleController::class, 'usuarios']);
-            Route::get('roles/{id}/usuarios', [RoleController::class, 'usuarios']);
+            Route::get('roles/{id}/usuarios', \App\Livewire\Seguridad\RoleUsuarios::class)->name('roles.usuarios');
+            Route::get('roles/{id}/permisos', \App\Livewire\Seguridad\RolePermisos::class)->name('roles.permisos');
 
-            Route::get('permisos/{id}/usuarios/{usuid}/{tarea}', [PermisosController::class, 'usuarios']);
-            Route::get('permisos/{id}/usuarios', [PermisosController::class, 'usuarios'])->name('permisos.usuarios');
-            Route::get('permisos/{id}/roles/{rolid}/{tarea}', [PermisosController::class, 'roles']);
-            Route::get('permisos/{id}/roles', [PermisosController::class, 'roles'])->name('permisos.grupos');
+            Route::get('permisos/{id}/usuarios', \App\Livewire\Seguridad\PermisoUsuarios::class)->name('permisos.usuarios');
+            Route::get('permisos/{id}/roles', \App\Livewire\Seguridad\PermisoRoles::class)->name('permisos.grupos');
         });
 
         Route::group(['middleware' => ['permission:adm_presupuestos']], function () {
@@ -122,7 +99,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('presupuestos/cab/create', \App\Livewire\Presupuestos\PresupuestoCreate::class)->name('presupuestos.cab.create');
             Route::get('presupuestos/cab/{id}/edit', \App\Livewire\Presupuestos\PresupuestoCreate::class)->name('presupuestos.cab.edit');
             Route::get('presupuestos/cab/{id}/print', [PresupuestoCabController::class, 'print'])->name('presupuestos.cab.print');
-            Route::get('presupuestos/cab/{id}/partes', [PresupuestoCabController::class, 'partes'])->name('presupuestos.cab.partes');
 
             // Rutas expandidas de presupuestos det
             Route::get('presupuestos/{id}/det/create', \App\Livewire\Presupuestos\PresupuestoDetIndex::class)->name('presupuestos.det.create');
@@ -134,15 +110,15 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 // Ruta para verificar routes
-Route::get('/check-routes', function () {
-    return collect(\Illuminate\Support\Facades\Route::getRoutes())
-        ->pluck('action.as')
-        ->filter()
-        ->values();
-});
+// Route::get('/check-routes', function () {
+//     return collect(\Illuminate\Support\Facades\Route::getRoutes())
+//         ->pluck('action.as')
+//         ->filter()
+//         ->values();
+// });
 
 // Limpiar cache
-Route::get('/limpiar-cache', function () {
-    Artisan::call('optimize:clear');
-    return 'Cach� limpiada correctamente ?';
-});
+// Route::get('/limpiar-cache', function () {
+//     Artisan::call('optimize:clear');
+//     return 'Cach� limpiada correctamente ?';
+// });

@@ -15,40 +15,40 @@ class ValoresIndex extends Component
 {
     use WithPagination;
 
-    public $filtroGrupo;
-    public $filtroNivel;
+    public ?string $filtroGrupo = null;
+    public ?string $filtroNivel = null;
 
-    public $modalValorId;
-    public $modalValor;
+    public ?int $modalValorId = null;
+    public ?string $modalValor = null;
 
-    public $grupoC;
-    public $grupoN;
-    public $porcentaje;
+    public ?int $grupoC = null;
+    public ?int $grupoN = null;
+    public ?int $porcentaje = null;
 
-    public $nuevoGrupo;
-    public $nuevoNivel;
-    public $nuevoTipo;
-    public $nuevoValor;
-    public $nuevoMoneda = 'ARS';
+    public ?string $nuevoGrupo = null;
+    public ?string $nuevoNivel = null;
+    public ?string $nuevoTipo = null;
+    public ?string $nuevoValor = null;
+    public string $nuevoMoneda = 'ARS';
 
-    public function mount()
+    public function mount(): void
     {
         $this->filtroGrupo = request('grupo');
         $this->filtroNivel = request('nivel');
     }
 
-    public function filtrar()
+    public function filtrar(): void
     {
         $this->resetPage();
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $this->reset(['filtroGrupo', 'filtroNivel']);
         $this->resetPage();
     }
 
-    public function abrirModalValor($id)
+    public function abrirModalValor(int $id): void
     {
         $valores = Valores::withTrashed()->find($id);
 
@@ -59,7 +59,7 @@ class ValoresIndex extends Component
         }
     }
 
-    public function guardarValor()
+    public function guardarValor(): void
     {
         $this->validate([
             'modalValor' => ['required'],
@@ -72,14 +72,14 @@ class ValoresIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['nuevoGrupo', 'nuevoNivel', 'nuevoTipo', 'nuevoValor', 'nuevoMoneda']);
         $this->nuevoMoneda = 'ARS';
         $this->dispatch('open-modal', modal: 'nuevoModal');
     }
 
-    public function guardarNuevo()
+    public function guardarNuevo(): void
     {
         $this->validate([
             'nuevoGrupo'  => ['required'],
@@ -108,7 +108,7 @@ class ValoresIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function copiarGrupo()
+    public function copiarGrupo(): void
     {
         $this->validate([
             'grupoC'     => ['required', 'integer', 'max:999', 'exists:nom_valores,grupo'],
@@ -145,7 +145,7 @@ class ValoresIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         $valores = Valores::withTrashed()->findOrFail($id);
 
@@ -160,12 +160,12 @@ class ValoresIndex extends Component
         session()->flash('message', $mensaje);
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $query = Valores::query()->withTrashed();
 

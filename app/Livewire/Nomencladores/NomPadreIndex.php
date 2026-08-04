@@ -12,11 +12,11 @@ class NomPadreIndex extends Component
 {
     use WithPagination;
 
-    public $tipo;
-    public $modalId;
-    public $nombre;
+    public ?string $tipo = null;
+    public ?int $modalId = null;
+    public ?string $nombre = null;
 
-    public function mount()
+    public function mount(): void
     {
         $tipo = request('tipo') ?? session('ses_nom_tipo');
         if (empty($tipo)) {
@@ -26,14 +26,14 @@ class NomPadreIndex extends Component
         session(['ses_nom_tipo' => $tipo]);
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'nombre']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'nomPadreModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'nombre' => ['required', 'string', 'max:255'],
@@ -60,12 +60,12 @@ class NomPadreIndex extends Component
         session()->flash('success', 'Nomenclador guardado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $nomencladores = NomPadre::where('tipo', $this->tipo)->paginate(10);
 

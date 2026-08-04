@@ -3,10 +3,8 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span class="card-title">Carga de detalle del parte, Nro: {{ $parte_cab_id }}</span>
             <div>
-                <a class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal"
-                    data-bs-target="#valorModal"
-                    data-id="{{ $parte_cab_id }}"
-                    data-observaciones="{{ $observaciones }}"
+                <a class="btn btn-warning btn-sm"
+                    wire:click="abrirEstadoModal({{ $parte_cab_id }}, @js($observaciones))"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                     data-bs-title="Pasar el estado del parte a A liquidar o Con faltantes">
                     Cambiar estado
@@ -92,19 +90,19 @@
             </form>
         </div>
     </div>
-    <div wire:ignore>
+    <div>
         @include('cargas.cab.partials.cambio_estado')
     </div>
 </section>
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            $(document).on('click', '.llama_modal', function() {
-                var parteCabId = $(this).data('id');
-                var observaciones = $(this).data('observaciones');
-                document.querySelector('input[type="hidden"][name="id"]').value = parteCabId;
-                document.querySelector('textarea[name="observaciones"]').value = observaciones;
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('open-modal', (event) => {
+                new bootstrap.Modal(document.getElementById(event.modal)).show();
+            });
+            Livewire.on('close-modal', (event) => {
+                bootstrap.Modal.getInstance(document.getElementById(event.modal))?.hide();
             });
         });
     </script>

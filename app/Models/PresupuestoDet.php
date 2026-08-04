@@ -6,6 +6,7 @@ use App\Models\Cobertura;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PresupuestoDet extends Model
 {
@@ -16,13 +17,13 @@ class PresupuestoDet extends Model
                         'porcentaje', 'valor', 'observaciones', 'periodo'];
 
     // Relación inversa con PresupuestoCab (Cada detalle pertenece a un presupuesto)
-    public function presupuestoCab()
+    public function presupuestoCab(): BelongsTo
     {
         return $this->belongsTo(PresupuestoCab::class, 'presupuesto_cab_id');
     }
 
     // Relación con Cobertura
-    public function cobertura()
+    public function cobertura(): BelongsTo
     {
         return $this->belongsTo(Cobertura::class, 'cobertura_id');
     }

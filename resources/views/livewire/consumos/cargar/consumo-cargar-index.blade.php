@@ -3,8 +3,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <span class="card-title">Detalle del parte nro: {{ $parte_cab_id }}</span>
             <div>
-                <div class="btn btn-warning btn-sm llama_modal" data-bs-toggle="modal"
-                    data-bs-target="#valorModal" data-id="{{ $parte_cab_id }}">
+                <div class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#valorModal">
                     Cambiar estado
                 </div>
                 <a href="{{ route('consumos.partes.filtrar') }}" class="btn btn-info btn-sm" data-placement="left">
@@ -99,36 +98,44 @@
         </div>
     </div>
 
-    <div wire:ignore>
-        <div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="valorModalLabel">Pasar el parte a observado</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{{ route('consumos.observar') }}" method="POST">
-                        @csrf
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="{{ $parte_cab_id }}">
-                            <label class="label-control" for="estado_cambio">Estados</label>
-                            <select class="form-select form-select-sm" id="estado_cambio" name="estado_cambio">
-                                <option value="">-- Seleccione --</option>
-                                @foreach ($estados as $item)
-                                    <option value="{{ $item->id }}" {{ $data->estado_id == $item->id ? 'selected' : '' }}>
-                                        {{ $item->descripcion }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label class="label-control">Observaciones</label>
-                            <textarea rows="4" name="observaciones" class="form-control">{{ $observaciones }}</textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-                    </form>
+    <div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="valorModalLabel">Pasar el parte a observado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <form wire:submit="observar">
+                    <div class="modal-body">
+                        <label class="label-control" for="estado_cambio">Estados</label>
+                        <select class="form-select form-select-sm @error('estado_cambio') is-invalid @enderror"
+                            id="estado_cambio" wire:model="estado_cambio">
+                            <option value="">-- Seleccione --</option>
+                            @foreach ($estados as $item)
+                                <option value="{{ $item->id }}">
+                                    {{ $item->descripcion }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('estado_cambio')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        <label class="label-control">Observaciones</label>
+                        <textarea rows="4" wire:model="observaciones"
+                            class="form-control @error('observaciones') is-invalid @enderror"></textarea>
+                        @error('observaciones')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Jerarquium
@@ -37,7 +38,7 @@ class Profesional extends Model
      */
     protected $fillable = ['id','nombre','email','dni','telefono'];
 
-    public function documentos()
+    public function documentos(): BelongsToMany
     {
         return $this->belongsToMany(Documento::class, 'profesionales_docum', 'profesional_id', 'documento_id');
     }

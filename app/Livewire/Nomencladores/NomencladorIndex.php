@@ -14,40 +14,40 @@ class NomencladorIndex extends Component
 {
     use WithPagination;
 
-    public $nomPadreId;
-    public $text;
+    public int $nomPadreId;
+    public ?string $text = null;
 
-    public $modalId;
-    public $codigo;
-    public $nivel;
-    public $descripcion;
+    public ?int $modalId = null;
+    public ?string $codigo = null;
+    public ?string $nivel = null;
+    public ?string $descripcion = null;
 
-    public function mount($nom_padre)
+    public function mount(int $nom_padre): void
     {
         $this->nomPadreId = $nom_padre;
         $this->text = request('text');
         session(['ses_nom_padre_id' => $nom_padre]);
     }
 
-    public function filtrar()
+    public function filtrar(): void
     {
         $this->resetPage();
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $this->reset(['text']);
         $this->resetPage();
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'codigo', 'nivel', 'descripcion']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'nomencladorModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $nomenclador = Nomenclador::withTrashed()->findOrFail($id);
 
@@ -59,7 +59,7 @@ class NomencladorIndex extends Component
         $this->dispatch('open-modal', modal: 'nomencladorModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'codigo' => [
@@ -105,7 +105,7 @@ class NomencladorIndex extends Component
         session()->flash('success', 'Registro guardado correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         try {
             $nomenclador = Nomenclador::withTrashed()->findOrFail($id);
@@ -125,12 +125,12 @@ class NomencladorIndex extends Component
         session()->flash('success', $restaurando ? 'Registro restaurado correctamente.' : 'Registro borrado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $nomPadre = NomPadre::findOrFail($this->nomPadreId);
 

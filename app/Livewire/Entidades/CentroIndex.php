@@ -12,20 +12,20 @@ class CentroIndex extends Component
 {
     use WithPagination;
 
-    public $modalId;
-    public $nombre;
-    public $cuit;
-    public $telefono;
-    public $contacto;
+    public ?int $modalId = null;
+    public ?string $nombre = null;
+    public ?string $cuit = null;
+    public ?string $telefono = null;
+    public ?string $contacto = null;
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'nombre', 'cuit', 'telefono', 'contacto']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'centroModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $centro = Centro::findOrFail($id);
 
@@ -38,7 +38,7 @@ class CentroIndex extends Component
         $this->dispatch('open-modal', modal: 'centroModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'nombre'   => ['required', 'string', 'max:200'],
@@ -72,18 +72,18 @@ class CentroIndex extends Component
         session()->flash('success', 'Centro guardado correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         Centro::findOrFail($id)->delete();
         session()->flash('success', 'Centro borrado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $centros = Centro::paginate(10);
 

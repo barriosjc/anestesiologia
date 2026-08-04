@@ -8,7 +8,7 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class RendicionesIndex extends Component
 {
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.consumos.rendiciones.rendiciones-index');
     }

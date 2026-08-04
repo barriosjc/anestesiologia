@@ -14,18 +14,18 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class PresupuestoCreate extends Component
 {
-    public $presupuesto_id;
-    public $gerenciadora_id;
-    public $fecha;
-    public $centro_id;
-    public $profesional_id;
-    public $valor_dolar;
-    public $nombre;
-    public $dni;
-    public $fecha_nac;
-    public $observaciones;
+    public ?int $presupuesto_id = null;
+    public ?int $gerenciadora_id = null;
+    public string $fecha;
+    public ?int $centro_id = null;
+    public ?int $profesional_id = null;
+    public ?string $valor_dolar = null;
+    public ?string $nombre = null;
+    public ?string $dni = null;
+    public ?string $fecha_nac = null;
+    public ?string $observaciones = null;
 
-    public function mount($id = null)
+    public function mount(?int $id = null)
     {
         $this->fecha = now()->format('Y-m-d');
         $this->valor_dolar = Parametro::where('nombre', 'UDS')->value('valor');
@@ -50,7 +50,7 @@ class PresupuestoCreate extends Component
         }
     }
 
-    public function save()
+    public function save(): \Illuminate\Http\RedirectResponse
     {
         $this->validate();
 
@@ -73,7 +73,7 @@ class PresupuestoCreate extends Component
         return $this->redirect(route('presupuestos.det.create', $presupuesto->id), navigate: true);
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'fecha'          => ['required', 'date'],
@@ -86,7 +86,7 @@ class PresupuestoCreate extends Component
         ];
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $gerenciadoras = Gerenciadora::all();
         $centros = Centro::all();

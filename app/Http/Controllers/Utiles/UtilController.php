@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Utiles;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Contracts\View\View;
 
 class UtilController extends Controller
 {
-    public function runMigrationAndSeeder()
+    public function runMigrationAndSeeder(): View
     {
         // Verificar que no esté en producción (opcional)
         // if (app()->environment('production')) {

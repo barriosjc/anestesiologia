@@ -13,17 +13,17 @@ class RoleIndex extends Component
 {
     use WithPagination;
 
-    public $search = '';
-    public $modalId;
-    public $name;
-    public $guard_name;
+    public string $search = '';
+    public ?int $modalId = null;
+    public ?string $name = null;
+    public ?string $guard_name = null;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'name', 'guard_name']);
         $this->guard_name = 'web';
@@ -31,7 +31,7 @@ class RoleIndex extends Component
         $this->dispatch('open-modal', modal: 'roleModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $role = Role::findOrFail($id);
 
@@ -42,7 +42,7 @@ class RoleIndex extends Component
         $this->dispatch('open-modal', modal: 'roleModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'name'       => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($this->modalId)],
@@ -69,18 +69,18 @@ class RoleIndex extends Component
         session()->flash('success', 'Role guardado correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         Role::findOrFail($id)->delete();
         session()->flash('success', 'Role borrado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $roles = Role::query()
             ->where('guard_name', 'web')

@@ -4,6 +4,8 @@ namespace App\Services\Reports;
 
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -31,7 +33,7 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         return $validator->validated();
     }
 
-    public function generate(array $filtros)
+    public function generate(array $filtros): Collection
     {
         $query = DB::table('v_rendiciones');
         $query->whereBetween('fec_prestacion_orig', [$filtros['fec_desde'], $filtros['fec_hasta']]);
@@ -51,7 +53,7 @@ class ReportTypeDetallexProfesional implements ReportStrategy
         return new PdfFormat(TamanoPapel::A4, Orientacion::LANDSCAPE);
     }
 
-    private function applyCommonFilters($query, array $filtros)
+    private function applyCommonFilters(Builder $query, array $filtros): void
     {
         if (!empty($filtros['profesional_id'] ?? null)) {
             $query->where('profesional_id', '=', $filtros['profesional_id']);

@@ -11,19 +11,19 @@ use Livewire\Component;
 
 class ParteFiltro extends Component
 {
-    public $cobertura_id;
-    public $centro_id;
-    public $profesional_id;
-    public $user_id;
-    public $nombre;
-    public $nro_parte;
-    public $fec_desde;
-    public $fec_hasta;
-    public $estado_id = [];
-    public $fec_desde_adm;
-    public $fec_hasta_adm;
+    public ?int $cobertura_id = null;
+    public ?int $centro_id = null;
+    public ?int $profesional_id = null;
+    public ?int $user_id = null;
+    public ?string $nombre = null;
+    public ?string $nro_parte = null;
+    public ?string $fec_desde = null;
+    public ?string $fec_hasta = null;
+    public array $estado_id = [];
+    public ?string $fec_desde_adm = null;
+    public ?string $fec_hasta_adm = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->cobertura_id = session('p_cobertura_id');
         $this->centro_id = session('p_centro_id');
@@ -38,7 +38,7 @@ class ParteFiltro extends Component
         $this->fec_hasta_adm = session('p_fec_hasta_adm');
     }
 
-    protected function filtroKeys()
+    protected function filtroKeys(): array
     {
         return [
             'cobertura_id', 'centro_id', 'profesional_id', 'user_id',
@@ -47,7 +47,7 @@ class ParteFiltro extends Component
         ];
     }
 
-    public function aplicar()
+    public function aplicar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -58,7 +58,7 @@ class ParteFiltro extends Component
         $this->dispatch('filtros-aplicados', filtros: $filtros);
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -71,7 +71,7 @@ class ParteFiltro extends Component
         $this->dispatch('filtro-limpiado');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.partes.parte-filtro', [
             'coberturas' => Cobertura::orderBy('nombre')->get(),

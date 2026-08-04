@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf133358a1b81f1056ef9482ff29068a",
+    "content-hash": "5a58ef27685bcb4b6672ea1819d120be",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -999,16 +999,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.10.0",
+            "version": "7.10.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "b51ac707cfa420b7bfd4e4d5e510ba8008e822b4"
+                "reference": "e7412b3180912c01650cc66647f18c1d1cbe9b94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/b51ac707cfa420b7bfd4e4d5e510ba8008e822b4",
-                "reference": "b51ac707cfa420b7bfd4e4d5e510ba8008e822b4",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/e7412b3180912c01650cc66647f18c1d1cbe9b94",
+                "reference": "e7412b3180912c01650cc66647f18c1d1cbe9b94",
                 "shasum": ""
             },
             "require": {
@@ -1026,8 +1026,9 @@
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "ext-curl": "*",
                 "guzzle/client-integration-tests": "3.0.2",
+                "guzzlehttp/test-server": "^0.4",
                 "php-http/message-factory": "^1.1",
-                "phpunit/phpunit": "^8.5.39 || ^9.6.20",
+                "phpunit/phpunit": "^8.5.52 || ^9.6.34",
                 "psr/log": "^1.1 || ^2.0 || ^3.0"
             },
             "suggest": {
@@ -1105,7 +1106,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.10.0"
+                "source": "https://github.com/guzzle/guzzle/tree/7.10.6"
             },
             "funding": [
                 {
@@ -1121,7 +1122,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-23T22:36:01+00:00"
+            "time": "2026-06-01T13:06:22+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1872,69 +1873,6 @@
                 "source": "https://github.com/laravel/tinker/tree/v2.11.1"
             },
             "time": "2026-02-06T14:12:35+00:00"
-        },
-        {
-            "name": "laravel/ui",
-            "version": "v4.6.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/ui.git",
-                "reference": "ff27db15416c1ed8ad9848f5692e47595dd5de27"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ui/zipball/ff27db15416c1ed8ad9848f5692e47595dd5de27",
-                "reference": "ff27db15416c1ed8ad9848f5692e47595dd5de27",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/filesystem": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/support": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/validation": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "php": "^8.0",
-                "symfony/console": "^6.0|^7.0|^8.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^7.35|^8.15|^9.0|^10.0|^11.0",
-                "phpunit/phpunit": "^9.3|^10.4|^11.5|^12.5|^13.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Laravel\\Ui\\UiServiceProvider"
-                    ]
-                },
-                "branch-alias": {
-                    "dev-master": "4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Ui\\": "src/",
-                    "Illuminate\\Foundation\\Auth\\": "auth-backend/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "Laravel UI utilities and presets.",
-            "keywords": [
-                "laravel",
-                "ui"
-            ],
-            "support": {
-                "source": "https://github.com/laravel/ui/tree/v4.6.3"
-            },
-            "time": "2026-03-17T13:41:52+00:00"
         },
         {
             "name": "league/commonmark",
@@ -9785,12 +9723,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

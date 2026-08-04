@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Grupal
@@ -34,22 +36,22 @@ class Gerenciadora extends Model
      */
     protected $fillable = ['nombre', 'cuit', 'telefono', 'contacto'];
 
-    public function valores_cab()
+    public function valores_cab(): HasMany
     {
-        return $this->hasMany(Valores_cab::class, 'gerenciadora_id');
+        return $this->hasMany(ValoresCab::class, 'gerenciadora_id');
     }
     
-    public function nomPadres()
+    public function nomPadres(): BelongsToMany
     {
         return $this->belongsToMany(NomPadre::class, 'gerenciadoras_coberturas_nom_padres', 'gerenciadora_id', 'nom_padre_id');
     }
     
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'gerenciadoras_users', 'gerenciadora_id', 'user_id');
     }
  
-    public function coberturas()
+    public function coberturas(): BelongsToMany
     {
         return $this->belongsToMany(Cobertura::class, 'gerenciadoras_coberturas_nom_padres', 'gerenciadora_id', 'cobertura_id')
                     ->withPivot('nom_padre_id');

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Consumos\Partes;
 
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -11,9 +11,9 @@ class ConsumoPartesTabla extends Component
 {
     use WithPagination;
 
-    public $filtros = [];
+    public array $filtros = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->filtros = [
             'cobertura_id' => session('a_cobertura_id'),
@@ -30,20 +30,20 @@ class ConsumoPartesTabla extends Component
     }
 
     #[On('filtros-aplicados')]
-    public function aplicarFiltros($filtros)
+    public function aplicarFiltros(array $filtros): void
     {
         $this->filtros = $filtros;
         $this->resetPage();
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
-        $query = Parte_cab::vParteCab();
+        $query = ParteCab::vParteCab();
 
         if (!empty($this->filtros['cobertura_id'])) {
             $query->where('cobertura_id', '=', $this->filtros['cobertura_id']);

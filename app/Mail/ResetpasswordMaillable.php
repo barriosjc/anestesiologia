@@ -6,21 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
 
-class ResetpasswordMaillable extends Mailable
+class ResetpasswordMaillable extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $user = null;
-    public $clave = null;
-    public $empresa = null;
+    public ?User $user = null;
+    public ?string $clave = null;
+    public ?string $empresa = null;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $clave)
+    public function __construct(User $user, string $clave)
     {
         $this->user = $user;
         $this->clave = $clave;
@@ -32,8 +33,9 @@ class ResetpasswordMaillable extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): Mailable
     {
-        return $this->view('emails.resetpassword');
+        return $this->view('emails.resetpassword')
+            ->subject('Cambio de clave para ingreso al portal');
     }
 }

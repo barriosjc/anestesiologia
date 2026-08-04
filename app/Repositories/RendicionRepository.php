@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Models\Consumo_det;
+use App\Models\ConsumoDet;
 use App\Models\Estado;
-use App\Models\Parte_cab;
-use App\Models\Valores_cab;
+use App\Models\ParteCab;
+use App\Models\ValoresCab;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -19,15 +19,15 @@ class RendicionRepository
         return DB::table('v_rendiciones')->where('consumos_det_id', $consumoDetId)->value('parte_cab_id');
     }
 
-    public function generarRendicion(array $selected, $periodo)
+    public function generarRendicion(array $selected, string $periodo): array
     {
         foreach ($selected as $consumoDetId) {
-            $det = Consumo_det::find($consumoDetId);
+            $det = ConsumoDet::find($consumoDetId);
             $det->periodo = $periodo;
             $det->estado_id = 5; // liquidado
             $det->save();
 
-            $parte = Parte_cab::where('id', $this->parteIdFor($consumoDetId))->first();
+            $parte = ParteCab::where('id', $this->parteIdFor($consumoDetId))->first();
             $parte->estado_id = 5;
             $parte->save();
         }
@@ -35,7 +35,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se generó la rendición.'];
     }
 
-    public function cambiarEstados(array $selected, $nuevoEstado, $periodoRefac, $obsRefac)
+    public function cambiarEstados(array $selected, int $nuevoEstado, ?string $periodoRefac, ?string $obsRefac): array
     {
         try {
             if ($nuevoEstado == 7 && empty($periodoRefac)) {
@@ -45,7 +45,7 @@ class RendicionRepository
             $sepa = '';
             $ids = '';
             foreach ($selected as $consumoDetId) {
-                $consumo = Consumo_det::find($consumoDetId);
+                $consumo = ConsumoDet::find($consumoDetId);
                 $estActual = $consumo->estado_id;
                 $parteId = $this->parteIdFor($consumoDetId);
 
@@ -95,13 +95,13 @@ class RendicionRepository
         }
     }
 
-    public function revalorizar(array $selected, $periodo)
+    public function revalorizar(array $selected, string $periodo): array
     {
         $cantidad = 0;
         foreach ($selected as $consumoDetId) {
             $rendicion = DB::table('v_rendiciones')->where('consumos_det_id', $consumoDetId)->first();
 
-            $valores = Valores_cab::vValores(
+            $valores = ValoresCab::vValores(
                 $rendicion->gerenciadora_id,
                 $rendicion->cobertura_id,
                 $rendicion->centro_id,
@@ -110,7 +110,7 @@ class RendicionRepository
             );
 
             if (!empty($valores)) {
-                $consumoDet = Consumo_det::find($consumoDetId);
+                $consumoDet = ConsumoDet::find($consumoDetId);
                 $consumoDet->valor = $valores->valor * ($rendicion->porcentaje / 100);
                 $consumoDet->save();
                 $cantidad++;
@@ -120,13 +120,13 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => "Se actualizaron los valores de {$cantidad} consumos."];
     }
 
-    public function agregarConsumo(array $selected, $periodo, $estado, $valor, $observaciones)
+    public function agregarConsumo(array $selected, string $periodo, int $estado, $valor, string $observaciones): array
     {
         if (count($selected) !== 1) {
             return ['success' => false, 'mensaje' => 'Para este proceso debe seleccionar solo (1) un consumo.'];
         }
 
-        $original = Consumo_det::where('id', $selected[0])->first();
+        $original = ConsumoDet::where('id', $selected[0])->first();
         $nuevo = $original->replicate();
         $nuevo->periodo = $periodo;
         $nuevo->estado_id = $estado;
@@ -137,7 +137,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se agregó el nuevo consumo a la rendición.'];
     }
 
-    public function agregarConsumoYDiferencia(array $selected, $periodo, $estado, $valor, $observaciones, $refacturar)
+    public function agregarConsumoYDiferencia(array $selected, string $periodo, int $estado, $valor, string $observaciones, string $refacturar): array
     {
         if (count($selected) !== 1) {
             return ['success' => false, 'mensaje' => 'Para este proceso debe seleccionar solo (1) un consumo.'];
@@ -145,7 +145,7 @@ class RendicionRepository
 
         $estados = Estado::all();
         $anulado = $estados->firstWhere('extra', 'anulado')->id;
-        $original = Consumo_det::where('id', $selected[0])->first();
+        $original = ConsumoDet::where('id', $selected[0])->first();
         $valorDiff = $original->valor - $valor;
         if ($valorDiff < 0) {
             return ['success' => false, 'mensaje' => 'El valor a agregar no puede ser mayor al valor original.'];
@@ -174,7 +174,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se agregó el nuevo consumo y diferencia a la rendición.'];
     }
 
-    protected function incrementarMes($dateString, $monthsToAdd)
+    protected function incrementarMes(string $dateString, int $monthsToAdd): string
     {
         $date = DateTime::createFromFormat('Y/m', $dateString);
         if (!$date) {

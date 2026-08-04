@@ -16,27 +16,27 @@ class UsuarioIndex extends Component
 {
     use WithPagination;
 
-    public $search = '';
-    public $modalId;
-    public $name;
-    public $email;
-    public $centro_id;
-    public $perfiles = [];
-    public $blanquear = false;
+    public string $search = '';
+    public ?int $modalId = null;
+    public ?string $name = null;
+    public ?string $email = null;
+    public ?int $centro_id = null;
+    public array $perfiles = [];
+    public bool $blanquear = false;
 
-    public function updatingSearch()
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'name', 'email', 'centro_id', 'perfiles', 'blanquear']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'usuarioModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $user = user::findOrFail($id);
 
@@ -50,7 +50,7 @@ class UsuarioIndex extends Component
         $this->dispatch('open-modal', modal: 'usuarioModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'name'      => ['required', 'string', 'max:50'],
@@ -98,18 +98,18 @@ class UsuarioIndex extends Component
         session()->flash('success', 'Se guardó los datos del usuario de forma correcta.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         user::destroy($id);
         session()->flash('success', 'Usuario borrado!');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $users = user::query()
             ->when($this->search !== '', function ($query) {
