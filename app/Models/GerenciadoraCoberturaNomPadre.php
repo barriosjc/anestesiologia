@@ -7,6 +7,7 @@ use App\Models\Cobertura;
 use App\Models\Gerenciadora;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GerenciadoraCoberturaNomPadre extends Model
 {
@@ -21,17 +22,17 @@ class GerenciadoraCoberturaNomPadre extends Model
     ];
     
     // Relaciones
-    public function gerenciadora()
+    public function gerenciadora(): BelongsTo
     {
         return $this->belongsTo(Gerenciadora::class, 'gerenciadora_id');
     }
     
-    public function cobertura()
+    public function cobertura(): BelongsTo
     {
         return $this->belongsTo(Cobertura::class, 'cobertura_id');
     }
     
-    public function nomPadre()
+    public function nomPadre(): BelongsTo
     {
         return $this->belongsTo(NomPadre::class, 'nom_padre_id');
     }

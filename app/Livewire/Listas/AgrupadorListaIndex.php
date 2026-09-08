@@ -17,20 +17,20 @@ class AgrupadorListaIndex extends Component
 {
     use WithPagination;
 
-    public $filtroGerenciadoraId;
-    public $filtroCoberturaId;
-    public $filtroCentroId;
-    public $filtroPeriodo;
-    public $filtroGrupo;
+    public ?int $filtroGerenciadoraId = null;
+    public ?int $filtroCoberturaId = null;
+    public ?int $filtroCentroId = null;
+    public ?string $filtroPeriodo = null;
+    public ?int $filtroGrupo = null;
 
-    public $listaId;
-    public $gerenciadora_id;
-    public $cobertura_id;
-    public $centro_id;
-    public $periodo;
-    public $grupo;
+    public ?int $listaId = null;
+    public ?int $gerenciadora_id = null;
+    public ?int $cobertura_id = null;
+    public ?int $centro_id = null;
+    public ?string $periodo = null;
+    public ?int $grupo = null;
 
-    public function mount($nom_padre)
+    public function mount(int $nom_padre): void
     {
         session(['ses_nom_padre_id' => $nom_padre]);
         $this->filtroGerenciadoraId = request('gerenciadora_id');
@@ -40,18 +40,18 @@ class AgrupadorListaIndex extends Component
         $this->filtroGrupo = request('grupo');
     }
 
-    public function filtrar()
+    public function filtrar(): void
     {
         $this->resetPage();
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $this->reset(['filtroGerenciadoraId', 'filtroCoberturaId', 'filtroCentroId', 'filtroPeriodo', 'filtroGrupo']);
         $this->resetPage();
     }
 
-    public function abrirModal($id = null)
+    public function abrirModal(?int $id = null): void
     {
         $this->resetErrorBag();
         $this->reset(['listaId', 'gerenciadora_id', 'cobertura_id', 'centro_id', 'periodo', 'grupo']);
@@ -69,7 +69,7 @@ class AgrupadorListaIndex extends Component
         $this->dispatch('open-modal', modal: 'listaModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'cobertura_id' => 'required|integer',
@@ -103,7 +103,7 @@ class AgrupadorListaIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         try {
             $lista = Valores_cab::find($id);
@@ -124,12 +124,12 @@ class AgrupadorListaIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $nomPadreId = session('ses_nom_padre_id');
 

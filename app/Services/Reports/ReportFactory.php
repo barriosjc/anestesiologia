@@ -6,7 +6,7 @@ use Exception;
 
 class ReportFactory
 {
-    public static function create($reporteId)
+    public static function create(?int $reporteId): ReportStrategy
     {
         switch ($reporteId) {
             case 1:

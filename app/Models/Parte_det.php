@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class parte_det
@@ -41,7 +42,7 @@ class Parte_det extends Model
         , 'nro_hoja'
     ];
 
-    public function documento()
+    public function documento(): BelongsTo
     {
         return $this->belongsTo(Documento::class);
     }

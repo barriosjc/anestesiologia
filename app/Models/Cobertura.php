@@ -8,6 +8,8 @@ use App\Models\Gerenciadora;
 use App\Models\PresupuestoDet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Grupal
@@ -38,22 +40,22 @@ class Cobertura extends Model
      */
     protected $fillable = ['nombre', 'cuit', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
     
-    public function valoresCab()
+    public function valoresCab(): HasMany
     {
         return $this->hasMany(Valores_cab::class, 'cobertura_id');
     }
 
-    public function presupuestosDet()
+    public function presupuestosDet(): HasMany
     {
         return $this->hasMany(PresupuestoDet::class, 'cobertura_id');
     }
 
-    public function nomPadres()
+    public function nomPadres(): BelongsToMany
     {
         return $this->belongsToMany(NomPadre::class, 'cobertura_nom_padre', 'cobertura_id', 'nom_padre_id');
     }
     
-    public function gerenciadoras()
+    public function gerenciadoras(): BelongsToMany
     {
         return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_coberturas_nom_padres', 'cobertura_id', 'gerenciadora_id')
                     ->withPivot('nom_padre_id');

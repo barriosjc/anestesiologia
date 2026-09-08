@@ -9,16 +9,16 @@ use Livewire\Component;
 
 class PresupuestoFiltro extends Component
 {
-    public $centro_id;
-    public $nombre;
-    public $profesional_id;
-    public $usuario_id;
-    public $fecha_desde;
-    public $fecha_hasta;
-    public $numero;
-    public $estado;
+    public ?int $centro_id = null;
+    public ?string $nombre = null;
+    public ?int $profesional_id = null;
+    public ?int $usuario_id = null;
+    public ?string $fecha_desde = null;
+    public ?string $fecha_hasta = null;
+    public ?string $numero = null;
+    public ?string $estado = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->centro_id = session('pc_centro_id');
         $this->nombre = session('pc_nombre');
@@ -30,12 +30,12 @@ class PresupuestoFiltro extends Component
         $this->estado = session('pc_estado');
     }
 
-    protected function filtroKeys()
+    protected function filtroKeys(): array
     {
         return ['centro_id', 'nombre', 'profesional_id', 'usuario_id', 'fecha_desde', 'fecha_hasta', 'numero', 'estado'];
     }
 
-    public function aplicar()
+    public function aplicar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -46,7 +46,7 @@ class PresupuestoFiltro extends Component
         $this->dispatch('filtros-aplicados', filtros: $filtros);
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -59,7 +59,7 @@ class PresupuestoFiltro extends Component
         $this->dispatch('filtro-limpiado');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.presupuestos.presupuesto-filtro', [
             'centros' => Centro::orderBy('nombre')->get(),

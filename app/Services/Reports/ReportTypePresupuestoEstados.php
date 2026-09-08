@@ -5,6 +5,8 @@ namespace App\Services\Reports;
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
 use App\Models\PresupuestoCab;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
 class ReportTypePresupuestoEstados implements ReportStrategy
@@ -28,7 +30,7 @@ class ReportTypePresupuestoEstados implements ReportStrategy
         return $validator->validated();
     }
 
-    public function generate(array $filtros)
+    public function generate(array $filtros): Collection
     {
         $datos = PresupuestoCab::with(['profesional', 'centro', 'presupuestosDet.cobertura'])
                     ->whereBetween('fecha', [$filtros['fec_desde'], $filtros['fec_hasta']]);
@@ -47,7 +49,7 @@ class ReportTypePresupuestoEstados implements ReportStrategy
         return new PdfFormat(TamanoPapel::A4, Orientacion::LANDSCAPE);
     }
 
-    private function applyCommonFilters($query, array $filtros)
+    private function applyCommonFilters(Builder $query, array $filtros): void
     {
         if (!empty($filtros['profesional_id'] ?? null)) {
             $query->where('profesional_id', '=', $filtros['profesional_id']);

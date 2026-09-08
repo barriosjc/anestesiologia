@@ -6,6 +6,7 @@ use App\Models\NomPadre;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Nomenclador extends Model
 {
@@ -22,7 +23,7 @@ class Nomenclador extends Model
      */
     protected $fillable = ['nom_padre_id', 'organo_id', 'cobertura_id',  'codigo', 'nivel', 'descripcion', 'tipo'];
 
-    public function nomPadre()
+    public function nomPadre(): BelongsTo
     {
         return $this->belongsTo(NomPadre::class, 'nom_padre_id');
     }

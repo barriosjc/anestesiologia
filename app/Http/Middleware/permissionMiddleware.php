@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class permissionMiddleware
 {
@@ -16,7 +18,7 @@ class permissionMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $permission)
+    public function handle(Request $request, Closure $next, string $permission): Response
     {
         if (Auth::guest()) {
             return redirect('/login');

@@ -35,7 +35,7 @@ class Paciente extends Model
     
     
     //formato para mostrar en los inputs
-    public function getFecNacimientoAttribute($value)
+    public function getFecNacimientoAttribute($value): string
     {
         $resu = '';
         if (!empty($value)) {

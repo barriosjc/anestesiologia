@@ -10,22 +10,22 @@ use Livewire\Component;
 
 class PresupuestoDetForm extends Component
 {
-    public $presupuestoCabId;
-    public $gerenciadoraId;
-    public $centroId;
-    public $valorDolar;
+    public int $presupuestoCabId;
+    public ?int $gerenciadoraId = null;
+    public ?int $centroId = null;
+    public ?float $valorDolar = null;
 
-    public $coberturaId;
-    public $periodo;
-    public $nomencladorOpciones = [];
-    public $nomenclador_id;
-    public $nom_padre_id;
+    public ?int $coberturaId = null;
+    public ?string $periodo = null;
+    public array $nomencladorOpciones = [];
+    public ?int $nomenclador_id = null;
+    public ?int $nom_padre_id = null;
     public $porcentaje = 100;
     public $valorOrig = 0;
     public $valorTotal = 0;
-    public $observaciones;
+    public ?string $observaciones = null;
 
-    public function mount($presupuestoCabId)
+    public function mount(int $presupuestoCabId): void
     {
         $presupuestoCab = PresupuestoCab::findOrFail($presupuestoCabId);
 
@@ -35,7 +35,7 @@ class PresupuestoDetForm extends Component
         $this->valorDolar = $presupuestoCab->valor_dolar;
     }
 
-    public function buscarNomenclador($codigo, $descripcion, NomencladoresServices $nomencladoresServices)
+    public function buscarNomenclador(string $codigo, string $descripcion, NomencladoresServices $nomencladoresServices): void
     {
         if (empty($codigo) && empty($descripcion)) {
             return;
@@ -59,19 +59,19 @@ class PresupuestoDetForm extends Component
         }
     }
 
-    public function updatedPeriodo()
+    public function updatedPeriodo(): void
     {
         if ($this->nomenclador_id) {
             $this->valorizar(app(PresupuestoDetalleRepository::class));
         }
     }
 
-    public function updatedNomencladorId()
+    public function updatedNomencladorId(): void
     {
         $this->valorizar(app(PresupuestoDetalleRepository::class));
     }
 
-    protected function valorizar(PresupuestoDetalleRepository $repository)
+    protected function valorizar(PresupuestoDetalleRepository $repository): void
     {
         if (empty($this->periodo) || empty($this->nomenclador_id) || empty($this->coberturaId)) {
             return;
@@ -106,7 +106,7 @@ class PresupuestoDetForm extends Component
         $this->porcentaje = 100;
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'coberturaId' => 'required',
@@ -138,7 +138,7 @@ class PresupuestoDetForm extends Component
         $this->dispatch('presupuesto-det-guardado');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.presupuestos.presupuesto-det-form', [
             'coberturas' => \App\Models\Cobertura::orderBy('nombre')->get(),

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\PresupuestoDet;
 use App\Models\Valores_cab;
+use Illuminate\Support\Collection;
 
 class PresupuestoDetalleRepository
 {
@@ -20,7 +21,7 @@ class PresupuestoDetalleRepository
             ->first();
     }
 
-    public function detalleConDescripcion(int $presupuestoCabId)
+    public function detalleConDescripcion(int $presupuestoCabId): Collection
     {
         $query1 = PresupuestoDet::query()
             ->join('nom_practicas_estudios as pe', 'presupuestos_det.nom_padre_id', '=', 'pe.nom_padre_id')

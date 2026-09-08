@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Valores_cab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Grupal
@@ -34,17 +35,17 @@ class Centro extends Model
      */
     protected $fillable = ['nombre', 'cuit', 'telefono', 'contacto'];
 
-    public function valores()
+    public function valores(): HasMany
     {
         return $this->hasMany(Valores::class);
     }
 
-    public function valoresCab()
+    public function valoresCab(): HasMany
     {
         return $this->hasMany(Valores_cab::class, 'centro_id');
     }
 
-    public function presupuestosCab()
+    public function presupuestosCab(): HasMany
     {
         return $this->hasMany(PresupuestoCab::class, 'centro_id');
     }

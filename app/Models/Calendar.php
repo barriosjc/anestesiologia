@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Calendar extends Model
 {
@@ -14,7 +15,7 @@ class Calendar extends Model
     
     protected $fillable = ['user_id', 'fecha_ini', 'fecha_fin', 'observaciones', 'cerrado'];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id');
     }

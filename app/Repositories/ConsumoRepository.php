@@ -10,7 +10,7 @@ use App\Models\Valores_cab;
 
 class ConsumoRepository
 {
-    public function valorBuscar($periodo, $nivel, $parte_cab)
+    public function valorBuscar(string $periodo, string $nivel, Parte_cab $parte_cab)
     {
         $valores = Valores_cab::vValores(
             $parte_cab->gerenciadora_id,
@@ -23,14 +23,14 @@ class ConsumoRepository
         return $valores;
     }
 
-    public function parteBuscar($id)
+    public function parteBuscar(int $id)
     {
         $parte_cab = Parte_cab::where("id", $id)->first();
 
         return $parte_cab;
     }
 
-    public function coberturaBuscar($id)
+    public function coberturaBuscar(int $id)
     {
         $cobertura = Cobertura::where("id", $id)->first();
 

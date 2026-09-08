@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git fetch *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(php artisan *)",
+      "Bash(printenv)",
+      "Bash(powershell -Command \"Get-Service -Name wampapache64\" 2>&1)",
+      "Bash(powershell -Command \"Restart-Service -Name wampapache64 -Force\")",
+      "Bash(powershell -Command \"Get-Service -Name wampapache64\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'C:\\\\wamp64\\\\logs' -Filter '*.log' | Sort-Object LastWriteTime -Descending | Select-Object -First 10 Name, LastWriteTime\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\logs\\\\apache_error.log' -Tail 60\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\logs\\\\php_error.log' -Tail 40\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\logs\\\\access.log' -Tail 20\" 2>&1)",
+      "Bash(powershell -Command \"Get-ChildItem 'C:\\\\wamp64\\\\bin\\\\apache\\\\apache2.4.59\\\\conf\\\\extra\\\\httpd-vhosts.conf'\")",
+      "Read(//c/wamp64/bin/apache/apache2.4.59/conf/extra/**)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\logs\\\\anestesiologia-error.log' -Tail 40\" 2>&1)",
+      "Bash(powershell -Command \"Get-ChildItem 'C:\\\\wamp64\\\\bin\\\\apache\\\\apache2.4.59\\\\logs' -Filter '*anestesiologia*'\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\bin\\\\apache\\\\apache2.4.59\\\\logs\\\\anestesiologia-access.log' -Tail 20\" 2>&1)",
+      "Bash(powershell -Command \"Get-Content 'C:\\\\wamp64\\\\logs\\\\php_error.log' -Tail 20\" 2>&1)",
+      "Bash(curl *)",
+      "Bash(powershell -Command \"Get-ChildItem 'C:\\\\wamp64\\\\bin\\\\mysql' -Directory\" 2>&1)",
+      "Bash(C:/wamp64/bin/mysql/mysql8.3.0/bin/mysql.exe *)"
+    ]
+  }
+}

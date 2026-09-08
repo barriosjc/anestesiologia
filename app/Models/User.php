@@ -15,6 +15,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // use Illuminate\Support\Facades\Auth as FacadesAuth;
 
@@ -58,27 +61,27 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function centro()
+    public function centro(): BelongsTo
     {
         return $this->belongsTo(Centro::class, 'centro_id');
     }
 
-    public function calendar()
+    public function calendar(): HasMany
     {
         return $this->hasMany(Calendar::class, 'user_id');
     }
 
-    public function presupuestosCab()
+    public function presupuestosCab(): HasMany
     {
         return $this->hasMany(PresupuestoCab::class, 'usuario_id');
     }
 
-    public function gerenciadoras()
+    public function gerenciadoras(): BelongsToMany
     {
         return $this->belongsToMany(Gerenciadora::class, 'gerenciadoras_users', 'user_id', 'gerenciadora_id');
     }
     
-    public function presupuestosPago()
+    public function presupuestosPago(): HasMany
     {
         return $this->hasMany(PresupuestoPago::class, 'usuario_id');
     }

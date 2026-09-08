@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Parte_det;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Documento
@@ -21,7 +23,7 @@ class Documento extends Model
 {
     use SoftDeletes;
 
-    static $rules = [
+    public static array $rules = [
 		'nombre' => 'required',
     ];
 
@@ -36,12 +38,12 @@ class Documento extends Model
      */
     protected $fillable = ['nombre'];
 
-    public function parteDets()
+    public function parteDets(): HasMany
     {
         return $this->hasMany(Parte_det::class);
     }
     
-    public function profesionales()
+    public function profesionales(): BelongsToMany
     {
         return $this->belongsToMany(Profesional::class, 'profesionales_docum', 'documento_id', 'profesional_id');
     }

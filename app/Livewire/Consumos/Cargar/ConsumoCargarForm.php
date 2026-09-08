@@ -13,21 +13,21 @@ use Livewire\Component;
 
 class ConsumoCargarForm extends Component
 {
-    public $parteCabId;
-    public $gerenciadoraId;
-    public $coberturaId;
-    public $nomPadreJson;
-    public $soloConsulta;
+    public int $parteCabId;
+    public ?int $gerenciadoraId = null;
+    public ?int $coberturaId = null;
+    public ?string $nomPadreJson = null;
+    public ?bool $soloConsulta = null;
 
-    public $periodo;
-    public $nomencladorOpciones = [];
-    public $nomenclador_id;
-    public $nom_padre_id;
+    public ?string $periodo = null;
+    public array $nomencladorOpciones = [];
+    public ?int $nomenclador_id = null;
+    public ?int $nom_padre_id = null;
     public $porcentaje = 100;
     public $valorOrig = 0;
     public $valorTotal = 0;
 
-    public function mount($parteCabId, $gerenciadoraId, $coberturaId, $nomPadreJson, $soloConsulta)
+    public function mount(int $parteCabId, ?int $gerenciadoraId, ?int $coberturaId, ?string $nomPadreJson, ?bool $soloConsulta): void
     {
         $this->parteCabId = $parteCabId;
         $this->gerenciadoraId = $gerenciadoraId;
@@ -36,7 +36,7 @@ class ConsumoCargarForm extends Component
         $this->soloConsulta = $soloConsulta;
     }
 
-    public function buscarNomenclador($codigo, $descripcion, ConsumoRepository $consumoRepository, \App\Services\NomencladoresServices $nomencladoresServices)
+    public function buscarNomenclador(string $codigo, string $descripcion, ConsumoRepository $consumoRepository, \App\Services\NomencladoresServices $nomencladoresServices): void
     {
         if (empty($codigo) && empty($descripcion)) {
             return;
@@ -60,19 +60,19 @@ class ConsumoCargarForm extends Component
         }
     }
 
-    public function updatedPeriodo()
+    public function updatedPeriodo(): void
     {
         if ($this->nomenclador_id) {
             $this->valorizar(app(ConsumoRepository::class));
         }
     }
 
-    public function updatedNomencladorId()
+    public function updatedNomencladorId(): void
     {
         $this->valorizar(app(ConsumoRepository::class));
     }
 
-    protected function valorizar(ConsumoRepository $consumoRepository)
+    protected function valorizar(ConsumoRepository $consumoRepository): void
     {
         if (empty($this->periodo) || empty($this->nomenclador_id)) {
             return;
@@ -110,7 +110,7 @@ class ConsumoCargarForm extends Component
         $this->porcentaje = ($this->porcentaje ?: 100) + $porcentajeAdic;
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'porcentaje' => 'required|numeric|between:1,200',
@@ -148,7 +148,7 @@ class ConsumoCargarForm extends Component
         $this->dispatch('consumo-guardado');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.consumos.cargar.consumo-cargar-form', [
             'periodos' => \App\Models\Periodo::orderBy('nombre')->get(),

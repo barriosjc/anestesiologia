@@ -13,9 +13,13 @@ class ParteTabla extends Component
 {
     use WithPagination;
 
-    public $filtros = [];
+    public array $filtros = [];
 
-    public function mount()
+    public ?int $estado_cambio_id = null;
+    public ?string $estado_cambio_obs = null;
+    public ?int $estado_cambio_estado = null;
+
+    public function mount(): void
     {
         $this->filtros = [
             'cobertura_id' => session('p_cobertura_id'),
@@ -33,13 +37,13 @@ class ParteTabla extends Component
     }
 
     #[On('filtros-aplicados')]
-    public function aplicarFiltros($filtros)
+    public function aplicarFiltros(array $filtros): void
     {
         $this->filtros = $filtros;
         $this->resetPage();
     }
 
-    public function destroy($id)
+    public function destroy(int $id): void
     {
         $parte = Parte_cab::find($id);
 
@@ -54,12 +58,38 @@ class ParteTabla extends Component
         session()->flash('success', 'Parte borrado correctamente.');
     }
 
-    public function paginationView()
+    public function abrirEstadoModal(int $id, ?string $observaciones = null): void
+    {
+        $this->estado_cambio_id = $id;
+        $this->estado_cambio_obs = $observaciones;
+        $this->estado_cambio_estado = null;
+        $this->dispatch('open-modal', modal: 'valorModal');
+    }
+
+    public function cambiarEstado(): void
+    {
+        $this->validate([
+            'estado_cambio_estado' => 'required',
+        ], [
+            'estado_cambio_estado.required' => '¡Atención! La selección del estado es obligatoria.',
+        ]);
+
+        $parte = Parte_cab::findOrFail($this->estado_cambio_id);
+        $parte->observaciones = strip_tags((string) $this->estado_cambio_obs);
+        $parte->estado_id = $this->estado_cambio_estado;
+        $parte->save();
+
+        $this->reset('estado_cambio_id', 'estado_cambio_obs', 'estado_cambio_estado');
+        $this->dispatch('close-modal', modal: 'valorModal');
+        session()->flash('success', 'Estado cambiado exitosamente.');
+    }
+
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $query = Parte_cab::vParteCab();
 

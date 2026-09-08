@@ -12,18 +12,18 @@ class ParametroIndex extends Component
 {
     use WithPagination;
 
-    public $modalId;
-    public $nombre;
-    public $valor;
+    public ?int $modalId = null;
+    public ?string $nombre = null;
+    public ?string $valor = null;
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'nombre', 'valor']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'parametroModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $parametro = Parametro::findOrFail($id);
 
@@ -34,7 +34,7 @@ class ParametroIndex extends Component
         $this->dispatch('open-modal', modal: 'parametroModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'nombre' => ['required', 'string', 'max:50'],
@@ -59,18 +59,18 @@ class ParametroIndex extends Component
         session()->flash('success', 'Parámetro guardado correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         Parametro::findOrFail($id)->delete();
         session()->flash('success', 'Parámetro borrado correctamente.');
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $parametros = Parametro::paginate(10);
 

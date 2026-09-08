@@ -18,7 +18,7 @@ class ReportGeneratorService
         return $strategy->validate($filtros);
     }
 
-    public function generar(?int $reporteId, array $filtros)
+    public function generar(?int $reporteId, array $filtros): \Barryvdh\DomPDF\PDF
     {
         if (empty($reporteId)) {
             throw new Exception('Es obligatorio seleccionar el tipo de reporte a generar.');

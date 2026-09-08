@@ -11,18 +11,18 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class PresupuestoPagoIndex extends Component
 {
-    public $presupuestoCabId;
-    public $fecha;
-    public $valor = '0,00';
-    public $observaciones;
+    public int $presupuestoCabId;
+    public string $fecha;
+    public string $valor = '0,00';
+    public ?string $observaciones = null;
 
-    public function mount($id)
+    public function mount(int $id): void
     {
         $this->presupuestoCabId = $id;
         $this->fecha = now()->format('Y-m-d');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'fecha' => ['required', 'date'],
@@ -43,14 +43,14 @@ class PresupuestoPagoIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function destroy($id)
+    public function destroy(int $id): void
     {
         PresupuestoPago::findOrFail($id)->delete();
 
         session()->flash('success', 'El pago ha sido eliminado exitosamente.');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $presupuestosCab = PresupuestoCab::findOrFail($this->presupuestoCabId);
         $pagos = PresupuestoPago::where('presupuesto_cab_id', $this->presupuestoCabId)

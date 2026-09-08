@@ -36,14 +36,15 @@
 
 ### Consumos
 - `ConsumoCab` / `ConsumoDet` — consumos de insumos/prácticas
-- Controller: `produccion/ConsumoController`
+- Componente Livewire: `Consumos/Cargar/ConsumoCargarIndex` (carga + cambio de estado)
 - Vistas: `consumo/`
 - Permiso: `adm_consumos`
 - Incluye rendiciones y revalorizaciones
 
 ### Presupuestos
 - `PresupuestoCab` / `PresupuestoDet` / `PresupuestoPago`
-- Controller: `entidades/PresupuestoCabController`
+- Componentes Livewire: `Presupuestos/*` (creación de partes vía `Services/PresupuestoParteService`)
+- Controller (solo PDF): `entidades/PresupuestoCabController`
 - Vistas: `presupuestos/presupuestos_cab/`
 - Permiso: `adm_presupuestos`
 - Estados: I (Ingresado), P (Pagado), C (Cancelado), O (Cobrado), F (Facturado)
@@ -65,17 +66,9 @@
 - Vistas: `seguridad/`
 - Permiso: `adm_permisos`
 
-## Migración a Livewire (en progreso)
-- Livewire 3 instalado, sin componentes aún
+## Migración a Livewire (completa)
+- Livewire 3 instalado; todos los módulos y Auth migrados a componentes
 - Directorios: `app/Livewire/` y `resources/views/livewire/`
 - Nombre de componentes: kebab-case (ej: `parte-create`, `presupuesto-table`)
 
-### Plan de migración
-1. **Partes** — crear/edit/listar (piloto)
-2. **Presupuestos** — tabla con filtros reactivos
-3. **Consumos** — carga dinámica con búsqueda
-4. **Nomenclador/Valores** — CRUD con modales
-5. Entidades CRUD (si aplica)
-6. Seguridad (si aplica)
-
-No migrar: Reportes PDF/Excel, Calendar, Auth.
+No migrar: Reportes PDF/Excel, Calendar, descargas de archivos, ejecución de migraciones.

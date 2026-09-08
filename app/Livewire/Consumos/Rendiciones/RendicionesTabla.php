@@ -14,32 +14,32 @@ class RendicionesTabla extends Component
 {
     use WithPagination;
 
-    public $filtros = [];
-    public $selected = [];
+    public array $filtros = [];
+    public array $selected = [];
 
-    public $mensaje;
-    public $mensajeTipo;
+    public ?string $mensaje = null;
+    public ?string $mensajeTipo = null;
 
-    public $periodo;
+    public ?string $periodo = null;
 
-    public $estadoCambio;
-    public $periodoRefac;
-    public $obsRefac;
+    public ?int $estadoCambio = null;
+    public ?string $periodoRefac = null;
+    public ?string $obsRefac = null;
 
-    public $periodoRevalorizar;
+    public ?string $periodoRevalorizar = null;
 
-    public $estadoAgregar;
-    public $periodoAgregar;
-    public $obsAgregar;
-    public $valorAgregar;
+    public ?int $estadoAgregar = null;
+    public ?string $periodoAgregar = null;
+    public ?string $obsAgregar = null;
+    public ?string $valorAgregar = null;
 
-    public $estadoAgregarYDiff;
-    public $periodoAgregarYDiff;
-    public $obsAgregarYDiff;
-    public $valorAgregarYDiff;
-    public $refacturarYDiff = 'refacturar';
+    public ?int $estadoAgregarYDiff = null;
+    public ?string $periodoAgregarYDiff = null;
+    public ?string $obsAgregarYDiff = null;
+    public ?string $valorAgregarYDiff = null;
+    public string $refacturarYDiff = 'refacturar';
 
-    public function mount()
+    public function mount(): void
     {
         $this->filtros = [
             'cobertura_id' => session('c_cobertura_id'),
@@ -55,14 +55,14 @@ class RendicionesTabla extends Component
     }
 
     #[On('filtros-aplicados')]
-    public function aplicarFiltros($filtros)
+    public function aplicarFiltros(array $filtros): void
     {
         $this->filtros = $filtros;
         $this->selected = [];
         $this->resetPage();
     }
 
-    public function toggleAll($checked)
+    public function toggleAll(bool $checked): void
     {
         if ($checked) {
             $this->selected = collect($this->buildQuery()->paginate()->items())
@@ -113,7 +113,7 @@ class RendicionesTabla extends Component
      * Template method: valida, ejecuta la acción contra el repository y aplica el resultado.
      * Cada acción pública solo declara sus reglas propias y qué método del repository llamar.
      */
-    protected function procesarAccion(array $reglas, array $mensajes, \Closure $accion)
+    protected function procesarAccion(array $reglas, array $mensajes, \Closure $accion): void
     {
         $this->validate($reglas, $mensajes);
 
@@ -127,7 +127,7 @@ class RendicionesTabla extends Component
         }
     }
 
-    public function generarRendicion(RendicionRepository $rendiciones)
+    public function generarRendicion(RendicionRepository $rendiciones): void
     {
         $this->procesarAccion(
             ['selected' => 'required', 'periodo' => 'required'],
@@ -136,7 +136,7 @@ class RendicionesTabla extends Component
         );
     }
 
-    public function cambiarEstados(RendicionRepository $rendiciones)
+    public function cambiarEstados(RendicionRepository $rendiciones): void
     {
         $this->procesarAccion(
             [
@@ -154,7 +154,7 @@ class RendicionesTabla extends Component
         );
     }
 
-    public function revalorizar(RendicionRepository $rendiciones)
+    public function revalorizar(RendicionRepository $rendiciones): void
     {
         $this->procesarAccion(
             ['selected' => 'required', 'periodoRevalorizar' => 'required'],
@@ -163,7 +163,7 @@ class RendicionesTabla extends Component
         );
     }
 
-    public function agregarConsumo(RendicionRepository $rendiciones)
+    public function agregarConsumo(RendicionRepository $rendiciones): void
     {
         $this->procesarAccion(
             [
@@ -178,7 +178,7 @@ class RendicionesTabla extends Component
         );
     }
 
-    public function agregarConsumoYDiferencia(RendicionRepository $rendiciones)
+    public function agregarConsumoYDiferencia(RendicionRepository $rendiciones): void
     {
         $this->procesarAccion(
             [
@@ -200,12 +200,12 @@ class RendicionesTabla extends Component
         );
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $partes = $this->buildQuery()->paginate();
 

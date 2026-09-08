@@ -16,19 +16,19 @@ class GerenciadoraCoberturaPadreIndex extends Component
 {
     use WithPagination;
 
-    public $modalId;
-    public $gerenciadora_id;
-    public $cobertura_id;
-    public $nom_padre_id;
+    public ?int $modalId = null;
+    public ?int $gerenciadora_id = null;
+    public ?int $cobertura_id = null;
+    public ?int $nom_padre_id = null;
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'gerenciadora_id', 'cobertura_id', 'nom_padre_id']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'gerenciadoraCoberturaPadreModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $registro = GerenciadoraCoberturaNomPadre::withTrashed()->findOrFail($id);
 
@@ -40,7 +40,7 @@ class GerenciadoraCoberturaPadreIndex extends Component
         $this->dispatch('open-modal', modal: 'gerenciadoraCoberturaPadreModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'gerenciadora_id' => ['required', 'integer'],
@@ -78,7 +78,7 @@ class GerenciadoraCoberturaPadreIndex extends Component
         session()->flash('success', 'La operación se ha completado exitosamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         $registro = GerenciadoraCoberturaNomPadre::withTrashed()->findOrFail($id);
 
@@ -91,12 +91,12 @@ class GerenciadoraCoberturaPadreIndex extends Component
         }
     }
 
-    public function paginationView()
+    public function paginationView(): string
     {
         return 'livewire::bootstrap';
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $gerenciadora_cobertura_padre = GerenciadoraCoberturaNomPadre::withTrashed()
             ->with(['gerenciadora', 'cobertura', 'nomPadre'])

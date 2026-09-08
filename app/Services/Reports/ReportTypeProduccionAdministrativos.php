@@ -4,6 +4,7 @@ namespace App\Services\Reports;
 
 use App\Enums\Orientacion;
 use App\Enums\TamanoPapel;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +28,7 @@ class ReportTypeProduccionAdministrativos implements ReportStrategy
         return $validator->validated();
     }
 
-    public function generate(array $filtros)
+    public function generate(array $filtros): Collection
     {
         $query = DB::table('v_parte_cab')
             ->select(DB::raw('name, DATE(created_at) as fecha, COUNT(*) as cantidad'))

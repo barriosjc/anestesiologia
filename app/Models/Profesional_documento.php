@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes; 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Profesional_documento extends Model
 {
@@ -20,7 +21,7 @@ class Profesional_documento extends Model
         'fecha_vcto'
     ];
 
-    public function getFechaVctoAtAttribute($value)
+    public function getFechaVctoAtAttribute($value): string
     {
         $resu = '';
         if (!empty($value)) {
@@ -30,7 +31,7 @@ class Profesional_documento extends Model
         return $resu;
     }
 
-    public function getFechaVctoyAttribute()
+    public function getFechaVctoyAttribute(): ?string
     {
         $resu = $this->fecha_vcto;
         if (!empty($resu)) {
@@ -44,12 +45,12 @@ class Profesional_documento extends Model
 
     public $timestamps = true;
 
-    public function profesional()
+    public function profesional(): BelongsTo
     {
         return $this->belongsTo(Profesional::class);
     }
 
-    public function documento()
+    public function documento(): BelongsTo
     {
         return $this->belongsTo(Documento::class);
     }

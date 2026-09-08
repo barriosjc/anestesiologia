@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 
 /**
  * Class parte_cab
@@ -56,24 +57,24 @@ class Parte_cab extends Model
     ];
 
     // Accessor para el input de fecha de prestación (formato para datetime-local)
-    public function getFecPrestacionInputAttribute()
+    public function getFecPrestacionInputAttribute(): ?string
     {
         return $this->fec_prestacion ? $this->fec_prestacion->format('Y-m-d\TH:i') : null;
     }
     
     // Accessor para el input de fecha de prestación fin (formato para datetime-local)
-    public function getFecPrestacionFinInputAttribute()
+    public function getFecPrestacionFinInputAttribute(): ?string
     {
         return $this->fec_prestacion_fin ? $this->fec_prestacion_fin->format('Y-m-d\TH:i') : null;
     }
     
     // Accessor para mostrar las fechas en formato dd/mm/yyyy H:i
-    public function getFecPrestacionFormattedAttribute()
+    public function getFecPrestacionFormattedAttribute(): ?string
     {
         return $this->fec_prestacion ? $this->fec_prestacion->format('d/m/Y H:i') : null;
     }
     
-    public function getFecPrestacionFinFormattedAttribute()
+    public function getFecPrestacionFinFormattedAttribute(): ?string
     {
         return $this->fec_prestacion_fin ? $this->fec_prestacion_fin->format('d/m/Y H:i') : null;
     }
@@ -89,7 +90,7 @@ class Parte_cab extends Model
         $this->attributes['fec_prestacion_fin'] = $value ? Carbon::parse($value) : null;
     }
     
-    public static function vParteCab()
+    public static function vParteCab(): Builder
     {
         $query = DB::table('v_parte_cab')
             ->select('id', 'gerenciadora_id','profesional_id', 'paciente_id', 'cobertura_id', 'centro_id', 'observacion', 'user_id',

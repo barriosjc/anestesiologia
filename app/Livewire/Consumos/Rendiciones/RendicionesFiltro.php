@@ -11,17 +11,17 @@ use Livewire\Component;
 
 class RendicionesFiltro extends Component
 {
-    public $cobertura_id;
-    public $centro_id;
-    public $profesional_id;
-    public $nombre;
-    public $fec_desde;
-    public $fec_hasta;
-    public $estado_id = [];
-    public $periodo_gen;
-    public $nro_parte;
+    public ?int $cobertura_id = null;
+    public ?int $centro_id = null;
+    public ?int $profesional_id = null;
+    public ?string $nombre = null;
+    public ?string $fec_desde = null;
+    public ?string $fec_hasta = null;
+    public array $estado_id = [];
+    public ?string $periodo_gen = null;
+    public ?string $nro_parte = null;
 
-    public function mount()
+    public function mount(): void
     {
         $this->cobertura_id = session('c_cobertura_id');
         $this->centro_id = session('c_centro_id');
@@ -34,7 +34,7 @@ class RendicionesFiltro extends Component
         $this->nro_parte = session('c_nro_parte');
     }
 
-    protected function filtroKeys()
+    protected function filtroKeys(): array
     {
         return [
             'cobertura_id', 'centro_id', 'profesional_id', 'nombre',
@@ -42,7 +42,7 @@ class RendicionesFiltro extends Component
         ];
     }
 
-    public function aplicar()
+    public function aplicar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -53,7 +53,7 @@ class RendicionesFiltro extends Component
         $this->dispatch('filtros-aplicados', filtros: $filtros);
     }
 
-    public function limpiar()
+    public function limpiar(): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -66,7 +66,7 @@ class RendicionesFiltro extends Component
         $this->dispatch('filtro-limpiado');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.consumos.rendiciones.rendiciones-filtro', [
             'coberturas' => Cobertura::orderBy('nombre')->get(),

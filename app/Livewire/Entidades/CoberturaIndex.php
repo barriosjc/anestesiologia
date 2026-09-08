@@ -9,24 +9,24 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class CoberturaIndex extends Component
 {
-    public $text;
+    public ?string $text = null;
 
-    public $modalId;
-    public $nombre;
-    public $sigla;
-    public $cuit;
-    public $edad_desde;
-    public $edad_hasta;
-    public $porcentaje_adic;
+    public ?int $modalId = null;
+    public ?string $nombre = null;
+    public ?string $sigla = null;
+    public ?string $cuit = null;
+    public ?int $edad_desde = null;
+    public ?int $edad_hasta = null;
+    public ?int $porcentaje_adic = null;
 
-    public function abrirModalNuevo()
+    public function abrirModalNuevo(): void
     {
         $this->reset(['modalId', 'nombre', 'sigla', 'cuit', 'edad_desde', 'edad_hasta', 'porcentaje_adic']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'coberturaModal');
     }
 
-    public function abrirModalEditar($id)
+    public function abrirModalEditar(int $id): void
     {
         $cobertura = Cobertura::findOrFail($id);
 
@@ -41,7 +41,7 @@ class CoberturaIndex extends Component
         $this->dispatch('open-modal', modal: 'coberturaModal');
     }
 
-    public function guardar()
+    public function guardar(): void
     {
         $this->validate([
             'nombre'          => ['required', 'string', 'max:200'],
@@ -82,13 +82,13 @@ class CoberturaIndex extends Component
         session()->flash('success', 'Cobertura guardada correctamente.');
     }
 
-    public function borrar($id)
+    public function borrar(int $id): void
     {
         Cobertura::findOrFail($id)->delete();
         session()->flash('success', 'Cobertura borrada correctamente.');
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $coberturas = Cobertura::when($this->text, function ($query) {
             $query->where(function ($q) {

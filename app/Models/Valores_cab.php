@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\ValorizacionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Valores_cab
@@ -41,17 +42,17 @@ class Valores_cab extends Model
         'grupo'
     ];
 
-    public function cobertura()
+    public function cobertura(): BelongsTo
     {
         return $this->belongsTo(Cobertura::class, 'cobertura_id');
     }
 
-    public function centro()
+    public function centro(): BelongsTo
     {
         return $this->belongsTo(Centro::class, 'centro_id');
     }
 
-    public function gerenciadora()
+    public function gerenciadora(): BelongsTo
     {
         return $this->belongsTo(Gerenciadora::class, 'gerenciadora_id');
     }
@@ -62,7 +63,7 @@ class Valores_cab extends Model
         int $centro_id,
         string $periodo,
         string $codigo
-    ) {
+    ): ?Valores_cab {
         return app(ValorizacionService::class)->getValor(
             $gerenciadora_id,
             $cobertura_id,

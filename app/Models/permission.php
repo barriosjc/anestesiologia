@@ -10,7 +10,7 @@ class Permission extends SpatiePermission
         'created_at' => 'date',
     ];
     
-    public function getCreatedAtAttribute($value)
+    public function getCreatedAtAttribute($value): string
     {
         $resu = '';
         if (!empty($value)) {

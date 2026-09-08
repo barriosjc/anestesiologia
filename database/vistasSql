@@ -1,6 +1,6 @@
--- c2660308_anest.v_consumos source
+-- c2880689_anest.v_consumos source
 
-create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_consumos` as
+create or REPLACE algorithm = UNDEFINED view `c2880689_anest`.`v_consumos` as
 select
     `cc`.`id` as `consumos_cab_id`,
     `cc`.`parte_cab_id` as `parte_cab_id`,
@@ -20,10 +20,10 @@ select
     `np`.`descripcion` as `nom_descripcion`,
     `e`.`descripcion` as `est_descripcion`
 from
-    (((`c2660308_anest`.`consumos_cab` `cc`
-join `c2660308_anest`.`consumos_det` `cd` on
+    (((`c2880689_anest`.`consumos_cab` `cc`
+join `c2880689_anest`.`consumos_det` `cd` on
     (`cc`.`id` = `cd`.`consumo_cab_id`))
-join `c2660308_anest`.`estados` `e` on
+join `c2880689_anest`.`estados` `e` on
     (`e`.`id` = `cd`.`estado_id`))
 join (
     select
@@ -33,7 +33,7 @@ join (
         `n`.`nivel` as `nivel`,
         `n`.`descripcion` as `descripcion`
     from
-        `c2660308_anest`.`nomenclador` `n`
+        `c2880689_anest`.`nomenclador` `n`
 union all
     select
         `p`.`id` as `id`,
@@ -42,7 +42,7 @@ union all
         `p`.`codigo` as `codigo`,
         `p`.`nombre` as `nombre`
     from
-        `c2660308_anest`.`nom_practicas_estudios` `p`) `np` on
+        `c2880689_anest`.`nom_practicas_estudios` `p`) `np` on
     (`np`.`id` = `cd`.`nomenclador_id`))
 where
     `cc`.`deleted_at` is null
@@ -50,9 +50,9 @@ where
 
 ------------------------------------------------------------------------------------------
 
--- c2660308_anest.v_parte_cab source
+-- c2880689_anest.v_parte_cab source
 
-create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_parte_cab` as
+create or REPLACE algorithm = UNDEFINED view `c2880689_anest`.`v_parte_cab` as
 select
     `cab`.`id` as `id`,
     `cab`.`gerenciadora_id` as `gerenciadora_id`,
@@ -85,32 +85,32 @@ select
     select
         count(0)
     from
-        `c2660308_anest`.`partes_det` `det`
+        `c2880689_anest`.`partes_det` `det`
     where
         `det`.`parte_cab_id` = `cab`.`id`
         and `det`.`deleted_at` is null) as `cantidad`
 from
-    ((((((`c2660308_anest`.`partes_cab` `cab`
-join `c2660308_anest`.`users` `us` on
+    ((((((`c2880689_anest`.`partes_cab` `cab`
+join `c2880689_anest`.`users` `us` on
     (`us`.`id` = `cab`.`user_id`))
-join `c2660308_anest`.`estados` `est` on
+join `c2880689_anest`.`estados` `est` on
     (`est`.`id` = `cab`.`estado_id`))
-join `c2660308_anest`.`profesionales` `prof` on
+join `c2880689_anest`.`profesionales` `prof` on
     (`prof`.`id` = `cab`.`profesional_id`))
-join `c2660308_anest`.`centros` `cen` on
+join `c2880689_anest`.`centros` `cen` on
     (`cen`.`id` = `cab`.`centro_id`))
-join `c2660308_anest`.`pacientes` `pac` on
+join `c2880689_anest`.`pacientes` `pac` on
     (`pac`.`id` = `cab`.`paciente_id`))
-join `c2660308_anest`.`coberturas` `cob` on
+join `c2880689_anest`.`coberturas` `cob` on
     (`cob`.`id` = `cab`.`cobertura_id`))
 where
     `cab`.`deleted_at` is null;
 
 ------------------------------------------------------------------------------------------
 
--- c2660308_anest.v_presupuestos_cab source
+-- c2880689_anest.v_presupuestos_cab source
 
-create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_presupuestos_cab` as
+create or REPLACE algorithm = UNDEFINED view `c2880689_anest`.`v_presupuestos_cab` as
 select
     `pc`.`id` as `id`,
     `pc`.`fecha` as `fecha`,
@@ -141,41 +141,41 @@ select
     coalesce(`pp`.`total_pagado`, 0) as `total_pagado`,
     coalesce(`pd`.`total_presupuesto`, 0) as `total_presupuesto`
 from
-    (((((`c2660308_anest`.`presupuestos_cab` `pc`
-left join `c2660308_anest`.`centros` `c` on
+    (((((`c2880689_anest`.`presupuestos_cab` `pc`
+left join `c2880689_anest`.`centros` `c` on
     (`c`.`id` = `pc`.`centro_id`))
-left join `c2660308_anest`.`profesionales` `p` on
+left join `c2880689_anest`.`profesionales` `p` on
     (`p`.`id` = `pc`.`profesional_id`))
-left join `c2660308_anest`.`users` `u` on
+left join `c2880689_anest`.`users` `u` on
     (`u`.`id` = `pc`.`usuario_id`))
 left join (
     select
-        `c2660308_anest`.`presupuestos_pagos`.`presupuesto_cab_id` as `presupuesto_cab_id`,
-        sum(`c2660308_anest`.`presupuestos_pagos`.`valor`) as `total_pagado`
+        `c2880689_anest`.`presupuestos_pagos`.`presupuesto_cab_id` as `presupuesto_cab_id`,
+        sum(`c2880689_anest`.`presupuestos_pagos`.`valor`) as `total_pagado`
     from
-        `c2660308_anest`.`presupuestos_pagos`
+        `c2880689_anest`.`presupuestos_pagos`
     where
-        `c2660308_anest`.`presupuestos_pagos`.`deleted_at` is null
+        `c2880689_anest`.`presupuestos_pagos`.`deleted_at` is null
     group by
-        `c2660308_anest`.`presupuestos_pagos`.`presupuesto_cab_id`) `pp` on
+        `c2880689_anest`.`presupuestos_pagos`.`presupuesto_cab_id`) `pp` on
     (`pp`.`presupuesto_cab_id` = `pc`.`id`))
 left join (
     select
-        `c2660308_anest`.`presupuestos_det`.`presupuesto_cab_id` as `presupuesto_cab_id`,
-        sum(`c2660308_anest`.`presupuestos_det`.`valor`) as `total_presupuesto`
+        `c2880689_anest`.`presupuestos_det`.`presupuesto_cab_id` as `presupuesto_cab_id`,
+        sum(`c2880689_anest`.`presupuestos_det`.`valor`) as `total_presupuesto`
     from
-        `c2660308_anest`.`presupuestos_det`
+        `c2880689_anest`.`presupuestos_det`
     where
-        `c2660308_anest`.`presupuestos_det`.`deleted_at` is null
+        `c2880689_anest`.`presupuestos_det`.`deleted_at` is null
     group by
-        `c2660308_anest`.`presupuestos_det`.`presupuesto_cab_id`) `pd` on
+        `c2880689_anest`.`presupuestos_det`.`presupuesto_cab_id`) `pd` on
     (`pd`.`presupuesto_cab_id` = `pc`.`id`));
 
 ------------------------------------------------------------------------------------------
 
--- c2660308_anest.v_rendicion_agrupxnivel source
+-- c2880689_anest.v_rendicion_agrupxnivel source
 
-create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_rendicion_agrupxnivel` as
+create or REPLACE algorithm = UNDEFINED view `c2880689_anest`.`v_rendicion_agrupxnivel` as
 select
     `con`.`parte_cab_id` as `parte_cab_id`,
     `con`.`cantidad` as `cantidad`,
@@ -209,12 +209,12 @@ from
         group_concat(coalesce(`n`.`nivel`, `np`.`codigo`) order by coalesce(`n`.`nivel`, `np`.`codigo`) asc separator ', ') as `niveles`,
         sum(`cd`.`valor`) as `valor`
     from
-        (((`c2660308_anest`.`consumos_det` `cd`
-    join `c2660308_anest`.`consumos_cab` `cc` on
+        (((`c2880689_anest`.`consumos_det` `cd`
+    join `c2880689_anest`.`consumos_cab` `cc` on
         (`cc`.`id` = `cd`.`consumo_cab_id`))
-    left join `c2660308_anest`.`nomenclador` `n` on
+    left join `c2880689_anest`.`nomenclador` `n` on
         (`cd`.`nomenclador_id` = `n`.`id` and `cd`.`nom_padre_id` = `n`.`nom_padre_id`))
-    left join `c2660308_anest`.`nom_practicas_estudios` `np` on
+    left join `c2880689_anest`.`nom_practicas_estudios` `np` on
         (`cd`.`nomenclador_id` = `np`.`id` and `cd`.`nom_padre_id` = `np`.`nom_padre_id`))
     where
         `cd`.`deleted_at` is null
@@ -222,24 +222,24 @@ from
         `cd`.`consumo_cab_id`,
         `cd`.`cantidad`,
         `cd`.`periodo`) `con`
-join `c2660308_anest`.`partes_cab` `pc` on
+join `c2880689_anest`.`partes_cab` `pc` on
     (`pc`.`id` = `con`.`parte_cab_id`))
-join `c2660308_anest`.`profesionales` `pr` on
+join `c2880689_anest`.`profesionales` `pr` on
     (`pr`.`id` = `pc`.`profesional_id`))
-join `c2660308_anest`.`pacientes` `pa` on
+join `c2880689_anest`.`pacientes` `pa` on
     (`pa`.`id` = `pc`.`paciente_id`))
-join `c2660308_anest`.`coberturas` `co` on
+join `c2880689_anest`.`coberturas` `co` on
     (`co`.`id` = `pc`.`cobertura_id`))
-join `c2660308_anest`.`centros` `ce` on
+join `c2880689_anest`.`centros` `ce` on
     (`ce`.`id` = `pc`.`centro_id`))
 where
     `pc`.`deleted_at` is null;
 
 ------------------------------------------------------------------------------------------
 
--- c2660308_anest.v_rendiciones source
+-- c2880689_anest.v_rendiciones source
 
-create or REPLACE algorithm = UNDEFINED view `c2660308_anest`.`v_rendiciones` as
+create or REPLACE algorithm = UNDEFINED view `c2880689_anest`.`v_rendiciones` as
 select
     `sel`.`id` as `parte_cab_id`,
     `sel`.`profesional_id` as `profesional_id`,
@@ -279,14 +279,14 @@ select
         when `np`.`id` is not null then 'practica'
     end as `tipo_practica`
 from
-    (((((`c2660308_anest`.`consumos_cab` `cc`
-join `c2660308_anest`.`consumos_det` `cd` on
+    (((((`c2880689_anest`.`consumos_cab` `cc`
+join `c2880689_anest`.`consumos_det` `cd` on
     (`cc`.`id` = `cd`.`consumo_cab_id`))
-left join `c2660308_anest`.`nomenclador` `n` on
+left join `c2880689_anest`.`nomenclador` `n` on
     (`cd`.`nomenclador_id` = `n`.`id` and `cd`.`nom_padre_id` = `n`.`nom_padre_id`))
-left join `c2660308_anest`.`nom_practicas_estudios` `np` on
+left join `c2880689_anest`.`nom_practicas_estudios` `np` on
     (`cd`.`nomenclador_id` = `np`.`id` and `cd`.`nom_padre_id` = `np`.`nom_padre_id`))
-join `c2660308_anest`.`estados` `e` on
+join `c2880689_anest`.`estados` `e` on
     (`cd`.`estado_id` = `e`.`id`))
 left join (
     select
@@ -311,14 +311,14 @@ left join (
         `ce`.`nombre` as `cen_nombre`,
         `pc`.`gerenciadora_id` as `gerenciadora_id`
     from
-        ((((`c2660308_anest`.`partes_cab` `pc`
-    join `c2660308_anest`.`profesionales` `pr` on
+        ((((`c2880689_anest`.`partes_cab` `pc`
+    join `c2880689_anest`.`profesionales` `pr` on
         (`pr`.`id` = `pc`.`profesional_id`))
-    join `c2660308_anest`.`pacientes` `pa` on
+    join `c2880689_anest`.`pacientes` `pa` on
         (`pa`.`id` = `pc`.`paciente_id`))
-    join `c2660308_anest`.`coberturas` `co` on
+    join `c2880689_anest`.`coberturas` `co` on
         (`co`.`id` = `pc`.`cobertura_id`))
-    join `c2660308_anest`.`centros` `ce` on
+    join `c2880689_anest`.`centros` `ce` on
         (`ce`.`id` = `pc`.`centro_id`))) `sel` on
     (`sel`.`id` = `cc`.`parte_cab_id`))
 where

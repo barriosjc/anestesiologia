@@ -17,21 +17,21 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class ReportesForm extends Component
 {
-    public $reporte_id;
-    public $cobertura_id;
-    public $centro_id;
-    public $profesional_id;
-    public $nombre;
-    public $estados = [];
-    public $periodo_gen;
-    public $fec_desde;
-    public $fec_hasta;
-    public $estado_presupuesto;
-    public $user_id;
-    public $fec_desde_adm;
-    public $fec_hasta_adm;
+    public ?int $reporte_id = null;
+    public ?int $cobertura_id = null;
+    public ?int $centro_id = null;
+    public ?int $profesional_id = null;
+    public ?string $nombre = null;
+    public array $estados = [];
+    public ?int $periodo_gen = null;
+    public ?string $fec_desde = null;
+    public ?string $fec_hasta = null;
+    public ?string $estado_presupuesto = null;
+    public ?int $user_id = null;
+    public ?string $fec_desde_adm = null;
+    public ?string $fec_hasta_adm = null;
 
-    protected function filtroKeys()
+    protected function filtroKeys(): array
     {
         return [
             'reporte_id', 'cobertura_id', 'centro_id', 'profesional_id', 'nombre',
@@ -40,7 +40,7 @@ class ReportesForm extends Component
         ];
     }
 
-    public function generar(ReportGeneratorService $reportGeneratorService)
+    public function generar(ReportGeneratorService $reportGeneratorService): void
     {
         $filtros = [];
         foreach ($this->filtroKeys() as $key) {
@@ -61,7 +61,7 @@ class ReportesForm extends Component
         $this->dispatch('reporte-pdf-listo', url: route('reportes.stream', $filtros));
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $user = Auth::user();
 

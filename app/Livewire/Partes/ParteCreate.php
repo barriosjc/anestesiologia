@@ -16,22 +16,22 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.main')]
 class ParteCreate extends Component
 {
-    public $parte_id;
-    public $gerenciadora_id;
-    public $centro_id;
-    public $fec_prestacion;
-    public $fec_prestacion_fin;
-    public $dni;
-    public $nombre;
-    public $fec_nacimiento;
-    public $cobertura_id;
-    public $profesional_id;
-    public $observaciones;
+    public ?int $parte_id = null;
+    public ?int $gerenciadora_id = null;
+    public ?int $centro_id = null;
+    public ?string $fec_prestacion = null;
+    public ?string $fec_prestacion_fin = null;
+    public ?string $dni = null;
+    public ?string $nombre = null;
+    public ?string $fec_nacimiento = null;
+    public ?int $cobertura_id = null;
+    public ?int $profesional_id = null;
+    public ?string $observaciones = null;
 
-    public $searchMessage;
-    public $searchMessageType;
+    public ?string $searchMessage = null;
+    public ?string $searchMessageType = null;
 
-    public function mount($id = null)
+    public function mount(?int $id = null): void
     {
         if ($id) {
             $parte = Parte_cab::find($id);
@@ -51,7 +51,7 @@ class ParteCreate extends Component
         }
     }
 
-    public function searchPatient()
+    public function searchPatient(): void
     {
         $this->reset('searchMessage', 'searchMessageType');
 
@@ -76,7 +76,7 @@ class ParteCreate extends Component
         }
     }
 
-    public function save()
+    public function save(): \Illuminate\Http\RedirectResponse
     {
         $this->validate();
 
@@ -113,7 +113,7 @@ class ParteCreate extends Component
         return $this->redirect(route('partes_det.create', $parte->id), navigate: true);
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'dni' => 'required|string|max:20',
@@ -149,14 +149,14 @@ class ParteCreate extends Component
         ];
     }
 
-    public function updatedFecPrestacion($value)
+    public function updatedFecPrestacion(?string $value): void
     {
         if ($value && empty($this->fec_prestacion_fin)) {
             $this->fec_prestacion_fin = $value;
         }
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         $user = Auth::user();
         $gerenciadoras = $user->gerenciadoras;

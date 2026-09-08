@@ -9,12 +9,12 @@ use Livewire\Component;
 #[Layout('layouts.main')]
 class CalendarIndex extends Component
 {
-    public $fecha;
-    public $observaciones;
-    public $cerrado = false;
-    public $cancelar = false;
+    public ?string $fecha = null;
+    public ?string $observaciones = null;
+    public bool $cerrado = false;
+    public bool $cancelar = false;
 
-    public function guardar(CalendarRepository $calendarRepository)
+    public function guardar(CalendarRepository $calendarRepository): void
     {
         $resultado = $calendarRepository->guardar([
             'fecha' => $this->fecha,
@@ -33,7 +33,7 @@ class CalendarIndex extends Component
         $this->dispatch('calendario-guardado', eventos: $calendarRepository->eventos());
     }
 
-    public function render(CalendarRepository $calendarRepository)
+    public function render(CalendarRepository $calendarRepository): \Illuminate\Contracts\View\View
     {
         return view('livewire.cargas.calendar-index', [
             'eventos' => $calendarRepository->eventos(),

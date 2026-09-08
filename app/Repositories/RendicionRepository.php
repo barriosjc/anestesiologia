@@ -19,7 +19,7 @@ class RendicionRepository
         return DB::table('v_rendiciones')->where('consumos_det_id', $consumoDetId)->value('parte_cab_id');
     }
 
-    public function generarRendicion(array $selected, $periodo)
+    public function generarRendicion(array $selected, string $periodo): array
     {
         foreach ($selected as $consumoDetId) {
             $det = Consumo_det::find($consumoDetId);
@@ -35,7 +35,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se generó la rendición.'];
     }
 
-    public function cambiarEstados(array $selected, $nuevoEstado, $periodoRefac, $obsRefac)
+    public function cambiarEstados(array $selected, int $nuevoEstado, ?string $periodoRefac, ?string $obsRefac): array
     {
         try {
             if ($nuevoEstado == 7 && empty($periodoRefac)) {
@@ -95,7 +95,7 @@ class RendicionRepository
         }
     }
 
-    public function revalorizar(array $selected, $periodo)
+    public function revalorizar(array $selected, string $periodo): array
     {
         $cantidad = 0;
         foreach ($selected as $consumoDetId) {
@@ -120,7 +120,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => "Se actualizaron los valores de {$cantidad} consumos."];
     }
 
-    public function agregarConsumo(array $selected, $periodo, $estado, $valor, $observaciones)
+    public function agregarConsumo(array $selected, string $periodo, int $estado, $valor, string $observaciones): array
     {
         if (count($selected) !== 1) {
             return ['success' => false, 'mensaje' => 'Para este proceso debe seleccionar solo (1) un consumo.'];
@@ -137,7 +137,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se agregó el nuevo consumo a la rendición.'];
     }
 
-    public function agregarConsumoYDiferencia(array $selected, $periodo, $estado, $valor, $observaciones, $refacturar)
+    public function agregarConsumoYDiferencia(array $selected, string $periodo, int $estado, $valor, string $observaciones, string $refacturar): array
     {
         if (count($selected) !== 1) {
             return ['success' => false, 'mensaje' => 'Para este proceso debe seleccionar solo (1) un consumo.'];
@@ -174,7 +174,7 @@ class RendicionRepository
         return ['success' => true, 'mensaje' => 'Se agregó el nuevo consumo y diferencia a la rendición.'];
     }
 
-    protected function incrementarMes($dateString, $monthsToAdd)
+    protected function incrementarMes(string $dateString, int $monthsToAdd): string
     {
         $date = DateTime::createFromFormat('Y/m', $dateString);
         if (!$date) {

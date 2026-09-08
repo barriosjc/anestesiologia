@@ -11,10 +11,10 @@
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
 
-                            <a href="{{ route('presupuestos.cab.partes', $presupuestosCab->id) }}"
+                            <button type="button" wire:click="generarPartes"
                                 class="btn btn-primary btn-sm shadow-sm" title="Crear parte">
                                 <i class="fa fa-plus-circle me-2" aria-hidden="true"></i> Crear parte
-                            </a>
+                            </button>
 
                             <a href="{{ route('presupuestos.cab.edit', $presupuestosCab->id) }}"
                                 class="btn btn-warning btn-sm shadow-sm" title="Volver">

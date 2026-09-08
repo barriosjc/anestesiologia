@@ -75,11 +75,12 @@
                                             </button>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('presupuestos.cab.partes', $item->id) }}"
+                                            <button type="button" class="dropdown-item"
+                                                wire:click="generarPartes({{ $item->id }})"
                                                 data-bs-toggle="tooltip" data-bs-placement="top"
                                                 title="Genera el parte para facturar a la institución">
                                                 <i class="fas fa-coins me-2"></i> Generar parte
-                                            </a>
+                                            </button>
                                         </li>
                                         <li>
                                             <hr class="dropdown-divider">
