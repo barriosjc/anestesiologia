@@ -19,13 +19,8 @@ Route::get('login/restablecer', \App\Livewire\Auth\ResetPassword::class)->name('
 
 
 Route::group(['middleware' => 'auth'], function () {
-<<<<<<< HEAD
-    Route::get('/run-migration', [UtilController::class, 'runMigrationAndSeeder'])
-                ->middleware(['role:super-admin']);
-=======
     // Route::get('/run-migration', [UtilController::class, 'runMigrationAndSeeder'])
     //             ->middleware(['role:super-admin']);
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
     Route::get('password/profile', \App\Livewire\Perfil\PerfilPassword::class)->name('profile.password');
 
     Route::middleware('IngresoInicialMiddleware')->group(function () {

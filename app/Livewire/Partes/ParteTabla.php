@@ -74,11 +74,7 @@ class ParteTabla extends Component
             'estado_cambio_estado.required' => '¡Atención! La selección del estado es obligatoria.',
         ]);
 
-<<<<<<< HEAD
-        $parte = Parte_cab::findOrFail($this->estado_cambio_id);
-=======
         $parte = ParteCab::findOrFail($this->estado_cambio_id);
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
         $parte->observaciones = strip_tags((string) $this->estado_cambio_obs);
         $parte->estado_id = $this->estado_cambio_estado;
         $parte->save();

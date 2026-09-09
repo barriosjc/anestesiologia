@@ -4,11 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-<<<<<<< HEAD
-use App\Models\Parte_det;
-=======
 use App\Models\ParteDet;
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

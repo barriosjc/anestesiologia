@@ -63,11 +63,7 @@ class ValoresCab extends Model
         int $centro_id,
         string $periodo,
         string $codigo
-<<<<<<< HEAD:app/Models/Valores_cab.php
-    ): ?Valores_cab {
-=======
     ): ?ValoresCab {
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856:app/Models/ValoresCab.php
         return app(ValorizacionService::class)->getValor(
             $gerenciadora_id,
             $cobertura_id,

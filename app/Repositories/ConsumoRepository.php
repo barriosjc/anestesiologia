@@ -10,11 +10,7 @@ use App\Models\ValoresCab;
 
 class ConsumoRepository
 {
-<<<<<<< HEAD
-    public function valorBuscar(string $periodo, string $nivel, Parte_cab $parte_cab)
-=======
     public function valorBuscar(string $periodo, string $nivel, ParteCab $parte_cab)
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
     {
         $valores = ValoresCab::vValores(
             $parte_cab->gerenciadora_id,

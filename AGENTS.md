@@ -70,8 +70,6 @@
 - Directorios: `app/Livewire/` y `resources/views/livewire/`
 - Nombre de componentes: kebab-case (ej: `parte-create`, `presupuesto-table`)
 
-<<<<<<< HEAD
-=======
 ## Esqueleto Laravel 11
 - `bootstrap/app.php` con `Application::configure()` (routing, middleware y aliases, exceptions)
 - Sin `app/Http/Kernel.php`, `app/Console/Kernel.php` ni `app/Exceptions/Handler.php`
@@ -79,5 +77,4 @@
 - Rate limiters (`api`, `login`) en `app/Providers/RouteServiceProvider.php`
 - Build de assets con Vite (`package.json` + `vite.config.js`); sin jQuery/laravel-mix
 
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 No migrar: Reportes PDF/Excel, Calendar, descargas de archivos, ejecución de migraciones.

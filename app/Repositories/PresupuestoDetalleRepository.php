@@ -3,11 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\PresupuestoDet;
-<<<<<<< HEAD
-use App\Models\Valores_cab;
-=======
 use App\Models\ValoresCab;
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 use Illuminate\Support\Collection;
 
 class PresupuestoDetalleRepository

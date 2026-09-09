@@ -43,29 +43,6 @@ class ConsumoCargarIndex extends Component
     }
 
     public function observar(): void
-<<<<<<< HEAD
-    {
-        $this->validate([
-            'estado_cambio' => ['required'],
-            'observaciones' => ['required', 'max:255'],
-        ]);
-
-        try {
-            $parte = Parte_cab::find($this->parte_cab_id);
-            $parte->observaciones = strip_tags($this->observaciones);
-            $parte->estado_id = $this->estado_cambio;
-            $parte->save();
-
-            session()->flash('success', 'Estado cambiado exitosamente.');
-            $this->redirect(route('consumos.partes.filtrar'));
-        } catch (\Exception $e) {
-            $this->addError('estado_cambio', $e->getMessage());
-        }
-    }
-
-    public function render(): \Illuminate\Contracts\View\View
-=======
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
     {
         $this->validate([
             'estado_cambio' => ['required'],

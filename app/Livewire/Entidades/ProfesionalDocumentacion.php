@@ -3,11 +3,7 @@
 namespace App\Livewire\Entidades;
 
 use App\Models\Documento;
-<<<<<<< HEAD
-use App\Models\Profesional_documento;
-=======
 use App\Models\ProfesionalDocumento;
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -57,11 +53,7 @@ class ProfesionalDocumentacion extends Component
 
             $this->archivo->storeAs((string) $this->profesionalId, $archivoNombre, 'usuarios');
 
-<<<<<<< HEAD
-            Profesional_documento::create([
-=======
             ProfesionalDocumento::create([
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
                 'profesional_id' => $this->profesionalId,
                 'documento_id'   => $this->documento_id,
                 'nro_hoja'       => $this->nro_hoja,
@@ -81,11 +73,7 @@ class ProfesionalDocumentacion extends Component
     public function borrar(int $id): void
     {
         try {
-<<<<<<< HEAD
-            Profesional_documento::findOrFail($id)->delete();
-=======
             ProfesionalDocumento::findOrFail($id)->delete();
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
         } catch (\Throwable $e) {
             session()->flash('error', 'No se pudo eliminar la documentación.');
 
@@ -98,11 +86,7 @@ class ProfesionalDocumentacion extends Component
     public function render(): \Illuminate\Contracts\View\View
     {
         $documentos = Documento::where('tipo', 'like', '%prof%')->get();
-<<<<<<< HEAD
-        $prof_docum = Profesional_documento::with('documento')
-=======
         $prof_docum = ProfesionalDocumento::with('documento')
->>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
             ->where('profesional_id', $this->profesionalId)
             ->paginate(5);
 
