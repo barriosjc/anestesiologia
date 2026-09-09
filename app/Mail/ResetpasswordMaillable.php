@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class ResetpasswordMaillable extends Mailable
+class ResetpasswordMaillable extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -35,6 +35,7 @@ class ResetpasswordMaillable extends Mailable
      */
     public function build(): Mailable
     {
-        return $this->view('emails.resetpassword');
+        return $this->view('emails.resetpassword')
+            ->subject('Cambio de clave para ingreso al portal');
     }
 }

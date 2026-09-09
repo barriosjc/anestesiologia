@@ -2,10 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Models\Consumo_det;
+use App\Models\ConsumoDet;
 use App\Models\Estado;
-use App\Models\Parte_cab;
-use App\Models\Valores_cab;
+use App\Models\ParteCab;
+use App\Models\ValoresCab;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -22,12 +22,12 @@ class RendicionRepository
     public function generarRendicion(array $selected, string $periodo): array
     {
         foreach ($selected as $consumoDetId) {
-            $det = Consumo_det::find($consumoDetId);
+            $det = ConsumoDet::find($consumoDetId);
             $det->periodo = $periodo;
             $det->estado_id = 5; // liquidado
             $det->save();
 
-            $parte = Parte_cab::where('id', $this->parteIdFor($consumoDetId))->first();
+            $parte = ParteCab::where('id', $this->parteIdFor($consumoDetId))->first();
             $parte->estado_id = 5;
             $parte->save();
         }
@@ -45,7 +45,7 @@ class RendicionRepository
             $sepa = '';
             $ids = '';
             foreach ($selected as $consumoDetId) {
-                $consumo = Consumo_det::find($consumoDetId);
+                $consumo = ConsumoDet::find($consumoDetId);
                 $estActual = $consumo->estado_id;
                 $parteId = $this->parteIdFor($consumoDetId);
 
@@ -101,7 +101,7 @@ class RendicionRepository
         foreach ($selected as $consumoDetId) {
             $rendicion = DB::table('v_rendiciones')->where('consumos_det_id', $consumoDetId)->first();
 
-            $valores = Valores_cab::vValores(
+            $valores = ValoresCab::vValores(
                 $rendicion->gerenciadora_id,
                 $rendicion->cobertura_id,
                 $rendicion->centro_id,
@@ -110,7 +110,7 @@ class RendicionRepository
             );
 
             if (!empty($valores)) {
-                $consumoDet = Consumo_det::find($consumoDetId);
+                $consumoDet = ConsumoDet::find($consumoDetId);
                 $consumoDet->valor = $valores->valor * ($rendicion->porcentaje / 100);
                 $consumoDet->save();
                 $cantidad++;
@@ -126,7 +126,7 @@ class RendicionRepository
             return ['success' => false, 'mensaje' => 'Para este proceso debe seleccionar solo (1) un consumo.'];
         }
 
-        $original = Consumo_det::where('id', $selected[0])->first();
+        $original = ConsumoDet::where('id', $selected[0])->first();
         $nuevo = $original->replicate();
         $nuevo->periodo = $periodo;
         $nuevo->estado_id = $estado;
@@ -145,7 +145,7 @@ class RendicionRepository
 
         $estados = Estado::all();
         $anulado = $estados->firstWhere('extra', 'anulado')->id;
-        $original = Consumo_det::where('id', $selected[0])->first();
+        $original = ConsumoDet::where('id', $selected[0])->first();
         $valorDiff = $original->valor - $valor;
         if ($valorDiff < 0) {
             return ['success' => false, 'mensaje' => 'El valor a agregar no puede ser mayor al valor original.'];

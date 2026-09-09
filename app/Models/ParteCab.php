@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class parte_cab
+ * Class ParteCab
  *
  * @property $id
  * @property $gerenciadora_id
@@ -26,7 +26,7 @@ use Illuminate\Database\Query\Builder;
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Parte_cab extends Model
+class ParteCab extends Model
 {
     use SoftDeletes;
 

@@ -2,22 +2,21 @@
 
 ## Origen y objetivo
 - Proyecto originado en Laravel 8, con JS/jQuery tradicional (controllers + blade + jQuery/AJAX).
-- Ya migrado a Laravel 11 (upgrade de framework, sin cambios funcionales de código).
-- Objetivo actual: reemplazar progresivamente todo el JS/jQuery por Livewire 3,
-  migrando módulo por módulo hacia componentes (ver "Migración a Livewire" más abajo).
+- Migrado a Laravel 11: esqueleto moderno (`bootstrap/app.php`), Vite, sin jQuery (CDN Bootstrap 5 + JS vanilla).
+- Todo el JS/jQuery fue reemplazado por Livewire 3 (ver "Migración a Livewire" más abajo).
 
 ## Stack
 - Laravel 11
 - Livewire 3
-- Bootstrap 5
-- jQuery
+- Bootstrap 5 (CDN)
+- Vite (sin bundle referenciado en vistas; JS/CSS por CDN)
 - MySQL
 - spatie/laravel-permission (RBAC)
 - barryvdh/laravel-dompdf (PDF)
 - maatwebsite/excel (exports)
 
 ## Convenciones
-- Modelos en `app/Models/` con nombres en ingés (ej: `Parte_cab`, `Consumo_det`, `PresupuestoCab`)
+- Modelos en `app/Models/` con nombres en ingés (ej: `ParteCab`, `ConsumoDet`, `PresupuestoCab`)
 - Vistas en `resources/views/{modulo}/` (ej: `cargas/cab/`, `presupuestos/presupuestos_cab/`)
 - Controladores en `app/Http/Controllers/{modulo}/`
 - Servicios en `app/Services/`
@@ -71,4 +70,14 @@
 - Directorios: `app/Livewire/` y `resources/views/livewire/`
 - Nombre de componentes: kebab-case (ej: `parte-create`, `presupuesto-table`)
 
+<<<<<<< HEAD
+=======
+## Esqueleto Laravel 11
+- `bootstrap/app.php` con `Application::configure()` (routing, middleware y aliases, exceptions)
+- Sin `app/Http/Kernel.php`, `app/Console/Kernel.php` ni `app/Exceptions/Handler.php`
+- Middleware custom en `app/Http/Middleware/` registrados como aliases en `bootstrap/app.php`
+- Rate limiters (`api`, `login`) en `app/Providers/RouteServiceProvider.php`
+- Build de assets con Vite (`package.json` + `vite.config.js`); sin jQuery/laravel-mix
+
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 No migrar: Reportes PDF/Excel, Calendar, descargas de archivos, ejecución de migraciones.

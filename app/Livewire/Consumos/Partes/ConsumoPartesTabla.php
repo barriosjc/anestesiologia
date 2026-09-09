@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Consumos\Partes;
 
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -43,7 +43,7 @@ class ConsumoPartesTabla extends Component
 
     public function render(): \Illuminate\Contracts\View\View
     {
-        $query = Parte_cab::vParteCab();
+        $query = ParteCab::vParteCab();
 
         if (!empty($this->filtros['cobertura_id'])) {
             $query->where('cobertura_id', '=', $this->filtros['cobertura_id']);

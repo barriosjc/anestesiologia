@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Consumos\Cargar;
 
-use App\Models\Consumo_cab;
-use App\Models\Consumo_det;
+use App\Models\ConsumoCab;
+use App\Models\ConsumoDet;
 use App\Models\Paciente;
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use App\Repositories\ConsumoRepository;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
@@ -119,19 +119,19 @@ class ConsumoCargarForm extends Component
             'nom_padre_id' => 'required',
         ]);
 
-        $parte = Parte_cab::find($this->parteCabId);
+        $parte = ParteCab::find($this->parteCabId);
         $parte->estado_id = 4; // en facturacion
         $parte->save();
 
-        $consumoCab = Consumo_cab::where('parte_cab_id', $this->parteCabId)->first();
+        $consumoCab = ConsumoCab::where('parte_cab_id', $this->parteCabId)->first();
         if (empty($consumoCab)) {
-            $consumoCab = new Consumo_cab();
+            $consumoCab = new ConsumoCab();
             $consumoCab->parte_cab_id = $this->parteCabId;
             $consumoCab->user_id = Auth::user()->id;
             $consumoCab->save();
         }
 
-        $consumoDet = new Consumo_det();
+        $consumoDet = new ConsumoDet();
         $consumoDet->consumo_cab_id = $consumoCab->id;
         $consumoDet->nom_padre_id = $this->nom_padre_id;
         $consumoDet->nomenclador_id = $this->nomenclador_id;

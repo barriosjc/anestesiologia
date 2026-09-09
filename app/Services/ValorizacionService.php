@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use App\Models\Parametro;
 
 class ValorizacionService
@@ -14,7 +14,7 @@ class ValorizacionService
         string $periodo,
         string $codigo  // nivel de nomenclador O codigo de nom_practicas_estudios
     ) {
-        $resu = Valores_cab::query()
+        $resu = ValoresCab::query()
             ->select('nv.valor', 'nv.nivel', 'nv.aplica_pocent_adic', 'nv.moneda')
             ->join('nom_valores as nv', 'nv.grupo', 'nom_valores_cab.grupo')
             ->where('nom_valores_cab.gerenciadora_id', $gerenciadora_id)

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Centro;
 use App\Models\Paciente;
 use App\Models\Cobertura;
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use App\Models\Profesional;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +34,7 @@ class ParteCreate extends Component
     public function mount(?int $id = null): void
     {
         if ($id) {
-            $parte = Parte_cab::find($id);
+            $parte = ParteCab::find($id);
             $paciente = Paciente::find($parte->paciente_id);
 
             $this->parte_id = $parte->id;
@@ -90,10 +90,10 @@ class ParteCreate extends Component
         $paciente->save();
 
         if ($this->parte_id) {
-            $parte = Parte_cab::find($this->parte_id);
+            $parte = ParteCab::find($this->parte_id);
             $msg = 'actualizado';
         } else {
-            $parte = new Parte_cab();
+            $parte = new ParteCab();
             $msg = 'creado';
         }
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class Valores_cab
+ * Class ValoresCab
  *
  * @property $id
  * @property $gerenciadora_id
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property $deleted_at
  *
  */
-class Valores_cab extends Model
+class ValoresCab extends Model
 {
     use SoftDeletes;
 
@@ -63,7 +63,11 @@ class Valores_cab extends Model
         int $centro_id,
         string $periodo,
         string $codigo
+<<<<<<< HEAD:app/Models/Valores_cab.php
     ): ?Valores_cab {
+=======
+    ): ?ValoresCab {
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856:app/Models/ValoresCab.php
         return app(ValorizacionService::class)->getValor(
             $gerenciadora_id,
             $cobertura_id,

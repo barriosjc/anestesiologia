@@ -3,8 +3,8 @@
 namespace App\Livewire\Partes;
 
 use App\Models\Documento;
-use App\Models\Parte_cab;
-use App\Models\Parte_det;
+use App\Models\ParteCab;
+use App\Models\ParteDet;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -30,7 +30,7 @@ class ParteDetalle extends Component
     public function mount(int $id): void
     {
         $this->parte_cab_id = $id;
-        $this->observaciones = Parte_cab::find($id)->observaciones;
+        $this->observaciones = ParteCab::find($id)->observaciones;
     }
 
     public function rules(): array
@@ -49,7 +49,7 @@ class ParteDetalle extends Component
         $archivoNombre = $this->archivo->getClientOriginalName();
         $this->archivo->storeAs($this->parte_cab_id, $archivoNombre, 'partes');
 
-        $parteDet = new Parte_det();
+        $parteDet = new ParteDet();
         $parteDet->parte_cab_id = $this->parte_cab_id;
         $parteDet->documento_id = $this->documento_id;
         $parteDet->nro_hoja = $this->nro_hoja;
@@ -63,8 +63,8 @@ class ParteDetalle extends Component
 
     public function destroy(int $id): void
     {
-        $parteDet = Parte_det::find($id);
-        $parte = Parte_cab::find($parteDet->parte_cab_id);
+        $parteDet = ParteDet::find($id);
+        $parte = ParteCab::find($parteDet->parte_cab_id);
 
         if (!in_array($parte->estado_id, [1, 2])) {
             session()->flash('error', 'No es posible borrar la documentación con el estado actual del parte.');
@@ -92,7 +92,11 @@ class ParteDetalle extends Component
             'estado_cambio_estado.required' => '¡Atención! La selección del estado es obligatoria.',
         ]);
 
+<<<<<<< HEAD
         $parte = Parte_cab::findOrFail($this->estado_cambio_id);
+=======
+        $parte = ParteCab::findOrFail($this->estado_cambio_id);
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
         $parte->observaciones = strip_tags((string) $this->estado_cambio_obs);
         $parte->estado_id = $this->estado_cambio_estado;
         $parte->save();
@@ -111,7 +115,7 @@ class ParteDetalle extends Component
     {
         $documentos = Documento::where('tipo', 'like', '%parte%')->get();
         $estados = \App\Models\Estado::get();
-        $partes = Parte_det::with('documento')
+        $partes = ParteDet::with('documento')
             ->where('parte_cab_id', $this->parte_cab_id)
             ->paginate(5);
 

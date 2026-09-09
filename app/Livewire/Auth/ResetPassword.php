@@ -31,11 +31,15 @@ class ResetPassword extends Component
             $user->save();
 
             $correo = new ResetpasswordMaillable($user, $clave);
+<<<<<<< HEAD
             Mail::send([], [], function ($message) use ($user, $correo) {
                 $message->to($user->email, $user->name)
                     ->subject('Cambio de clave para ingreso al portal')
                     ->setBody($correo->render(), 'text/html');
             });
+=======
+            Mail::to($user)->send($correo);
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
         }
 
         $this->status = 'Se le ha enviado un email a ' . $validated['email'] . ' con su nueva clave.';

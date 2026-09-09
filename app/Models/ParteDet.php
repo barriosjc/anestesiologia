@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Class parte_det
+ * Class ParteDet
  *
  * @property $id
  * @property $parte_cab_id
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class Parte_det extends Model
+class ParteDet extends Model
 {
     use SoftDeletes;
 

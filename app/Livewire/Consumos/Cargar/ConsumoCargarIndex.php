@@ -4,10 +4,10 @@ namespace App\Livewire\Consumos\Cargar;
 
 use App\Models\Documento;
 use App\Models\Estado;
-use App\Models\Consumo_det;
+use App\Models\ConsumoDet;
 use App\Models\GerenciadoraCoberturaNomPadre;
-use App\Models\Parte_cab;
-use App\Models\Parte_det;
+use App\Models\ParteCab;
+use App\Models\ParteDet;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -39,10 +39,11 @@ class ConsumoCargarIndex extends Component
 
     public function destroy(int $id): void
     {
-        Consumo_det::find($id)->delete();
+        ConsumoDet::find($id)->delete();
     }
 
     public function observar(): void
+<<<<<<< HEAD
     {
         $this->validate([
             'estado_cambio' => ['required'],
@@ -63,12 +64,34 @@ class ConsumoCargarIndex extends Component
     }
 
     public function render(): \Illuminate\Contracts\View\View
+=======
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
     {
-        $partes_det = Parte_det::where('parte_cab_id', $this->parte_cab_id)->paginate(3);
+        $this->validate([
+            'estado_cambio' => ['required'],
+            'observaciones' => ['required', 'max:255'],
+        ]);
+
+        try {
+            $parte = ParteCab::find($this->parte_cab_id);
+            $parte->observaciones = strip_tags($this->observaciones);
+            $parte->estado_id = $this->estado_cambio;
+            $parte->save();
+
+            session()->flash('success', 'Estado cambiado exitosamente.');
+            $this->redirect(route('consumos.partes.filtrar'));
+        } catch (\Exception $e) {
+            $this->addError('estado_cambio', $e->getMessage());
+        }
+    }
+
+    public function render(): \Illuminate\Contracts\View\View
+    {
+        $partes_det = ParteDet::where('parte_cab_id', $this->parte_cab_id)->paginate(3);
         $documentos = Documento::where('tipo', 'like', '%parte%')->get();
         $consumos = DB::table('v_consumos')->where('parte_cab_id', $this->parte_cab_id)->get();
         $data = DB::table('v_parte_cab')->find($this->parte_cab_id);
-        $soloConsulta = !in_array(Parte_cab::find($this->parte_cab_id)->estado_id, [3, 4]);
+        $soloConsulta = !in_array(ParteCab::find($this->parte_cab_id)->estado_id, [3, 4]);
         $array = GerenciadoraCoberturaNomPadre::where('gerenciadora_id', $data->gerenciadora_id)
             ->where('cobertura_id', $data->cobertura_id)
             ->pluck('nom_padre_id')

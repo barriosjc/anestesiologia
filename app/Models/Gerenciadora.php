@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,7 +38,7 @@ class Gerenciadora extends Model
 
     public function valores_cab(): HasMany
     {
-        return $this->hasMany(Valores_cab::class, 'gerenciadora_id');
+        return $this->hasMany(ValoresCab::class, 'gerenciadora_id');
     }
     
     public function nomPadres(): BelongsToMany

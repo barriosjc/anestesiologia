@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,7 +42,7 @@ class Centro extends Model
 
     public function valoresCab(): HasMany
     {
-        return $this->hasMany(Valores_cab::class, 'centro_id');
+        return $this->hasMany(ValoresCab::class, 'centro_id');
     }
 
     public function presupuestosCab(): HasMany

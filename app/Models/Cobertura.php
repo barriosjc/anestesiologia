@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\NomPadre;
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use App\Models\Gerenciadora;
 use App\Models\PresupuestoDet;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +42,7 @@ class Cobertura extends Model
     
     public function valoresCab(): HasMany
     {
-        return $this->hasMany(Valores_cab::class, 'cobertura_id');
+        return $this->hasMany(ValoresCab::class, 'cobertura_id');
     }
 
     public function presupuestosDet(): HasMany

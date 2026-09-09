@@ -3,7 +3,7 @@
 namespace App\Livewire\Partes;
 
 use App\Models\Estado;
-use App\Models\Parte_cab;
+use App\Models\ParteCab;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -45,7 +45,7 @@ class ParteTabla extends Component
 
     public function destroy(int $id): void
     {
-        $parte = Parte_cab::find($id);
+        $parte = ParteCab::find($id);
 
         // si esta ingresado o observado no se puede borrar
         if (in_array($parte->estado, [1, 2])) {
@@ -74,7 +74,11 @@ class ParteTabla extends Component
             'estado_cambio_estado.required' => '¡Atención! La selección del estado es obligatoria.',
         ]);
 
+<<<<<<< HEAD
         $parte = Parte_cab::findOrFail($this->estado_cambio_id);
+=======
+        $parte = ParteCab::findOrFail($this->estado_cambio_id);
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
         $parte->observaciones = strip_tags((string) $this->estado_cambio_obs);
         $parte->estado_id = $this->estado_cambio_estado;
         $parte->save();
@@ -91,7 +95,7 @@ class ParteTabla extends Component
 
     public function render(): \Illuminate\Contracts\View\View
     {
-        $query = Parte_cab::vParteCab();
+        $query = ParteCab::vParteCab();
 
         if (!empty($this->filtros['cobertura_id'])) {
             $query->where('cobertura_id', '=', $this->filtros['cobertura_id']);

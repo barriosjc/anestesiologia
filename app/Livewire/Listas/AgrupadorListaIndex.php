@@ -6,7 +6,7 @@ use App\Models\Centro;
 use App\Models\Cobertura;
 use App\Models\Gerenciadora;
 use App\Models\Periodo;
-use App\Models\Valores_cab;
+use App\Models\ValoresCab;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -57,7 +57,7 @@ class AgrupadorListaIndex extends Component
         $this->reset(['listaId', 'gerenciadora_id', 'cobertura_id', 'centro_id', 'periodo', 'grupo']);
 
         if ($id) {
-            $lista = Valores_cab::findOrFail($id);
+            $lista = ValoresCab::findOrFail($id);
             $this->listaId = $lista->id;
             $this->gerenciadora_id = $lista->gerenciadora_id;
             $this->cobertura_id = $lista->cobertura_id;
@@ -90,7 +90,7 @@ class AgrupadorListaIndex extends Component
         ]);
 
         try {
-            $lista = $this->listaId ? Valores_cab::find($this->listaId) : new Valores_cab();
+            $lista = $this->listaId ? ValoresCab::find($this->listaId) : new ValoresCab();
             $lista->fill($this->only(['gerenciadora_id', 'cobertura_id', 'centro_id', 'periodo', 'grupo']));
             $lista->save();
         } catch (\Throwable $e) {
@@ -106,7 +106,7 @@ class AgrupadorListaIndex extends Component
     public function borrar(int $id): void
     {
         try {
-            $lista = Valores_cab::find($id);
+            $lista = ValoresCab::find($id);
 
             if (!$lista) {
                 session()->flash('error', 'La lista no existe o ya fue eliminada.');
@@ -133,7 +133,7 @@ class AgrupadorListaIndex extends Component
     {
         $nomPadreId = session('ses_nom_padre_id');
 
-        $query = Valores_cab::with(['gerenciadora:id,nombre', 'cobertura:id,sigla', 'centro:id,nombre'])
+        $query = ValoresCab::with(['gerenciadora:id,nombre', 'cobertura:id,sigla', 'centro:id,nombre'])
             ->whereHas('gerenciadora')
             ->whereHas('cobertura', function ($q) use ($nomPadreId) {
                 if (!empty($nomPadreId)) {

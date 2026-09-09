@@ -2,10 +2,17 @@
 
 namespace App\Services;
 
+<<<<<<< HEAD
 use App\Models\Consumo_cab;
 use App\Models\Consumo_det;
 use App\Models\Paciente;
 use App\Models\Parte_cab;
+=======
+use App\Models\ConsumoCab;
+use App\Models\ConsumoDet;
+use App\Models\Paciente;
+use App\Models\ParteCab;
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use Illuminate\Support\Facades\Validator;
@@ -51,7 +58,11 @@ class PresupuestoParteService
                     ['nombre' => $presupuesto->nombre, 'fec_nacimiento' => $presupuesto->fecha_nac]
                 );
 
+<<<<<<< HEAD
                 $parte = new Parte_cab();
+=======
+                $parte = new ParteCab();
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
                 $parte->profesional_id = $presupuesto->profesional_id;
                 $parte->paciente_id = $paciente->id;
                 $parte->gerenciadora_id = $presupuesto->gerenciadora_id;
@@ -64,7 +75,11 @@ class PresupuestoParteService
                 $parte->estado_id = 4;
                 $parte->save();
 
+<<<<<<< HEAD
                 $consumo = new Consumo_cab();
+=======
+                $consumo = new ConsumoCab();
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
                 $consumo->parte_cab_id = $parte->id;
                 $consumo->user_id = $parte->user_id;
                 $consumo->save();
@@ -74,7 +89,11 @@ class PresupuestoParteService
                 $presupuesto->save();
             }
 
+<<<<<<< HEAD
             $cons_det = new Consumo_det();
+=======
+            $cons_det = new ConsumoDet();
+>>>>>>> d6c2154c0add594dee2072297cdca7f4bbbc4856
             $cons_det->consumo_cab_id = $consumo->id;
             $cons_det->nomenclador_id = $item->nomenclador_id;
             $cons_det->porcentaje = $item->porcentaje;
