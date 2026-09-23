@@ -6,7 +6,7 @@
                     <span class="card-title">{{ $parte_id ? "Modificar Parte, Nro: {$parte_id}" : 'Crear Parte' }}</span>
                     <div>
                         <a href="{{ route('partes_cab.filtrar') }}" class="btn btn-info btn-sm" data-placement="left">
-                            Volver
+                            <i class="fa-solid fa-arrow-left me-1"></i>Volver
                         </a>
                     </div>
                 </div>
@@ -57,7 +57,8 @@
                             <div class="col-md-3">
                                 <label class="small mb-1" for="dni">DNI</label>
                                 <div class="input-group">
-                                    <input wire:model="dni" class="form-control" type="text" placeholder="dni" required />
+                                    <input wire:model="dni" class="form-control" type="text" placeholder="dni" required maxlength="15"
+                                        inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '');" />
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" type="button" wire:click="searchPatient">
                                             <i class="fas fa-search"></i>
@@ -70,13 +71,14 @@
                                 @endif
                             </div>
                             <div class="col-md-5">
-                                <label class="small mb-1" for="nombre">Nombre y apellido/a</label>
-                                <input wire:model="nombre" class="form-control" placeholder="Ingrese su nombre y apellido" required />
+                                <label class="small mb-1" for="nombre">Nombre y apellido (250 caracteres)</label>
+                                <input wire:model="nombre" class="form-control" placeholder="Ingrese su nombre y apellido" required maxlength="250" />
                                 @error('nombre') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-md-4">
                                 <label class="small mb-1" for="fec_nacimiento">Fec. Nac.</label>
-                                <input wire:model="fec_nacimiento" class="form-control" type="date" required />
+                                <input wire:model="fec_nacimiento" class="form-control" type="date" required min="1900-01-01"
+                                    max="{{ date('Y-m-d') }}" />
                                 @error('fec_nacimiento') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -86,8 +88,7 @@
                                 <label for="cobertura_id" class="small mb-1">Coberturas</label>
                                 <div wire:ignore x-data="{
                                         init() {
-                                            new TomSelect(this.$refs.coberturaSelect, {
-                                                allowEmptyOption: true,
+                                            initChoices(this.$refs.coberturaSelect, {
                                                 onChange: (value) => { $wire.set('cobertura_id', value) },
                                             });
                                         }
@@ -115,15 +116,18 @@
 
                         <div class="row gx-3 mb-3">
                             <div class="col-12">
-                                <label class="small mb-1">Observaciones</label>
-                                <textarea wire:model="observaciones" class="form-control" rows="4"></textarea>
+                                <label class="small mb-1">Observaciones (2000 caracteres)</label>
+                                <textarea wire:model="observaciones" class="form-control" rows="4" maxlength="2000"
+                                    x-data="{ contador: 0 }" x-init="contador = document.getElementById('observaciones').value.length"
+                                    @input="contador = $el.value.length" id="observaciones"></textarea>
+                                <small class="text-muted" x-text="contador + '/2000'"></small>
                             </div>
                         </div>
 
                         <div class="box-footer mt20">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                             @if ($parte_id)
-                                <a href="{{ route('partes_det.create', $parte_id) }}" class="btn btn-success">Cargar detalle</a>
+                                <a href="{{ route('partes_det.create', $parte_id) }}" class="btn btn-success"><i class="fa-solid fa-paperclip me-1"></i>Cargar detalle</a>
                             @endif
                         </div>
                     </form>

@@ -7,6 +7,7 @@ use App\Models\Gerenciadora;
 use App\Models\Parametro;
 use App\Models\PresupuestoCab;
 use App\Models\Profesional;
+use App\Services\PresupuestoParteService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,6 +16,7 @@ use Livewire\Component;
 class PresupuestoCreate extends Component
 {
     public ?int $presupuesto_id = null;
+    public bool $parteBloqueado = false;
     public ?int $gerenciadora_id = null;
     public string $fecha;
     public ?int $centro_id = null;
@@ -47,12 +49,37 @@ class PresupuestoCreate extends Component
             $this->dni = $presupuesto->dni;
             $this->fecha_nac = $presupuesto->fecha_nac;
             $this->observaciones = $presupuesto->observaciones;
+
+            $this->parteBloqueado = $this->parteTieneEstadoDistintoEnFacturacion($presupuesto);
         }
     }
 
-    public function save(): \Illuminate\Http\RedirectResponse
+    private function parteTieneEstadoDistintoEnFacturacion(PresupuestoCab $presupuesto): bool
+    {
+        if ($presupuesto->parte_cab_id === null) {
+            return false;
+        }
+
+        $parte = \App\Models\ParteCab::find($presupuesto->parte_cab_id);
+
+        return $parte === null || (int) $parte->estado_id !== 4;
+    }
+
+    public function save(): void
     {
         $this->validate();
+
+        $presupuesto = PresupuestoCab::withTrashed()->find($this->presupuesto_id);
+
+        if ($presupuesto && $presupuesto->parte_cab_id !== null) {
+            $result = app(PresupuestoParteService::class)->desvincular($presupuesto->id);
+
+            if (! $result['success']) {
+                session()->flash('error', 'El presupuesto tiene una parte asociada que no se encuentra en estado "En facturación"; no es posible editar la cabecera.');
+
+                return;
+            }
+        }
 
         $presupuesto = PresupuestoCab::updateOrCreate(['id' => $this->presupuesto_id], [
             'fecha'          => $this->fecha,
@@ -70,7 +97,12 @@ class PresupuestoCreate extends Component
 
         session()->flash('success', "La operación se ha completado exitosamente, presupuesto nro: {$presupuesto->id}.");
 
-        return $this->redirect(route('presupuestos.det.create', $presupuesto->id), navigate: true);
+        $this->redirect(route('presupuestos.det.create', $presupuesto->id), navigate: true);
+    }
+
+    public function irAlDetalle(): void
+    {
+        $this->redirect(route('presupuestos.det.create', $this->presupuesto_id), navigate: true);
     }
 
     public function rules(): array

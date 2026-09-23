@@ -62,7 +62,7 @@
         </div>
 
         <div class="col-md-3 d-flex align-items-end justify-content-end gap-1 ms-auto">
-            <button class="btn btn-primary btn-sm" type="submit">Filtrar</button>
+            <button class="btn btn-primary btn-sm" type="submit"><i class="fa-solid fa-filter me-1"></i>Filtrar</button>
             <button class="btn btn-warning btn-sm" type="button" wire:click="limpiar" x-data
                 x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Limpiar filtro">
                 <i class="fa-solid fa-eraser"></i> Borrar filtros

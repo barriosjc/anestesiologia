@@ -1,5 +1,55 @@
 // Funciones utilitarias de confirmación con SweetAlert2 (sin dependencia de jQuery)
 
+// Inicializador de Choices.js con búsqueda (renombrado de Tom Select)
+function initChoices(selectEl, config = {}) {
+    if (!selectEl) return null;
+    if (selectEl._choices instanceof Choices) return selectEl._choices;
+
+    const { onChange, ...choicesConfig } = config;
+
+    const defaults = {
+        searchEnabled: true,
+        searchPlaceholderValue: 'Buscar...',
+        itemSelectText: '',
+        shouldSort: false,
+        allowHTML: false,
+        placeholder: false,
+        removeItemButton: false,
+        noChoicesText: 'No hay opciones disponibles',
+        noResultsText: 'Sin resultados para la búsqueda',
+    };
+
+    const instance = new Choices(selectEl, Object.assign(defaults, choicesConfig));
+
+    if (selectEl.classList.contains('form-select-sm')) {
+        instance.containerOuter.element.classList.add('choices-sm');
+    }
+
+    if (typeof onChange === 'function') {
+        selectEl.addEventListener('change', () => {
+            onChange(instance.getValue(true), selectEl.value, instance);
+        });
+    }
+
+    selectEl._choices = instance;
+    return instance;
+}
+
+// Resetea visualmente un select de Choices.js
+function resetChoices(instance, multi = false) {
+    if (!instance) return;
+    instance.clearInput();
+    instance.hideDropdown();
+    if (multi) {
+        instance.removeActiveItems();
+    } else {
+        instance.setValue(['']);
+        instance.clearInput();
+    }
+}
+
+// ----------
+
 function confirmDelete(id, text = "Esta acción es irreversible.", onConfirm = null) {
     Swal.fire({
         title: '¿Confirma eliminar?',

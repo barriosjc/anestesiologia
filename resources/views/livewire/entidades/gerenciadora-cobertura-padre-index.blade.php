@@ -13,7 +13,7 @@
                             <div class="float-right">
                                 <button wire:click="abrirModalNuevo" class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
-                                    {{ __('Nuevo') }}
+                                    <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                                 </button>
                             </div>
                         </div>
@@ -99,13 +99,22 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="small mb-1" for="m_cobertura_id">Coberturas</label>
-                                <select wire:model="cobertura_id" class="form-select form-select-sm"
-                                    id="m_cobertura_id">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($coberturas as $data)
-                                        <option value="{{ $data->id }}">{{ $data->sigla }}</option>
-                                    @endforeach
-                                </select>
+                                <div wire:ignore x-data="{
+                                        choices: null,
+                                        init() {
+                                            this.choices = initChoices(this.$refs.coberturaSelect, {
+                                                onChange: (value) => { $wire.set('cobertura_id', value) },
+                                            });
+                                        }
+                                    }">
+                                    <select x-ref="coberturaSelect" class="form-select form-select-sm"
+                                        id="m_cobertura_id">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($coberturas as $data)
+                                            <option value="{{ $data->id }}">{{ $data->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 @error('cobertura_id') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-md-4">
@@ -122,8 +131,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

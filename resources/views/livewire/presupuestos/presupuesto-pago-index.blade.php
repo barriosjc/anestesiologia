@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="box-footer mt20">
-                            <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}</button>
                         </div>
                     </form>
                 </div>

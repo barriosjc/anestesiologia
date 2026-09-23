@@ -24,7 +24,7 @@
                                 </a>
                                 <button wire:click="abrirModalNuevo" class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
-                                    {{ __('Nuevo') }}
+                                    <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                                 </button>
                             </div>
                         </div>
@@ -115,8 +115,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

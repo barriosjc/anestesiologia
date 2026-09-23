@@ -76,6 +76,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('profesional/documentacion/{id}', \App\Livewire\Entidades\ProfesionalDocumentacion::class)->name('profesional.cargar.documentacion');
             Route::get('profesional/documentacion/download/{id}', [ProfesionalController::class, 'downloadDocum'])->name('profesional.download.documentacion');
         });
+
+        Route::group(['middleware' => ['role:super-admin|anestesiologo']], function () {
+            Route::get('guardias/calendario', \App\Livewire\Guardias\GuardiasMedicosIndex::class)->name('guardias.calendario');
+            Route::get('guardias/pdf', [\App\Http\Controllers\Guardias\GuardiaMedicoController::class, 'pdf'])->name('guardias.pdf');
+        });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {
             Route::get('usuario', \App\Livewire\Seguridad\UsuarioIndex::class)->name('usuario.index');

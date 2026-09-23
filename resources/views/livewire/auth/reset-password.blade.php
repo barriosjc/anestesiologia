@@ -35,7 +35,7 @@
                 <div class="row mb-0">
                     <div class="col-md-6 offset-md-4">
                         <button type="submit" class="btn btn-primary">
-                            {{ __('Enviar correo con nueva clave') }}
+                            <i class="fa-solid fa-envelope me-1"></i> {{ __('Enviar correo con nueva clave') }}
                         </button>
                     </div>
                 </div>

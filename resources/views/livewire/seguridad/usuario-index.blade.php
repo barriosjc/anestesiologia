@@ -13,7 +13,7 @@
                             <div class="float-right">
                                 <button wire:click="abrirModalNuevo" class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
-                                    {{ __('Nuevo') }}
+                                    <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                                 </button>
                             </div>
                         </div>
@@ -48,7 +48,11 @@
                                     @foreach ($users as $item)
                                         <tr wire:key="usuario-{{ $item->id }}">
                                             <td>{{ $users->firstItem() + $loop->index }}</td>
-                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->name }}
+                                                        @if ($item->trashed())
+                                                            <span class="badge bg-danger ms-1">Baja</span>
+                                                        @endif
+                                                    </td>
                                             <td><img src="{{ Storage::disk('usuarios')->url($item->foto) }}"
                                                     class="rounded-circle" width="45px" alt=""></td>
                                             <td>{{ $item->email }}</td>
@@ -56,25 +60,33 @@
                                                 <div class="float-right">
                                                     <div class="btn-group btn-group-sm" role="group"
                                                         aria-label="Basic example">
-                                                        <a href="{{ url('/usuario/' . $item->id . '/roles') }}"><button
-                                                                class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
-                                                                title="Roles asignados al usuario."><i
-                                                                    class="fa fa-users" aria-hidden="true"></i></button></a>
-                                                        <a href="{{ url('/usuario/' . $item->id . '/permisos') }}"
-                                                            data-bs-toggle="tooltip"
-                                                            title="Permisos asignados al usuario "><button
-                                                                class="btn btn-success btn-sm"><i class="fa fa-key"
-                                                                    aria-hidden="true"></i></button></a>
-                                                        <button type="button" class="btn btn-primary btn-sm"
-                                                            data-bs-toggle="tooltip" title="Editar Usuario"
-                                                            wire:click="abrirModalEditar({{ $item->id }})">
-                                                            <i class="far fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-danger btn-sm"
-                                                            data-bs-toggle="tooltip" title="Borrar Usuario"
-                                                            onclick="confirmDelete({{ $item->id }}, 'Confirma eliminar el usuario?', () => @this.borrar({{ $item->id }}))">
-                                                            <i class="far fa-trash-alt text-white"></i>
-                                                        </button>
+                                                        @if ($item->trashed())
+                                                            <button type="button" class="btn btn-success btn-sm"
+                                                                data-bs-toggle="tooltip" title="Restablecer usuario"
+                                                                wire:click="restablecer({{ $item->id }})">
+                                                                <i class="fas fa-undo-alt"></i>
+                                                            </button>
+                                                        @else
+                                                            <a href="{{ url('/usuario/' . $item->id . '/roles') }}"><button
+                                                                    class="btn btn-warning btn-sm" data-bs-toggle="tooltip"
+                                                                    title="Roles asignados al usuario."><i
+                                                                        class="fa fa-users" aria-hidden="true"></i></button></a>
+                                                            <a href="{{ url('/usuario/' . $item->id . '/permisos') }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Permisos asignados al usuario "><button
+                                                                    class="btn btn-success btn-sm"><i class="fa fa-key"
+                                                                        aria-hidden="true"></i></button></a>
+                                                            <button type="button" class="btn btn-primary btn-sm"
+                                                                data-bs-toggle="tooltip" title="Editar Usuario"
+                                                                wire:click="abrirModalEditar({{ $item->id }})">
+                                                                <i class="far fa-edit"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger btn-sm"
+                                                                data-bs-toggle="tooltip" title="Borrar Usuario"
+                                                                onclick="confirmDelete({{ $item->id }}, 'Confirma eliminar el usuario?', () => @this.borrar({{ $item->id }}))">
+                                                                <i class="far fa-trash-alt text-white"></i>
+                                                            </button>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </td>
@@ -154,8 +166,8 @@
                         @endif
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

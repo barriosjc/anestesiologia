@@ -13,7 +13,7 @@
                             <div class="float-right">
                                 <button wire:click="abrirModal" class="btn btn-primary btn-sm float-right"
                                     data-placement="left">
-                                    {{ __('Nuevo') }}
+                                    <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                                 </button>
                             </div>
                         </div>
@@ -33,12 +33,21 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                <select wire:model="filtroCoberturaId" class="form-select form-select-sm" id="cobertura_id">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
-                                    @endforeach
-                                </select>
+                                <div wire:ignore x-data="{
+                                        choices: null,
+                                        init() {
+                                            this.choices = initChoices(this.$refs.coberturaSelect, {
+                                                onChange: (value) => { $wire.set('filtroCoberturaId', value) },
+                                            });
+                                        }
+                                    }">
+                                    <select x-ref="coberturaSelect" class="form-select form-select-sm" id="cobertura_id">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($coberturas as $item)
+                                            <option value="{{ $item->id }}">{{ $item->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <label class="small mb-1" for="centro_id">Centros</label>
@@ -65,10 +74,10 @@
                             </div>
                             <div class="col-md-1 d-flex gap-1">
                                 <button wire:click="filtrar" class="btn btn-primary btn-sm">
-                                    Buscar
+                                    <i class="fa-solid fa-magnifying-glass me-1"></i>Buscar
                                 </button>
                                 <button wire:click="limpiar" class="btn btn-warning btn-sm">
-                                    Limpiar
+                                    <i class="fa-solid fa-eraser me-1"></i>Limpiar
                                 </button>
                             </div>
                         </div>
@@ -149,13 +158,22 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
-                                <select wire:model="cobertura_id" class="form-select form-select-sm"
-                                    id="m_cobertura_id">
-                                    <option value="">-- Seleccione --</option>
-                                    @foreach ($coberturas as $item)
-                                        <option value="{{ $item->id }}">{{ $item->sigla }}</option>
-                                    @endforeach
-                                </select>
+                                <div wire:ignore x-data="{
+                                        choices: null,
+                                        init() {
+                                            this.choices = initChoices(this.$refs.coberturaSelect, {
+                                                onChange: (value) => { $wire.set('cobertura_id', value) },
+                                            });
+                                        }
+                                    }">
+                                    <select x-ref="coberturaSelect" class="form-select form-select-sm"
+                                        id="m_cobertura_id">
+                                        <option value="">-- Seleccione --</option>
+                                        @foreach ($coberturas as $item)
+                                            <option value="{{ $item->id }}">{{ $item->sigla }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 @error('cobertura_id') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -191,8 +209,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

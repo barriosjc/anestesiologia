@@ -24,7 +24,7 @@
                             title="JPG or PNG no mayor a 5 MB">
                         @error('foto') <span class="text-danger small">{{ $message }}</span> @enderror
                         <div class="mt-2">
-                            <button class="btn btn-primary" wire:click="guardarFoto">Guardar</button>
+                            <button class="btn btn-primary" wire:click="guardarFoto"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                 placeholder="Ingrese su email" />
                             @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
-                        <button class="btn btn-primary" wire:click="guardar">Guardar</button>
+                        <button class="btn btn-primary" wire:click="guardar"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </div>
             </div>

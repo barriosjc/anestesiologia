@@ -18,7 +18,17 @@
                 <div class="card-body">
                     @include('utiles.alerts')
 
+                    @if ($parteBloqueado)
+                        <div class="alert alert-warning py-2" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                            El presupuesto tiene su parte asociada con estado distinto a "En facturación", por lo que la cabecera no puede modificarse.
+                        </div>
+                    @endif
+
                     <form wire:submit="save" novalidate>
+                        @if ($parteBloqueado)
+                            <fieldset disabled>
+                        @endif
                         <input type="hidden" wire:model="presupuesto_id">
 
                         <div class="row gx-3 mb-3">
@@ -90,8 +100,16 @@
                             </div>
                         </div>
 
+                        @if ($parteBloqueado)
+                            </fieldset>
+                        @endif
+
                         <div class="box-footer mt20">
-                            <button type="submit" class="btn btn-primary">{{ __('Guardar e ingresar detalle') }}</button>
+                            @if ($parteBloqueado)
+                                <button type="button" wire:click="irAlDetalle" class="btn btn-primary"><i class="fa-solid fa-eye me-1"></i> {{ __('Ver detalle') }}</button>
+                            @else
+                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar e ingresar detalle') }}</button>
+                            @endif
                         </div>
                     </form>
                 </div>

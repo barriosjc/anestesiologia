@@ -27,20 +27,38 @@
         }
     }" x-init="if (parseFloat(porcentaje) > 100) { porcentaje = 100; } recalcular()" x-effect="recalcular()">
     <div class="card-body">
-        @if (session('success'))
-            <div class="alert alert-success py-2">{{ session('success') }}</div>
+        @if (session('success_det'))
+            <div class="alert alert-success py-2">{{ session('success_det') }}</div>
+        @endif
+        @if (session('error_det'))
+            <div class="alert alert-danger py-2">{{ session('error_det') }}</div>
+        @endif
+        @if ($parteBloqueado)
+            <div class="alert alert-warning py-2" role="alert">
+                <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                El presupuesto tiene su parte asociada con estado distinto a "En facturación", por lo que el detalle no puede modificarse.
+            </div>
         @endif
 
         <form wire:submit="guardar" novalidate>
             <div class="row gx-3 mb-3">
                 <div class="col-md-6">
                     <label class="small mb-1" for="coberturaId">Coberturas</label>
-                    <select wire:model.live="coberturaId" class="form-select" id="coberturaId">
-                        <option value="">-- Seleccione --</option>
-                        @foreach ($coberturas as $item)
-                            <option value="{{ $item->id }}">{{ $item->sigla }}</option>
-                        @endforeach
-                    </select>
+                    <div wire:ignore x-data="{
+                            choices: null,
+                            init() {
+                                this.choices = initChoices(this.$refs.coberturaSelect, {
+                                    onChange: (value) => { $wire.set('coberturaId', value) },
+                                });
+                            }
+                        }">
+                        <select x-ref="coberturaSelect" class="form-select" id="coberturaId">
+                            <option value="">-- Seleccione --</option>
+                            @foreach ($coberturas as $item)
+                                <option value="{{ $item->id }}">{{ $item->sigla }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     @error('coberturaId') <span class="text-danger small">{{ $message }}</span> @enderror
                 </div>
             </div>
@@ -110,11 +128,13 @@
             </div>
             <div class="row gx-3 mb-3">
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                    @if (!$parteBloqueado)
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}</button>
+                    @endif
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-1 px-4">
                     <a href="{{ route('presupuestos.cab.print', $presupuestoCabId) }}" target="_blank"
-                        class="btn btn-success">{{ __('Imprimir') }}</a>
+                        class="btn btn-success"><i class="fa-solid fa-print me-1"></i> {{ __('Imprimir') }}</a>
                 </div>
             </div>
         </form>

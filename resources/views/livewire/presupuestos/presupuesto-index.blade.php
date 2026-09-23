@@ -10,7 +10,7 @@
                         <div class="float-right">
                             <a href="{{ route('presupuestos.cab.create') }}" class="btn btn-primary btn-sm float-right"
                                 data-placement="left">
-                                {{ __('Nuevo') }}
+                                <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                             </a>
                         </div>
                     </div>

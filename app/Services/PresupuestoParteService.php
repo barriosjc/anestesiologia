@@ -6,6 +6,7 @@ use App\Models\ConsumoCab;
 use App\Models\ConsumoDet;
 use App\Models\Paciente;
 use App\Models\ParteCab;
+use App\Models\ParteDet;
 use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use Illuminate\Support\Facades\Validator;
@@ -90,6 +91,75 @@ class PresupuestoParteService
         return [
             'success' => true,
             'message' => 'Partes creados correctamente. Nro de parte generado: ' . $parte->id,
+            'errors' => [],
+        ];
+    }
+
+    /**
+     * Desvincula el parte de un presupuesto: lo borra lógicamente (junto a sus
+     * consumos) y devuelve el presupuesto al estado "Ingresado".
+     *
+     * Solo se permite si el parte se encuentra en estado 4 ("En facturación").
+     *
+     * @return array{success: bool, message: string, errors: array<int, string>}
+     */
+    public function desvincular(int $id): array
+    {
+        $presupuesto = PresupuestoCab::withTrashed()->where('id', $id)->first();
+
+        if (! $presupuesto) {
+            return [
+                'success' => false,
+                'message' => 'No se encontró el presupuesto.',
+                'errors' => [],
+            ];
+        }
+
+        if ($presupuesto->parte_cab_id === null) {
+            return [
+                'success' => false,
+                'message' => 'El presupuesto no tiene un parte asociado.',
+                'errors' => [],
+            ];
+        }
+
+        $parte = ParteCab::find($presupuesto->parte_cab_id);
+
+        if (! $parte) {
+            $presupuesto->parte_cab_id = null;
+            $presupuesto->estado = 'I';
+            $presupuesto->save();
+
+            return [
+                'success' => true,
+                'message' => 'El presupuesto fue reabierto para edición.',
+                'errors' => [],
+            ];
+        }
+
+        if ((int) $parte->estado_id !== 4) {
+            return [
+                'success' => false,
+                'message' => 'El parte asociado no se encuentra en estado "En facturación"; no es posible desvincularlo.',
+                'errors' => [],
+            ];
+        }
+
+        $consumoIds = ConsumoCab::where('parte_cab_id', $parte->id)->pluck('id');
+
+        ConsumoDet::whereIn('consumo_cab_id', $consumoIds)->delete();
+        ConsumoCab::whereIn('id', $consumoIds)->delete();
+
+        ParteDet::where('parte_cab_id', $parte->id)->delete();
+        $parte->delete();
+
+        $presupuesto->parte_cab_id = null;
+        $presupuesto->estado = 'I';
+        $presupuesto->save();
+
+        return [
+            'success' => true,
+            'message' => 'El presupuesto fue reabierto para edición y el parte fue dado de baja.',
             'errors' => [],
         ];
     }

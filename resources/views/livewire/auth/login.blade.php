@@ -40,7 +40,7 @@
                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                     <a class="small" href="{{ route('login.restablecer') }}">Olvido su password?</a>
                     <button type="submit" class="btn btn-primary">
-                        {{ __('Login') }}
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> {{ __('Login') }}
                     </button>
                 </div>
             </form>

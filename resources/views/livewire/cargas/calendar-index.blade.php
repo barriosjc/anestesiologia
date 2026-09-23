@@ -16,17 +16,31 @@
                     }
                 },
                 dateClick: (info) => {
-                    $wire.set('fecha', info.dateStr);
-                    new bootstrap.Modal(this.$refs.dateModal).show();
+                    document.getElementById('spinner-calendario').classList.remove('d-none');
+                    $wire.set('fecha', info.dateStr).then(() => {
+                        new bootstrap.Modal(this.$refs.dateModal).show();
+                    }).catch(() => {
+                        document.getElementById('spinner-calendario').classList.add('d-none');
+                    });
                 }
             });
             this.calendarInstance.render();
+            this.$refs.dateModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('spinner-calendario')?.classList.add('d-none');
+            });
         }
     }"
     x-on:calendario-guardado.window="
         calendarInstance.removeAllEvents();
         $event.detail.eventos.forEach(e => calendarInstance.addEvent(e));
         bootstrap.Modal.getInstance($refs.dateModal)?.hide();
+    "
+    x-on:hidden.bs.modal="
+        document.getElementById('spinner-calendario')?.classList.add('d-none');
+        $nextTick(() => {
+            document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+            document.body.classList.remove('modal-open');
+        });
     "
 >
     <div class="row justify-content-center">
@@ -35,16 +49,23 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">Calendario</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body position-relative">
                     <div wire:ignore>
                         <div x-ref="calendarEl"></div>
+                    </div>
+                    <div id="spinner-calendario"
+                        class="d-none position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-75"
+                        style="z-index: 5; border-radius: inherit;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" x-ref="dateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" x-ref="dateModal" tabindex="-1" aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog">
             <div class="modal-content">
                 <form wire:submit="guardar">
@@ -74,7 +95,7 @@
                     @enderror
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

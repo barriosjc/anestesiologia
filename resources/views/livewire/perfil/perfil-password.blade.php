@@ -53,7 +53,7 @@
                         <div class="row gx-3">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <button wire:click="guardar" class="btn btn-primary">Guardar</button>
+                                    <button wire:click="guardar" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                                 </div>
                             </div>
                         </div>

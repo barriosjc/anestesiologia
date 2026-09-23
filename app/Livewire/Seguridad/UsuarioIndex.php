@@ -80,7 +80,7 @@ class UsuarioIndex extends Component
             }
 
             $user->save();
-            $user->syncRoles($this->perfiles);
+            $user->syncRoles($this->nombresRoles());
         } else {
             $user = user::create([
                 'name'            => $this->name,
@@ -90,7 +90,7 @@ class UsuarioIndex extends Component
                 'cambio_password' => 1,
                 'foto'            => 'fotovacia.jpeg',
             ]);
-            $user->assignRole($this->perfiles);
+            $user->assignRole($this->nombresRoles());
         }
 
         $this->dispatch('close-modal', modal: 'usuarioModal');
@@ -104,6 +104,17 @@ class UsuarioIndex extends Component
         session()->flash('success', 'Usuario borrado!');
     }
 
+    public function restablecer(int $id): void
+    {
+        user::withTrashed()->findOrFail($id)->restore();
+        session()->flash('success', 'Usuario restablecido!');
+    }
+
+    private function nombresRoles(): array
+    {
+        return Role::whereIn('id', $this->perfiles)->pluck('name')->all();
+    }
+
     public function paginationView(): string
     {
         return 'livewire::bootstrap';
@@ -111,7 +122,7 @@ class UsuarioIndex extends Component
 
     public function render(): \Illuminate\Contracts\View\View
     {
-        $users = user::query()
+        $users = user::withTrashed()
             ->when($this->search !== '', function ($query) {
                 $query->where('name', 'LIKE', "%{$this->search}%")
                     ->orWhere('email', 'LIKE', "%{$this->search}%");

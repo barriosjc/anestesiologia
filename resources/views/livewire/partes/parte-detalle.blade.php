@@ -7,10 +7,10 @@
                     wire:click="abrirEstadoModal({{ $parte_cab_id }}, @js($observaciones))"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                     data-bs-title="Pasar el estado del parte a A liquidar o Con faltantes">
-                    Cambiar estado
+                    <i class="fa-solid fa-rotate me-1"></i>Cambiar estado
                 </a>
                 <a href="{{ route('partes_cab.edit', $parte_cab_id) }}" class="btn btn-info btn-sm" data-placement="left">
-                    Volver
+                    <i class="fa-solid fa-arrow-left me-1"></i>Volver
                 </a>
             </div>
         </div>
@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div class="box-footer mt20">
-                    <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}</button>
                 </div>
             </form>
         </div>

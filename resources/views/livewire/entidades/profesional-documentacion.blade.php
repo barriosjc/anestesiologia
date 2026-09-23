@@ -4,7 +4,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="card-title">Carga de documentación del profesional, Nro: {{ $profesionalId }}</span>
                 <a href="{{ route('profesionales.index') }}" class="btn btn-info btn-sm" data-placement="left">
-                    Volver
+                    <i class="fa-solid fa-arrow-left me-1"></i>Volver
                 </a>
             </div>
             <div class="card-body">
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                     <div class="box-footer mt20">
-                        <button type="submit" class="btn btn-primary">{{ __('Guardar') }}</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}</button>
                     </div>
                 </form>
             </div>

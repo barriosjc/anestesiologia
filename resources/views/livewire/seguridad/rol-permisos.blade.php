@@ -29,7 +29,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->guard_name }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
+                                                <td>{{ $item->created_at }}</td>
                                                 <td>
                                                     <div class="float-right">
                                                         <button wire:click="desasignar({{ $item->id }})"
@@ -75,7 +75,7 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td>{{ $item->guard_name }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
+                                                <td>{{ $item->created_at }}</td>
                                                 <td>
                                                     <div class="float-right">
                                                         <button wire:click="asignar({{ $item->id }})"

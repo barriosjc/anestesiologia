@@ -3,15 +3,13 @@
         <div class="form-group col-md-3">
             <label class="small mb-1" for="cobertura_id">Coberturas</label>
             <div wire:ignore x-data="{
-                    ts: null,
+                    choices: null,
                     init() {
-                        this.ts = new TomSelect(this.$refs.coberturaSelect, {
-                            allowEmptyOption: true,
-                            placeholder: '-- Seleccione --',
+                        this.choices = initChoices(this.$refs.coberturaSelect, {
                             onChange: (value) => { $wire.set('cobertura_id', value) },
                         });
                     }
-                }" x-on:filtro-limpiado.window="ts.clear()">
+                }" x-on:filtro-limpiado.window="resetChoices(choices)">
                 <select x-ref="coberturaSelect" class="form-select form-select-sm">
                     <option value="">-- Seleccione --</option>
                     @foreach ($coberturas as $item)
@@ -50,14 +48,14 @@
         <div class="form-group col-md-3">
             <label class="small mb-1" for="estado_id">Estados</label>
             <div wire:ignore x-data="{
-                    ts: null,
+                    choices: null,
                     init() {
-                        this.ts = new TomSelect(this.$refs.estadoSelect, {
-                            plugins: ['remove_button'],
+                        this.choices = initChoices(this.$refs.estadoSelect, {
+                            removeItemButton: true,
                             onChange: (values) => { $wire.set('estado_id', values) },
                         });
                     }
-                }" x-on:filtro-limpiado.window="ts.clear()">
+                }" x-on:filtro-limpiado.window="resetChoices(choices, true)">
                 <select x-ref="estadoSelect" class="form-select form-select-sm" multiple>
                     @foreach ($estados as $item)
                         <option value="{{ $item->id }}" @selected(in_array($item->id, $estado_id))>{{ $item->descripcion }}</option>
@@ -105,7 +103,7 @@
         </div>
         <div class="form-group col-md-3 d-flex align-items-end justify-content-end gap-1">
             <button class="btn btn-primary btn-sm" type="submit" x-data
-                x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Aplicar el filtro ingresado">Filtrar
+                x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Aplicar el filtro ingresado"><i class="fa-solid fa-filter me-1"></i>Filtrar
                 listado</button>
             <button class="btn btn-outline-secondary btn-sm" type="button" wire:click="limpiar" x-data
                 x-init="new bootstrap.Tooltip($el)" data-bs-placement="top" data-bs-title="Limpiar filtro">

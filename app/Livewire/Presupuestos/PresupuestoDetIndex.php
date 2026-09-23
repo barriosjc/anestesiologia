@@ -52,12 +52,19 @@ class PresupuestoDetIndex extends Component
 
     public function render(PresupuestoDetalleRepository $repository): \Illuminate\Contracts\View\View
     {
-        $presupuestosCab = PresupuestoCab::findOrFail($this->presupuestoCabId);
+        $presupuestosCab = PresupuestoCab::withTrashed()->findOrFail($this->presupuestoCabId);
         $presupuestosDet = $repository->detalleConDescripcion($this->presupuestoCabId);
+
+        $parteBloqueado = false;
+        if ($presupuestosCab->parte_cab_id !== null) {
+            $parte = \App\Models\ParteCab::find($presupuestosCab->parte_cab_id);
+            $parteBloqueado = $parte === null || (int) $parte->estado_id !== 4;
+        }
 
         return view('livewire.presupuestos.presupuesto-det-index', compact(
             'presupuestosCab',
-            'presupuestosDet'
+            'presupuestosDet',
+            'parteBloqueado'
         ));
     }
 }

@@ -18,12 +18,12 @@
                                 <div class="btn btn-sm btn-success float-right" data-bs-toggle="tooltip"
                                     title="Copiar de una lista de precios existente y crea una nueva Lista de precios con el grupo ingresado, este nuevo no debe existir."
                                     wire:click="abrirModalNuevo">
-                                    <span>{{ __('Nuevo') }}</span>
+                                    <span><i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}</span>
                                 </div>
                                 <div class="btn btn-sm btn-primary float-right" data-bs-toggle="tooltip"
                                     title="Copiar una lista de precios de un grupo a otro grupo."
                                     wire:click="$dispatch('open-modal', { modal: 'copiarModal' })">
-                                    <span>{{ __('Copiar') }}</span>
+                                    <span><i class="fa-solid fa-copy me-1"></i> {{ __('Copiar') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -50,10 +50,10 @@
 
                             <div class="col-md-3 d-flex gap-2">
                                 <button wire:click="filtrar" class="btn btn-primary">
-                                    Filtrar Listas
+                                    <i class="fa-solid fa-filter me-1"></i>Filtrar Listas
                                 </button>
                                 <button wire:click="limpiar" class="btn btn-warning">
-                                    Limpiar
+                                    <i class="fa-solid fa-eraser me-1"></i>Limpiar
                                 </button>
                             </div>
                         </div>
@@ -138,8 +138,8 @@
                         @error('modalValor') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>
@@ -180,8 +180,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Crear</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-plus me-1"></i>Crear</button>
                     </div>
                 </form>
             </div>
@@ -237,8 +237,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

@@ -91,7 +91,7 @@
         </div>
         <div class="col-md-2">
             <button type="button" wire:click="generarRendicion" class="btn btn-primary btn-sm">
-                {{ __('Generar rendición') }}
+                <i class="fa-solid fa-file-invoice-dollar me-1"></i> {{ __('Generar rendición') }}
             </button>
         </div>
     </div>
@@ -123,7 +123,7 @@
         </div>
         <div class="col-md-2">
             <button type="button" wire:click="cambiarEstados" class="btn btn-info btn-sm">
-                {{ __('Cambiar estados') }}
+                <i class="fa-solid fa-rotate me-1"></i> {{ __('Cambiar estados') }}
             </button>
         </div>
     </div>
@@ -141,7 +141,7 @@
         </div>
         <div class="col-md-2">
             <button type="button" wire:click="revalorizar" class="btn btn-warning btn-sm">
-                {{ __('Revalorizar partes') }}
+                <i class="fa-solid fa-coins me-1"></i> {{ __('Revalorizar partes') }}
             </button>
         </div>
     </div>
@@ -177,7 +177,7 @@
         </div>
         <div class="col-md-1">
             <button type="button" wire:click="agregarConsumo" class="btn btn-info btn-sm">
-                {{ __('Guardar') }}
+                <i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}
             </button>
         </div>
     </div>
@@ -207,7 +207,7 @@
             <textarea class="form-control form-control-sm" wire:model="obsAgregarYDiff" rows="1"
                 placeholder="Por que agrega nuevo consumo? "></textarea>
         </div>
-        <div class="form-group col-md-1">
+        <div class="form-group col-md-1 px-0">
             <div>
                 <input type="radio" id="refacturarydiff" wire:model="refacturarYDiff" value="refacturar" checked>
                 <label class="small mb-1" for="refacturarydiff">Refacturar</label>
@@ -223,7 +223,7 @@
         </div>
         <div class="col-md-1">
             <button type="button" wire:click="agregarConsumoYDiferencia" class="btn btn-info btn-sm">
-                {{ __('Guardar') }}
+                <i class="fa-solid fa-floppy-disk me-1"></i> {{ __('Guardar') }}
             </button>
         </div>
     </div>

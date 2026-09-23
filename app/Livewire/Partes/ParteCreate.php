@@ -76,7 +76,7 @@ class ParteCreate extends Component
         }
     }
 
-    public function save(): \Illuminate\Http\RedirectResponse
+    public function save(): void
     {
         $this->validate();
 
@@ -110,21 +110,24 @@ class ParteCreate extends Component
 
         session()->flash('success', "Se ha {$msg} la cabecera del parte correctamente, nro: {$parte->id}.");
 
-        return $this->redirect(route('partes_det.create', $parte->id), navigate: true);
+        $this->redirect(route('partes_det.create', $parte->id), navigate: true);
     }
 
     public function rules(): array
     {
         return [
-            'dni' => 'required|string|max:20',
-            'cobertura_id' => 'required',
-            'centro_id' => 'required',
-            'profesional_id' => 'required',
-            'nombre' => 'required',
-            'gerenciadora_id' => 'required',
+            'dni' => 'required|string|max:15|regex:/^[0-9]+$/',
+            'nombre' => 'required|string|min:2|max:250',
+            'observaciones' => 'nullable|string|max:2000',
+            'cobertura_id' => 'required|integer|exists:coberturas,id',
+            'centro_id' => 'required|integer|exists:centros,id',
+            'profesional_id' => 'required|integer|exists:profesionales,id',
+            'gerenciadora_id' => 'required|integer|exists:gerenciadoras,id',
             'fec_nacimiento' => [
                 'required',
                 'date',
+                'after_or_equal:1900-01-01',
+                'before_or_equal:today',
                 function ($attribute, $value, $fail) {
                     $year = explode('-', $value)[0];
                     if ($year < 1900 || $year > date('Y')) {
@@ -146,6 +149,34 @@ class ParteCreate extends Component
                     }
                 },
             ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'dni.required' => 'El campo DNI es obligatorio.',
+            'dni.max' => 'El DNI no puede superar los 15 caracteres.',
+            'dni.regex' => 'El DNI debe contener solo números.',
+            'nombre.required' => 'El campo nombre es obligatorio.',
+            'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+            'nombre.max' => 'El nombre no puede superar los 250 caracteres.',
+            'observaciones.max' => 'Las observaciones no pueden superar los 2000 caracteres.',
+            'cobertura_id.required' => 'Debe seleccionar una cobertura.',
+            'cobertura_id.exists' => 'La cobertura seleccionada no existe.',
+            'centro_id.required' => 'Debe seleccionar un centro.',
+            'centro_id.exists' => 'El centro seleccionado no existe.',
+            'profesional_id.required' => 'Debe seleccionar un profesional.',
+            'profesional_id.exists' => 'El profesional seleccionado no existe.',
+            'gerenciadora_id.required' => 'Debe seleccionar una gerenciadora.',
+            'gerenciadora_id.exists' => 'La gerenciadora seleccionada no existe.',
+            'fec_nacimiento.required' => 'El campo fecha de nacimiento es obligatorio.',
+            'fec_nacimiento.after_or_equal' => 'La fecha de nacimiento debe ser posterior al 01/01/1900.',
+            'fec_nacimiento.before_or_equal' => 'La fecha de nacimiento no puede ser futura.',
+            'fec_prestacion.required' => 'El campo fecha cirugía inicio es obligatorio.',
+            'fec_prestacion.date_format' => 'El campo fecha cirugía inicio tiene un formato inválido.',
+            'fec_prestacion_fin.required' => 'El campo fecha cirugía fin es obligatorio.',
+            'fec_prestacion_fin.date_format' => 'El campo fecha cirugía fin tiene un formato inválido.',
         ];
     }
 

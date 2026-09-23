@@ -6,11 +6,13 @@ use App\Models\PresupuestoCab;
 use App\Models\PresupuestoDet;
 use App\Repositories\PresupuestoDetalleRepository;
 use App\Services\NomencladoresServices;
+use App\Services\PresupuestoParteService;
 use Livewire\Component;
 
 class PresupuestoDetForm extends Component
 {
     public int $presupuestoCabId;
+    public bool $parteBloqueado = false;
     public ?int $gerenciadoraId = null;
     public ?int $centroId = null;
     public ?float $valorDolar = null;
@@ -27,12 +29,26 @@ class PresupuestoDetForm extends Component
 
     public function mount(int $presupuestoCabId): void
     {
-        $presupuestoCab = PresupuestoCab::findOrFail($presupuestoCabId);
+        $presupuestoCab = PresupuestoCab::withTrashed()->findOrFail($presupuestoCabId);
 
         $this->presupuestoCabId = $presupuestoCabId;
         $this->gerenciadoraId = $presupuestoCab->gerenciadora_id;
         $this->centroId = $presupuestoCab->centro_id;
         $this->valorDolar = $presupuestoCab->valor_dolar;
+
+        $this->parteBloqueado = $this->parteBloqueado
+            || $this->parteTieneEstadoDistintoEnFacturacion($presupuestoCab);
+    }
+
+    private function parteTieneEstadoDistintoEnFacturacion(PresupuestoCab $presupuestoCab): bool
+    {
+        if ($presupuestoCab->parte_cab_id === null) {
+            return false;
+        }
+
+        $parte = \App\Models\ParteCab::find($presupuestoCab->parte_cab_id);
+
+        return $parte !== null && (int) $parte->estado_id !== 4;
     }
 
     public function buscarNomenclador(string $codigo, string $descripcion, NomencladoresServices $nomencladoresServices): void
@@ -108,6 +124,12 @@ class PresupuestoDetForm extends Component
 
     public function guardar(): void
     {
+        if ($this->parteBloqueado) {
+            session()->flash('error_det', 'El presupuesto tiene su parte con estado distinto a "En facturación"; no se puede modificar el detalle.');
+
+            return;
+        }
+
         $this->validate([
             'coberturaId' => 'required',
             'periodo' => 'required',
@@ -128,14 +150,27 @@ class PresupuestoDetForm extends Component
         $det->observaciones = $this->observaciones;
         $det->save();
 
+        $this->desvincularParteSiCorresponde();
+
         $this->reset([
             'coberturaId', 'periodo', 'nomencladorOpciones', 'nomenclador_id',
             'nom_padre_id', 'porcentaje', 'valorOrig', 'valorTotal', 'observaciones',
         ]);
 
-        session()->flash('success', 'Práctica cargada correctamente.');
+        session()->flash('success_det', 'Práctica cargada correctamente.');
 
         $this->dispatch('presupuesto-det-guardado');
+    }
+
+    private function desvincularParteSiCorresponde(): void
+    {
+        $presupuesto = PresupuestoCab::withTrashed()->find($this->presupuestoCabId);
+
+        if ($presupuesto === null || $presupuesto->parte_cab_id === null) {
+            return;
+        }
+
+        app(PresupuestoParteService::class)->desvincular($this->presupuestoCabId);
     }
 
     public function render(): \Illuminate\Contracts\View\View

@@ -33,7 +33,7 @@ class Login extends Component
             return;
         }
 
-        if (RateLimiter::tooManyAttempts($key)) {
+        if (RateLimiter::tooManyAttempts($key, 5)) {
             $this->addError('email', 'Demasiados intentos de login. Intente de nuevo en ' . RateLimiter::availableIn($key) . ' segundos.');
         } else {
             $this->addError('email', 'Estas credenciales no coinciden con nuestros registros.');

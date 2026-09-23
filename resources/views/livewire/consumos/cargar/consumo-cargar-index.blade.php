@@ -4,10 +4,10 @@
             <span class="card-title">Detalle del parte nro: {{ $parte_cab_id }}</span>
             <div>
                 <div class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#valorModal">
-                    Cambiar estado
+                    <i class="fa-solid fa-rotate me-1"></i>Cambiar estado
                 </div>
                 <a href="{{ route('consumos.partes.filtrar') }}" class="btn btn-info btn-sm" data-placement="left">
-                    Volver
+                    <i class="fa-solid fa-arrow-left me-1"></i>Volver
                 </a>
             </div>
         </div>
@@ -132,8 +132,8 @@
                         @enderror
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i>Cerrar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar</button>
                     </div>
                 </form>
             </div>

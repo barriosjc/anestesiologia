@@ -11,10 +11,12 @@
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
 
-                            <button type="button" wire:click="generarPartes"
-                                class="btn btn-primary btn-sm shadow-sm" title="Crear parte">
-                                <i class="fa fa-plus-circle me-2" aria-hidden="true"></i> Crear parte
-                            </button>
+                            @if (!$parteBloqueado)
+                                <button type="button" wire:click="generarPartes"
+                                    class="btn btn-primary btn-sm shadow-sm" title="Crear parte">
+                                    <i class="fa fa-plus-circle me-2" aria-hidden="true"></i> Crear parte
+                                </button>
+                            @endif
 
                             <a href="{{ route('presupuestos.cab.edit', $presupuestosCab->id) }}"
                                 class="btn btn-warning btn-sm shadow-sm" title="Volver">
@@ -25,7 +27,12 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @include('utiles.alerts')
+                    @if ($parteBloqueado)
+                        <div class="alert alert-warning py-2" role="alert">
+                            <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                            El presupuesto tiene su parte asociada con estado distinto a "En facturación", por lo que el detalle no puede modificarse.
+                        </div>
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead class="thead">
@@ -53,10 +60,12 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                title="Borrar práctica o estudio"
-                                                onclick="confirmDelete({{ $item->id }}, 'Esta acción es irreversible.', () => @this.destroy({{ $item->id }}))"><i
-                                                    class="far fa-trash-alt text-white"></i></button>
+                                            @if (!$parteBloqueado)
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    title="Borrar práctica o estudio"
+                                                    onclick="confirmDelete({{ $item->id }}, 'Esta acción es irreversible.', () => @this.destroy({{ $item->id }}))"><i
+                                                        class="far fa-trash-alt text-white"></i></button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -66,6 +75,7 @@
                 </div>
             </div>
             <livewire:presupuestos.presupuesto-det-form :presupuesto-cab-id="$presupuestosCab->id"
+                :parte-bloqueado="$parteBloqueado"
                 :key="'presupuesto-det-form-' . $presupuestosCab->id" />
         </div>
     </div>

@@ -15,11 +15,9 @@
                             <div class="form-group col-md-3">
                                 <label class="small mb-1" for="cobertura_id">Coberturas</label>
                                 <div wire:ignore x-data="{
-                                        ts: null,
+                                        choices: null,
                                         init() {
-                                            this.ts = new TomSelect(this.$refs.coberturaSelect, {
-                                                allowEmptyOption: true,
-                                                placeholder: '-- Seleccione --',
+                                            this.choices = initChoices(this.$refs.coberturaSelect, {
                                                 onChange: (value) => { $wire.set('cobertura_id', value) },
                                             });
                                         }
@@ -62,10 +60,10 @@
                             <div class="form-group col-md-3">
                                 <label class="small mb-1" for="estados">Estados</label>
                                 <div wire:ignore x-data="{
-                                        ts: null,
+                                        choices: null,
                                         init() {
-                                            this.ts = new TomSelect(this.$refs.estadoSelect, {
-                                                plugins: ['remove_button'],
+                                            this.choices = initChoices(this.$refs.estadoSelect, {
+                                                removeItemButton: true,
                                                 onChange: (values) => { $wire.set('estados', values) },
                                             });
                                         }
@@ -138,7 +136,7 @@
                             </div>
                             <div class="form-group col-md-2 d-flex align-items-end">
                                 <button class="btn btn-primary btn-sm" type="submit" wire:loading.attr="disabled">
-                                    Generar listado
+                                    <i class="fa-solid fa-file-export me-1"></i>Generar listado
                                 </button>
                             </div>
                         </div>

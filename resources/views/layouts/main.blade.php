@@ -14,14 +14,19 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
     
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
 
-    <!-- Tom Select (usado en selects de coberturas/estados) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
+    <!-- Choices.js (selects con búsqueda) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/styles/choices.min.css" />
 
     <!-- Include base CSS (optional) -->
     <link href="{{ asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
@@ -52,14 +57,14 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0"></script>
 
-    <!-- Tom Select -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <!-- Choices.js -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@10.2.0/public/assets/scripts/choices.min.js"></script>
 
     <!-- SB Admin Scripts -->
     <script src="{{ asset('libs/sbadmin/js/scripts.js') }}"></script>
 
     <!-- Custom Util Scripts -->
-    <script src="{{ asset('js/util.js') }}"></script>
+    <script src="{{ asset('js/util.js') }}?v={{ filemtime(public_path('js/util.js')) }}"></script>
     
     @stack('scripts')
 </body>

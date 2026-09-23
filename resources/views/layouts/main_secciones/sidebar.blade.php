@@ -84,6 +84,13 @@
                 </div>
             @endrole
 
+            @role('super-admin|anestesiologo')
+                <a class="nav-link" href="{{ route('guardias.calendario') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    Guardias de Médicos
+                </a>
+            @endrole
+
             @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
                 <div class="sidenav-menu-heading">ADMINISTRATIVOS </div>
                 {{-- Sidenav Accordion (Votaciones) --}}
