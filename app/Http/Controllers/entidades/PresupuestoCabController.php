@@ -14,7 +14,7 @@ class PresupuestoCabController extends Controller
         $presupuesto = PresupuestoCab::with(['pagos', 'centro', 'user'])->findOrFail($id);
         $presupuesto->presupuestosDet = $presupuestoDetalleRepository->detalleConDescripcion($id);
 
-        $pdf = Pdf::loadView('reportes.Presupuestos.Informe', compact('presupuesto'));
+        $pdf = Pdf::loadView('Reportes.Presupuestos.Informe', compact('presupuesto'));
 
         //return $pdf->stream('presupuesto_'.$presupuesto->id.'.pdf');
         // Si querés que se descargue automáticamente:

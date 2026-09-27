@@ -43,7 +43,7 @@ class GuardiaMedicoController extends Controller
         $habiles = $resumen->filter(fn ($fila) => $fila['habiles'] > 0)->values();
         $feriadosFindes = $resumen->filter(fn ($fila) => $fila['feriados_findes'] > 0)->values();
 
-        $pdf = Pdf::loadView('reportes.Guardias.Informe', compact('titulo', 'habiles', 'feriadosFindes', 'incluir'));
+        $pdf = Pdf::loadView('Reportes.Guardias.Informe', compact('titulo', 'habiles', 'feriadosFindes', 'incluir'));
 
         return response($pdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
