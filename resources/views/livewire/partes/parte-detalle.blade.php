@@ -38,8 +38,8 @@
                                 <td>{{ $item->documento->nombre }}</td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-warning"
-                                        href="{{ route('partes_det.download', $item->id) }}"><i
-                                            class="fa fa-fw fa-download"></i>
+                                        href="{{ route('partes_det.download', $item->id) }}" target="_blank">
+                                        <i class="fa fa-fw fa-download"></i>
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm" title="Borrar documento"
                                         onclick="confirmDelete({{ $item->id }}, 'Esta acción es irreversible.', () => @this.destroy({{ $item->id }}))">

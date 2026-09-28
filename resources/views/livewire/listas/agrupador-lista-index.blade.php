@@ -74,10 +74,10 @@
                             </div>
                             <div class="col-md-1 d-flex gap-1">
                                 <button wire:click="filtrar" class="btn btn-primary btn-sm">
-                                    <i class="fa-solid fa-magnifying-glass me-1"></i>Buscar
+                                    <i class="fa-solid fa-magnifying-glass me-1"></i>
                                 </button>
                                 <button wire:click="limpiar" class="btn btn-warning btn-sm">
-                                    <i class="fa-solid fa-eraser me-1"></i>Limpiar
+                                    <i class="fa-solid fa-eraser me-1"></i>
                                 </button>
                             </div>
                         </div>

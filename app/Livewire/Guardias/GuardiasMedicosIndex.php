@@ -19,6 +19,12 @@ class GuardiasMedicosIndex extends Component
 
     public ?string $nombreFeriado = null;
 
+    public ?string $feriadoFecha = null;
+
+    public ?string $feriadoNombre = null;
+
+    public bool $feriadoConfirmado = false;
+
     public array $asignadosPendientes = [];
 
     public array $marcados = [];
@@ -55,10 +61,19 @@ class GuardiasMedicosIndex extends Component
         $this->marcados = [];
         $this->asignadosPendientes = [];
         $this->desasignados = [];
+        $this->feriadoFecha = null;
+        $this->feriadoNombre = null;
+        $this->feriadoConfirmado = false;
     }
 
     public function marcaDia(string $fecha, FeriadoRepository $feriadoRepo): void
     {
+        if ($this->feriadoFecha === $fecha) {
+            $this->descartarFeriado(false);
+
+            return;
+        }
+
         if (isset($this->marcados[$fecha])) {
             unset($this->marcados[$fecha], $this->asignadosPendientes[$fecha]);
             $this->desasignados[$fecha] = true;
@@ -66,11 +81,81 @@ class GuardiasMedicosIndex extends Component
             return;
         }
 
+        $nombre = trim((string) $this->nombreFeriado);
+
+        if ($nombre === '') {
+            $this->marcados[$fecha] = true;
+            unset($this->desasignados[$fecha]);
+
+            return;
+        }
+
+        if ($this->feriadoFecha !== null) {
+            $this->dispatch(
+                'aviso-feriado',
+                mensaje: 'Solo se puede marcar 1 celda para crear un feriado. Desmarcá la celda del ' . $this->fechaLegible($this->feriadoFecha) . ' o limpiá el nombre del feriado.',
+            );
+
+            return;
+        }
+
         $this->marcados[$fecha] = true;
         unset($this->desasignados[$fecha]);
+        $this->feriadoFecha = $fecha;
+        $this->feriadoNombre = $nombre;
+        $this->feriadoConfirmado = false;
 
-        if ($this->nombreFeriado && !$feriadoRepo->tiene($fecha)) {
-            $feriadoRepo->crear($fecha, $this->nombreFeriado);
+        $this->dispatch(
+            'confirmar-feriado',
+            fecha: $fecha,
+            nombre: $nombre,
+            fechaLegible: $this->fechaLegible($fecha),
+            yaExiste: $feriadoRepo->tiene($fecha),
+        );
+    }
+
+    public function confirmarFeriado(string $fecha, FeriadoRepository $feriadoRepo): void
+    {
+        if ($this->feriadoFecha !== $fecha) {
+            return;
+        }
+
+        $nombre = trim((string) $this->feriadoNombre);
+
+        if ($nombre === '') {
+            $this->descartarFeriado();
+            session()->flash('warning', 'Ingrese el nombre del feriado antes de marcar el día.');
+
+            return;
+        }
+
+        if ($feriadoRepo->tiene($fecha)) {
+            $this->feriadoConfirmado = true;
+            session()->flash('info', 'El ' . $this->fechaLegible($fecha) . ' ya estaba cargado como feriado.');
+
+            return;
+        }
+
+        $feriadoRepo->crear($fecha, $nombre);
+        $this->feriadoConfirmado = true;
+
+        session()->flash('success', 'Feriado "' . $nombre . '" cargado el ' . $this->fechaLegible($fecha) . '.');
+    }
+
+    public function descartarFeriado(bool $limpiarNombre = true): void
+    {
+        if ($this->feriadoFecha !== null) {
+            $fecha = $this->feriadoFecha;
+            unset($this->marcados[$fecha], $this->asignadosPendientes[$fecha]);
+            $this->desasignados = array_diff_key($this->desasignados, [$fecha => true]);
+        }
+
+        $this->feriadoFecha = null;
+        $this->feriadoNombre = null;
+        $this->feriadoConfirmado = false;
+
+        if ($limpiarNombre) {
+            $this->nombreFeriado = null;
         }
     }
 
@@ -136,6 +221,7 @@ class GuardiasMedicosIndex extends Component
         $feriados = $feriadoRepo->mes($this->anio, $this->mes);
         $medicos = $guardiaRepo->medicos();
         $nombresMedicos = $medicos->pluck('nombre', 'id');
+        $indiceId = $medicos->pluck('id')->flip()->all();
         $hoyKey = now()->format('Y-m-d');
 
         $celdas = [];
@@ -159,7 +245,7 @@ class GuardiasMedicosIndex extends Component
             }
 
             if ($pendienteId) {
-                $color = $guardiaRepo->colorPara($pendienteId);
+                $color = $guardiaRepo->colorPara($pendienteId, $indiceId[$pendienteId] ?? $pendienteId);
                 $medicoNombre = $nombresMedicos->get($pendienteId);
             } elseif ($row?->color) {
                 $color = $row->color;
@@ -178,6 +264,8 @@ class GuardiasMedicosIndex extends Component
                 'letraColor' => $color ? $this->textoDeColor($color) : '#333',
                 'esFeriado' => $feriado !== null,
                 'feriadoNombre' => $feriado?->nombre,
+                'esFeriadoPendiente' => $this->feriadoFecha === $key,
+                'feriadoConfirmado' => $this->feriadoConfirmado,
                 'marcado' => $marcado,
                 'desasignado' => $desasignado,
             ];
@@ -191,7 +279,13 @@ class GuardiasMedicosIndex extends Component
             'tituloMes' => $primerDia->translatedFormat('F Y'),
             'pintados' => count($feriados),
             'pendientes' => count($this->asignadosPendientes),
+            'feriadoFechaLegible' => $this->feriadoFecha ? $this->fechaLegible($this->feriadoFecha) : null,
         ]);
+    }
+
+    private function fechaLegible(string $fecha): string
+    {
+        return Carbon::parse($fecha)->translatedFormat('d/m/Y');
     }
 
     private function textoDeColor(string $hex): string

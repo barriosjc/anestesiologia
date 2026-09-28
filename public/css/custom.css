@@ -165,7 +165,8 @@
   .choices.is-disabled .choices__inner { background-color: #e9ecef; }
   .choices__input { background-color: #fff; font-size: .875rem; }
   .choices__placeholder { color: #a7aeb8; opacity: 1; }
-  .choices__list--dropdown {
+  .choices__list--dropdown,
+  .choices__list[aria-expanded] {
     border: 1px solid #d3e7f7;
     border-radius: 0 0 .5rem .5rem;
     box-shadow: 0 8px 18px rgba(23, 130, 224, 0.14);
@@ -212,6 +213,12 @@
     padding-top: 0;
     padding-bottom: 0;
     line-height: 1.5;
+  }
+  .choices-sm .choices__list--single { vertical-align: top; }
+  .choices-sm .choices__list--single .choices__item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* ---------- Tablas ---------- */
@@ -622,11 +629,15 @@
   .guardia-dia.dia-marcado:not([style*="background-color"]) {
     background-color: #e0e0e0;
   }
+  .guardia-dia.dia-feriado-pendiente:not([style*="background-color"]) {
+    background-color: #ffeeba;
+  }
   .guardia-dia.dia-desasignado:not([style*="background-color"]) {
     background-color: #ffffff;
   }
   .guardia-dia.dia-feriado:hover,
   .guardia-dia.dia-marcado:hover,
+  .guardia-dia.dia-feriado-pendiente:hover,
   .guardia-dia.dia-desasignado:hover {
     box-shadow: inset 0 0 0 2px rgba(108, 117, 125, 0.5);
   }

@@ -153,7 +153,7 @@ class PresupuestoDetForm extends Component
         $this->desvincularParteSiCorresponde();
 
         $this->reset([
-            'coberturaId', 'periodo', 'nomencladorOpciones', 'nomenclador_id',
+            'nomencladorOpciones', 'nomenclador_id',
             'nom_padre_id', 'porcentaje', 'valorOrig', 'valorTotal', 'observaciones',
         ]);
 

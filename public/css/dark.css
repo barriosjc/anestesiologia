@@ -1,0 +1,663 @@
+/* ============================================================
+   Modo oscuro — Bootstrap 5.3 (data-bs-theme en <html>)
+
+   El tema inicial lo aplica el script inline del <head> de
+   layouts.main / layouts.login (antes del paint, para no parpadear)
+   y public/js/util.js lo cambia al hacer clic en [data-toggle-theme].
+
+   Este archivo va DESPUÉS de libs/sbadmin/css/styles.css y de
+   custom.css, y todos los selectores están scoped con
+   [data-bs-theme='dark'] para ganarle en especificidad a los colores
+   claros que ambos fijan a mano.
+   ============================================================ */
+
+/* ---------- Botón del toggle ---------- */
+.btn-tema {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50rem;
+    background-color: var(--azul);
+    color: #fff;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(23, 130, 224, .35);
+    transition: background-color .15s ease, transform .05s ease;
+}
+
+.btn-tema:hover,
+.btn-tema:focus {
+    background-color: var(--azul-oscuro);
+    color: #fff;
+}
+
+.btn-tema:active {
+    transform: translateY(1px);
+}
+
+/* En claro mostramos la luna (la acción es pasar a oscuro). */
+.btn-tema .icono-tema-claro {
+    display: none;
+}
+
+[data-bs-theme='dark'] .btn-tema {
+    background-color: #1b3b5f;
+    box-shadow: none;
+}
+
+[data-bs-theme='dark'] .btn-tema:hover,
+[data-bs-theme='dark'] .btn-tema:focus {
+    background-color: #24507f;
+}
+
+[data-bs-theme='dark'] .btn-tema .icono-tema-claro {
+    display: inline-block;
+}
+
+[data-bs-theme='dark'] .btn-tema .icono-tema-oscuro {
+    display: none;
+}
+
+/* ---------- Paleta ---------- */
+:root[data-bs-theme='dark'] {
+    /* Propias de custom.css */
+    --celeste-claro: #14283d;
+    --bs-primary-soft: #14293f;
+
+    /* Bootstrap: hay que redeclarar estas porque SB Admin las fija en su
+       :root (--bs-body-bg: #eaf4fc / --bs-card-bg: #fff) y, al venir
+       después de Bootstrap, le ganarían al bloque oficial de dark. */
+    --bs-body-bg: #0B1524;
+    --bs-body-color: #E4EDF7;
+    --bs-emphasis-color: #ffffff;
+    --bs-secondary-color: #9BB0C7;
+    --bs-tertiary-color: #8496AC;
+    --bs-secondary-bg: #1D2E49;
+    --bs-tertiary-bg: #17253C;
+    --bs-card-bg: #121E31;
+    --bs-card-cap-bg: #17253C;
+    --bs-border-color: #27395A;
+    --bs-border-color-translucent: rgba(39, 57, 90, .85);
+    --bs-link-color: #4FB3F0;
+    --bs-link-hover-color: #8ACDF7;
+    --bs-heading-color: #E4EDF7;
+    --bs-disabled-color: #6B7B90;
+}
+
+/* ============================================================
+   Modo oscuro
+   ============================================================ */
+[data-bs-theme='dark'] {
+    color-scheme: dark;
+
+    /* ---------- Base ---------- */
+    body {
+        background:
+            radial-gradient(900px 420px at 88% -10%, rgba(42, 184, 232, .14), transparent 60%),
+            radial-gradient(760px 420px at -6% 12%, rgba(23, 130, 224, .10), transparent 55%),
+            linear-gradient(180deg, #0B1524 0%, #0E1A2C 45%, #0C1727 100%);
+        background-attachment: fixed;
+        color: #C7D4E3;
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .page-header-title {
+        color: #E4EDF7;
+    }
+
+    .card-title, .modal-title {
+        color: #5FB6F0;
+    }
+
+    label, .form-label, .small.mb-1 {
+        color: #B7C6D8;
+    }
+
+    .form-text {
+        color: #8496AC;
+    }
+
+    a {
+        color: #4FB3F0;
+    }
+
+    a:hover {
+        color: #8ACDF7;
+    }
+
+    .text-primary {
+        color: #4FB3F0 !important;
+    }
+
+    /* ---------- Utilidades de Bootstrap que no se adaptan solas ---------- */
+    .bg-white,
+    .bg-light {
+        background-color: #17253C !important;
+    }
+
+    .text-dark {
+        color: #E4EDF7 !important;
+    }
+
+    /* .text-secondary usa un color fijo (#6c757d) que no se adapta solo */
+    .text-secondary {
+        color: #9BB0C7 !important;
+    }
+
+    .btn-light {
+        --bs-btn-color: #E4EDF7;
+        --bs-btn-bg: #1D2E49;
+        --bs-btn-border-color: #27395A;
+        --bs-btn-hover-color: #ffffff;
+        --bs-btn-hover-bg: #1B3B5F;
+        --bs-btn-hover-border-color: #1B3B5F;
+        --bs-btn-active-color: #ffffff;
+        --bs-btn-active-bg: #1B3B5F;
+        --bs-btn-active-border-color: #1B3B5F;
+        --bs-btn-disabled-color: #6B7B90;
+        --bs-btn-disabled-bg: #17253C;
+        --bs-btn-disabled-border-color: #27395A;
+        background-color: #1D2E49;
+        border-color: #27395A;
+        color: #E4EDF7;
+    }
+
+    .btn-secondary, .btn-outline-secondary {
+        color: #C7D4E3;
+        background-color: #1D2E49;
+        border-color: #27395A;
+    }
+
+    .btn-secondary:hover, .btn-outline-secondary:hover {
+        color: #ffffff;
+        background-color: #1B3B5F;
+    }
+
+    /* Bootstrap no invierte los .btn-dark en dark: el texto negro quedaría
+       invisible sobre el fondo oscuro. */
+    .btn-dark {
+        --bs-btn-color: #E4EDF7;
+        --bs-btn-bg: #1D2E49;
+        --bs-btn-border-color: #27395A;
+        --bs-btn-hover-color: #ffffff;
+        --bs-btn-hover-bg: #1B3B5F;
+        --bs-btn-hover-border-color: #1B3B5F;
+        --bs-btn-active-color: #ffffff;
+        --bs-btn-active-bg: #1B3B5F;
+        --bs-btn-active-border-color: #1B3B5F;
+        color: #E4EDF7;
+        background-color: #1D2E49;
+        border-color: #27395A;
+    }
+
+    .btn-outline-dark {
+        --bs-btn-color: #C7D4E3;
+        --bs-btn-border-color: #3A4E70;
+        --bs-btn-hover-color: #ffffff;
+        --bs-btn-hover-bg: #1B3B5F;
+        --bs-btn-hover-border-color: #1B3B5F;
+        --bs-btn-active-color: #ffffff;
+        --bs-btn-active-bg: #1B3B5F;
+        --bs-btn-active-border-color: #1B3B5F;
+        color: #C7D4E3;
+        border-color: #3A4E70;
+    }
+
+    /* El ícono de .btn-close es un SVG negro embebido */
+    .btn-close {
+        --bs-btn-close-color: #ffffff;
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    /* ---------- Textos grises de SB Admin ( utilities con !important ) ---------- */
+    .text-gray-100 { color: #7E8B9B !important; }
+    .text-gray-200 { color: #8D9AAC !important; }
+    .text-gray-300 { color: #9CAABC !important; }
+    .text-gray-400 { color: #A9B8C9 !important; }
+    .text-gray-500 { color: #B4C2D2 !important; }
+    .text-gray-600 { color: #C2CEDC !important; }
+    .text-gray-700 { color: #D0DAE6 !important; }
+    .text-gray-800 { color: #DEE6EF !important; }
+    .text-gray-900 { color: #FFFFFF !important; }
+
+    /* ---------- Superficies ---------- */
+    /* SB Admin declara --bs-card-bg / --bs-card-cap-bg / --bs-card-border-color
+       sobre la propia clase .card (styles.css ~5281), no en :root. Una
+       declaración en el elemento siempre le gana a la heredada, así que el
+       :root[data-bs-theme='dark'] de arriba NO alcanza: sin redeclararlas acá la
+       card se queda blanca en modo oscuro, y las tablas —que son transparentes
+       y se apoyan en el fondo de la card— quedan con texto claro sobre blanco. */
+    .card {
+        --bs-card-bg: #132033;
+        --bs-card-cap-bg: #1A2A44;
+        --bs-card-border-color: #25385A;
+        --bs-card-color: #C9D6E5;
+        --bs-card-cap-color: #A9C7E6;
+        background-color: #132033;
+        /* Filete de 1px por box-shadow en vez de border: define la card contra
+           el fondo sin sumar 2px al layout (custom.css deja .card { border: 0 }).
+           En oscuro la sombra sola no separa dos superficies de valor parecido. */
+        box-shadow:
+            0 0 0 1px #25385A,
+            0 .4rem 1.4rem rgba(0, 0, 0, .35),
+            0 .15rem .45rem rgba(0, 0, 0, .22);
+    }
+
+    /* El cap tiene que separarse del body: mismo tono = franja invisible. */
+    .card-header {
+        background: linear-gradient(180deg, #1B2C47, #16243A);
+        border-bottom: 1px solid #25385A;
+        color: #A9C7E6;
+    }
+
+    .card-footer {
+        background-color: #16243A;
+        border-top: 1px solid #25385A;
+    }
+
+    .topnav.navbar-light {
+        background: linear-gradient(90deg, #101C2E, #16273F);
+        border-bottom: 1px solid #22354F;
+    }
+
+    .topnav.navbar-light #sidebarToggle,
+    .topnav.navbar-light .nav-link {
+        color: #A9C0D8;
+    }
+
+    .topnav.navbar-light .btn-transparent-dark:hover {
+        background-color: rgba(255, 255, 255, .08);
+    }
+
+    .modal-content {
+        background-color: #121E31;
+        border: 1px solid #22354F;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #16243A, #132034);
+        border-bottom: 1px solid #22354F;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #22354F;
+    }
+
+    .dropdown-menu {
+        background-color: #121E31;
+        border-color: #22354F;
+        color: #C7D4E3;
+    }
+
+    .dropdown-item {
+        color: #C7D4E3;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+        background-color: #1B3B5F;
+        color: #ffffff;
+    }
+
+    .dropdown-divider {
+        border-color: #22354F;
+    }
+
+    .list-group-item {
+        background-color: #121E31;
+        border-color: #22354F;
+        color: #C7D4E3;
+    }
+
+    /* ---------- Sidebar ---------- */
+    .sidenav.sidenav-light {
+        background-color: #0D1727;
+    }
+
+    .sidenav-light .sidenav-menu .sidenav-menu-heading {
+        color: #5E7FA3;
+    }
+
+    .sidenav-light .sidenav-menu .nav-link {
+        color: #A9C0D8;
+    }
+
+    .sidenav-light .sidenav-menu .nav-link .nav-link-icon {
+        color: #5E7FA3;
+    }
+
+    .sidenav-light .sidenav-menu .nav-link:hover,
+    .sidenav-light .sidenav-menu .nav-link.active,
+    .sidenav-light .sidenav-menu .nav-link.active .nav-link-icon {
+        color: #4FB3F0;
+    }
+
+    .sidenav-light .sidenav-menu-nested {
+        border-left-color: #1E2E45;
+    }
+
+    .sidenav-light .sidenav-footer {
+        background-color: #111E30;
+    }
+
+    .sidenav-light .sidenav-footer .sidenav-footer-subtitle {
+        color: #7FC2EE;
+    }
+
+    .footer-admin.footer-light {
+        color: #8496AC;
+    }
+
+    /* ---------- Formularios ---------- */
+    .form-control,
+    .form-select,
+    .input-group-text {
+        background-color: #16243A;
+        border-color: #27395A;
+        color: #E4EDF7;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: #16243A;
+        border-color: #3E7FB5;
+        color: #E4EDF7;
+    }
+
+    .form-control::placeholder {
+        color: #7E8FA5;
+    }
+
+    .form-control:disabled,
+    .form-select:disabled,
+    .form-control[readonly] {
+        background-color: #131F33;
+        color: #7E8FA5;
+    }
+
+    .form-control.bg-light {
+        background-color: #1A2740 !important;
+    }
+
+    .form-check-input {
+        background-color: #1D2E49;
+        border-color: #3A4E70;
+    }
+
+    .input-group-text {
+        background-color: #17253C;
+        color: #9BB0C7;
+    }
+
+    /* La flecha del <select> es un SVG con trazo oscuro embebido */
+    .form-select,
+    .custom-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23C7D4E3' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: .7;
+    }
+
+    /* Select propio del proyecto */
+    .custom-select {
+        color: #E4EDF7;
+        background-color: #16243A;
+        border-color: #27395A;
+    }
+
+    .custom-select:disabled {
+        background-color: #131F33;
+    }
+
+    /* Select2 */
+    .select2-container .form-select-2,
+    .select2-container--default .select2-selection--single {
+        color: #E4EDF7 !important;
+        background-color: #16243A !important;
+        border-color: #27395A !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #E4EDF7;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #C7D4E3 transparent transparent;
+    }
+
+    /* Tom Select */
+    .ts-wrapper .ts-control {
+        background-color: #16243A;
+        border-color: #27395A;
+        color: #E4EDF7;
+    }
+
+    /* ---------- Choices.js ---------- */
+    .choices__inner,
+    .choices[data-type*="select-one"] .choices__inner,
+    .choices[data-type*="select-multiple"] .choices__inner {
+        background-color: #16243A;
+        border-color: #27395A;
+        color: #E4EDF7;
+    }
+
+    .choices__input {
+        background-color: #16243A;
+        color: #E4EDF7;
+    }
+
+    .choices.is-disabled .choices__inner {
+        background-color: #131F33;
+    }
+
+    .choices__list--dropdown,
+    .choices__list[aria-expanded] {
+        background-color: #121E31;
+        border-color: #27395A;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, .45);
+    }
+
+    .choices__list--dropdown .choices__item--selectable.is-highlighted,
+    .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+        background-color: #1B3B5F;
+        color: #ffffff;
+    }
+
+    .choices__item--selectable {
+        color: #C7D4E3;
+    }
+
+    .choices__placeholder {
+        color: #7E8FA5;
+    }
+
+    /* ---------- Tablas ---------- */
+    /* Mismo problema que .card: SB Admin fija --bs-table-* sobre la propia .table
+       (styles.css ~1898). El :root del tema no llega, así que las celdas quedan
+       con el borde claro #e0e5ec y el hover con un velo claro
+       rgba(224,229,236,.25) que lava la fila en lugar de resaltarla. */
+    .table {
+        --bs-table-color: #C9D6E5;
+        --bs-table-bg: transparent;
+        --bs-table-border-color: rgba(255, 255, 255, .07);
+        --bs-table-accent-bg: transparent;
+        --bs-table-striped-color: #C9D6E5;
+        --bs-table-striped-bg: rgba(79, 179, 240, .07);
+        --bs-table-active-color: #E6EEF9;
+        --bs-table-active-bg: rgba(79, 179, 240, .16);
+        --bs-table-hover-color: #E6EEF9;
+        --bs-table-hover-bg: rgba(79, 179, 240, .13);
+        color: #C9D6E5;
+    }
+
+    .table tbody td {
+        color: #C9D6E5;
+    }
+
+    /* La última fila no deja filete colgando al pie de la tabla. */
+    .table > tbody > tr:last-child > * {
+        border-bottom: 0;
+    }
+
+    /* custom.css pinta la cabecera con el gradiente celeste #1782e0→#2ab8e8.
+       Sobre fondo oscuro ese bloque saturado y claro es lo que más molesta: por
+       área es el elemento de mayor luminancia de la pantalla y genera
+       halación. En oscuro la cabecera va con superficie propia (un peldaño
+       por encima de la card) y la identidad la aporta un filete de acento,
+       no un relleno brillante. */
+    .table thead {
+        background: linear-gradient(180deg, #1B2C47 0%, #152438 100%);
+        box-shadow: inset 0 -1px 0 rgba(79, 179, 240, .35);
+    }
+
+    .table thead th {
+        background: transparent;
+        border-bottom: 0;
+        color: #B7CFE7;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        --bs-table-striped-bg: rgba(79, 179, 240, .07);
+    }
+
+    .table-light {
+        --bs-table-bg: #16243A;
+        --bs-table-color: #C9D6E5;
+        --bs-table-border-color: #25385A;
+        color: #C9D6E5;
+    }
+
+    /* ---------- Calendario de guardias de médicos ---------- */
+    .guardias-cal-head {
+        background-color: #16243A;
+    }
+
+    .guardia-dia.dia-fuera {
+        background-color: #101B2C !important;
+    }
+
+    .guardia-dia.dia-fin-semana:not([style*="background-color"]),
+    .guardia-dia.dia-desasignado:not([style*="background-color"]) {
+        background-color: #16243A;
+    }
+
+    .guardia-dia.dia-feriado:not([style*="background-color"]) {
+        background-color: #232B3D;
+    }
+
+    .guardia-dia.dia-marcado:not([style*="background-color"]) {
+        background-color: #2C3A52;
+    }
+
+    .guardia-dia.dia-feriado-pendiente:not([style*="background-color"]) {
+        background-color: #3E3410;
+    }
+
+    /* Las celdas con médico llevan el color de la paleta en un style inline:
+       ese color no cambia con el tema, así que le encima un velo oscuro para
+       que el texto claro siga teniendo contraste. */
+    .guardia-dia[style*="background-color"] {
+        background-image: linear-gradient(rgba(11, 21, 36, .38), rgba(11, 21, 36, .38));
+    }
+
+    .guardia-dia.dia-feriado:hover,
+    .guardia-dia.dia-marcado:hover,
+    .guardia-dia.dia-feriado-pendiente:hover,
+    .guardia-dia.dia-desasignado:hover {
+        box-shadow: inset 0 0 0 2px rgba(148, 163, 184, .6);
+    }
+
+    /* ---------- Paginación ---------- */
+    .pagination .page-link {
+        color: #4FB3F0;
+        background-color: #16243A;
+        border-color: #27395A;
+    }
+
+    .pagination .page-link:hover {
+        color: #ffffff;
+        background-color: #1B3B5F;
+        border-color: #1B3B5F;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6B7B90;
+        background-color: #131F33;
+        border-color: #27395A;
+    }
+
+    /* ---------- Alerts ---------- */
+    .alert-info {
+        background-color: rgba(23, 130, 224, .18);
+        color: #8ACDF7;
+    }
+
+    .alert-success {
+        background-color: rgba(18, 181, 122, .18);
+        color: #6FD6A5;
+    }
+
+    .alert-danger {
+        background-color: rgba(232, 69, 60, .18);
+        color: #F19AA0;
+    }
+
+    .alert-warning {
+        background-color: rgba(255, 193, 77, .18);
+        color: #F5C77A;
+    }
+
+    /* ---------- Auxiliares del proyecto ---------- */
+    .disabled-link {
+        color: #7C8B9C;
+        background-color: #2A3648 !important;
+    }
+
+    .dg-gray {
+        background-color: #3A4658 !important;
+    }
+
+    /* ---------- Login ---------- */
+    /* El <style> inline de layouts/login.blade.php pone el gradiente azul con
+       !important, así que hay que volver a fixerlo con !important. */
+    [data-bs-theme='dark'] body.bg-primary {
+        background: linear-gradient(135deg, #0E3E6B, #0F5566) !important;
+    }
+
+    /* ---------- Scrollbar ---------- */
+    ::-webkit-scrollbar-track {
+        background: #0E1A2C;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #2A4A6B, #1E3A56);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #2F6FA8;
+    }
+
+    /* ---------- SweetAlert2 ---------- */
+    /* !important: confirmJob() setea el fondo con un style inline */
+    .swal2-popup {
+        background: #121E31 !important;
+        border: 1px solid #22354F;
+        color: #E4EDF7;
+    }
+
+    .swal2-title {
+        color: #E4EDF7;
+    }
+
+    .swal2-html-container {
+        color: #B7C6D8;
+    }
+}

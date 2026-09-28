@@ -35,6 +35,19 @@
             border-color: #1782e0;
         }
     </style>
+    {{-- Capa del modo oscuro + arranque del tema antes del primer paint.
+         Va después del <style> inline para ganarle en precedencia. --}}
+    <link href="{{ asset('css/dark.css') }}?v={{ filemtime(public_path('css/dark.css')) }}" rel="stylesheet" />
+    <script>
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('anestesiologia-tema'); } catch (e) { t = null; }
+            if (t !== 'dark' && t !== 'light') {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-bs-theme', t);
+        })();
+    </script>
 </head>
 <body class="bg-primary">
     <div id="layoutAuthentication">

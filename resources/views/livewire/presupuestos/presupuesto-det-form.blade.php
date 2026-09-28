@@ -52,7 +52,7 @@
                                 });
                             }
                         }">
-                        <select x-ref="coberturaSelect" class="form-select" id="coberturaId">
+                        <select x-ref="coberturaSelect" class="form-select form-select-sm" id="coberturaId">
                             <option value="">-- Seleccione --</option>
                             @foreach ($coberturas as $item)
                                 <option value="{{ $item->id }}">{{ $item->sigla }}</option>

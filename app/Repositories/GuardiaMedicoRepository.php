@@ -9,20 +9,47 @@ use Illuminate\Support\Collection;
 
 class GuardiaMedicoRepository
 {
-    private const PALETA = [
-        '#1782e0', '#2ab8e8', '#0f9d8f', '#7a5cff', '#e67e22',
-        '#c0392b', '#16a085', '#8e44ad', '#2c3e50', '#d35400',
-        '#27ae60', '#7f8c8d', '#f39c12', '#1abc9c', '#e74c3c',
-    ];
-
     public function medicos(): Collection
     {
         return Profesional::orderBy('nombre')->get();
     }
 
-    public function colorPara(int $medicoId): string
+    /**
+     * Color bien diferenciado según la posición del médico en la lista
+     * ordenada. Usa el ángulo áureo (137.5°) sobre el matiz HSL para que
+     * médicos consecutivos siempre tengan colores claramente distintos.
+     */
+    public function colorPara(int $medicoId, int $orden = 0): string
     {
-        return self::PALETA[$medicoId % count(self::PALETA)];
+        $hue = fmod($orden * 137.508, 360);
+        if ($hue < 0) {
+            $hue += 360;
+        }
+
+        return $this->hslToHex($hue, 0.72, 0.45);
+    }
+
+    private function hslToHex(float $hue, float $saturation, float $lightness): string
+    {
+        $c = (1 - abs(2 * $lightness - 1)) * $saturation;
+        $x = $c * (1 - abs(fmod($hue / 60, 2) - 1));
+        $m = $lightness - $c / 2;
+
+        $rgb = match ((int) floor($hue / 60)) {
+            0 => [$c, $x, 0],
+            1 => [$x, $c, 0],
+            2 => [0, $c, $x],
+            3 => [0, $x, $c],
+            4 => [$x, 0, $c],
+            default => [$c, 0, $x],
+        };
+
+        return sprintf(
+            '#%02x%02x%02x',
+            (int) round(($rgb[0] + $m) * 255),
+            (int) round(($rgb[1] + $m) * 255),
+            (int) round(($rgb[2] + $m) * 255),
+        );
     }
 
     public function mes(int $anio, int $mes): Collection
@@ -43,14 +70,22 @@ class GuardiaMedicoRepository
     {
         $total = 0;
 
+        $indiceId = $this->medicos()->pluck('id')->flip()->all();
+
         foreach ($asignaciones as $fecha => $medicoId) {
+            $medicoId = (int) $medicoId;
             $dia = Carbon::parse($fecha);
             $row = GuardiaMedico::firstOrNew(['fecha' => $fecha]);
-            $row->medico_id = (int) $medicoId;
+            $row->medico_id = $medicoId;
             $row->es_sabado = $dia->isSaturday() ? 1 : 0;
             $row->es_domingo = $dia->isSunday() ? 1 : 0;
             $row->feriado = $feriadoRepository->nombre($fecha);
-            $row->color = $this->colorPara((int) $medicoId);
+
+            $colorPrevio = GuardiaMedico::where('medico_id', $medicoId)
+                ->whereNotNull('color')
+                ->latest('fecha')
+                ->value('color');
+            $row->color = $colorPrevio ?? $this->colorPara($medicoId, $indiceId[$medicoId] ?? $medicoId);
             $row->save();
             $total++;
         }

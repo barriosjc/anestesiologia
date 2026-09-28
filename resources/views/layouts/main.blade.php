@@ -31,6 +31,21 @@
     <!-- Include base CSS (optional) -->
     <link href="{{ asset('libs/sbadmin/css/styles.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}?v={{ filemtime(public_path('css/custom.css')) }}" rel="stylesheet" />
+    {{-- Capa del modo oscuro (data-bs-theme). Va después de custom.css para
+         ganar en precedencia a los colores claros que fija a mano. --}}
+    <link href="{{ asset('css/dark.css') }}?v={{ filemtime(public_path('css/dark.css')) }}" rel="stylesheet" />
+    {{-- Tema claro/oscuro: se aplica antes del primer paint para no parpadear.
+         Sin elección guardada, sigue al sistema. --}}
+    <script>
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('anestesiologia-tema'); } catch (e) { t = null; }
+            if (t !== 'dark' && t !== 'light') {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-bs-theme', t);
+        })();
+    </script>
 </head>
 
 <body class="nav-fixed">

@@ -1,4 +1,39 @@
-<div class="container mt-4">
+<div class="container mt-4"
+    x-data="{
+        init() {
+            window.addEventListener('confirmar-feriado', (e) => this.confirmarFeriado(e.detail));
+            window.addEventListener('aviso-feriado', (e) => this.aviso(e.detail.mensaje));
+        },
+        aviso(mensaje) {
+            Swal.fire({
+                title: 'No se puede marcar esa celda',
+                text: mensaje,
+                icon: 'warning',
+                confirmButtonColor: '#d97706',
+                confirmButtonText: 'Entendido',
+            });
+        },
+        confirmarFeriado({ fecha, nombre, fechaLegible, yaExiste }) {
+            Swal.fire({
+                title: yaExiste ? '¿Confirmar feriado?' : '¿Confirmar alta de feriado?',
+                text: yaExiste
+                    ? nombre + ' — ' + fechaLegible + '. Esa fecha ya está cargada como feriado.'
+                    : nombre + ' — ' + fechaLegible + '. Solo se puede marcar 1 celda por feriado.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#1782e0',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar',
+            }).then((resultado) => {
+                if (resultado.isConfirmed) {
+                    $wire.confirmarFeriado(fecha);
+                } else {
+                    $wire.descartarFeriado();
+                }
+            });
+        },
+    }">
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between gap-2 bg-white flex-wrap">
             <h5 class="card-title mb-0"><i class="fa-solid fa-calendar-check me-2 text-primary"></i>Guardias de Médicos</h5>
@@ -46,6 +81,13 @@
                     </div>
                     <a class="btn btn-outline-dark btn-sm" target="_blank"
                         href="{{ route('guardias.pdf', ['anio' => $anio, 'mes' => $mes, 'incluir' => $incluirFeriados ? 1 : 0]) }}"
+                        x-on:click.prevent="
+                            const chk = document.getElementById('incluirFeriados');
+                            const url = new URL(@js(route('guardias.pdf', ['anio' => $anio, 'mes' => $mes])));
+                            url.searchParams.set('incluir', chk && chk.checked ? '1' : '0');
+                            $el.href = url.href;
+                            window.open(url.href, '_blank');
+                        "
                         title="Generar PDF del mes">
                         <i class="fa-solid fa-file-pdf text-danger me-1"></i>PDF
                     </a>
@@ -74,8 +116,20 @@
                         @if (!$profesionalId) disabled @endif>
                         <i class="fa-solid fa-user-plus me-1"></i>Asignar
                     </button>
-                    <input type="text" class="form-control form-control-sm" style="min-width: 180px; max-width: 220px;"
-                        wire:model.defer="nombreFeriado" placeholder="Nombre del feriado (al marcar)">
+                    <div class="input-group input-group-sm" style="min-width: 200px; max-width: 260px;">
+                        <input type="text" class="form-control" aria-label="Nombre del feriado"
+                            wire:model.defer="nombreFeriado" placeholder="Nombre del feriado (al marcar)">
+                        <button type="button" class="btn btn-outline-secondary" wire:click="descartarFeriado"
+                            x-on:click="$el.closest('.input-group').querySelector('input').value = ''"
+                            wire:loading.attr="disabled" title="Descartar el feriado marcado">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    @if ($feriadoFecha)
+                        <span class="badge text-bg-warning">
+                            <i class="fa-solid fa-star me-1"></i>{{ $feriadoConfirmado ? 'Feriado cargado' : 'Feriado por confirmar' }}: {{ $feriadoNombre }} ({{ $feriadoFechaLegible }})
+                        </span>
+                    @endif
                 </div>
                 <button type="button" class="btn btn-success btn-sm" wire:click="confirmar">
                     <i class="fa-solid fa-check-double me-1"></i>Confirmar
@@ -103,6 +157,7 @@
                                             class="guardia-dia
                                                 @if ($celda['esHoy']) dia-hoy @endif
                                                 @if ($celda['marcado']) dia-marcado @endif
+                                                @if ($celda['esFeriadoPendiente']) dia-feriado-pendiente @endif
                                                 @if ($celda['desasignado']) dia-desasignado @endif
                                                 @if ($celda['esFeriado'] && !$celda['color'] && !$celda['marcado'] && !$celda['desasignado']) dia-feriado @endif
                                                 @if ($celda['esSabado'] || $celda['esDomingo']) dia-fin-semana @endif"
@@ -122,7 +177,13 @@
                                                 </div>
                                             @else
                                                 @if ($celda['marcado'])
-                                                    <div class="small fw-bold text-secondary"><i class="fa-solid fa-pen me-1"></i>Marcado</div>
+                                                    <div class="small fw-bold text-secondary">
+                                                        @if ($celda['esFeriadoPendiente'])
+                                                            <i class="fa-solid fa-star me-1"></i>{{ $celda['feriadoConfirmado'] ? 'Feriado' : 'Feriado?' }}
+                                                        @else
+                                                            <i class="fa-solid fa-pen me-1"></i>Marcado
+                                                        @endif
+                                                    </div>
                                                 @elseif ($celda['desasignado'])
                                                     <div class="small fw-bold text-secondary"><i class="fa-solid fa-eraser me-1"></i>Sin asignar</div>
                                                 @endif

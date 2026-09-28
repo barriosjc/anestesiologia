@@ -80,6 +80,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['middleware' => ['role:super-admin|anestesiologo']], function () {
             Route::get('guardias/calendario', \App\Livewire\Guardias\GuardiasMedicosIndex::class)->name('guardias.calendario');
             Route::get('guardias/pdf', [\App\Http\Controllers\Guardias\GuardiaMedicoController::class, 'pdf'])->name('guardias.pdf');
+            Route::get('terceros-anestesia', \App\Livewire\TercerosAnestesia\TercerosAnestesiaIndex::class)->name('terceros_anestesia.index');
         });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {

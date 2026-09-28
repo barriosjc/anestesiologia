@@ -81,6 +81,16 @@
                     </form>
                 </div>
             </li>
+
+            {{-- Toggle de tema claro/oscuro (Bootstrap data-bs-theme) --}}
+            <li class="nav-item ms-2 me-2">
+                <button type="button" class="btn btn-icon btn-tema" data-toggle-theme
+                        title="Cambiar entre modo claro y oscuro"
+                        aria-label="Cambiar entre modo claro y oscuro">
+                    <i class="fas fa-moon icono-tema-oscuro"></i>
+                    <i class="fas fa-sun icono-tema-claro"></i>
+                </button>
+            </li>
             
         </ul>
     </nav>

@@ -21,9 +21,7 @@ function initChoices(selectEl, config = {}) {
 
     const instance = new Choices(selectEl, Object.assign(defaults, choicesConfig));
 
-    if (selectEl.classList.contains('form-select-sm')) {
-        instance.containerOuter.element.classList.add('choices-sm');
-    }
+    instance.containerOuter.element.classList.add('choices-sm');
 
     if (typeof onChange === 'function') {
         selectEl.addEventListener('change', () => {
@@ -43,10 +41,34 @@ function resetChoices(instance, multi = false) {
     if (multi) {
         instance.removeActiveItems();
     } else {
-        instance.setValue(['']);
+        instance.setChoiceByValue('');
         instance.clearInput();
     }
 }
+
+// ----------
+// Tema claro/oscuro — flip de data-bs-theme en <html> (Bootstrap 5.3).
+// El tema inicial lo aplica el script inline del <head> de layouts.main /
+// layouts.login (antes del paint, para no parpadear); acá solo se cambia y
+// se persiste. Click delegado en document para que siga funcionando
+// después de cualquier morph de Livewire.
+function aplicarTema(tema) {
+    document.documentElement.setAttribute('data-bs-theme', tema);
+
+    try {
+        localStorage.setItem('anestesiologia-tema', tema);
+    } catch (e) {
+        // localStorage bloqueado (modo privado): el tema dura lo que la sesión.
+    }
+}
+
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('[data-toggle-theme]');
+    if (!btn) return;
+
+    const actual = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+    aplicarTema(actual);
+});
 
 // ----------
 

@@ -14,9 +14,13 @@ class ArchivoDescargaService
         }
 
         $rutaAbsoluta = Storage::disk($disco)->path($rutaRelativa);
+        $nombre ??= basename($rutaRelativa);
 
         return $descargar
-            ? response()->download($rutaAbsoluta, $nombre ?? basename($rutaRelativa))
-            : response()->file($rutaAbsoluta);
+            ? response()->download($rutaAbsoluta, $nombre)
+            : response()->file($rutaAbsoluta, [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $nombre . '"',
+            ]);
     }
 }

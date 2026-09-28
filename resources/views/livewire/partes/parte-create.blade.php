@@ -93,7 +93,7 @@
                                             });
                                         }
                                     }">
-                                    <select x-ref="coberturaSelect" class="form-select">
+                                    <select x-ref="coberturaSelect" class="form-select form-select-sm">
                                         <option value="">-- Seleccione --</option>
                                         @foreach ($coberturas as $data)
                                             <option value="{{ $data->id }}" @selected($cobertura_id == $data->id)>{{ $data->sigla }}</option>

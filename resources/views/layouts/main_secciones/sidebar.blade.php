@@ -89,6 +89,10 @@
                     <div class="nav-link-icon"><i class="fa-solid fa-calendar-check"></i></div>
                     Guardias de Médicos
                 </a>
+                <a class="nav-link" href="{{ route('terceros_anestesia.index') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                    Terceros con Anestesia
+                </a>
             @endrole
 
             @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
