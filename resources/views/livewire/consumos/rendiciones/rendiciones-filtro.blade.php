@@ -55,7 +55,7 @@
         </div>
         <div class="form-group col-md-2">
             <label class="small mb-1" for="estado_id">Estados</label>
-            <div wire:ignore x-data="{
+            <div class="choices-nowrap" wire:ignore x-data="{
                     choices: null,
                     init() {
                         this.choices = initChoices(this.$refs.estadoSelect, {

@@ -25,7 +25,7 @@ class TercerosAnestesiaIndex extends Component
     public string $hora = '';
     public string $paciente = '';
     public ?int $nomenclador_id = null;
-    public string $estado = 'realizado';
+    public string $estado = 'asignado';
     public ?int $profesional_id = null;
     public ?int $cobertura_id = null;
     public int $urgencia = 0;
@@ -39,7 +39,7 @@ class TercerosAnestesiaIndex extends Component
             'hora'           => ['nullable'],
             'paciente'       => ['required', 'string', 'max:255'],
             'nomenclador_id' => ['nullable', 'integer', 'exists:nomenclador,id'],
-            'estado'         => ['required', 'string', 'in:realizado,suspendido'],
+            'estado'         => ['required', 'string', 'in:asignado,realizado,suspendido'],
             'profesional_id' => ['nullable', 'integer', 'exists:profesionales,id'],
             'cobertura_id'   => ['nullable', 'integer', 'exists:coberturas,id'],
             'urgencia'       => ['required', 'in:0,1'],
@@ -149,7 +149,7 @@ class TercerosAnestesiaIndex extends Component
         $this->hora           = '';
         $this->paciente       = '';
         $this->nomenclador_id = null;
-        $this->estado         = 'realizado';
+        $this->estado         = 'asignado';
         $this->profesional_id = null;
         $this->cobertura_id   = null;
         $this->urgencia       = 0;

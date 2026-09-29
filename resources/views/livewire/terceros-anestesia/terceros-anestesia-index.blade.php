@@ -185,24 +185,13 @@
 
                             {{-- Estado --}}
                             <div class="col-md-3">
-                                <label class="form-label small fw-bold d-block">Estado <span class="text-danger">*</span></label>
-                                <div class="btn-group btn-group-sm w-100" role="group" aria-label="Estado">
+                                <label class="form-label small fw-bold" for="sel_estado">Estado <span class="text-danger">*</span></label>
+                                <select wire:model="estado" id="sel_estado" class="form-select form-select-sm @error('estado') is-invalid @enderror">
                                     @foreach ($estados as $e)
-                                        <input
-                                            type="radio"
-                                            class="btn-check"
-                                            wire:model="estado"
-                                            name="estado"
-                                            id="estado_{{ $e->value }}"
-                                            value="{{ $e->value }}"
-                                            autocomplete="off"
-                                        />
-                                        <label class="btn btn-outline-primary @error('estado') is-invalid @enderror" for="estado_{{ $e->value }}">
-                                            {{ $e->label() }}
-                                        </label>
+                                        <option value="{{ $e->value }}">{{ $e->label() }}</option>
                                     @endforeach
-                                </div>
-                                @error('estado') <div class="text-danger small">{{ $message }}</div> @enderror
+                                </select>
+                                @error('estado') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             {{-- Procedimiento (Nomenclador) -> Choices.js --}}

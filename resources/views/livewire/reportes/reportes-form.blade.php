@@ -59,7 +59,7 @@
                         <div class="row pt-2">
                             <div class="form-group col-md-3">
                                 <label class="small mb-1" for="estados">Estados</label>
-                                <div wire:ignore x-data="{
+                                <div class="choices-nowrap" wire:ignore x-data="{
                                         choices: null,
                                         init() {
                                             this.choices = initChoices(this.$refs.estadoSelect, {
@@ -67,7 +67,7 @@
                                                 onChange: (values) => { $wire.set('estados', values) },
                                             });
                                         }
-                                    }">
+                                    }" x-on:filtro-limpiado.window="resetChoices(choices, true)">    
                                     <select x-ref="estadoSelect" class="form-select form-select-sm" multiple>
                                         @foreach ($listaEstados as $item)
                                             <option value="{{ $item->id }}" @selected(in_array($item->id, $estados))>{{ $item->descripcion }}</option>

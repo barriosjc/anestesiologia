@@ -221,6 +221,37 @@
     text-overflow: ellipsis;
   }
 
+  /* ---------- Choices.js multiselect en una sola fila ----------
+     Evita que los items seleccionados salten a otra fila: se mantienen
+     en una sola linea con scroll horizontal. El buscador queda fijo a la
+     derecha y el desplegable se ensancha para mostrar el texto completo. */
+  .choices-nowrap .choices__inner { display: flex; flex-wrap: nowrap; align-items: center; }
+  .choices-nowrap .choices__list--multiple {
+    display: flex;
+    flex-wrap: nowrap;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+  }
+  .choices-nowrap .choices__list--multiple .choices__item {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+  .choices-nowrap .choices__input {
+    flex: 0 0 auto;
+    width: 3rem;
+    min-width: 0;
+  }
+  .choices-nowrap .choices__list--dropdown,
+  .choices-nowrap .choices__list[aria-expanded] {
+    width: max-content;
+    min-width: 100%;
+    max-width: 340px;
+  }
+
   /* ---------- Tablas ---------- */
   .table {
     border-collapse: separate;

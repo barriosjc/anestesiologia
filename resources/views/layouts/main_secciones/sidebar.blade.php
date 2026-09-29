@@ -89,11 +89,13 @@
                     <div class="nav-link-icon"><i class="fa-solid fa-calendar-check"></i></div>
                     Guardias de Médicos
                 </a>
+            @endrole
+            @if (Auth()->user()->can('terceros con anestesia') || $super)
                 <a class="nav-link" href="{{ route('terceros_anestesia.index') }}">
                     <div class="nav-link-icon"><i class="fa-solid fa-notes-medical"></i></div>
                     Terceros con Anestesia
                 </a>
-            @endrole
+            @endif
 
             @if (Auth()->user()->hasPermissionTo('adm_partes', 'web') || $super)
                 <div class="sidenav-menu-heading">ADMINISTRATIVOS </div>
