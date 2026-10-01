@@ -575,6 +575,41 @@
         box-shadow: inset 0 0 0 2px rgba(148, 163, 184, .6);
     }
 
+    /* ---------- Terceros con anestesia (tarjetas del celular) ----------
+       custom.css pinta la tarjeta con var(--bs-card-bg), que dentro de una
+       .card oscura ya viene en #132033: sobre ese fondo la tarjeta no se
+       separa. Un peldaño más claro la define sin sumar filetes. */
+    .ta-card {
+        background-color: #16273F;
+        border-color: #25385A;
+        box-shadow: none;
+    }
+
+    .ta-card-meta,
+    .ta-dato dt,
+    .ta-vacio {
+        color: #9FB3CA;
+    }
+
+    .ta-dato {
+        border-top-color: rgba(79, 179, 240, .16);
+    }
+
+    .ta-card-foot {
+        border-top-color: rgba(79, 179, 240, .22);
+    }
+
+    /* El pie del formulario se apoya sobre la card oscura: sin fondo propio
+       el contenido scrollea por debajo y el texto se encima. */
+    .ta-form-actions {
+        background-color: #16243A;
+        box-shadow: 0 -.25rem .75rem rgba(0, 0, 0, .45);
+    }
+
+    .ta-obs-desktop {
+        color: #9FB3CA;
+    }
+
     /* ---------- Paginación ---------- */
     .pagination .page-link {
         color: #4FB3F0;

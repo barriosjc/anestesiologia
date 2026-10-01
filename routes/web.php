@@ -84,6 +84,8 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['middleware' => ['permission:terceros con anestesia']], function () {
             Route::get('terceros-anestesia', \App\Livewire\TercerosAnestesia\TercerosAnestesiaIndex::class)->name('terceros_anestesia.index');
+            Route::get('terceros-anestesia/create', \App\Livewire\TercerosAnestesia\TercerosAnestesiaForm::class)->name('terceros_anestesia.create');
+            Route::get('terceros-anestesia/{id}/edit', \App\Livewire\TercerosAnestesia\TercerosAnestesiaForm::class)->name('terceros_anestesia.edit');
         });
         
         Route::group(['middleware' => ['permission:adm_permisos']], function () {
