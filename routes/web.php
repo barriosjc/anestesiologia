@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\cargas\ParteController;
 use App\Http\Controllers\entidades\PresupuestoCabController;
 use App\Http\Controllers\entidades\ProfesionalController;
+use App\Http\Controllers\entidades\ValoresListasController;
 use App\Http\Controllers\Utiles\UtilController;
 use App\Livewire\Partes\ParteCreate;
 use Illuminate\Http\Request;
@@ -53,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('nomenclador/valores/filtrar', function (Request $request) {
                 return redirect()->route('nomenclador.valores.listas', $request->query());
             })->name('nomenclador.valores.filtrar');
+            Route::get('nomenclador/valores/listas/pdf', [ValoresListasController::class, 'pdf'])->name('nomenclador.valores.pdf');
             //se cambio a post porque borra y restaura
             Route::get('nomenclador/listas/creadas/{nom_padre}', \App\Livewire\Listas\AgrupadorListaIndex::class)->name('nomenclador.listas.listas');
 

@@ -85,9 +85,9 @@
                             <div class="ta-dato">
                                 <dt>Procedimiento</dt>
                                 <dd>
-                                    @if ($item->nomenclador)
-                                        <span class="badge bg-light text-dark border">{{ $item->nomenclador->codigo }}</span>
-                                        <span class="small">{{ $item->nomenclador->descripcion }}</span>
+                                    @if ($item->procedimiento)
+                                        <span class="badge bg-light text-dark border">{{ $item->procedimiento->codigo }}</span>
+                                        <span class="small">{{ $item->procedimiento->descripcion }}</span>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
@@ -177,11 +177,11 @@
                                     <td class="text-nowrap">{{ $item->hora ? substr($item->hora, 0, 5) : '—' }}</td>
                                     <td class="fw-semibold text-dark">{{ $item->paciente }}</td>
                                     <td>
-                                        @if ($item->nomenclador)
+                                        @if ($item->procedimiento)
                                             <span class="badge bg-light text-dark border">
-                                                {{ $item->nomenclador->codigo }}
+                                                {{ $item->procedimiento->codigo }}
                                             </span>
-                                            <span class="small">{{ $item->nomenclador->descripcion }}</span>
+                                            <span class="small">{{ $item->procedimiento->descripcion }}</span>
                                         @else
                                             <span class="text-muted">—</span>
                                         @endif

@@ -48,6 +48,22 @@ class ValoresIndex extends Component
         $this->resetPage();
     }
 
+    public function generarPdf(): void
+    {
+        $this->resetErrorBag();
+
+        if (empty($this->filtroGrupo) && empty($this->filtroNivel)) {
+            $this->addError('filtroGrupo', 'Debe ingresar al menos un filtro (Grupo o Nivel) para generar el PDF.');
+
+            return;
+        }
+
+        $this->dispatch('valores-pdf-listo', url: route('nomenclador.valores.pdf', array_filter([
+            'grupo' => $this->filtroGrupo,
+            'nivel' => $this->filtroNivel,
+        ], fn ($valor) => !is_null($valor) && $valor !== '')));
+    }
+
     public function abrirModalValor(int $id): void
     {
         $valores = Valores::withTrashed()->find($id);

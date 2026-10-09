@@ -1,4 +1,4 @@
-<div>
+<div x-data x-on:valores-pdf-listo.window="window.open($event.detail.url, '_blank')">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -48,15 +48,23 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-3 d-flex gap-2">
+                            <div class="col-md-6 d-flex gap-2 justify-content-end">
                                 <button wire:click="filtrar" class="btn btn-primary">
                                     <i class="fa-solid fa-filter me-1"></i>Filtrar Listas
                                 </button>
                                 <button wire:click="limpiar" class="btn btn-warning">
                                     <i class="fa-solid fa-eraser me-1"></i>Limpiar
                                 </button>
+                                <button wire:click="generarPdf" class="btn btn-danger"
+                                    title="Generar PDF de los datos filtrados">
+                                    <i class="fa-solid fa-file-pdf me-1"></i>PDF
+                                </button>
                             </div>
                         </div>
+
+                        @error('filtroGrupo')
+                            <div class="alert alert-danger py-2 mb-3">{{ $message }}</div>
+                        @enderror
 
                         <div class="table-responsive">
                             <table class="table table-striped table-hover" id="table_data">

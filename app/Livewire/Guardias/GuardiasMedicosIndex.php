@@ -221,7 +221,12 @@ class GuardiasMedicosIndex extends Component
         $feriados = $feriadoRepo->mes($this->anio, $this->mes);
         $medicos = $guardiaRepo->medicos();
         $nombresMedicos = $medicos->pluck('nombre', 'id');
-        $indiceId = $medicos->pluck('id')->flip()->all();
+        // Colores del mes: se reparten entre los médicos que tienen guardias
+        // este mes (los ya guardados + los pendientes de confirmar), de modo
+        // que dentro del mes no se repita ningún color.
+        $colorPorMedico = $guardiaRepo->colores(
+            $toma->pluck('medico_id')->merge(array_values($this->asignadosPendientes))->all()
+        );
         $hoyKey = now()->format('Y-m-d');
 
         $celdas = [];
@@ -245,10 +250,13 @@ class GuardiasMedicosIndex extends Component
             }
 
             if ($pendienteId) {
-                $color = $guardiaRepo->colorPara($pendienteId, $indiceId[$pendienteId] ?? $pendienteId);
+                $color = $colorPorMedico[$pendienteId] ?? null;
                 $medicoNombre = $nombresMedicos->get($pendienteId);
-            } elseif ($row?->color) {
-                $color = $row->color;
+            } elseif ($row?->medico_id) {
+                // El color se calcula desde la paleta según los médicos del mes
+                // (no se usa el valor guardado): así los meses ya cargados
+                // también muestran colores sin repetir.
+                $color = $colorPorMedico[$row->medico_id] ?? null;
                 $medicoNombre = $row->medico?->nombre;
             }
 

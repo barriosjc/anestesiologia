@@ -50,7 +50,7 @@ class TercerosAnestesiaIndex extends Component
     public function render(): \Illuminate\Contracts\View\View
     {
         $registros = TerceroAnestesia::query()
-            ->with(['nomenclador', 'profesional', 'cobertura'])
+            ->with(['nomenclador', 'nomPractica', 'profesional', 'cobertura'])
             ->when($this->busqueda !== '', function ($q) {
                 $q->where('paciente', 'like', '%' . $this->busqueda . '%');
             })
