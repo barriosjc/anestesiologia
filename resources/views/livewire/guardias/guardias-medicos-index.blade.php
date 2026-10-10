@@ -34,7 +34,7 @@
             });
         },
     }">
-    <div class="card">
+    <div class="card guardias-card">
         <div class="card-header d-flex align-items-center justify-content-between gap-2 bg-white flex-wrap">
             <h5 class="card-title mb-0"><i class="fa-solid fa-calendar-check me-2 text-primary"></i>Guardias de Médicos</h5>
         </div>
@@ -140,8 +140,12 @@
                 <table class="table table-bordered align-top text-center mb-0">
                     <thead>
                         <tr>
-                            @foreach (['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] as $i => $nombreDia)
-                                <th class="guardias-cal-head {{ $i >= 5 ? 'text-danger' : '' }}">{{ $nombreDia }}</th>
+                            @foreach ([['Lunes', 'Lun'], ['Martes', 'Mar'], ['Miércoles', 'Mié'], ['Jueves', 'Jue'], ['Viernes', 'Vie'], ['Sábado', 'Sáb'], ['Domingo', 'Dom']] as $i => [$nombreDia, $nombreDiaCorto])
+                                <th class="guardias-cal-head {{ $i >= 5 ? 'text-danger' : '' }}">
+                                    {{-- Móvil: abreviado. Md+ (desktop): nombre completo, tal cual siempre. --}}
+                                    <span class="d-none d-md-table-cell">{{ $nombreDia }}</span>
+                                    <span class="d-md-none">{{ $nombreDiaCorto }}</span>
+                                </th>
                             @endforeach
                         </tr>
                     </thead>
@@ -154,6 +158,7 @@
                                     @else
                                         <td
                                             wire:key="g-{{ $celda['fecha'] }}"
+                                            aria-label="{{ $celda['fecha'] }}{{ $celda['medicoNombre'] ? ' — ' . $celda['medicoNombre'] : '' }}"
                                             class="guardia-dia
                                                 @if ($celda['esHoy']) dia-hoy @endif
                                                 @if ($celda['marcado']) dia-marcado @endif
@@ -173,7 +178,9 @@
                                             @if ($celda['medicoNombre'] && !$celda['marcado'] && !$celda['desasignado'])
                                                 <div class="fw-bold small text-break"
                                                     style="color: {{ $celda['letraColor'] }}; text-shadow: 0 1px 2px rgba(0,0,0,.35);">
-                                                    {{ $celda['medicoNombre'] }}
+                                                    {{-- Móvil: iniciales. Md+ (desktop): nombre completo, tal cual siempre. --}}
+                                                    <span class="d-md-none guardias-iniciales">{{ $celda['iniciales'] }}</span>
+                                                    <span class="d-none d-md-block">{{ $celda['medicoNombre'] }}</span>
                                                 </div>
                                             @else
                                                 @if ($celda['marcado'])

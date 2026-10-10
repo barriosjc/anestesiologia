@@ -268,6 +268,7 @@ class GuardiasMedicosIndex extends Component
                 'esSabado' => $fecha->isSaturday(),
                 'esDomingo' => $fecha->isSunday(),
                 'medicoNombre' => $medicoNombre,
+                'iniciales' => $this->iniciales($medicoNombre),
                 'color' => $color,
                 'letraColor' => $color ? $this->textoDeColor($color) : '#333',
                 'esFeriado' => $feriado !== null,
@@ -294,6 +295,28 @@ class GuardiasMedicosIndex extends Component
     private function fechaLegible(string $fecha): string
     {
         return Carbon::parse($fecha)->translatedFormat('d/m/Y');
+    }
+
+    /**
+     * Iniciales del médico (máx. 2 letras, mayúsculas): primera letra de la
+     * primera y de la segunda palabra del nombre. "Ana Clara Benítez" -> "AC".
+     * Solo cambia la presentación; el nombre completo sigue en medicoNombre.
+     */
+    private function iniciales(?string $nombre): string
+    {
+        $partes = array_filter(preg_split('/\s+/', trim((string) $nombre)), fn ($p) => $p !== '');
+
+        if (empty($partes)) {
+            return '';
+        }
+
+        $iniciales = mb_strtoupper(mb_substr($partes[0], 0, 1));
+
+        if (count($partes) > 1) {
+            $iniciales .= mb_strtoupper(mb_substr($partes[1], 0, 1));
+        }
+
+        return $iniciales;
     }
 
     private function textoDeColor(string $hex): string
