@@ -282,9 +282,21 @@ class GuardiasMedicosIndex extends Component
 
         $semanas = array_chunk($celdas, 7);
 
+        // Leyenda de feriados del mes: en la celda el nombre largo no entra
+        // (el móvil muestra solo el ícono), así que el detalle se lista
+        // debajo de la grilla. La vista la oculta en desktop (d-md-none).
+        $leyendaFeriados = collect($celdas)
+            ->filter(fn (array $c) => $c['enMes'] && $c['feriadoNombre'])
+            ->map(fn (array $c) => [
+                'fecha' => Carbon::parse($c['fecha'])->format('d/m'),
+                'nombre' => $c['feriadoNombre'],
+            ])
+            ->values();
+
         return view('livewire.guardias.guardias-medicos-index', [
             'medicos' => $medicos,
             'semanas' => $semanas,
+            'leyendaFeriados' => $leyendaFeriados,
             'tituloMes' => $primerDia->translatedFormat('F Y'),
             'pintados' => count($feriados),
             'pendientes' => count($this->asignadosPendientes),

@@ -158,7 +158,7 @@
                                     @else
                                         <td
                                             wire:key="g-{{ $celda['fecha'] }}"
-                                            aria-label="{{ $celda['fecha'] }}{{ $celda['medicoNombre'] ? ' — ' . $celda['medicoNombre'] : '' }}"
+                                            aria-label="{{ $celda['fecha'] }}{{ $celda['medicoNombre'] ? ' — ' . $celda['medicoNombre'] : '' }}{{ $celda['feriadoNombre'] ? ' — Feriado: ' . $celda['feriadoNombre'] : '' }}"
                                             class="guardia-dia
                                                 @if ($celda['esHoy']) dia-hoy @endif
                                                 @if ($celda['marcado']) dia-marcado @endif
@@ -186,16 +186,20 @@
                                                 @if ($celda['marcado'])
                                                     <div class="small fw-bold text-secondary">
                                                         @if ($celda['esFeriadoPendiente'])
-                                                            <i class="fa-solid fa-star me-1"></i>{{ $celda['feriadoConfirmado'] ? 'Feriado' : 'Feriado?' }}
+                                                            {{-- Móvil: solo ícono. Desktop: ícono + texto, tal cual siempre. --}}
+                                                            <i class="fa-solid fa-star"></i><span class="d-none d-md-inline ms-1">{{ $celda['feriadoConfirmado'] ? 'Feriado' : 'Feriado?' }}</span>
                                                         @else
-                                                            <i class="fa-solid fa-pen me-1"></i>Marcado
+                                                            <i class="fa-solid fa-pen"></i><span class="d-none d-md-inline ms-1">Marcado</span>
                                                         @endif
                                                     </div>
                                                 @elseif ($celda['desasignado'])
-                                                    <div class="small fw-bold text-secondary"><i class="fa-solid fa-eraser me-1"></i>Sin asignar</div>
+                                                    <div class="small fw-bold text-secondary"><i class="fa-solid fa-eraser"></i><span class="d-none d-md-inline ms-1">Sin asignar</span></div>
                                                 @endif
                                                 @if ($celda['feriadoNombre'])
-                                                    <div class="small fw-semibold text-secondary">{{ $celda['feriadoNombre'] }}</div>
+                                                    {{-- Móvil: solo ícono (el nombre no entra en la celda); el detalle
+                                                         está en la leyenda inferior. Desktop: nombre completo, tal cual. --}}
+                                                    <i class="fa-solid fa-star guardias-ico-feriado d-md-none" title="{{ $celda['feriadoNombre'] }}" aria-hidden="true"></i>
+                                                    <div class="small fw-semibold text-secondary d-none d-md-block">{{ $celda['feriadoNombre'] }}</div>
                                                 @endif
                                             @endif
                                         </td>
@@ -206,6 +210,19 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Leyenda de feriados del mes: solo móvil (d-md-none); en desktop
+                 el nombre del feriado ya se ve dentro de la celda. --}}
+            @if ($leyendaFeriados->isNotEmpty())
+                <ul class="guardias-leyenda small d-md-none">
+                    @foreach ($leyendaFeriados as $item)
+                        <li>
+                            <i class="fa-solid fa-star guardias-ico-feriado me-1" aria-hidden="true"></i>
+                            <span class="fw-semibold">{{ $item['fecha'] }}</span> — {{ $item['nombre'] }}
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
     </div>
 </div>
