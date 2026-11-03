@@ -62,6 +62,7 @@ class PresupuestoParteService
                 $parte->fec_prestacion_fin = $presupuesto->fecha;
                 $parte->user_id = $presupuesto->usuario_id;
                 $parte->observaciones = $presupuesto->observaciones;
+                $parte->atencion = $presupuesto->atencion;
                 $parte->estado_id = 4;
                 $parte->save();
 
@@ -185,7 +186,8 @@ class PresupuestoParteService
             'fecha' => 'required|date',
             'dni' => 'required|string',
             'nombre' => 'required|string',
-            'fecha_nac' => 'required|date|before_or_equal:today'
+            'fecha_nac' => 'required|date|before_or_equal:today',
+            'atencion' => 'required|string|max:10'
         ], [
             'profesional_id.required' => 'Falta el profesional.',
             'gerenciadora_id.required' => 'Falta la gerenciadora.',
@@ -195,7 +197,8 @@ class PresupuestoParteService
             'dni.required' => 'Falta el DNI del paciente.',
             'nombre.required' => 'Falta el nombre del paciente.',
             'fecha_nac.required' => 'En la cabecera de presupuesto debe ingresarse la fecha de nacimiento del paciente.',
-            'fecha_nac.before_or_equal' => 'La fecha de nacimiento no puede ser posterior a fecha de hoy.'
+            'fecha_nac.before_or_equal' => 'La fecha de nacimiento no puede ser posterior a fecha de hoy.',
+            'atencion.required' => 'En la cabecera de presupuesto debe ingresarse el Nro de atención para poder generar el parte.'
         ]);
 
         if ($validatorCab->fails()) {

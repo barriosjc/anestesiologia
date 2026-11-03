@@ -5,6 +5,7 @@ namespace App\Livewire\Consumos\Rendiciones;
 use App\Models\Estado;
 use App\Models\Periodo;
 use App\Repositories\RendicionRepository;
+use App\Services\NomencladoresServices;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -39,8 +40,35 @@ class RendicionesTabla extends Component
     public ?string $valorAgregarYDiff = null;
     public string $refacturarYDiff = 'refacturar';
 
+    // Nuevo item: práctica a agregar al detalle marcado en la grilla.
+    public ?string $nuevoItemCodigo = null;
+    public ?string $nuevoItemDescripcion = null;
+    public array $nuevoItemOpciones = [];
+    public $nuevoItemNomencladorId = null;
+    public $nuevoItemNomPadreId = null;
+    public $nuevoItemPorcentaje = 100;
+    public $nuevoItemValor = 0;
+
     public function mount(): void
     {
+        // Llegada desde un enlace directo (ej. auditoría de órdenes de pago):
+        // se filtra por nro de parte sin arrastrar los filtros guardados en sesión.
+        if (request()->filled('nro_parte')) {
+            $this->filtros = [
+                'cobertura_id' => null,
+                'centro_id' => null,
+                'profesional_id' => null,
+                'nombre' => null,
+                'fec_desde' => null,
+                'fec_hasta' => null,
+                'estado_id' => [],
+                'periodo_gen' => null,
+                'nro_parte' => (string) request()->query('nro_parte'),
+            ];
+
+            return;
+        }
+
         $this->filtros = [
             'cobertura_id' => session('c_cobertura_id'),
             'centro_id' => session('c_centro_id'),
@@ -72,6 +100,31 @@ class RendicionesTabla extends Component
         } else {
             $this->selected = [];
         }
+    }
+
+    public function updatedSelected(): void
+    {
+        // El nuevo item se valoriza con el periodo del detalle marcado: al
+        // cambiar la selección se recalcula el valor de la práctica elegida.
+        if (count($this->selected) === 1) {
+            $this->valorizarNuevoItem();
+        } else {
+            $this->nuevoItemValor = 0;
+        }
+    }
+
+    /**
+     * Detalle de la grilla del que se toman los datos para el nuevo item.
+     */
+    protected function itemSeleccionado(): ?object
+    {
+        if (count($this->selected) !== 1) {
+            return null;
+        }
+
+        return DB::table('v_rendiciones')
+            ->where('consumos_det_id', $this->selected[0])
+            ->first();
     }
 
     protected function buildQuery()
@@ -113,7 +166,7 @@ class RendicionesTabla extends Component
      * Template method: valida, ejecuta la acción contra el repository y aplica el resultado.
      * Cada acción pública solo declara sus reglas propias y qué método del repository llamar.
      */
-    protected function procesarAccion(array $reglas, array $mensajes, \Closure $accion): void
+    protected function procesarAccion(array $reglas, array $mensajes, \Closure $accion): bool
     {
         $this->validate($reglas, $mensajes);
 
@@ -125,6 +178,8 @@ class RendicionesTabla extends Component
         if ($resultado['success']) {
             $this->selected = [];
         }
+
+        return $resultado['success'];
     }
 
     public function generarRendicion(RendicionRepository $rendiciones): void
@@ -161,6 +216,124 @@ class RendicionesTabla extends Component
             [],
             fn () => $rendiciones->revalorizar($this->selected, $this->periodoRevalorizar)
         );
+    }
+
+    public function buscarPracticaNuevoItem(NomencladoresServices $nomencladores): void
+    {
+        $this->resetValidation(['nuevoItemCodigo', 'nuevoItemNomencladorId', 'nuevoItemPorcentaje']);
+        $this->nuevoItemOpciones = [];
+        $this->nuevoItemNomencladorId = null;
+        $this->nuevoItemNomPadreId = null;
+        $this->nuevoItemValor = 0;
+
+        $item = $this->itemSeleccionado();
+        if ($item === null) {
+            $this->addError('nuevoItemCodigo', 'Debe marcar un solo ítem de la grilla para tomar sus datos.');
+
+            return;
+        }
+
+        $termino = trim((string) ($this->nuevoItemCodigo ?: $this->nuevoItemDescripcion));
+        if ($termino === '') {
+            $this->addError('nuevoItemCodigo', 'Ingrese un código o una descripción para buscar la práctica.');
+
+            return;
+        }
+
+        $this->nuevoItemOpciones = $nomencladores->buscar(
+            $termino,
+            null,
+            $item->gerenciadora_id,
+            $item->cobertura_id
+        );
+
+        if (empty($this->nuevoItemOpciones)) {
+            $this->addError('nuevoItemCodigo', 'No se encontraron prácticas para la búsqueda.');
+
+            return;
+        }
+
+        if (count($this->nuevoItemOpciones) === 1) {
+            $this->nuevoItemNomencladorId = $this->nuevoItemOpciones[0]['id'];
+            $this->updatedNuevoItemNomencladorId();
+        }
+    }
+
+    public function updatedNuevoItemNomencladorId(): void
+    {
+        $opcion = collect($this->nuevoItemOpciones)->firstWhere('id', $this->nuevoItemNomencladorId);
+        $this->nuevoItemNomPadreId = $opcion['nom_padre_id'] ?? null;
+        $this->valorizarNuevoItem();
+    }
+
+    public function updatedNuevoItemPorcentaje(): void
+    {
+        $this->valorizarNuevoItem();
+    }
+
+    protected function valorizarNuevoItem(): void
+    {
+        $this->nuevoItemValor = 0;
+
+        $item = $this->itemSeleccionado();
+        $opcion = collect($this->nuevoItemOpciones)->firstWhere('id', $this->nuevoItemNomencladorId);
+
+        if ($item === null || empty($opcion) || empty($item->periodo)) {
+            return;
+        }
+
+        $busqueda = app(RendicionRepository::class)->valoresPractica(
+            (int) $item->gerenciadora_id,
+            (int) $item->cobertura_id,
+            (int) $item->centro_id,
+            (string) $item->periodo,
+            (string) $opcion['nivel']
+        );
+
+        if (!empty($busqueda['valores'])) {
+            $porcentaje = (float) ($this->nuevoItemPorcentaje ?: 100);
+            $this->nuevoItemValor = round($busqueda['valores']->valor * ($porcentaje / 100), 2);
+        }
+    }
+
+    protected function resetNuevoItem(): void
+    {
+        $this->nuevoItemCodigo = null;
+        $this->nuevoItemDescripcion = null;
+        $this->nuevoItemOpciones = [];
+        $this->nuevoItemNomencladorId = null;
+        $this->nuevoItemNomPadreId = null;
+        $this->nuevoItemPorcentaje = 100;
+        $this->nuevoItemValor = 0;
+    }
+
+    public function agregarNuevoItem(RendicionRepository $rendiciones): void
+    {
+        $agregado = $this->procesarAccion(
+            [
+                'selected' => 'required',
+                'nuevoItemNomencladorId' => 'required',
+                'nuevoItemNomPadreId' => 'required',
+                'nuevoItemPorcentaje' => 'required|numeric|between:1,200',
+            ],
+            [
+                'selected.required' => 'Debe marcar el ítem de la grilla del cual tomar los datos.',
+                'nuevoItemNomencladorId.required' => 'Debe buscar y seleccionar la práctica a agregar.',
+                'nuevoItemPorcentaje.required' => 'Debe ingresar el porcentaje.',
+                'nuevoItemPorcentaje.between' => 'El porcentaje debe estar entre 1 y 200.',
+            ],
+            fn () => $rendiciones->agregarNuevoItem(
+                $this->selected,
+                (int) $this->nuevoItemNomencladorId,
+                (int) $this->nuevoItemNomPadreId,
+                (float) $this->nuevoItemPorcentaje
+            )
+        );
+
+        if ($agregado) {
+            $this->resetNuevoItem();
+            $this->resetValidation();
+        }
     }
 
     public function agregarConsumo(RendicionRepository $rendiciones): void
@@ -213,6 +386,7 @@ class RendicionesTabla extends Component
             'partes' => $partes,
             'estados' => Estado::get(),
             'periodos' => Periodo::orderBy('nombre')->get(),
+            'itemNuevo' => $this->itemSeleccionado(),
         ]);
     }
 }

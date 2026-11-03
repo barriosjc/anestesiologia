@@ -92,11 +92,18 @@
                                     placeholder="Ingrese fecha nac." />
                                 @error('fecha_nac') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-10">
                                 <label class="small mb-1" for="observaciones">Observaciones</label>
                                 <textarea wire:model="observaciones" class="form-control" id="observaciones" rows="3"
                                     placeholder="Se recomienda no ingresar prácticas a realizar aquí, solo observaciones."></textarea>
                                 @error('observaciones') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-md-2">
+                                <label class="small mb-1" for="atencion">Nro de atención</label>
+                                <input wire:model="atencion" class="form-control" id="atencion" type="text"
+                                    inputmode="numeric" maxlength="10" pattern="[0-9]*"
+                                    placeholder="Hasta 10 dígitos" />
+                                @error('atencion') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
 

@@ -26,6 +26,7 @@ class PresupuestoCreate extends Component
     public ?string $dni = null;
     public ?string $fecha_nac = null;
     public ?string $observaciones = null;
+    public ?string $atencion = null;
 
     public function mount(?int $id = null)
     {
@@ -49,6 +50,7 @@ class PresupuestoCreate extends Component
             $this->dni = $presupuesto->dni;
             $this->fecha_nac = $presupuesto->fecha_nac;
             $this->observaciones = $presupuesto->observaciones;
+            $this->atencion = $presupuesto->atencion;
 
             $this->parteBloqueado = $this->parteTieneEstadoDistintoEnFacturacion($presupuesto);
         }
@@ -88,6 +90,7 @@ class PresupuestoCreate extends Component
             'dni'            => $this->dni,
             'centro_id'      => $this->centro_id,
             'observaciones'  => $this->observaciones,
+            'atencion'       => $this->atencion,
             'usuario_id'     => Auth::id(),
             'profesional_id' => $this->profesional_id,
             'valor_dolar'    => $this->valor_dolar,
@@ -115,6 +118,15 @@ class PresupuestoCreate extends Component
             'centro_id'      => ['required', 'integer', 'exists:centros,id'],
             'gerenciadora_id' => ['required', 'integer'],
             'observaciones'  => ['nullable', 'string', 'max:2000'],
+            'atencion'       => ['nullable', 'string', 'max:10', 'regex:/^[0-9]*$/'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'atencion.max' => 'El Nro de atención no puede superar los 10 dígitos.',
+            'atencion.regex' => 'El Nro de atención debe contener solo números.',
         ];
     }
 

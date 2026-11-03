@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $id
  * @property $nombre
  * @property $cuit
+ * @property $cod_uom
  * @property $porcentaje_adic
  * @property $edad_desde
  * @property $edad_hasta
@@ -38,7 +39,7 @@ class Cobertura extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre', 'cuit', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
+    protected $fillable = ['nombre', 'sigla', 'cuit', 'cod_uom', 'porcentaje_adic', 'edad_desde', 'edad_hasta'];
     
     public function valoresCab(): HasMany
     {

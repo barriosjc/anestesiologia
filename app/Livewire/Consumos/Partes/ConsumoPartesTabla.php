@@ -21,6 +21,7 @@ class ConsumoPartesTabla extends Component
             'profesional_id' => session('a_profesional_id'),
             'nombre' => session('a_nombre'),
             'nro_parte' => session('a_nro_parte'),
+            'atencion' => session('a_atencion'),
             'fec_desde' => session('a_fec_desde'),
             'fec_hasta' => session('a_fec_hasta'),
             'estado_id' => (array) session('a_estado_id', []),
@@ -74,6 +75,14 @@ class ConsumoPartesTabla extends Component
         }
         if (!empty($this->filtros['nro_parte'])) {
             $query->where('id', $this->filtros['nro_parte']);
+        }
+        if (!empty($this->filtros['atencion'])) {
+            $atencion = trim((string) $this->filtros['atencion']);
+            $query->whereIn('id', function ($sub) use ($atencion) {
+                $sub->select('id')
+                    ->from('partes_cab')
+                    ->where('atencion', 'like', '%' . $atencion . '%');
+            });
         }
 
         $partes = $query->orderBy('created_at', 'asc')->paginate();

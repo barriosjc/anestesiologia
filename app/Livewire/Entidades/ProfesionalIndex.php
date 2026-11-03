@@ -14,13 +14,13 @@ class ProfesionalIndex extends Component
 
     public ?int $modalId = null;
     public ?string $nombre = null;
-    public ?string $dni = null;
+    public ?string $cuit = null;
     public ?string $email = null;
     public ?string $telefono = null;
 
     public function abrirModalNuevo(): void
     {
-        $this->reset(['modalId', 'nombre', 'dni', 'email', 'telefono']);
+        $this->reset(['modalId', 'nombre', 'cuit', 'email', 'telefono']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'profesionalModal');
     }
@@ -31,7 +31,7 @@ class ProfesionalIndex extends Component
 
         $this->modalId = $profesional->id;
         $this->nombre = $profesional->nombre;
-        $this->dni = $profesional->dni;
+        $this->cuit = $profesional->cuit;
         $this->email = $profesional->email;
         $this->telefono = $profesional->telefono;
         $this->resetValidation();
@@ -44,7 +44,7 @@ class ProfesionalIndex extends Component
             'nombre'   => ['required', 'string', 'max:200'],
             'email'    => ['required', 'email'],
             'telefono' => ['required', 'string', 'max:45'],
-            'dni'      => ['required', 'string', 'max:20'],
+            'cuit'     => ['required', 'string', 'max:11'],
         ], [
             'nombre.required'   => 'El nombre es obligatorio.',
             'nombre.max'        => 'El nombre no puede superar los 200 caracteres.',
@@ -52,15 +52,15 @@ class ProfesionalIndex extends Component
             'email.email'       => 'El email debe ser una dirección válida.',
             'telefono.required' => 'El teléfono es obligatorio.',
             'telefono.max'      => 'El teléfono no puede superar los 45 caracteres.',
-            'dni.required'      => 'El DNI es obligatorio.',
-            'dni.max'           => 'El DNI no puede superar los 20 caracteres.',
+            'cuit.required'     => 'El CUIT es obligatorio.',
+            'cuit.max'          => 'El CUIT no puede superar los 11 caracteres.',
         ]);
 
         $data = [
             'nombre'   => $this->nombre,
             'email'    => $this->email,
             'telefono' => $this->telefono,
-            'dni'      => $this->dni,
+            'cuit'     => $this->cuit,
         ];
 
         if ($this->modalId) {
@@ -72,7 +72,7 @@ class ProfesionalIndex extends Component
         }
 
         $this->dispatch('close-modal', modal: 'profesionalModal');
-        $this->reset(['modalId', 'nombre', 'dni', 'email', 'telefono']);
+        $this->reset(['modalId', 'nombre', 'cuit', 'email', 'telefono']);
         session()->flash('success', 'Médico guardado correctamente.');
     }
 

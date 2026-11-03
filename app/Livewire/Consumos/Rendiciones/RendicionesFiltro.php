@@ -23,6 +23,14 @@ class RendicionesFiltro extends Component
 
     public function mount(): void
     {
+        // Llegada desde un enlace directo (ej. auditoría de órdenes de pago):
+        // se muestra únicamente el parte solicitado, sin arrastrar filtros previos.
+        if (request()->filled('nro_parte')) {
+            $this->nro_parte = (string) request()->query('nro_parte');
+
+            return;
+        }
+
         $this->cobertura_id = session('c_cobertura_id');
         $this->centro_id = session('c_centro_id');
         $this->profesional_id = session('c_profesional_id');

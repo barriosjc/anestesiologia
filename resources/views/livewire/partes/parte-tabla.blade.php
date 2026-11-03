@@ -93,7 +93,7 @@
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('open-modal', (event) => {
-                new bootstrap.Modal(document.getElementById(event.modal)).show();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById(event.modal)).show();
             });
             Livewire.on('close-modal', (event) => {
                 bootstrap.Modal.getInstance(document.getElementById(event.modal))?.hide();

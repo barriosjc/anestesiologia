@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property $deleted_at
  * @property $id
  * @property $nombre
- * @property $dni
+ * @property $cuit
  * @property $email
  * @property $telefono
  * @property $estado
@@ -36,7 +36,7 @@ class Profesional extends Model
      *
      * @var array
      */
-    protected $fillable = ['id','nombre','email','dni','telefono'];
+    protected $fillable = ['id','nombre','email','cuit','telefono'];
 
     public function documentos(): BelongsToMany
     {

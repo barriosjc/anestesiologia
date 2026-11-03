@@ -4,20 +4,23 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <span id="card_title">
                                 {{ __('Coberturas') }}
                             </span>
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="input-group input-group-sm">
-                                    <input type="text" wire:model="text" wire:keydown.enter="$refresh"
-                                        class="form-control" placeholder="Buscar...">
+
+                            <div class="d-flex align-items-center gap-2 flex-nowrap">
+                                <div class="input-group input-group-sm flex-grow-1" style="max-width: 340px;">
+                                    <input type="text" wire:model.live.debounce.300ms="text"
+                                        class="form-control"
+                                        placeholder="Buscar por nombre, sigla, CUIT o Cód. UOM">
                                     <button type="button" class="btn btn-outline-success"
                                         wire:click="$refresh">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </div>
-                                <button wire:click="abrirModalNuevo" class="btn btn-primary btn-sm float-right"
+
+                                <button wire:click="abrirModalNuevo" class="btn btn-primary btn-sm flex-shrink-0"
                                     data-placement="left">
                                     <i class="fa-solid fa-plus me-1"></i> {{ __('Nuevo') }}
                                 </button>
@@ -35,6 +38,7 @@
                                         <th>Nombre</th>
                                         <th>Sigla</th>
                                         <th>CUIT</th>
+                                        <th>Cód. UOM</th>
                                         <th>Edad desde</th>
                                         <th>Edad hasta</th>
                                         <th>% adic.</th>
@@ -48,6 +52,7 @@
                                             <td>{{ $item->nombre }}</td>
                                             <td>{{ $item->sigla }}</td>
                                             <td>{{ $item->cuit }}</td>
+                                            <td>{{ $item->cod_uom }}</td>
                                             <td>{{ $item->edad_desde }}</td>
                                             <td>{{ $item->edad_hasta }}</td>
                                             <td>{{ $item->porcentaje_adic }}</td>
@@ -86,13 +91,13 @@
                 <form wire:submit="guardar" novalidate>
                     <div class="modal-body">
                         <div class="row gx-3 mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="small mb-1" for="m_nombre">Nombre</label>
                                 <input wire:model="nombre" class="form-control form-control-sm" id="m_nombre"
                                     type="text" placeholder="Ingrese su nombre y apellido" />
                                 @error('nombre') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="small mb-1" for="m_sigla">Sigla</label>
                                 <input wire:model="sigla" class="form-control form-control-sm" id="m_sigla"
                                     type="text" placeholder="Ingrese su sigla" />
@@ -103,6 +108,12 @@
                                 <input wire:model="cuit" class="form-control form-control-sm" id="m_cuit"
                                     type="text" placeholder="cuit" />
                                 @error('cuit') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small mb-1" for="m_cod_uom">Cód. UOM</label>
+                                <input wire:model="cod_uom" class="form-control form-control-sm" id="m_cod_uom"
+                                    type="text" placeholder="Ej: 78" />
+                                @error('cod_uom') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="row gx-3 mb-3">
@@ -117,6 +128,12 @@
                                 <input wire:model="edad_hasta" class="form-control form-control-sm" id="m_edad_hasta"
                                     type="text" placeholder="edad_hasta" />
                                 @error('edad_hasta') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small mb-1" for="m_cod_uom">Código UOM (archivo)</label>
+                                <input wire:model="cod_uom" class="form-control form-control-sm" id="m_cod_uom"
+                                    type="text" placeholder="Ej: 78" />
+                                @error('cod_uom') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-md-2">
                                 <label class="small mb-1" for="m_porcentaje_adic">% adicional</label>

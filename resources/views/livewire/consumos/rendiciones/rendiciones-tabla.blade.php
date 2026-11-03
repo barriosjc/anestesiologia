@@ -28,7 +28,7 @@
                     <tr wire:key="rendicion-{{ $item->consumos_det_id }}">
                         <td>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" wire:model="selected"
+                                <input class="form-check-input" type="checkbox" wire:model.live="selected"
                                     value="{{ $item->consumos_det_id }}">
                             </div>
                         </td>
@@ -143,6 +143,76 @@
             <button type="button" wire:click="revalorizar" class="btn btn-warning btn-sm">
                 <i class="fa-solid fa-coins me-1"></i> {{ __('Revalorizar partes') }}
             </button>
+        </div>
+    </div>
+
+    <hr>
+    <div class="row align-items-end pt-2">
+        <div class="form-group col-md-3">
+            <label class="small mb-1" for="nuevoItemCodigo">Nueva práctica</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" id="nuevoItemCodigo"
+                    wire:model="nuevoItemCodigo" style="flex: 0 0 35%;" placeholder="código"
+                    data-bs-placement="top" data-bs-title="Debe ingresar un código de nomenclador con o sin guiones."
+                    x-data x-init="new bootstrap.Tooltip($el)">
+                <input type="text" class="form-control form-control-sm" id="nuevoItemDescripcion"
+                    wire:model="nuevoItemDescripcion" placeholder="descripción"
+                    data-bs-placement="top" data-bs-title="Debe ingresar una descripción de práctica del nomenclador."
+                    x-data x-init="new bootstrap.Tooltip($el)">
+                <button type="button" wire:click="buscarPracticaNuevoItem" class="btn btn-primary btn-sm"
+                    data-bs-placement="top" data-bs-title="Buscar práctica en el nomenclador."
+                    x-data x-init="new bootstrap.Tooltip($el)">
+                    <i class="fa fa-fw fa-search"></i>
+                </button>
+            </div>
+            @error('nuevoItemCodigo') <span class="text-danger small">{{ $message }}</span> @enderror
+        </div>
+        <div class="form-group col-md-4">
+            <label class="small mb-1" for="nuevoItemNomencladorId">Práctica</label>
+            <select wire:model.live="nuevoItemNomencladorId" class="form-select form-select-sm"
+                id="nuevoItemNomencladorId">
+                @if (count($nuevoItemOpciones) > 1)
+                    <option value="">-- Seleccione una --</option>
+                @endif
+                @foreach ($nuevoItemOpciones as $opcion)
+                    <option value="{{ $opcion['id'] }}">
+                        {{ $opcion['nivel'] !== null ? $opcion['nivel'] . ' / ' : '' }}{{ $opcion['codigo'] }} /
+                        {{ $opcion['descripcion'] }}
+                    </option>
+                @endforeach
+            </select>
+            @error('nuevoItemNomencladorId') <span class="text-danger small">{{ $message }}</span> @enderror
+        </div>
+        <div class="form-group col-md-1">
+            <label class="small mb-1" for="nuevoItemPorcentaje">% </label>
+            <input type="text" class="form-control form-control-sm" id="nuevoItemPorcentaje"
+                wire:model.live.debounce.400ms="nuevoItemPorcentaje"
+                data-bs-placement="top" data-bs-title="Debe ingresar un valor numérico."
+                x-data x-init="new bootstrap.Tooltip($el)">
+            @error('nuevoItemPorcentaje') <span class="text-danger small">{{ $message }}</span> @enderror
+        </div>
+        <div class="form-group col-md-2">
+            <label class="small mb-1" for="nuevoItemValor">Valor ($)</label>
+            <label class="form-control form-control-sm bg-light text-muted" id="nuevoItemValor">
+                {{ number_format((float) $nuevoItemValor, 2, ',', '.') }}
+            </label>
+        </div>
+        <div class="col-md-2">
+            <button type="button" wire:click="agregarNuevoItem" class="btn btn-info btn-sm">
+                <i class="fa-solid fa-plus me-1"></i> {{ __('Agregar') }}
+            </button>
+        </div>
+    </div>
+    <div class="row pt-1">
+        <div class="col-12">
+            @if ($itemNuevo)
+                <div class="small text-muted">
+                    Datos tomados de: Parte {{ $itemNuevo->parte_cab_id }} - {{ $itemNuevo->pac_nombre }} -
+                    Periodo {{ $itemNuevo->periodo }} - Estado {{ $itemNuevo->est_descripcion }}
+                </div>
+            @else
+                <div class="small text-muted">Marque un solo ítem de la grilla para tomar de él los datos del nuevo ítem.</div>
+            @endif
         </div>
     </div>
 

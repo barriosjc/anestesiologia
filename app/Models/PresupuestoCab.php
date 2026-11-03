@@ -14,7 +14,7 @@ class PresupuestoCab extends Model
 
     protected $table = 'presupuestos_cab';
     protected $fillable = ['fecha', 'nombre', 'fecha_nac', 'dni', 'centro_id', 'profesional_id', 
-        'observaciones', 'usuario_id', 'estado', 'valor_dolar', 'gerenciadora_id'];
+        'observaciones', 'atencion', 'usuario_id', 'estado', 'valor_dolar', 'gerenciadora_id'];
 
     public function getPacienteAttribute(): string
     {

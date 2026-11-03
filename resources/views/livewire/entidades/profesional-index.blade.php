@@ -28,7 +28,7 @@
                                         <th>Nro</th>
                                         <th>Nombre</th>
                                         <th>Email</th>
-                                        <th>DNI</th>
+                                        <th>CUIT</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -38,7 +38,7 @@
                                             <td>{{ $profesionales->firstItem() + $loop->index }}</td>
                                             <td>{{ $item->nombre }}</td>
                                             <td>{{ $item->email }}</td>
-                                            <td>{{ $item->dni }}</td>
+                                            <td>{{ $item->cuit }}</td>
                                             <td class="td-actions text-center">
                                                 <a class="btn btn-sm btn-primary"
                                                     href="{{ route('profesional.cargar.documentacion', $item->id) }}"
@@ -89,10 +89,10 @@
                                 @error('nombre') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-md-6">
-                                <label class="small mb-1" for="m_dni">DNI</label>
-                                <input wire:model="dni" class="form-control form-control-sm" id="m_dni"
-                                    type="text" placeholder="dni" />
-                                @error('dni') <span class="text-danger small">{{ $message }}</span> @enderror
+                                <label class="small mb-1" for="m_cuit">CUIT</label>
+                                <input wire:model="cuit" class="form-control form-control-sm" id="m_cuit"
+                                    type="text" inputmode="numeric" maxlength="11" placeholder="CUIT (11 dígitos)" />
+                                @error('cuit') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
                         <div class="mb-3">

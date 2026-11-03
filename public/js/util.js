@@ -93,6 +93,27 @@ function confirmDelete(id, text = "Esta acción es irreversible.", onConfirm = n
     })
 }
 
+/**
+ * Confirmación genérica con SweetAlert2. Se usa en acciones que no son un
+ * borrado (por ejemplo pasar un consumo a pagado).
+ */
+function confirmAction(title, text, onConfirm = null, config = {}) {
+    Swal.fire(Object.assign({
+        title: title,
+        text: text,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#198754',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'Cancelar'
+    }, config)).then((result) => {
+        if (result.isConfirmed && onConfirm) {
+            onConfirm();
+        }
+    });
+}
+
 function confirmJob(msg, metodo, correSubmit = true, text = "Esta acción es irreversible.", onConfirm = null) {
     Swal.fire({
         title: msg,

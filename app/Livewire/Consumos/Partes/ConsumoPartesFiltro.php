@@ -15,6 +15,7 @@ class ConsumoPartesFiltro extends Component
     public ?int $profesional_id = null;
     public ?string $nombre = null;
     public ?string $nro_parte = null;
+    public ?string $atencion = null;
     public ?string $fec_desde = null;
     public ?string $fec_hasta = null;
     public array $estado_id = [];
@@ -28,6 +29,7 @@ class ConsumoPartesFiltro extends Component
         $this->profesional_id = session('a_profesional_id');
         $this->nombre = session('a_nombre');
         $this->nro_parte = session('a_nro_parte');
+        $this->atencion = session('a_atencion');
         $this->fec_desde = session('a_fec_desde');
         $this->fec_hasta = session('a_fec_hasta');
         $this->estado_id = (array) session('a_estado_id', []);
@@ -39,7 +41,7 @@ class ConsumoPartesFiltro extends Component
     {
         return [
             'cobertura_id', 'centro_id', 'profesional_id',
-            'nombre', 'nro_parte', 'fec_desde', 'fec_hasta',
+            'nombre', 'nro_parte', 'atencion', 'fec_desde', 'fec_hasta',
             'estado_id', 'fec_desde_adm', 'fec_hasta_adm',
         ];
     }

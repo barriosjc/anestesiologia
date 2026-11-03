@@ -26,6 +26,7 @@ class ParteCreate extends Component
     public ?string $fec_nacimiento = null;
     public ?int $cobertura_id = null;
     public ?int $profesional_id = null;
+    public ?string $atencion = null;
     public ?string $observaciones = null;
 
     public ?string $searchMessage = null;
@@ -47,6 +48,7 @@ class ParteCreate extends Component
             $this->fec_nacimiento = $paciente->fec_nacimiento;
             $this->cobertura_id = $parte->cobertura_id;
             $this->profesional_id = $parte->profesional_id;
+            $this->atencion = $parte->atencion;
             $this->observaciones = $parte->observaciones;
         }
     }
@@ -102,6 +104,7 @@ class ParteCreate extends Component
         $parte->centro_id = $this->centro_id;
         $parte->cobertura_id = $this->cobertura_id;
         $parte->profesional_id = $this->profesional_id;
+        $parte->atencion = $this->atencion;
         $parte->observaciones = $this->observaciones;
         $parte->fec_prestacion = $this->fec_prestacion;
         $parte->fec_prestacion_fin = $this->fec_prestacion_fin ?: $this->fec_prestacion;
@@ -122,6 +125,7 @@ class ParteCreate extends Component
             'cobertura_id' => 'required|integer|exists:coberturas,id',
             'centro_id' => 'required|integer|exists:centros,id',
             'profesional_id' => 'required|integer|exists:profesionales,id',
+            'atencion' => 'nullable|string|max:10|regex:/^[0-9]*$/',
             'gerenciadora_id' => 'required|integer|exists:gerenciadoras,id',
             'fec_nacimiento' => [
                 'required',
@@ -168,6 +172,8 @@ class ParteCreate extends Component
             'centro_id.exists' => 'El centro seleccionado no existe.',
             'profesional_id.required' => 'Debe seleccionar un profesional.',
             'profesional_id.exists' => 'El profesional seleccionado no existe.',
+            'atencion.max' => 'El Nro de atención no puede superar los 10 dígitos.',
+            'atencion.regex' => 'El Nro de atención debe contener solo números.',
             'gerenciadora_id.required' => 'Debe seleccionar una gerenciadora.',
             'gerenciadora_id.exists' => 'La gerenciadora seleccionada no existe.',
             'fec_nacimiento.required' => 'El campo fecha de nacimiento es obligatorio.',

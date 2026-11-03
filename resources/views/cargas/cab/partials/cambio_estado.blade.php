@@ -1,5 +1,8 @@
 {{-- modales --}}
-<div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true">
+{{-- wire:ignore.self evita que Livewire borre las clases/estilos que Bootstrap agrega
+     al modal al abrirlo (show, display:block). Sin esto, al re-renderizar por un error
+     de validación el modal se oculta pero el backdrop queda y bloquea la pantalla. --}}
+<div class="modal fade" id="valorModal" tabindex="-1" aria-labelledby="valorModalLabel" aria-hidden="true" wire:ignore.self>
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -19,6 +22,9 @@
                         @endforeach
                     </select>
                     @error('estado_cambio_estado') <span class="text-danger small">{{ $message }}</span> @enderror
+                    <div class="form-text">
+                        Para pasar el parte a "A liquidar" debe tener cargado el Nro de atención.
+                    </div>
                     <label class="label-control">Observaciones</label>
                     <textarea rows="4" wire:model="estado_cambio_obs" class="form-control"></textarea>
                 </div>

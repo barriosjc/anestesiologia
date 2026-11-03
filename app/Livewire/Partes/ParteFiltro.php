@@ -17,6 +17,7 @@ class ParteFiltro extends Component
     public ?int $user_id = null;
     public ?string $nombre = null;
     public ?string $nro_parte = null;
+    public ?string $atencion = null;
     public ?string $fec_desde = null;
     public ?string $fec_hasta = null;
     public array $estado_id = [];
@@ -31,6 +32,14 @@ class ParteFiltro extends Component
         $this->user_id = session('p_user_id');
         $this->nombre = session('p_nombre');
         $this->nro_parte = session('p_nro_parte');
+        $this->atencion = request()->filled('atencion')
+            ? (string) request('atencion')
+            : session('p_atencion');
+
+        if (request()->filled('atencion')) {
+            session()->put('p_atencion', $this->atencion);
+        }
+
         $this->fec_desde = session('p_fec_desde');
         $this->fec_hasta = session('p_fec_hasta');
         $this->estado_id = (array) session('p_estado_id', []);
@@ -42,7 +51,7 @@ class ParteFiltro extends Component
     {
         return [
             'cobertura_id', 'centro_id', 'profesional_id', 'user_id',
-            'nombre', 'nro_parte', 'fec_desde', 'fec_hasta',
+            'nombre', 'nro_parte', 'atencion', 'fec_desde', 'fec_hasta',
             'estado_id', 'fec_desde_adm', 'fec_hasta_adm',
         ];
     }

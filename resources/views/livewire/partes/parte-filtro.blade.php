@@ -73,6 +73,13 @@
             <input class="form-control form-control-sm" wire:model="fec_hasta" type="date"
                 placeholder="Ingrese fecha hasta" />
         </div>
+
+        <div class="col-md-2">
+            <label class="small mb-1" for="atencion">Nro atención</label>
+            <input class="form-control form-control-sm" wire:model="atencion" id="atencion"
+                type="text" inputmode="numeric" maxlength="10" pattern="[0-9]*"
+                placeholder="Nro atención" />
+        </div>
     </div>
     <div class="row pt-2">
         <div class="form-group col-md-3">

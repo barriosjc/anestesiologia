@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="row gx-3 mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="cobertura_id" class="small mb-1">Coberturas</label>
                                 <div wire:ignore x-data="{
                                         init() {
@@ -102,7 +102,7 @@
                                 </div>
                                 @error('cobertura_id') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="profesional_id" class="small mb-1">Profesional</label>
                                 <select wire:model="profesional_id" class="form-select" required>
                                     <option value=""> -- Seleccione --</option>
@@ -111,6 +111,20 @@
                                     @endforeach
                                 </select>
                                 @error('profesional_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="atencion" class="small mb-1">Nro de atención</label>
+                                <input
+                                    wire:model="atencion"
+                                    id="atencion"
+                                    type="text"
+                                    inputmode="numeric"
+                                    maxlength="10"
+                                    pattern="[0-9]*"
+                                    class="form-control form-control-sm"
+                                    placeholder="Hasta 10 dígitos"
+                                />
+                                @error('atencion') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
 

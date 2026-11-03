@@ -1,8 +1,8 @@
 <form wire:submit="aplicar">
     <div class="row">
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
             <label class="small mb-1" for="cobertura_id">Coberturas</label>
-            <div wire:ignore x-data="{
+            <div class="choices-wide-dropdown" wire:ignore x-data="{
                     choices: null,
                     init() {
                         this.choices = initChoices(this.$refs.coberturaSelect, {
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
             <label class="small mb-1" for="centro_id">Centros</label>
             <select wire:model="centro_id" class="form-select form-select-sm">
                 <option value="">-- Seleccione --</option>
@@ -60,6 +60,12 @@
             <label class="small mb-1" for="nro_parte">Nro parte</label>
             <input class="form-control form-control-sm" wire:model="nro_parte" type="number"
                 min="0" step=1 max="999999999" placeholder="número" />
+        </div>
+        <div class="col-md-2">
+            <label class="small mb-1" for="atencion">Nro atención</label>
+            <input class="form-control form-control-sm" wire:model="atencion" id="atencion"
+                type="text" inputmode="numeric" maxlength="10" pattern="[0-9]*"
+                placeholder="Nro atención" />
         </div>
     </div>
     <div class="row pt-2">

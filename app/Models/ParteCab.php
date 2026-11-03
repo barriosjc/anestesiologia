@@ -48,6 +48,7 @@ class ParteCab extends Model
         , 'fec_prestacion_fin'
         , 'prestador_id'
         , 'profesional_id'
+        , 'atencion'
         , 'observacion'
     ];
     

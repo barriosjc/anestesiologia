@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('nomenclador/lista/{nom_padre}', \App\Livewire\Nomencladores\NomencladorIndex::class)->name('nomenclador.index');
 
+            Route::get('nomenclador/niveles', \App\Livewire\Nomencladores\NivelesIndex::class)->name('niveles.index');
+
             Route::get('nomenclador/valores/listas', \App\Livewire\Valores\ValoresIndex::class)->name('nomenclador.valores.listas');
             Route::get('nomenclador/valores/filtrar', function (Request $request) {
                 return redirect()->route('nomenclador.valores.listas', $request->query());
@@ -82,6 +84,24 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['middleware' => ['role:super-admin|anestesiologo']], function () {
             Route::get('guardias/calendario', \App\Livewire\Guardias\GuardiasMedicosIndex::class)->name('guardias.calendario');
             Route::get('guardias/pdf', [\App\Http\Controllers\Guardias\GuardiaMedicoController::class, 'pdf'])->name('guardias.pdf');
+        });
+
+        Route::group(['middleware' => ['role:super-admin|facturista']], function () {
+            Route::get('ordenes-pagos-audit/cab', \App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
+                ->name('ordenes_pagos_audit.cab');
+            Route::get('ordenes-pagos-audit/cab/{orden}', \App\Livewire\OrdenesPagosAudit\OrdenPagoAuditDetalle::class)
+                ->name('ordenes_pagos_audit.detalle');
+        });
+
+        Route::group(['middleware' => ['role:super-admin|facturista']], function () {
+            Route::get('documentos-llamaparse', \App\Livewire\DocumentosLlamaparse\DocumentoLlamaparseIndex::class)
+                ->name('documentos_llamaparse.index');
+            Route::get('documentos-llamaparse/{documento}', \App\Livewire\DocumentosLlamaparse\DocumentoLlamaparseDetalle::class)
+                ->name('documentos_llamaparse.ver');
+            Route::get('documentos-llamaparse/{documento}/archivo', [\App\Http\Controllers\Llamaparse\DocumentoLlamaparseController::class, 'archivo'])
+                ->name('documentos_llamaparse.archivo');
+            Route::get('documentos-llamaparse/{documento}/xlsx', [\App\Http\Controllers\Llamaparse\DocumentoLlamaparseController::class, 'xlsx'])
+                ->name('documentos_llamaparse.xlsx');
         });
 
         Route::group(['middleware' => ['permission:terceros con anestesia']], function () {

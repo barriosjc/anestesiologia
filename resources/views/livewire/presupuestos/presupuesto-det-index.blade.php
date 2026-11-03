@@ -27,6 +27,8 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    @include('utiles.alerts')
+
                     @if ($parteBloqueado)
                         <div class="alert alert-warning py-2" role="alert">
                             <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>

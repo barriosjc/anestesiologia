@@ -120,11 +120,14 @@
         color: #8496AC;
     }
 
-    a {
+    /* El color de link no debe pisar a los <a class="btn">: si no, el texto
+       del botón (blanco o gris claro) queda con el azul de link sobre el fondo
+       del botón y pierde contraste. */
+    a:not(.btn) {
         color: #4FB3F0;
     }
 
-    a:hover {
+    a:not(.btn):hover {
         color: #8ACDF7;
     }
 
@@ -174,6 +177,48 @@
     .btn-secondary:hover, .btn-outline-secondary:hover {
         color: #ffffff;
         background-color: #1B3B5F;
+    }
+
+    /* .btn-info (botones "Volver", "Ver", etc.): el cian claro con texto blanco
+       da muy poco contraste, así que en oscuro pasa a un cian profundo con
+       texto claro (contraste ~7:1). */
+    .btn-info {
+        --bs-btn-color: #E4EDF7;
+        --bs-btn-bg: #0F5F78;
+        --bs-btn-border-color: #14708C;
+        --bs-btn-hover-color: #ffffff;
+        --bs-btn-hover-bg: #14708C;
+        --bs-btn-hover-border-color: #14708C;
+        --bs-btn-active-color: #ffffff;
+        --bs-btn-active-bg: #14708C;
+        --bs-btn-active-border-color: #14708C;
+        --bs-btn-disabled-color: #8FA6B8;
+        --bs-btn-disabled-bg: #123A47;
+        --bs-btn-disabled-border-color: #1C4E5E;
+        color: #E4EDF7;
+        background-image: none;
+        background-color: #0F5F78;
+        border-color: #14708C;
+    }
+
+    .btn-info:hover,
+    .btn-info:focus {
+        color: #ffffff;
+        background-color: #14708C;
+        border-color: #14708C;
+    }
+
+    .btn-outline-info {
+        --bs-btn-color: #7FD0E8;
+        --bs-btn-border-color: #2C7E99;
+        --bs-btn-hover-color: #ffffff;
+        --bs-btn-hover-bg: #14708C;
+        --bs-btn-hover-border-color: #14708C;
+        --bs-btn-active-color: #ffffff;
+        --bs-btn-active-bg: #14708C;
+        --bs-btn-active-border-color: #14708C;
+        color: #7FD0E8;
+        border-color: #2C7E99;
     }
 
     /* Bootstrap no invierte los .btn-dark en dark: el texto negro quedaría
@@ -695,4 +740,15 @@
     .swal2-html-container {
         color: #B7C6D8;
     }
+}
+
+/* ---------- Auditoria de ordenes de pago ---------- */
+[data-bs-theme='dark'] .opa-audit .opa-fila-baja > * {
+    background-color: rgba(255, 193, 7, .12) !important;
+}
+[data-bs-theme='dark'] .opa-audit .opa-fila-media > * {
+    background-color: rgba(253, 126, 20, .16) !important;
+}
+[data-bs-theme='dark'] .opa-audit .opa-fila-alta > * {
+    background-color: rgba(220, 53, 69, .18) !important;
 }

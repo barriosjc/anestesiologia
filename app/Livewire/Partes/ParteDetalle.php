@@ -16,6 +16,8 @@ class ParteDetalle extends Component
     use WithFileUploads;
     use WithPagination;
 
+    private const ESTADO_A_LIQUIDAR = 3;
+
     public int $parte_cab_id;
     public ?string $observaciones = null;
 
@@ -81,6 +83,7 @@ class ParteDetalle extends Component
         $this->estado_cambio_id = $id;
         $this->estado_cambio_obs = $observaciones;
         $this->estado_cambio_estado = null;
+        $this->resetValidation('estado_cambio_estado');
         $this->dispatch('open-modal', modal: 'valorModal');
     }
 
@@ -93,6 +96,13 @@ class ParteDetalle extends Component
         ]);
 
         $parte = ParteCab::findOrFail($this->estado_cambio_id);
+
+        if ((int) $this->estado_cambio_estado === self::ESTADO_A_LIQUIDAR && blank($parte->atencion)) {
+            $this->addError('estado_cambio_estado', 'Para pasar el parte a "A liquidar" debe cargar el Nro de atención en la pantalla de cabecera.');
+
+            return;
+        }
+
         $parte->observaciones = strip_tags((string) $this->estado_cambio_obs);
         $parte->estado_id = $this->estado_cambio_estado;
         $parte->save();

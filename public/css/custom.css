@@ -252,6 +252,22 @@
     max-width: 340px;
   }
 
+  /* ---------- Choices.js: desplegable ancho ----------
+     Para selects (uno o varios) ubicados en columnas angostas: el listado
+     se ensancha y cada opcion se muestra en una sola linea. */
+  .choices-wide-dropdown .choices__list--dropdown,
+  .choices-wide-dropdown .choices__list[aria-expanded] {
+    width: max-content;
+    min-width: 100%;
+    max-width: 340px;
+  }
+  .choices-wide-dropdown .choices__list--dropdown .choices__item,
+  .choices-wide-dropdown .choices__list[aria-expanded] .choices__item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   /* ---------- Tablas ---------- */
   .table {
     border-collapse: separate;
@@ -891,4 +907,94 @@
     /* La etiqueta del dato se acorta para dejarle lugar al valor */
     .ta-dato dt { flex-basis: 6rem; }
     .ta-paginacion .page-link { padding: .5rem .7rem; }
+  }
+
+  /* ============================================================
+     Ordenes de pagos - Auditoria
+     Reutiliza el marcado .ta-card / .ta-dato del bloque anterior
+     (las clases base son globales) y solo aporta los ajustes
+     propios del modulo: boton "Subir" y acciones al alcance del
+     dedo en pantalla chica.
+     ============================================================ */
+
+  @media (max-width: 767.98px) {
+    .opa .btn-sm {
+      min-height: 44px;
+      padding: .5rem .9rem;
+      font-size: .95rem;
+    }
+    .opa .ta-accion {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .95rem;
+    }
+    .opa .ta-card-foot .ta-accion i,
+    .opa .ta-paginacion .page-link {
+      font-size: 1rem;
+    }
+  }
+
+  /* ============================================================
+     Auditoria de ordenes de pago - diferencias
+     ============================================================ */
+
+  .opa-audit .opa-fila-baja > * {
+    background-color: rgba(255, 193, 7, .16) !important;
+  }
+  .opa-audit .opa-fila-media > * {
+    background-color: rgba(253, 126, 20, .22) !important;
+  }
+  .opa-audit .opa-fila-alta > * {
+    background-color: rgba(220, 53, 69, .20) !important;
+  }
+
+  .opa-audit .ta-card.opa-fila-baja { border-left: 4px solid #ffc107; }
+  .opa-audit .ta-card.opa-fila-media { border-left: 4px solid #fd7e14; }
+  .opa-audit .ta-card.opa-fila-alta { border-left: 4px solid #dc3545; }
+
+  /* Punto rojo delante del atributo que difiere con el sistema. */
+  .opa-audit .opa-dif-punto {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 11px;
+    height: 11px;
+    margin-right: .4rem;
+    border-radius: 50%;
+    background-color: #dc3545;
+    box-shadow: 0 0 0 2px #fff, 0 0 5px rgba(220, 53, 69, .85);
+    vertical-align: middle;
+  }
+
+  .opa-audit .opa-audit-tabla td {
+    vertical-align: top;
+  }
+
+  /* Linea de color en el borde izquierdo de la columna Atencion: cambia al
+     pasar a la siguiente atencion, asi se ven los bloques a simple vista.
+     Solo dos colores (azul y naranja) para que resalte el corte. */
+  .opa-audit .opa-audit-tabla td.opa-atencion {
+    border-left: 6px solid transparent;
+  }
+  .opa-audit .opa-audit-tabla td.opa-grupo-azul { border-left-color: #0d6efd; }
+  .opa-audit .opa-audit-tabla td.opa-grupo-naranja { border-left-color: #fd7e14; }
+
+  /* Marca de color con el numero de atencion en la vista de celular. */
+  .opa-audit .opa-marca-azul,
+  .opa-audit .opa-marca-naranja {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: baseline;
+  }
+  .opa-audit .opa-marca-azul { background-color: #0d6efd; }
+  .opa-audit .opa-marca-naranja { background-color: #fd7e14; }
+
+  @media (max-width: 767.98px) {
+    .opa-audit .ta-card-body .ta-dato dd {
+      word-break: break-word;
+    }
   }

@@ -20,6 +20,12 @@
                     Generar Rendiciones
                 </a>
             @endrole
+            @role('super-admin|facturista')
+                <a class="nav-link" href="{{ route('ordenes_pagos_audit.cab') }}">
+                    <div class="nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    Ordenes Pagos Audit.
+                </a>
+            @endrole
                 <a class="nav-link" href="{{ route('consumo.rendiciones.listado') }}">
                     <div class="nav-link-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     Listados
@@ -55,6 +61,7 @@
                                         href="{{ route('nom_padres.index', ['tipo' => 'a']) }}">Anestesiologia</a>
                                     <a class="nav-link" href="{{ route('nom_padres.index', ['tipo' => 'n']) }}">Prácticas y
                                         Estudios</a>
+                                    <a class="nav-link" href="{{ route('niveles.index') }}">Equivalencias UOM</a>
                                 @endif
                             </nav>
                         </div>
