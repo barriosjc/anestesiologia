@@ -82,29 +82,79 @@ class OrdenPagoAuditTest extends TestCase
             'op_retenciones' => 25000.10,
         ]);
 
+        // numero de OP tal como se guarda ahora (ver NumeroOrdenPagoExtractor)
+        $orden = OrdenPagoAuditCab::create([
+            'nro_op'         => '000000077740',
+            'profesional_id' => $profesional->id,
+            'fecha'          => '2026-03-02',
+            'op_total'       => 100,
+        ]);
+
+        $this->assertSame('77740', $orden->nro_op_8);
+
         Livewire::actingAs($this->usuarioConRol('super-admin'))
             ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
             ->assertSee('OP-0001')
-            ->assertSee('Dr. Juan Perez');
+            ->assertSee('Dr. Juan Perez')
+            ->assertSee('OP 77740');
+
+        // El modal de subida usa la ruta propia (XHR directo), no wire:model.
+        $this->actingAs($this->usuarioConRol('super-admin'))
+            ->get(route('ordenes_pagos_audit.cab'))
+            ->assertOk()
+            ->assertSee('data-upload-url="'.route('ordenes_pagos_audit.subir').'"', false)
+            ->assertSee('upload-directo.js', false);
+    }
+
+    public function test_la_vista_muestra_las_retenciones_y_el_a_pagar(): void
+    {
+        $profesional = Profesional::create(['nombre' => 'Dr. Juan Perez', 'cuit' => '20111222333']);
+
+        // Retenciones informadas por el archivo: caja 100, gastos adm. 320, IB 50.
+        OrdenPagoAuditCab::create([
+            'nro_op'           => '000000077740',
+            'profesional_id'   => $profesional->id,
+            'fecha'            => '2026-03-02',
+            'op_total'         => 1000,
+            'retencion_caja'   => 100,
+            'retencion_gastos' => 320,
+            'op_retenciones'   => 50,
+        ]);
+
+        // Orden sin retenciones en el archivo: no hay dato, se muestra "—".
+        OrdenPagoAuditCab::create([
+            'nro_op'         => '000000077741',
+            'profesional_id' => $profesional->id,
+            'fecha'          => '2026-03-03',
+            'op_total'       => 500,
+        ]);
+
+        Livewire::actingAs($this->usuarioConRol('super-admin'))
+            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
+            ->assertSee('$ 1.000,00')
+            ->assertSee('$ 100,00')
+            ->assertSee('$ 320,00')
+            ->assertSee('$ 50,00')
+            // A pagar = 1000 - 50 - 100 - 320
+            ->assertSee('$ 530,00')
+            ->assertSee('$ 500,00')
+            ->assertSee('—');
     }
 
     public function test_importa_un_archivo_csv(): void
     {
-        Storage::fake('local');
-
         $contenido = implode("\n", [
             'nro_op;profesional_id;fecha;op_total;op_retenciones',
             'OP-1001;1;01/03/2026;150000,50;25000,10',
             'OP-1002;1;02/03/2026;1000;100',
         ]);
 
-        $archivo = UploadedFile::fake()->createWithContent('ordenes.csv', $contenido);
+        $respuesta = $this->actingAs($this->usuarioConRol('facturista'))
+            ->post(route('ordenes_pagos_audit.subir'), [
+                'archivo' => UploadedFile::fake()->createWithContent('ordenes.csv', $contenido),
+            ]);
 
-        Livewire::actingAs($this->usuarioConRol('facturista'))
-            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
-            ->set('archivo', $archivo)
-            ->call('importar')
-            ->assertHasNoErrors();
+        $respuesta->assertOk()->assertJson(['ok' => true]);
 
         $this->assertSame(2, OrdenPagoAuditCab::count());
         $this->assertDatabaseHas('ordenes_pagos_audit_cab', [
@@ -116,8 +166,6 @@ class OrdenPagoAuditTest extends TestCase
 
     public function test_importa_un_archivo_csv_con_el_cuit_con_guiones(): void
     {
-        Storage::fake('local');
-
         // La base guarda el CUIT sin guiones; el archivo lo trae con guiones.
         $profesional = Profesional::create(['nombre' => 'Dr. Juan Perez', 'cuit' => '20111222333']);
 
@@ -126,13 +174,11 @@ class OrdenPagoAuditTest extends TestCase
             'OP-3001;20-11122233-3;01/03/2026;150000,50;25000,10',
         ]);
 
-        $archivo = UploadedFile::fake()->createWithContent('ordenes.csv', $contenido);
-
-        Livewire::actingAs($this->usuarioConRol('facturista'))
-            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
-            ->set('archivo', $archivo)
-            ->call('importar')
-            ->assertHasNoErrors();
+        $this->actingAs($this->usuarioConRol('facturista'))
+            ->post(route('ordenes_pagos_audit.subir'), [
+                'archivo' => UploadedFile::fake()->createWithContent('ordenes.csv', $contenido),
+            ])
+            ->assertOk();
 
         $this->assertDatabaseHas('ordenes_pagos_audit_cab', [
             'nro_op'         => 'OP-3001',
@@ -142,8 +188,6 @@ class OrdenPagoAuditTest extends TestCase
 
     public function test_importa_un_archivo_csv_con_el_cuit_de_la_base_con_guiones(): void
     {
-        Storage::fake('local');
-
         // La base guarda el CUIT con guiones; el archivo lo trae sin guiones.
         $profesional = Profesional::create(['nombre' => 'Dr. Juan Perez', 'cuit' => '20-11122233-3']);
 
@@ -152,13 +196,11 @@ class OrdenPagoAuditTest extends TestCase
             'OP-3002;20111222333;01/03/2026;150000,50;25000,10',
         ]);
 
-        $archivo = UploadedFile::fake()->createWithContent('ordenes.csv', $contenido);
-
-        Livewire::actingAs($this->usuarioConRol('facturista'))
-            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
-            ->set('archivo', $archivo)
-            ->call('importar')
-            ->assertHasNoErrors();
+        $this->actingAs($this->usuarioConRol('facturista'))
+            ->post(route('ordenes_pagos_audit.subir'), [
+                'archivo' => UploadedFile::fake()->createWithContent('ordenes.csv', $contenido),
+            ])
+            ->assertOk();
 
         $this->assertDatabaseHas('ordenes_pagos_audit_cab', [
             'nro_op'         => 'OP-3002',
@@ -179,13 +221,14 @@ class OrdenPagoAuditTest extends TestCase
 
         $archivo = UploadedFile::fake()->createWithContent('orden.pdf', '%PDF-1.4 test');
 
-        Livewire::actingAs($this->usuarioConRol('facturista'))
-            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
-            ->set('archivo', $archivo)
-            ->call('importar')
-            ->assertHasNoErrors();
+        $respuesta = $this->actingAs($this->usuarioConRol('facturista'))
+            ->post(route('ordenes_pagos_audit.subir'), ['archivo' => $archivo]);
+
+        $respuesta->assertOk()->assertJson(['ok' => true]);
 
         $documento = DocumentoLlamaparse::firstOrFail();
+
+        $respuesta->assertJson(['redirect' => route('documentos_llamaparse.ver', $documento)]);
 
         $this->assertSame('job-audit-1', $documento->job_id);
         $this->assertSame(EstadoDocumentoLlamaparse::Procesando, $documento->estado);
@@ -194,15 +237,25 @@ class OrdenPagoAuditTest extends TestCase
 
     public function test_no_importa_un_archivo_invalido(): void
     {
-        Storage::fake('local');
-
         $archivo = UploadedFile::fake()->createWithContent('ordenes.doc', 'contenido');
 
-        Livewire::actingAs($this->usuarioConRol('facturista'))
-            ->test(\App\Livewire\OrdenesPagosAudit\OrdenPagoAuditIndex::class)
-            ->set('archivo', $archivo)
-            ->call('importar')
-            ->assertHasErrors(['archivo']);
+        $this->actingAs($this->usuarioConRol('facturista'))
+            ->post(route('ordenes_pagos_audit.subir'), ['archivo' => $archivo])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['archivo']);
+
+        $this->assertSame(0, OrdenPagoAuditCab::count());
+    }
+
+    public function test_la_subida_requiere_un_rol_autorizado(): void
+    {
+        $contenido = "nro_op;profesional_id;fecha;op_total;op_retenciones\nOP-4001;1;01/03/2026;100;10";
+
+        $this->actingAs($this->usuarioConRol('otro-perfil'))
+            ->post(route('ordenes_pagos_audit.subir'), [
+                'archivo' => UploadedFile::fake()->createWithContent('ordenes.csv', $contenido),
+            ])
+            ->assertForbidden();
 
         $this->assertSame(0, OrdenPagoAuditCab::count());
     }

@@ -12,6 +12,15 @@ use Throwable;
 class XlsxJsonService
 {
     /**
+     * Años (4 dígitos) encontrados en las fechas del documento, con la
+     * cantidad de apariciones. Se usan para completar las fechas a las que
+     * el OCR les cortó el año.
+     *
+     * @var array<int, int>
+     */
+    private array $aniosDetectados = [];
+
+    /**
      * Correcciones de OCR para digitos.
      *
      * @var array<string, string>
@@ -30,9 +39,14 @@ class XlsxJsonService
     /**
      * Convierte el XLSX al MISMO JSON normalizado que usa el flujo PDF/IA.
      *
+     * El markdown es opcional: el XLSX de tablas no trae el titulo del
+     * comprobante, asi que cuando el numero no aparece en las celdas se busca
+     * ahi ("ORDEN DE PAGO OPL X 0000-00077740").
+     *
+     * @param  array<int|string, mixed>|string|null  $markdown
      * @return array<string, mixed>
      */
-    public function documento(string $ruta, ?string $nombreOriginal = null): array
+    public function documento(string $ruta, ?string $nombreOriginal = null, mixed $markdown = null): array
     {
         $crudo = $this->procesar($ruta, $nombreOriginal);
         $atenciones = [];
@@ -54,6 +68,8 @@ class XlsxJsonService
             $esHojaDetalle = $indiceHeader !== null || $this->pareceHojaDetalle($filas);
             $enDetalle = $esHojaDetalle && $indiceHeader === null;
             $esLlamaParse = str_starts_with((string) ($hoja['nombre'] ?? ''), 'Page ');
+            $esHojaValores = $this->esHojaValoresLlamaParse($filas);
+            $esHojaComprobantes = $this->esHojaComprobantesLlamaParse($filas);
             $paginaHoja = $indiceHoja + 1;
 
             if ($esLlamaParse) {
@@ -83,7 +99,7 @@ class XlsxJsonService
                 $hayDetalleLiquidacion = true;
             }
 
-            if ($esLlamaParse && ! $esHojaDetalle) {
+            if (($esLlamaParse || $esHojaValores || $esHojaComprobantes) && ! $esHojaDetalle) {
                 $this->extraerCabeceraLlamaParseHoja(
                     $filas,
                     $cabecera,
@@ -173,6 +189,32 @@ class XlsxJsonService
 
         if ($atenciones === []) {
             $advertencias[] = 'No se detectaron filas de detalle en el XLSX.';
+        }
+
+        if ($numeroDocumento === null) {
+            $numeroDocumento = NumeroOrdenPagoExtractor::desdeMarkdown($markdown);
+
+            if ($numeroDocumento !== null) {
+                $advertencias[] = 'Numero de orden de pago tomado del markdown: '.$numeroDocumento.'.';
+            }
+        }
+
+        // El OCR a veces corta el año de las fechas ("15/09/202"). Se toman
+        // los años completos del propio documento y se completan.
+        $this->registrarAniosDeHojas($crudo['hojas'] ?? []);
+        $anioPredominante = $this->anioPredominante();
+
+        if ($anioPredominante !== null) {
+            $fechaDocumento = $this->completarAnioFecha($fechaDocumento, $anioPredominante);
+
+            foreach ($atenciones as $indice => $atencion) {
+                if (is_array($atencion) && isset($atencion['fecha'])) {
+                    $atenciones[$indice]['fecha'] = $this->completarAnioFecha(
+                        is_string($atencion['fecha']) ? $atencion['fecha'] : null,
+                        $anioPredominante
+                    );
+                }
+            }
         }
 
         $input = [
@@ -269,6 +311,37 @@ class XlsxJsonService
         }
 
         return false;
+    }
+
+    /**
+     * Hoja "Valores" del XLSX de LlamaParse: el encabezado trae las columnas
+     * Valor / Banco / Numero / Fecha / Importe, donde vienen las retenciones
+     * (Caja de Prof., Gastos Administrativos, IB) y los cheques/transferencias.
+     *
+     * @param  array<int, array<string, mixed>>  $filas
+     */
+    private function esHojaValoresLlamaParse(array $filas): bool
+    {
+        $primera = $this->normalizarTexto($this->textoFila($filas[0]['celdas'] ?? []));
+
+        return str_contains($primera, 'valor')
+            && str_contains($primera, 'banco')
+            && str_contains($primera, 'importe');
+    }
+
+    /**
+     * Hoja "Comprobantes" del XLSX de LlamaParse: el encabezado trae
+     * Comprobante / Fecha / Nº Liq. / Observaciones / Neto / IVA / Total /
+     * Cancela / Saldo. De ahi sale el total de la liquidacion.
+     *
+     * @param  array<int, array<string, mixed>>  $filas
+     */
+    private function esHojaComprobantesLlamaParse(array $filas): bool
+    {
+        $primera = $this->normalizarTexto($this->textoFila($filas[0]['celdas'] ?? []));
+
+        return str_contains($primera, 'comprobante')
+            && (str_contains($primera, 'neto') || str_contains($primera, 'total'));
     }
 
     /**
@@ -418,6 +491,22 @@ class XlsxJsonService
     }
 
     /**
+     * Descripcion de la practica. En el formato "Detalle de Liquidacion" la
+     * celda siguiente al codigo puede traer el tipo de formula ("Esp") en
+     * lugar de la descripcion.
+     */
+    private function descripcionDetalleOrdenPago(string $texto): string
+    {
+        $texto = trim($texto);
+
+        if ($texto === '' || $this->normalizarTexto($texto) === 'esp') {
+            return '';
+        }
+
+        return $texto;
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $celdas
      * @return array{consumidas: int, detalle: array<string, mixed>}|null
      */
@@ -446,17 +535,23 @@ class XlsxJsonService
 
         $codigo = null;
         $descripcion = null;
-        $separado = false;
 
         if (preg_match('/^[0-9OoQIlZSGBgbTq]{3,8}$/u', trim($textoB)) === 1
             && $this->normalizarTexto($textoB) !== 'esp') {
+            // Layout con la fecha, el codigo y la descripcion en celdas
+            // separadas ("19/08/2026" | "600011" | "Especial F").
             $codigo = trim($textoB);
             $descripcion = trim($textoC);
-            $separado = true;
         } elseif (preg_match('/^(\d{1,2}\s*[\/.\-]\s*\d{1,2}\s*[\/.\-]\s*\d{2,4})\s+([0-9OoQIlZSGBgbTq]{3,8})\s+(.+)$/u', $textoA, $m) === 1) {
             $fecha = $this->buscarFechaEnToken($m[1]) ?? $fecha;
             $codigo = $m[2];
             $descripcion = trim($m[3]);
+        } elseif (preg_match('/^(\d{1,2}\s*[\/.\-]\s*\d{1,2}\s*[\/.\-]\s*\d{2,4})\s+([0-9OoQIlZSGBgbTq]{3,8})$/u', $textoA, $m) === 1) {
+            // Layout con la fecha y el codigo juntos en la primera celda y la
+            // descripcion en la siguiente ("18/08/2026 600023" | "Evaluacion").
+            $fecha = $this->buscarFechaEnToken($m[1]) ?? $fecha;
+            $codigo = $m[2];
+            $descripcion = $this->descripcionDetalleOrdenPago($textoB);
         }
 
         if ($codigo === null) {
@@ -479,9 +574,14 @@ class XlsxJsonService
                     $porcentaje = (float) str_replace(',', '.', $m[1]);
                 }
 
-                $cantidad = $this->textoCelda($cont[$separado ? 3 : 1] ?? []);
+                // En los dos layouts de este formato la cantidad esta en la
+                // columna C (la misma que la descripcion en el layout con la
+                // fecha y el codigo juntos).
+                $cantidad = $this->textoCelda($cont[2] ?? []);
 
-                if ($cantidad === '') {
+                if ($cantidad === '' || preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', trim($cantidad)) !== 1) {
+                    $cantidad = '';
+
                     foreach ($tokensCont as $token) {
                         if (preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', trim($token)) === 1) {
                             $cantidad = trim($token);
@@ -687,6 +787,27 @@ class XlsxJsonService
                 $cabecera['comprobante'] = $this->limpiarCabecera($comprobante);
             }
 
+            // Fecha del comprobante. El OCR a veces corta el año ("15/09/202"),
+            // en ese caso se completa con un año completo del documento.
+            if ($fechaDocumento === null) {
+                $encabezado = array_map(
+                    fn ($celda) => $this->normalizarTexto($this->textoCelda($celda)),
+                    $filas[0]['celdas'] ?? []
+                );
+                $indiceFecha = $this->indiceEtiqueta($encabezado, 'fecha');
+
+                if ($indiceFecha !== null) {
+                    $fecha = $this->buscarFechaEnToken($this->textoCelda($primeraData[$indiceFecha] ?? []));
+
+                    if ($fecha !== null) {
+                        $fechaDocumento = $fecha;
+                    }
+                }
+            }
+
+            // El total de la liquidacion esta en la columna "Cancela" (la
+            // ultima fila con importe): en los comprobantes cancelados cada
+            // liquidacion tiene su importe y el ultimo es la suma.
             $total = null;
 
             foreach ($filas as $fila) {
@@ -708,15 +829,31 @@ class XlsxJsonService
         }
 
         if (str_contains($titulo, 'valor') && str_contains($titulo, 'banco') && str_contains($titulo, 'importe')) {
+            $encabezado = array_map(
+                fn ($celda) => $this->normalizarTexto($this->textoCelda($celda)),
+                $filas[0]['celdas'] ?? []
+            );
+            $indiceImporte = $this->indiceEtiqueta($encabezado, 'importe');
             $caja = null;
             $gastos11 = null;
             $gastos5 = null;
+            $ib = null;
             $transferencia = 0;
 
             foreach ($filas as $fila) {
                 $celdas = $fila['celdas'] ?? [];
                 $texto = $this->normalizarTexto($this->textoFila($celdas));
-                $importe = $this->buscarImporteTokens($this->tokensFila($celdas));
+                $importe = null;
+
+                if ($indiceImporte !== null) {
+                    $valorImporte = $this->textoCelda($celdas[$indiceImporte] ?? []);
+
+                    if ($valorImporte !== '' && $this->esImporteMonetario($valorImporte)) {
+                        $importe = $valorImporte;
+                    }
+                }
+
+                $importe ??= $this->buscarImporteTokens($this->tokensFila($celdas));
 
                 if ($importe === null) {
                     continue;
@@ -734,6 +871,10 @@ class XlsxJsonService
                     $gastos11 = $centavos;
                 } elseif (str_contains($texto, 'gastos administrativos') && str_contains($texto, '5')) {
                     $gastos5 = $centavos;
+                } elseif (str_contains($texto, 'ingresos brutos')
+                    || preg_match('/\bib\b/u', $texto) === 1
+                    || preg_match('/\bi b\b/u', $texto) === 1) {
+                    $ib = $centavos;
                 } elseif (preg_match('/\bch\b/', $texto) === 1
                     || str_contains($texto, 'cheque')
                     || str_contains($texto, 'transf')) {
@@ -761,6 +902,10 @@ class XlsxJsonService
 
             if ($gastos5 !== null) {
                 $cabecera['retencion_gastos_5_centavos'] = $gastos5;
+            }
+
+            if ($ib !== null) {
+                $cabecera['retencion_ib_centavos'] = $ib;
             }
 
             if ($totalRetenciones > 0) {
@@ -1301,11 +1446,92 @@ class XlsxJsonService
             $anio = '20'.$anio;
         }
 
-        if ($dia === '' || $mes === '' || ! checkdate((int) $mes, (int) $dia, (int) $anio)) {
+        if ($dia === '' || $mes === '') {
             return trim($m[0]);
         }
 
-        return sprintf('%02d/%02d/%04d', (int) $dia, (int) $mes, (int) $anio);
+        $diaNumero = (int) $dia;
+        $mesNumero = (int) $mes;
+
+        if (strlen($anio) === 3) {
+            // Año cortado por el OCR ("15/09/202"): se devuelve tal cual y
+            // luego se completa con un año del propio documento.
+            return sprintf('%02d/%02d/%s', $diaNumero, $mesNumero, $anio);
+        }
+
+        if (! checkdate($mesNumero, $diaNumero, (int) $anio)) {
+            return trim($m[0]);
+        }
+
+        return sprintf('%02d/%02d/%04d', $diaNumero, $mesNumero, (int) $anio);
+    }
+
+    /**
+     * Registra los años (4 dígitos) que aparecen en las fechas del documento.
+     *
+     * Sirve para completar las fechas a las que el OCR les cortó el año
+     * ("15/09/202"), que se completan con el año predominante del documento.
+     */
+    private function registrarAniosEnTexto(?string $texto): void
+    {
+        if ($texto === null || $texto === '') {
+            return;
+        }
+
+        if (preg_match_all('/\d{1,2}\s*[\/.\-]\s*\d{1,2}\s*[\/.\-]\s*(\d{4})/u', $texto, $matches) === false) {
+            return;
+        }
+
+        foreach ($matches[1] as $anio) {
+            $anio = (int) $anio;
+
+            $this->aniosDetectados[$anio] = ($this->aniosDetectados[$anio] ?? 0) + 1;
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $hojas
+     */
+    private function registrarAniosDeHojas(array $hojas): void
+    {
+        foreach ($hojas as $hoja) {
+            foreach ($hoja['datos'] ?? [] as $fila) {
+                foreach ($fila['celdas'] ?? [] as $celda) {
+                    $this->registrarAniosEnTexto($this->textoCelda($celda));
+                }
+            }
+        }
+    }
+
+    /**
+     * Año que predomina en las fechas del documento.
+     */
+    private function anioPredominante(): ?int
+    {
+        if ($this->aniosDetectados === []) {
+            return null;
+        }
+
+        arsort($this->aniosDetectados);
+
+        return (int) array_key_first($this->aniosDetectados);
+    }
+
+    /**
+     * Completa el año de las fechas a las que el OCR les cortó el último
+     * dígito ("15/09/202" -> "15/09/2026").
+     */
+    private function completarAnioFecha(?string $fecha, ?int $anio): ?string
+    {
+        if ($fecha === null || $anio === null) {
+            return $fecha;
+        }
+
+        if (preg_match('/^(\d{2})\/(\d{2})\/(\d{3})$/', trim($fecha), $m) !== 1) {
+            return $fecha;
+        }
+
+        return sprintf('%s/%s/%04d', $m[1], $m[2], $anio);
     }
 
     private function normalizarPeriodoToken(string $token): ?string

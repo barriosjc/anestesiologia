@@ -91,6 +91,9 @@ Route::group(['middleware' => 'auth'], function () {
                 ->name('ordenes_pagos_audit.cab');
             Route::get('ordenes-pagos-audit/cab/{orden}', \App\Livewire\OrdenesPagosAudit\OrdenPagoAuditDetalle::class)
                 ->name('ordenes_pagos_audit.detalle');
+            // Subida directa (XHR) del modal "Subir": no pasa por Livewire.
+            Route::post('ordenes-pagos-audit/subir', [\App\Http\Controllers\OrdenesPagosAudit\OrdenPagoAuditUploadController::class, 'store'])
+                ->name('ordenes_pagos_audit.subir');
         });
 
         Route::group(['middleware' => ['role:super-admin|facturista']], function () {

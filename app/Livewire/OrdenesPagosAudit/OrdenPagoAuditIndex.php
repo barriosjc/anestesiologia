@@ -3,32 +3,23 @@
 namespace App\Livewire\OrdenesPagosAudit;
 
 use App\Enums\EstadoDocumentoLlamaparse;
-use App\Exceptions\LlamaParseException;
+use App\Http\Controllers\OrdenesPagosAudit\OrdenPagoAuditUploadController;
 use App\Models\DocumentoLlamaparse;
 use App\Models\OrdenPagoAuditCab;
-use App\Services\LlamaParse\LlamaParseService;
 use App\Services\OrdenPagoAuditCompareService;
-use App\Services\OrdenPagoAuditImportService;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 #[Layout('layouts.main')]
 class OrdenPagoAuditIndex extends Component
 {
-    use WithFileUploads;
     use WithPagination;
 
     /** Busqueda sobre nro_op y nombre del profesional. */
     public string $busqueda = '';
-
-    /** Archivo a importar (CSV / XLSX) o procesar (PDF). */
-    public ?TemporaryUploadedFile $archivo = null;
-
-    /** Errores de la ultima importacion. */
-    public array $erroresImportacion = [];
 
     /** Documento procesado que se va a auditar contra la base. */
     public ?int $documentoAuditarId = null;
@@ -83,82 +74,32 @@ class OrdenPagoAuditIndex extends Component
 
     /**
      * Abre el modal de carga de archivo.
+     *
+     * La subida en si se hace por XHR contra OrdenPagoAuditUploadController
+     * (ver public/js/upload-directo.js), sin la subida temporal de Livewire.
      */
     public function abrirModalSubir(): void
     {
-        $this->reset(['archivo', 'erroresImportacion']);
         $this->resetValidation();
         $this->dispatch('open-modal', modal: 'opAuditUploadModal');
     }
 
     /**
-     * Importa CSV/XLSX o envia el PDF a LlamaParse.
+     * Refresca el listado despues de una importacion hecha por la ruta de subida.
      */
-    public function importar(): void
+    #[On('orden-pago-audit-importada')]
+    public function refrescarListado(): void
     {
-        $maxKb = max(1, (int) config('llamaparse.max_file_mb', 100) * 1024);
-
-        $this->validate([
-            'archivo' => ['required', 'file', 'max:'.$maxKb],
-        ], [
-            'archivo.required' => 'Debe seleccionar un archivo.',
-            'archivo.file'     => 'El archivo seleccionado no es valido.',
-            'archivo.max'      => 'El archivo supera el tamano maximo permitido.',
-        ]);
-
-        $extension = strtolower($this->archivo->getClientOriginalExtension());
-
-        if ($extension === 'pdf') {
-            $this->procesarPdfConLlamaparse();
-
-            return;
-        }
-
-        if (! in_array($extension, ['csv', 'txt', 'xls', 'xlsx'], true)) {
-            $this->addError('archivo', 'El archivo debe ser CSV, TXT, XLS, XLSX o PDF.');
-
-            return;
-        }
-
-        $resultado = app(OrdenPagoAuditImportService::class)->importar($this->archivo->getRealPath());
-
-        $this->erroresImportacion = $resultado['errors'];
-
-        if (! $resultado['success']) {
-            session()->flash('error', $resultado['message']);
-
-            return;
-        }
-
-        $this->reset(['archivo', 'erroresImportacion']);
-        $this->resetValidation();
         $this->resetPage();
-
-        $this->dispatch('close-modal', modal: 'opAuditUploadModal');
-
-        session()->flash('success', $resultado['message']);
     }
 
-    private function procesarPdfConLlamaparse(): void
+    /**
+     * Limite real de subida (aplicacion y php.ini).
+     */
+    #[Computed]
+    public function maxArchivoMb(): int
     {
-        try {
-            $service = app(LlamaParseService::class);
-            $documento = $service->registrar($this->archivo, auth()->id());
-            $service->iniciar($documento);
-        } catch (LlamaParseException $e) {
-            $this->addError('archivo', $e->getMessage());
-
-            return;
-        }
-
-        $this->reset(['archivo', 'erroresImportacion']);
-        $this->resetValidation();
-        $this->dispatch('close-modal', modal: 'opAuditUploadModal');
-        $this->resetPage();
-
-        $this->js('window.open('.json_encode(route('documentos_llamaparse.ver', $documento)).', "_blank")');
-
-        session()->flash('success', 'PDF enviado a LlamaParse. Se abrio el detalle en otra pestana.');
+        return OrdenPagoAuditUploadController::maxMb();
     }
 
     /**

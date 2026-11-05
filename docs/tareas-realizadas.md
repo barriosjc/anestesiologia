@@ -1,5 +1,210 @@
 # Tareas realizadas
 
+## 04/11/2026 — Niveles por descripción con porcentaje y texto adicional
+
+### Objetivo
+
+Cuando el archivo informa una descripción como `Especial D 30% valor base`,
+`Especial D valor base 30%` o `Especial D 30%`, y el código (`600042`) no existe
+en `niveles.cod_uom`, el nivel debe resolverse por la descripción `Especial D` y
+el porcentaje (`30`) debe usarse para cruzar el consumo.
+
+### Cambios
+
+- `OrdenPagoAuditCompareService` busca el nivel por descripción en dos pasos:
+  primero la descripción base exacta (texto anterior al `%`) y después la
+  descripción de `niveles` más larga que sea prefijo de la descripción del
+  archivo. Así se tolera texto adicional antes o después del porcentaje.
+- El porcentaje se sigue extrayendo del primer número seguido de `%`; ahora
+  también acepta espacios no separables (NBSP).
+- Se agregó un test para `Especial D valor base 30%` sin equivalencia de
+  código en `niveles.cod_uom`.
+
+### Archivos principales
+
+- `app/Services/OrdenPagoAuditCompareService.php`
+- `tests/Feature/OrdenPagoAuditCompareTest.php`
+
+---
+
+## 04/11/2026 — Retenciones de la orden de pago en el listado
+
+### Objetivo
+
+En `ordenes-pagos-audit/cab` la columna **Retención** debe mostrar la fila
+**Caja de Prof. de la salud** de la hoja *Valores* del archivo, la columna
+**Gast. Adm.** las filas **Gastos Administrativos 11%** y **5%**, y la columna
+**IB** la retención de **Ingresos Brutos** (antes `op_retenciones` guardaba la
+suma de todas las retenciones). **A pagar** es la diferencia entre el total y
+esas retenciones.
+
+### Causa
+
+Las retenciones no están en el detalle de la liquidación: vienen en la hoja
+*Valores* del XLSX que genera LlamaParse (`Caja de Prof. de la salud`,
+`Gastos Administrativos 11%`, `Gastos Administrativos 5%`, cheques y
+transferencias). Además, muchas OPs no tienen retención de IB: esa información
+simplemente no está en el archivo.
+
+### Cambios
+
+- `XlsxJsonService` toma la hoja *Valores* (encabezado `Valor / Banco / Numero
+  / Fecha / Importe`) y guarda en la cabecera del JSON:
+  `retencion_caja_centavos`, `retencion_gastos_11_centavos`,
+  `retencion_gastos_5_centavos` y `retencion_ib_centavos` (este último solo si
+  el archivo informa IB).
+- `OrdenPagoAuditCompareService` guarda esas retenciones como snapshot en la
+  cabecera: `retencion_caja`, `retencion_gastos` y `op_retenciones` (IB).
+  Si el archivo no informa el dato, la columna queda en `NULL` (no en cero).
+- `OrdenPagoAuditCab` agrega los accesores `caja_prof_salud`, `gastos_admin`,
+  `ib` y `a_pagar` (`total - IB - caja - gastos admins`). Si el archivo no trae
+  retenciones, `a_pagar` queda en `NULL`.
+- El listado y el detalle muestran `—` cuando no hay dato.
+- `OrdenPagoAuditImportService`: la columna del CSV `op_retenciones` es la
+  retención de IB; también acepta `ib` e `ingresos_brutos`.
+- Nuevo comando `documentos-llamaparse:regenerar-json`: regenera el JSON de los
+  documentos ya procesados desde el XLSX guardado en `storage` (sin volver a
+  llamar a LlamaParse ni gastar credits) y, con `--auditar`, vuelve a generar
+  la auditoría.
+
+### Comandos
+
+- `php artisan documentos-llamaparse:regenerar-json --dry-run` → muestra las
+  retenciones que encuentra en cada XLSX.
+- `php artisan documentos-llamaparse:regenerar-json --auditar` → regenera el
+  JSON y las auditorías.
+
+### Base de datos
+
+Columnas nuevas en `ordenes_pagos_audit_cab` (script en
+`docs/scripts-db-produccion.md`, sección 13):
+
+```sql
+ALTER TABLE ordenes_pagos_audit_cab
+    ADD COLUMN retencion_caja DECIMAL(14,2) NULL AFTER op_total,
+    ADD COLUMN retencion_gastos DECIMAL(14,2) NULL AFTER retencion_caja;
+```
+
+### Archivos principales
+
+- `app/Services/LlamaParse/XlsxJsonService.php`
+- `app/Services/OrdenPagoAuditCompareService.php`
+- `app/Services/OrdenPagoAuditImportService.php`
+- `app/Models/OrdenPagoAuditCab.php`
+- `app/Console/Commands/RegenerarJsonDocumentosLlamaparse.php`
+- `resources/views/livewire/ordenes-pagos-audit/orden-pago-audit-index.blade.php`
+- `resources/views/livewire/ordenes-pagos-audit/orden-pago-audit-detalle.blade.php`
+- `database/migrations/2026_11_04_000100_add_retenciones_to_ordenes_pagos_audit_cab_table.php`
+- `tests/Feature/OrdenPagoAuditCompareTest.php`
+- `tests/Feature/OrdenPagoAuditTest.php`
+- `tests/Feature/Llamaparse/RegenerarJsonDocumentosLlamaparseTest.php`
+
+---
+
+## 04/11/2026 — Nro OP de la auditoría tomado del PDF
+
+### Objetivo
+
+La columna **Nro OP** de `ordenes-pagos-audit/cab` mostraba `8` / `5` (el id
+del documento) en lugar del número real de la orden de pago
+(`OPL X 0000-00077740` → `77740`).
+
+### Causa
+
+`OrdenPagoAuditCompareService` toma el número de `documento.numero` del JSON.
+Ese JSON se genera desde el **XLSX de tablas** de LlamaParse, y ese XLSX **no
+incluye el título del comprobante**: la hoja `--ORDEN DE PAGO--` sólo trae
+Agente, CUIT, Dirección y Fecha. El número `OPL X 0000-00077740` existe
+únicamente en el **markdown**, que se guardaba pero no se leía. Sin número, la
+auditoría caía en el fallback `DOC-<id>` y la vista mostraba esos dígitos.
+
+### Cambios
+
+- `app/Services/LlamaParse/NumeroOrdenPagoExtractor.php` (nuevo): extrae el
+  número del markdown (`OPL`, `ORDEN DE PAGO`, `OP`), recorre todas las páginas
+  y devuelve sólo los dígitos (`000000077740`).
+- `XlsxJsonService::documento()` acepta el markdown como tercer parámetro y lo
+  usa sólo cuando las celdas no traen número. `LlamaParseService` ahora calcula
+  el markdown **antes** de generar el JSON y se lo pasa.
+- `OrdenPagoAuditCompareService`: si `documento.numero` es `null`, intenta el
+  markdown antes de caer en `DOC-<id>`. Así los documentos ya procesados se
+  corrigen al volver a auditarlos.
+- `OrdenPagoAuditCab::getNroOp8Attribute()` ignora el sufijo `-<docId>` que se
+  agrega cuando dos documentos traen la misma OP (índice único de `nro_op`).
+- Comando `ordenes-pagos:reparar-nro-op [--dry-run]`: completa el `nro_op` de
+  las auditorías que quedaron con `DOC-<id>`, usando el markdown del documento.
+  No toca números cargados a mano.
+
+### Archivos principales
+
+- `app/Services/LlamaParse/NumeroOrdenPagoExtractor.php`
+- `app/Services/LlamaParse/XlsxJsonService.php`
+- `app/Services/LlamaParse/LlamaParseService.php`
+- `app/Services/OrdenPagoAuditCompareService.php`
+- `app/Models/OrdenPagoAuditCab.php`
+- `app/Console/Commands/RepararNroOpOrdenPago.php`
+- `tests/Feature/Llamaparse/NumeroOrdenPagoExtractorTest.php`
+- `tests/Feature/Llamaparse/LlamaParseXlsxTest.php`
+- `tests/Feature/OrdenPagoAuditCompareTest.php`
+- `tests/Feature/OrdenPagoAuditTest.php`
+
+### Comando de reparación
+
+- `php artisan ordenes-pagos:reparar-nro-op --dry-run` → muestra los cambios.
+- `php artisan ordenes-pagos:reparar-nro-op` → los guarda.
+
+---
+
+## 04/11/2026 — Subida de archivos de Órdenes de Pago sin Livewire
+
+### Objetivo
+
+El modal **Subir** de `ordenes-pagos-audit/cab` fallaba con
+*"The file failed to upload"* incluso con PDFs de menos de 10 MB. La subida
+temporal de Livewire (`wire:model` + URL firmada + `/livewire/upload-file`)
+depende de tres pasos y cualquier falla intermedia termina en ese mensaje
+genérico, sin decir qué pasó.
+
+### Cambios
+
+- La subida se rehizo como un **POST multipart directo** del navegador
+  (`XMLHttpRequest`) a `POST /ordenes-pagos-audit/subir`
+  (`OrdenPagoAuditUploadController`). El archivo va en un único request.
+- El modal muestra **progreso real** (`xhr.upload.onprogress`) y el error que
+  devuelve el servidor tal cual (validación, sesión expirada, permisos, tamaño).
+- `public/js/upload-directo.js`: helper reutilizable. Se configura con
+  `data-upload-*` en el contenedor y no depende de Livewire.
+- Al terminar una importación de CSV/XLSX se emite
+  `orden-pago-audit-importada` y el componente refresca el listado
+  (`#[On] refrescarListado`). Con un PDF se navega al detalle del documento.
+- `OrdenPagoAuditImportService::importar()` acepta la extensión explícita: el
+  archivo subido por HTTP queda en una ruta temporal sin extensión
+  (`/tmp/phpXXXX.tmp`), y antes se deducía el lector por la extensión del path.
+- El máximo informado es el **menor entre la aplicación y PHP**
+  (`upload_max_filesize` / `post_max_size`). En este entorno PHP limita a 16 MB
+  aunque `LLAMAPARSE_MAX_FILE_MB` diga 100.
+- Se eliminaron del componente `WithFileUploads`, `$archivo`,
+  `$erroresImportacion`, `importar()` y `procesarPdfConLlamaparse()`.
+- Si el PDF se guarda pero LlamaParse no lo recibe, la respuesta abre igual el
+  detalle del documento (que queda en estado Error) para reprocesarlo.
+
+### Archivos principales
+
+- `app/Http/Controllers/OrdenesPagosAudit/OrdenPagoAuditUploadController.php`
+- `public/js/upload-directo.js`
+- `app/Livewire/OrdenesPagosAudit/OrdenPagoAuditIndex.php`
+- `resources/views/livewire/ordenes-pagos-audit/orden-pago-audit-index.blade.php`
+- `app/Services/OrdenPagoAuditImportService.php`
+- `routes/web.php`
+- `tests/Feature/OrdenPagoAuditTest.php`
+
+### Ruta nueva
+
+- `POST /ordenes-pagos-audit/subir` → importación CSV/XLSX o envío del PDF a
+  LlamaParse.
+
+---
+
 ## 02/11/2026 — Auditoría: la descripción no marca diferencia
 
 ### Objetivo

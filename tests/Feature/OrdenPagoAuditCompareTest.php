@@ -169,6 +169,145 @@ class OrdenPagoAuditCompareTest extends TestCase
         ]);
     }
 
+    public function test_toma_el_numero_de_la_orden_de_pago_del_markdown(): void
+    {
+        Profesional::create([
+            'nombre' => 'PEREZ, JUAN',
+            'cuit'   => '20111222333',
+        ]);
+
+        // El JSON del XLSX no trae el numero (el XLSX de tablas pierde el
+        // titulo del comprobante); el numero real esta en el markdown.
+        $documento = $this->documentoConDetalles(
+            '33333333-3333-3333-3333-333333333333',
+            '143 - UOM',
+            [['codigo_nivel' => '600011', 'descripcion_nivel' => 'Especial F', 'importe' => 100]]
+        );
+
+        $documento->update([
+            'markdown' => [[
+                'page'     => 1,
+                'markdown' => '## **ORDEN DE PAGO** **OPL X 0000-00077740**',
+            ]],
+        ]);
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento, false);
+
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $orden = OrdenPagoAuditCab::firstOrFail();
+
+        $this->assertSame('000000077740', $orden->nro_op);
+        // La columna "Nro OP" muestra los ultimos 8 digitos sin ceros.
+        $this->assertSame('77740', $orden->nro_op_8);
+    }
+
+    public function test_guarda_las_retenciones_del_archivo_y_calcula_el_a_pagar(): void
+    {
+        Profesional::create([
+            'nombre' => 'PEREZ, JUAN',
+            'cuit'   => '20111222333',
+        ]);
+
+        $documento = $this->documentoConDetalles(
+            '55555555-5555-5555-5555-555555555555',
+            '143 - UOM',
+            [['codigo_nivel' => '600011', 'descripcion_nivel' => 'Especial F', 'importe' => 100]],
+            '1180759',
+            1000
+        );
+
+        // Hoja "Valores" del XLSX: Caja de Prof. 100, Gastos Adm. 11% 220 y 5%
+        // 100, e IB 50.
+        $json = $documento->json;
+        $json['cabecera'] = array_merge($json['cabecera'], [
+            'retencion_caja_centavos'      => 10000,
+            'retencion_gastos_11_centavos' => 22000,
+            'retencion_gastos_5_centavos'  => 10000,
+            'retencion_ib_centavos'        => 5000,
+        ]);
+
+        $documento->update(['json' => $json]);
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento, false);
+
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $orden = OrdenPagoAuditCab::firstOrFail();
+
+        $this->assertSame(100.0, (float) $orden->retencion_caja);
+        $this->assertSame(320.0, (float) $orden->retencion_gastos);
+        // op_retenciones es la retencion de Ingresos Brutos.
+        $this->assertSame(50.0, (float) $orden->op_retenciones);
+
+        $this->assertSame(100.0, $orden->caja_prof_salud);
+        $this->assertSame(320.0, $orden->gastos_admin);
+        $this->assertSame(50.0, $orden->ib);
+
+        // A pagar = total - IB - caja - gastos admins = 1000 - 50 - 100 - 320
+        $this->assertSame(530.0, $orden->a_pagar);
+    }
+
+    public function test_cuando_el_archivo_no_informa_retenciones_no_hay_datos_para_calcular_el_a_pagar(): void
+    {
+        Profesional::create([
+            'nombre' => 'PEREZ, JUAN',
+            'cuit'   => '20111222333',
+        ]);
+
+        $documento = $this->documentoConDetalles(
+            '66666666-6666-6666-6666-666666666666',
+            '143 - UOM',
+            [['codigo_nivel' => '600011', 'descripcion_nivel' => 'Especial F', 'importe' => 100]],
+            '1180759',
+            1000
+        );
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento, false);
+
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $orden = OrdenPagoAuditCab::firstOrFail();
+
+        // Sin hoja "Valores" no hay dato de retenciones: NULL, no cero.
+        $this->assertNull($orden->retencion_caja);
+        $this->assertNull($orden->retencion_gastos);
+        $this->assertNull($orden->caja_prof_salud);
+        $this->assertNull($orden->gastos_admin);
+        // Muchas OP no tienen retencion de Ingresos Brutos.
+        $this->assertSame(0.0, $orden->ib);
+        $this->assertNull($orden->a_pagar);
+    }
+
+    public function test_el_comando_repara_las_auditorias_que_quedaron_con_doc_id(): void
+    {
+        $documento = $this->documentoConDetalles(
+            '44444444-4444-4444-4444-444444444444',
+            '143 - UOM',
+            [['codigo_nivel' => '600011', 'descripcion_nivel' => 'Especial F', 'importe' => 100]]
+        );
+
+        $documento->update([
+            'markdown' => [[
+                'page'     => 1,
+                'markdown' => '## **ORDEN DE PAGO** **OPL X 0000-00077740**',
+            ]],
+        ]);
+
+        // Fila creada antes del fix: nro_op cayo en el fallback "DOC-<id>".
+        $orden = OrdenPagoAuditCab::create([
+            'documento_llamaparse_id' => $documento->id,
+            'nro_op'                  => 'DOC-'.$documento->id,
+        ]);
+
+        $this->artisan('ordenes-pagos:reparar-nro-op')->assertSuccessful();
+
+        $orden->refresh();
+
+        $this->assertSame('000000077740', $orden->nro_op);
+        $this->assertSame('77740', $orden->nro_op_8);
+    }
+
     public function test_la_vista_de_detalle_muestra_las_diferencias_y_permite_filtrar(): void
     {
         $profesional = Profesional::create([
@@ -842,6 +981,128 @@ class OrdenPagoAuditCompareTest extends TestCase
         $this->assertSame('ok', $detalle100->estado);
 
         $this->assertSame(650.0, (float) OrdenPagoAuditCab::firstOrFail()->total_sistema);
+    }
+
+    public function test_resuelve_el_nivel_por_descripcion_aunque_el_porcentaje_no_este_al_final(): void
+    {
+        $profesional = Profesional::create([
+            'nombre' => 'PEREZ, JUAN',
+            'cuit'   => '20111222333',
+        ]);
+
+        $cobertura = Cobertura::create([
+            'nombre'  => 'OSDE',
+            'sigla'   => 'OSDE',
+            'cuit'    => '30-12345678-9',
+            'cod_uom' => '143',
+        ]);
+
+        $parte = ParteCab::create([
+            'profesional_id' => $profesional->id,
+            'atencion'       => '1215417',
+            'fec_prestacion' => '2026-06-11 09:00:00',
+        ]);
+        $parte->cobertura_id = $cobertura->id;
+        $parte->save();
+
+        $consumoCab = new ConsumoCab();
+        $consumoCab->parte_cab_id = $parte->id;
+        $consumoCab->save();
+
+        $nomenclador = Nomenclador::create([
+            'nom_padre_id' => 1,
+            'codigo'       => 'ED',
+            'nivel'        => 'ED',
+            'descripcion'  => 'Especial D',
+        ]);
+
+        $this->consumoDetalle($consumoCab->id, $nomenclador->id, 150, 30);
+
+        // El codigo 600042 no existe en niveles.cod_uom: el nivel solo puede
+        // resolverse por la descripcion "Especial D".
+        Nivel::create(['nivel' => 'ED', 'cod_uom' => '600009', 'descripcion' => 'Especial D']);
+
+        $documento = DocumentoLlamaparse::create([
+            'uuid'            => '55555555-5555-5555-5555-555555555555',
+            'archivo'         => 'documento.pdf',
+            'nombre_original' => 'OP junio.pdf',
+            'mime'            => 'application/pdf',
+            'estado'          => 'procesado',
+            'json'            => [
+                'documento' => [
+                    'tipo'            => 'detalle_liquidacion',
+                    'fecha'           => '11/06/2026',
+                    'total_informado' => 150,
+                ],
+                'cabecera' => [
+                    'profesional' => 'PEREZ, JUAN',
+                    'cuit'        => '20111222333',
+                ],
+                'atenciones' => [[
+                    'atencion'    => '1215417',
+                    'fecha'       => '11/06/2026',
+                    'obra_social' => '143 - OSDE',
+                    'detalles'    => [[
+                        'fecha'             => '11/06/2026',
+                        'codigo_nivel'      => '600042',
+                        'descripcion_nivel' => 'Especial D 30% valor base',
+                        'importe'           => 150,
+                    ]],
+                ]],
+            ],
+        ]);
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento);
+
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $detalle = OrdenPagoAuditDet::firstOrFail();
+        $this->assertSame('ED', $detalle->nivel_sistema);
+        $this->assertSame(150.0, (float) $detalle->valor_sistema);
+        $this->assertSame(30.0, (float) $detalle->porcentaje_archivo);
+        $this->assertSame(30.0, (float) $detalle->porcentaje_sistema);
+        $this->assertSame('ok', $detalle->estado);
+    }
+
+    public function test_resuelve_el_nivel_buscando_la_descripcion_base_aunque_haya_texto_antes_del_porcentaje(): void
+    {
+        $this->crearParteConConsumo('OSDE', '143');
+
+        $nomenclador = Nomenclador::create([
+            'nom_padre_id' => 1,
+            'codigo'       => 'ED',
+            'nivel'        => 'ED',
+            'descripcion'  => 'Especial D',
+        ]);
+
+        $consumoCab = ConsumoCab::firstOrFail();
+        $this->consumoDetalle($consumoCab->id, $nomenclador->id, 150, 30);
+
+        // El codigo 600042 no existe en niveles.cod_uom: solo puede resolverse
+        // tomando "Especial D" como prefijo de la descripcion del archivo.
+        Nivel::create(['nivel' => 'ED', 'cod_uom' => '600009', 'descripcion' => 'Especial D']);
+
+        $documento = $this->documentoConDetalles(
+            '66666666-6666-6666-6666-666666666666',
+            '143 - OSDE',
+            [[
+                'codigo_nivel'      => '600042',
+                'descripcion_nivel' => 'Especial D valor base 30%',
+                'importe'           => 150,
+            ]],
+            '1180759',
+            150
+        );
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento);
+
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $detalle = OrdenPagoAuditDet::where('codigo_archivo', '600042')->firstOrFail();
+        $this->assertSame('ED', $detalle->nivel_sistema);
+        $this->assertSame(30.0, (float) $detalle->porcentaje_archivo);
+        $this->assertSame(30.0, (float) $detalle->porcentaje_sistema);
+        $this->assertSame('ok', $detalle->estado);
     }
 
     public function test_para_ioma_cruza_por_codigo_de_nomenclador_y_no_por_nivel(): void

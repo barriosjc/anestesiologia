@@ -82,5 +82,10 @@
         @if ($nota)
             <div class="mb-0">{{ $nota }}</div>
         @endif
+        <div class="mt-2 text-end">
+            <a href="{{ route('ordenes_pagos_audit.cab') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i>Volver a cabecera
+            </a>
+        </div>
     </div>
 @endif

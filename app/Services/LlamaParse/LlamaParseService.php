@@ -261,13 +261,16 @@ class LlamaParseService
         Storage::disk($disk)->put($rutaXlsx, $descarga->body());
 
         $pathXlsx = Storage::disk($disk)->path($rutaXlsx);
-        $json = $this->xlsx->documento($pathXlsx, $documento->nombre_original);
-        $jsonCrudo = $this->xlsx->procesar($pathXlsx, $documento->nombre_original);
 
         $paginasMarkdown = data_get($datos, 'markdown.pages');
         $markdown = is_array($paginasMarkdown)
             ? $paginasMarkdown
             : (data_get($datos, 'markdown_full') ? ['full' => data_get($datos, 'markdown_full')] : null);
+
+        // El numero de la OP ("OPL X 0000-00077740") solo viene en el markdown:
+        // el XLSX de tablas no incluye el titulo del comprobante.
+        $json = $this->xlsx->documento($pathXlsx, $documento->nombre_original, $markdown);
+        $jsonCrudo = $this->xlsx->procesar($pathXlsx, $documento->nombre_original);
 
         $paginasItems = data_get($datos, 'items.pages');
 

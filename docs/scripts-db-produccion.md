@@ -348,6 +348,37 @@ WHERE NOT EXISTS (
 
 ---
 
+## 13. Retenciones de la orden de pago en `ordenes_pagos_audit_cab`
+
+Las retenciones no vienen en el detalle: están en la hoja **Valores** del XLSX
+que genera LlamaParse (filas `Caja de Prof. de la salud`, `Gastos
+Administrativos 11%` y `5%`). Se guardan como snapshot en la cabecera.
+
+- `retencion_caja` = fila **Caja de Prof. de la salud**.
+- `retencion_gastos` = filas **Gastos Administrativos 11%** + **5%**.
+- `op_retenciones` = retención de **Ingresos Brutos (IB)** (ya existía; cambia
+  el significado: antes guardaba la suma de todas las retenciones).
+
+```sql
+ALTER TABLE ordenes_pagos_audit_cab
+    ADD COLUMN retencion_caja DECIMAL(14,2) NULL AFTER op_total,
+    ADD COLUMN retencion_gastos DECIMAL(14,2) NULL AFTER retencion_caja;
+```
+
+> Las columnas quedan en `NULL` cuando el archivo no informa el dato: no es lo
+> mismo que cero. Por eso **A pagar** (`total - IB - retención - gastos adm.`)
+> también queda en `NULL` si el archivo no trae retenciones.
+>
+> MySQL no soporta `ADD COLUMN IF NOT EXISTS`: correr una sola vez o controlar
+> con `information_schema.columns`.
+>
+> **Ojo con las órdenes importadas por CSV**: `op_retenciones` antes guardaba la
+> suma de todas las retenciones y ahora guarda solo el IB. Si en producción hay
+> filas importadas por CSV, hay que volver a importarlas (el archivo puede
+> traer la columna como `ib` o `ingresos_brutos`) o corregir el valor a mano.
+
+---
+
 ## Historial de cambios
 
 | Fecha | Cambio | Estado |
@@ -368,3 +399,4 @@ WHERE NOT EXISTS (
 | 29/10/2026 | corrección: `ordenes_pagos_audit_det.nivel_id` sin FK a `niveles` (MyISAM) | pendiente |
 | 02/11/2026 | retiro de `coberturas.id_uom` (solo se usa `cod_uom`) | pendiente |
 | 02/11/2026 | renombre `id_uom_archivo`/`id_uom_sistema` a `cod_uom_archivo`/`cod_uom_sistema` en `ordenes_pagos_audit_det` | pendiente |
+| 04/11/2026 | columnas `retencion_caja` y `retencion_gastos` en `ordenes_pagos_audit_cab` (`op_retenciones` = IB) | pendiente |

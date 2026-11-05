@@ -43,9 +43,13 @@ de LlamaParse. No requiere binarios ni comandos en el servidor: funciona con sal
   `COBERTURA_COD_IOMA` (valor `78`). En ese caso el código del archivo se busca
   en `nomenclador.codigo` con `nom_padre_id = 2`, sin usar `niveles.cod_uom`.
 - **Resto de coberturas**: el código del archivo se busca en `niveles.cod_uom`.
-  Si la descripción termina en porcentaje (ej. `Especial F 30%` o
-  `Especial F 50% valor`), se quita el porcentaje y el nivel se busca por
-  `niveles.descripcion`.
+  Si la descripción informa un porcentaje (ej. `Especial F 30%`,
+  `Especial F 50% valor` o `Especial D 30% valor base`), el nivel se busca por
+  `niveles.descripcion`: se prueba la descripción base (texto anterior al
+  porcentaje) y, si no coincide, la descripción de `niveles` más larga que sea
+  prefijo del texto del archivo. Así `Especial D valor base 30%` también
+  resuelve el nivel `Especial D`. En estos casos no se usa el código como
+  respaldo.
 - **Consumos**: se cruzan por nivel (o código, para IOMA) **y**
   `consumos_det.porcentaje`. Si el archivo no informa porcentaje se prioriza el
   100 % y, si no existe, se usa el único consumo disponible.

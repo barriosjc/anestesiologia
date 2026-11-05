@@ -51,6 +51,27 @@ class LlamaParseXlsxTest extends TestCase
         $this->assertSame(142233282, $json['cabecera']['transferencia_centavos']);
     }
 
+    public function test_toma_el_numero_de_la_orden_de_pago_del_markdown(): void
+    {
+        $ruta = $this->crearXlsxLlamaParse();
+
+        $markdown = [
+            [
+                'page'     => 1,
+                'markdown' => '## **ORDEN DE PAGO** **OPL X 0000-00077740**',
+            ],
+        ];
+
+        $conMarkdown = app(XlsxJsonService::class)->documento($ruta, 'llamaparse.xlsx', $markdown);
+        $sinMarkdown = app(XlsxJsonService::class)->documento($ruta, 'llamaparse.xlsx');
+        @unlink($ruta);
+
+        // El XLSX de tablas no trae el titulo del comprobante: sin markdown el
+        // numero queda vacio y la auditoria caia en "DOC-<id>".
+        $this->assertNull($sinMarkdown['documento']['numero']);
+        $this->assertSame('000000077740', $conMarkdown['documento']['numero']);
+    }
+
     public function test_procesa_el_xlsx_de_llamaparse_formato_orden_de_pago(): void
     {
         $ruta = $this->crearXlsxLlamaParseOrdenPago();

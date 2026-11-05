@@ -9,6 +9,7 @@ use App\Models\OrdenPagoAuditCab;
 use App\Models\Parametro;
 use App\Models\ParteCab;
 use App\Models\Profesional;
+use App\Services\LlamaParse\NumeroOrdenPagoExtractor;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,14 @@ class OrdenPagoAuditCompareService
      * Nombre del padre de nomenclador que corresponde a IOMA.
      */
     private const NOM_PADRE_IOMA = 2;
+
+    /**
+     * Sigla y nombre de las coberturas del sistema -> cod_uom (cache de la
+     * corrida).
+     *
+     * @var array<string, string|null>|null
+     */
+    private ?array $nombresObraSocial = null;
 
     /**
      * Compara el documento contra la base y genera la auditoria.
@@ -67,6 +76,12 @@ class OrdenPagoAuditCompareService
         );
 
         if ($nroOp === null) {
+            // Documentos ya procesados antes de leer el numero del markdown:
+            // se recupera de ahi en lugar de caer en "DOC-<id>".
+            $nroOp = NumeroOrdenPagoExtractor::desdeMarkdown($documento->markdown);
+        }
+
+        if ($nroOp === null) {
             $nroOp = 'DOC-'.$documento->id;
         }
 
@@ -75,9 +90,26 @@ class OrdenPagoAuditCompareService
 
         $fecha = $this->fecha($json['documento']['fecha'] ?? null);
         $totalArchivoCab = (float) ($json['documento']['total_informado'] ?? $cabecera['importe'] ?? 0);
-        $retenciones = isset($cabecera['total_retenciones_centavos'])
-            ? ((int) $cabecera['total_retenciones_centavos']) / 100
+
+        // Retenciones de la hoja "Valores" del XLSX:
+        // - IB (Ingresos Brutos): muchas OP no lo tienen (queda en 0).
+        // - Caja de Prof. de la salud y Gastos Administrativos: NULL cuando el
+        //   archivo no informa el dato, para no confundirlo con el cero.
+        $ib = isset($cabecera['retencion_ib_centavos'])
+            ? ((int) $cabecera['retencion_ib_centavos']) / 100
             : 0.0;
+        $retencionCaja = isset($cabecera['retencion_caja_centavos'])
+            ? ((int) $cabecera['retencion_caja_centavos']) / 100
+            : null;
+        $retencionGastos = (
+            isset($cabecera['retencion_gastos_11_centavos'])
+            || isset($cabecera['retencion_gastos_5_centavos'])
+        )
+            ? (
+                (isset($cabecera['retencion_gastos_11_centavos']) ? (int) $cabecera['retencion_gastos_11_centavos'] : 0)
+                + (isset($cabecera['retencion_gastos_5_centavos']) ? (int) $cabecera['retencion_gastos_5_centavos'] : 0)
+            ) / 100
+            : null;
 
         $mapasNiveles = $this->mapasNiveles();
         $codUomIoma = $this->codUomIoma();
@@ -113,7 +145,9 @@ class OrdenPagoAuditCompareService
                 $nroLiquidacion,
                 $fecha,
                 $totalArchivoCab,
-                $retenciones,
+                $ib,
+                $retencionCaja,
+                $retencionGastos,
                 $mapasNiveles,
                 $codUomIoma,
                 $nomencladorIoma,
@@ -129,7 +163,9 @@ class OrdenPagoAuditCompareService
                         'profesional_id'         => $profesional->id,
                         'fecha'                  => $fecha?->toDateString(),
                         'op_total'               => $totalArchivoCab,
-                        'op_retenciones'         => $retenciones,
+                        'retencion_caja'         => $retencionCaja,
+                        'retencion_gastos'       => $retencionGastos,
+                        'op_retenciones'         => $ib,
                         'total_sistema'          => 0,
                         'total_diferencia'       => 0,
                         'cantidad_diferencias'   => 0,
@@ -155,7 +191,7 @@ class OrdenPagoAuditCompareService
                     $nroAtencion = $this->texto($atencion['atencion'] ?? null);
                     $fechaAtencion = $this->fecha($atencion['fecha'] ?? null);
                     $obraSocial = $this->texto($atencion['obra_social'] ?? null);
-                    $codUomArchivo = $this->prefijoUom($obraSocial);
+                    $codUomArchivo = $this->resolverCodUomArchivo($obraSocial)['cod_uom'];
 
                     $parte = $this->buscarParte($nroAtencion, $profesional->id, $partesCache);
 
@@ -198,6 +234,7 @@ class OrdenPagoAuditCompareService
                             $esIoma,
                             $codigo,
                             $descripcionBase,
+                            $descripcionArchivo,
                             $porcentajeArchivo,
                             $mapasNiveles,
                             $nomencladorIoma
@@ -1099,6 +1136,7 @@ class OrdenPagoAuditCompareService
         bool $esIoma,
         ?string $codigo,
         ?string $descripcionBase,
+        ?string $descripcionArchivo,
         ?float $porcentaje,
         array $mapasNiveles,
         Collection $nomencladorIoma
@@ -1119,8 +1157,10 @@ class OrdenPagoAuditCompareService
             $claveConsumo = $codigo !== null ? $this->codigoKey($codigo) : null;
         } else {
             if ($porcentaje !== null) {
-                $nivel = $mapasNiveles['descripcion']->get(
-                    $this->descripcionKey($descripcionBase)
+                $nivel = $this->buscarNivelPorDescripcion(
+                    $mapasNiveles['descripcion'],
+                    $descripcionBase,
+                    $descripcionArchivo
                 );
             } elseif ($codigo !== null) {
                 $nivel = $mapasNiveles['cod_uom']->get($this->codigoKey($codigo));
@@ -1139,6 +1179,68 @@ class OrdenPagoAuditCompareService
             'clave_consumo' => $claveConsumo,
             'sin_nivel'     => $esIoma ? $nomenclador === null : $nivel === null,
         ];
+    }
+
+    /**
+     * Busca el nivel por descripcion cuando el archivo informa un porcentaje.
+     *
+     * El archivo puede traer texto extra alrededor del porcentaje
+     * ("Especial D 30% valor base", "Especial D valor base 30%"). Primero se
+     * prueba la descripcion exacta y, si no coincide, se busca la descripcion
+     * de `niveles` mas larga que sea prefijo del texto del archivo.
+     *
+     * @param  Collection<string, Nivel>  $porDescripcion
+     */
+    private function buscarNivelPorDescripcion(
+        Collection $porDescripcion,
+        ?string $descripcionBase,
+        ?string $descripcionArchivo
+    ): ?Nivel {
+        $baseKey = $this->descripcionKey($descripcionBase);
+
+        if ($baseKey !== '' && $porDescripcion->has($baseKey)) {
+            return $porDescripcion->get($baseKey);
+        }
+
+        $archivoKey = $this->descripcionKey($descripcionArchivo);
+
+        if ($archivoKey !== '' && $porDescripcion->has($archivoKey)) {
+            return $porDescripcion->get($archivoKey);
+        }
+
+        if ($archivoKey === '') {
+            return null;
+        }
+
+        $mejor = null;
+        $mejorLargo = 0;
+
+        foreach ($porDescripcion as $clave => $nivel) {
+            $clave = (string) $clave;
+
+            if ($clave === '' || strlen($clave) <= $mejorLargo) {
+                continue;
+            }
+
+            if (! str_starts_with($archivoKey, $clave)) {
+                continue;
+            }
+
+            // La descripcion encontrada tiene que terminar en un limite de
+            // palabra: asi "Especial D" no se confunde con "Especial DX".
+            if (strlen($archivoKey) > strlen($clave)) {
+                $siguiente = substr($archivoKey, strlen($clave), 1);
+
+                if ($siguiente !== '' && ctype_alnum($siguiente)) {
+                    continue;
+                }
+            }
+
+            $mejor = $nivel;
+            $mejorLargo = strlen($clave);
+        }
+
+        return $mejor;
     }
 
     /**
@@ -1175,7 +1277,8 @@ class OrdenPagoAuditCompareService
             $nroAtencion = $this->texto($atencion['atencion'] ?? null);
             $obraSocial = $this->texto($atencion['obra_social'] ?? null);
             $parte = $this->buscarParte($nroAtencion, $profesional->id, $partesCache);
-            $codUomArchivo = $this->prefijoUom($obraSocial);
+            $resolucionObraSocial = $this->resolverCodUomArchivo($obraSocial);
+            $codUomArchivo = $resolucionObraSocial['cod_uom'];
 
             if ($codUomArchivo === null) {
                 $inconsistencias['obra_social|'.($nroAtencion ?? '').'|sin_codigo'] = [
@@ -1184,7 +1287,7 @@ class OrdenPagoAuditCompareService
                     'codigo'      => null,
                     'descripcion' => null,
                     'porcentaje'  => null,
-                    'motivo'      => 'El archivo no informa el código de obra social (cod_uom).',
+                    'motivo'      => $resolucionObraSocial['motivo'],
                     'tipo'        => 'obra_social',
                 ];
             } elseif (! isset($codigosObraSocial[$codUomArchivo])) {
@@ -1227,6 +1330,7 @@ class OrdenPagoAuditCompareService
                     $esIoma,
                     $codigo,
                     $descripcionBase,
+                    $descripcionArchivo,
                     $porcentaje,
                     $mapasNiveles,
                     $nomencladorIoma
@@ -1413,6 +1517,112 @@ class OrdenPagoAuditCompareService
         return $codigos;
     }
 
+    /**
+     * Resuelve el cod_uom de la obra social que informa el archivo.
+     *
+     * Hay dos formatos de archivo:
+     * - Con codigo: "143 - UOM" -> 143.
+     * - Con nombre: "Obra Social - Plan: OSDE - 310 GRAVADO" -> se busca la
+     *   sigla o el nombre de la cobertura en el sistema (OSDE -> 102,
+     *   OSAP -> 100) y se usa su cod_uom.
+     *
+     * @return array{cod_uom: string|null, motivo: string|null}
+     */
+    private function resolverCodUomArchivo(?string $obraSocial): array
+    {
+        $codUom = $this->prefijoUom($obraSocial);
+
+        if ($codUom !== null) {
+            return ['cod_uom' => $codUom, 'motivo' => null];
+        }
+
+        if ($obraSocial === null || trim($obraSocial) === '') {
+            return [
+                'cod_uom' => null,
+                'motivo'  => 'El archivo no informa la obra social.',
+            ];
+        }
+
+        $clave   = $this->claveObraSocial($obraSocial);
+        $nombres = $this->nombresObraSocialSistema();
+
+        if ($clave !== '' && array_key_exists($clave, $nombres)) {
+            $codUom = $nombres[$clave];
+
+            if ($codUom !== null) {
+                return ['cod_uom' => $codUom, 'motivo' => null];
+            }
+
+            return [
+                'cod_uom' => null,
+                'motivo'  => 'La obra social del archivo ('.$obraSocial.') no tiene cod_uom cargado en el sistema.',
+            ];
+        }
+
+        return [
+            'cod_uom' => null,
+            'motivo'  => 'La obra social del archivo ('.$obraSocial.') no coincide con ninguna cobertura del sistema.',
+        ];
+    }
+
+    /**
+     * Sigla y nombre de las coberturas del sistema -> cod_uom.
+     *
+     * La sigla tiene prioridad sobre el nombre. Las coberturas sin cod_uom
+     * quedan con null: se informa que no se puede relacionar.
+     *
+     * @return array<string, string|null>
+     */
+    private function nombresObraSocialSistema(): array
+    {
+        if ($this->nombresObraSocial !== null) {
+            return $this->nombresObraSocial;
+        }
+
+        $siglas  = [];
+        $nombres = [];
+
+        foreach (Cobertura::query()->get(['nombre', 'sigla', 'cod_uom']) as $cobertura) {
+            $codUom = $this->prefijoUom($this->texto($cobertura->cod_uom));
+
+            // El 0 no es un codigo de obra social: son coberturas todavia sin
+            // codificar.
+            if ($codUom === '0') {
+                $codUom = null;
+            }
+
+            $sigla = $this->claveObraSocial($this->texto($cobertura->sigla));
+
+            if ($sigla !== '' && ! array_key_exists($sigla, $siglas)) {
+                $siglas[$sigla] = $codUom;
+            }
+
+            $nombre = $this->claveObraSocial($this->texto($cobertura->nombre));
+
+            if ($nombre !== '' && ! array_key_exists($nombre, $nombres)) {
+                $nombres[$nombre] = $codUom;
+            }
+        }
+
+        return $this->nombresObraSocial = array_merge($nombres, $siglas);
+    }
+
+    /**
+     * Clave de comparacion de una obra social: solo letras y numeros en
+     * mayusculas, sin acentos ni signos.
+     * Ej.: "O.S.PERS.A.A.M.S" -> "OSPERS AAMS" -> "OSPERSAAMS".
+     */
+    private function claveObraSocial(?string $nombre): string
+    {
+        if ($nombre === null) {
+            return '';
+        }
+
+        $nombre = Str::ascii(mb_strtoupper(trim($nombre)));
+
+        return (string) preg_replace('/[^A-Z0-9]+/', '', $nombre);
+    }
+
     private function esCoberturaIoma(?Cobertura $cobertura, ?string $codUomIoma): bool
     {
         if ($cobertura === null || $codUomIoma === null) {
@@ -1425,8 +1635,11 @@ class OrdenPagoAuditCompareService
     }
 
     /**
-     * Separa el porcentaje que aparece al final de la descripcion del archivo.
-     * Ej.: "Especial F 30%" o "Especial F 50% valor" devuelven ["Especial F", 30|50].
+     * Separa el porcentaje que aparece en la descripcion del archivo. Se toma
+     * el primer numero seguido de `%` y se descarta cualquier texto posterior.
+     * Ej.: "Especial F 30%", "Especial F 50% valor" y
+     * "Especial D 30% valor base" devuelven ["Especial F"|"Especial D", 30|50].
+     * Tambien acepta espacios no separables (NBSP) alrededor del porcentaje.
      *
      * @return array{0: string|null, 1: float|null}
      */
@@ -1438,7 +1651,7 @@ class OrdenPagoAuditCompareService
             return [null, null];
         }
 
-        if (preg_match('/^(.*?)\s*(\d{1,3}(?:[.,]\d+)?)\s*%\s*(?:valor(?:es)?)?\s*$/iu', $descripcion, $m) !== 1) {
+        if (preg_match('/^(.*?)[\s\x{00A0}]*(\d{1,3}(?:[.,]\d+)?)[\s\x{00A0}]*%.*$/iu', $descripcion, $m) !== 1) {
             return [$descripcion, null];
         }
 
@@ -1543,7 +1756,7 @@ class OrdenPagoAuditCompareService
             'Ü' => 'U', 'Ñ' => 'N',
         ]);
 
-        return (string) preg_replace('/\s+/', ' ', $texto);
+        return (string) preg_replace('/[\s\x{00A0}]+/u', ' ', $texto);
     }
 
     /**

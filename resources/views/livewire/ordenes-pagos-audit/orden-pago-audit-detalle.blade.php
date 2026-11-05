@@ -19,9 +19,6 @@
 <div class="opa opa-audit container-fluid px-2 px-md-4 mt-3">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
         <div>
-            <a href="{{ route('ordenes_pagos_audit.cab') }}" class="btn btn-outline-secondary btn-sm mb-2">
-                <i class="fa-solid fa-arrow-left me-1"></i>Volver
-            </a>
             <h5 class="m-0 font-weight-bold text-primary fs-5">
                 <i class="fa-solid fa-scale-balanced me-2"></i>
                 Auditoría OP {{ $orden->nro_op }}
@@ -52,6 +49,9 @@
                 <span wire:loading wire:target="reauditar" class="spinner-border spinner-border-sm ms-1"
                     role="status" aria-hidden="true"></span>
             </button>
+            <a href="{{ route('ordenes_pagos_audit.cab') }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-1"></i>Volver
+            </a>
         </div>
     </div>
 
@@ -72,6 +72,47 @@
                 <div class="card-body py-2 px-3">
                     <div class="small text-muted">Total archivo</div>
                     <div class="fw-semibold">$ {{ number_format((float) $orden->op_total, 2, ',', '.') }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-body py-2 px-3">
+                    <div class="small text-muted">Retención
+                    </div>
+                    <div class="fw-semibold">
+                        {{ $orden->caja_prof_salud === null ? '—' : '$ '.number_format((float) $orden->caja_prof_salud, 2, ',', '.') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-body py-2 px-3">
+                    <div class="small text-muted">Gast. Adm.</div>
+                    <div class="fw-semibold">
+                        {{ $orden->gastos_admin === null ? '—' : '$ '.number_format((float) $orden->gastos_admin, 2, ',', '.') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-body py-2 px-3">
+                    <div class="small text-muted">IIBB </div>
+                    <div class="fw-semibold">
+                        {{ $orden->ib == 0 ? '—' : '$ '.number_format((float) $orden->ib, 2, ',', '.') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-xl-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-body py-2 px-3">
+                    <div class="small text-muted">A cobrar</div>
+                    <div class="fw-semibold">
+                        {{ $orden->a_pagar === null ? '—' : '$ '.number_format((float) $orden->a_pagar, 2, ',', '.') }}
+                    </div>
                 </div>
             </div>
         </div>

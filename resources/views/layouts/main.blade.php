@@ -7,6 +7,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>{{ config('app.name', 'Medi Nexus') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('img/logomedinexustransparente.png') }}">
     <link rel="shortcut icon" href="{{ asset('img/logomedinexustransparente.png') }}">
     {{-- <link rel="icon" href="{{ asset('img/favicon.ico') }}"> --}}

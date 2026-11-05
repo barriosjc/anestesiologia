@@ -14,6 +14,9 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
  * El archivo debe tener una fila de encabezado con los nombres de columna:
  *   nro_op, profesional_id, fecha, op_total, op_retenciones
  *
+ * op_retenciones es la retencion de Ingresos Brutos (IB): tambien se acepta
+ * una columna llamada "ib" o "ingresos_brutos".
+ *
  * La columna profesional_id admite:
  *   - el id numerico del profesional, o
  *   - el CUIT del profesional, o
@@ -25,6 +28,8 @@ class OrdenPagoAuditImportService
     /**
      * Alias aceptados para cada columna, ya normalizados.
      *
+     * op_retenciones es la retencion de Ingresos Brutos (IB).
+     *
      * @var array<string, array<int, string>>
      */
     private const ALIAS = [
@@ -32,16 +37,16 @@ class OrdenPagoAuditImportService
         'profesional_id' => ['profesional_id', 'profesionalid', 'profesional', 'cuit', 'nombre_profesional'],
         'fecha'          => ['fecha', 'fecha_op', 'fechaop'],
         'op_total'       => ['op_total', 'optotal', 'total', 'importe', 'monto'],
-        'op_retenciones' => ['op_retenciones', 'opretenciones', 'retenciones', 'retencion'],
+        'op_retenciones' => ['op_retenciones', 'opretenciones', 'retenciones', 'retencion', 'ib', 'ingresos_brutos'],
     ];
 
     /**
      * @return array{success: bool, message: string, errors: array<int, string>, importadas: int}
      */
-    public function importar(string $rutaTemporal): array
+    public function importar(string $rutaTemporal, ?string $extension = null): array
     {
         try {
-            $filas = $this->leerFilas($rutaTemporal);
+            $filas = $this->leerFilas($rutaTemporal, $extension);
         } catch (\Throwable $e) {
             return [
                 'success'    => false,
@@ -118,11 +123,14 @@ class OrdenPagoAuditImportService
      * Lee el archivo y devuelve un array indexado por numero de fila con las
      * claves ya normalizadas (nro_op, profesional_id, fecha, op_total, op_retenciones).
      *
+     * La extension se recibe aparte porque el archivo subido por HTTP queda en
+     * una ruta temporal sin extension (ej: /tmp/phpA1B2.tmp).
+     *
      * @return array<int, array<string, string|null>>
      */
-    private function leerFilas(string $ruta): array
+    private function leerFilas(string $ruta, ?string $extension = null): array
     {
-        $extension = strtolower(pathinfo($ruta, PATHINFO_EXTENSION));
+        $extension = strtolower($extension ?? pathinfo($ruta, PATHINFO_EXTENSION));
 
         if (in_array($extension, ['csv', 'txt'], true)) {
             return $this->leerCsv($ruta);
