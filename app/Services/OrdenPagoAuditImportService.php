@@ -91,15 +91,25 @@ class OrdenPagoAuditImportService
                     $errores[] = 'Fila ' . $numero . ': el profesional "' . $valorProfesional . '" no existe.';
                 }
 
-                OrdenPagoAuditCab::updateOrCreate(
-                    ['nro_op' => $nroOp],
-                    [
-                        'profesional_id' => $profesionalId,
-                        'fecha'          => $this->parseFecha($fila['fecha'] ?? null),
-                        'op_total'       => $this->parseNumero($fila['op_total'] ?? null),
-                        'op_retenciones' => $this->parseNumero($fila['op_retenciones'] ?? null),
-                    ]
-                );
+                $orden = OrdenPagoAuditCab::where('nro_op', $nroOp)->first();
+
+                $datos = [
+                    'profesional_id' => $profesionalId,
+                    'fecha'          => $this->parseFecha($fila['fecha'] ?? null),
+                    'op_total'       => $this->parseNumero($fila['op_total'] ?? null),
+                    'op_retenciones' => $this->parseNumero($fila['op_retenciones'] ?? null),
+                ];
+
+                if ($orden === null) {
+                    // El CSV no trae caja ni gastos: se guardan en 0 porque
+                    // esas columnas no admiten NULL en producción.
+                    $datos['retencion_caja']   = 0.0;
+                    $datos['retencion_gastos'] = 0.0;
+
+                    OrdenPagoAuditCab::create(array_merge(['nro_op' => $nroOp], $datos));
+                } else {
+                    $orden->update($datos);
+                }
 
                 $importadas++;
             }

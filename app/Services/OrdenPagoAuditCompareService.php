@@ -104,7 +104,8 @@ class OrdenPagoAuditCompareService
         // - Caja de Prof. de la salud: si el PDF no la informa se toma 0 y el
         //   documento queda con una advertencia para que el usuario analice
         //   si corresponde solicitarla.
-        // - Gastos Administrativos: NULL cuando el archivo no informa el dato.
+        // - Gastos Administrativos: si el PDF no informa las filas de Gastos
+        //   Administrativos se toma 0 (la columna no admite NULL en producción).
         $ib = isset($cabecera['retencion_ib_centavos'])
             ? ((int) $cabecera['retencion_ib_centavos']) / 100
             : 0.0;
@@ -119,7 +120,7 @@ class OrdenPagoAuditCompareService
                 (isset($cabecera['retencion_gastos_11_centavos']) ? (int) $cabecera['retencion_gastos_11_centavos'] : 0)
                 + (isset($cabecera['retencion_gastos_5_centavos']) ? (int) $cabecera['retencion_gastos_5_centavos'] : 0)
             ) / 100
-            : null;
+            : 0.0;
 
         $mapasNiveles = $this->mapasNiveles();
         $codUomIoma = $this->codUomIoma();

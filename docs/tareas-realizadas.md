@@ -25,6 +25,9 @@ encabezado `Concepto … Retención` y el valor debajo de esa última columna.
   **0** y se agrega una advertencia al documento. El listado y el detalle de
   auditoría muestran un ícono/aviso para que el usuario analice si corresponde
   solicitarla.
+- Los gastos administrativos no informados también se guardan en **0** (antes
+  `NULL`), para que el insert no falle cuando la columna quedó `NOT NULL` en
+  producción.
 - Se corrigió la lectura de **cantidad** en el formato *Orden de Pago* cuando la
   columna C trae el importe total en lugar de la cantidad.
 - Tests nuevos: retención tomada solo de la hoja *Nombre del Contribuyente*,

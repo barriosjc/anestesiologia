@@ -132,7 +132,8 @@ class OrdenPagoAuditCab extends Model
     /**
      * Gastos administrativos = filas "Gastos Administrativos 11%" y "5%".
      *
-     * NULL cuando el archivo no informa el dato (no es lo mismo que cero).
+     * La auditoría guarda 0 cuando el PDF no informa el dato (solo queda NULL
+     * en filas viejas importadas antes de este cambio).
      */
     public function getGastosAdminAttribute(): ?float
     {

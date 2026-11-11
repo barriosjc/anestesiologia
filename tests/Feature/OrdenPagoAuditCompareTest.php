@@ -340,7 +340,8 @@ class OrdenPagoAuditCompareTest extends TestCase
         // que el usuario analice si corresponde solicitarla.
         $this->assertSame(0.0, $orden->caja_prof_salud);
         $this->assertTrue($orden->caja_no_informada);
-        $this->assertNull($orden->gastos_admin);
+        // Los gastos administrativos no informados también quedan en 0.
+        $this->assertSame(0.0, $orden->gastos_admin);
         // Muchas OP no tienen retencion de Ingresos Brutos.
         $this->assertSame(0.0, $orden->ib);
         $this->assertSame(1000.0, $orden->a_pagar);

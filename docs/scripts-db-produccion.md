@@ -365,12 +365,19 @@ ALTER TABLE ordenes_pagos_audit_cab
     ADD COLUMN retencion_gastos DECIMAL(14,2) NULL AFTER retencion_caja;
 ```
 
-> Las columnas quedan en `NULL` cuando el archivo no informa el dato: no es lo
-> mismo que cero. Por eso **A pagar** (`total - IB - retención - gastos adm.`)
-> también queda en `NULL` si el archivo no trae retenciones.
+> La aplicación guarda **0** cuando el PDF no informa la Caja o los Gastos
+> Administrativos (no `NULL`), así el insert no falla aunque la columna haya
+> quedado `NOT NULL`. La Caja, además, deja una advertencia en el documento.
 >
 > MySQL no soporta `ADD COLUMN IF NOT EXISTS`: correr una sola vez o controlar
-> con `information_schema.columns`.
+> con `information_schema.columns`. Si la columna ya existía `NOT NULL`, se
+> puede normalizar con:
+>
+> ```sql
+> ALTER TABLE ordenes_pagos_audit_cab
+>     MODIFY retencion_caja DECIMAL(14,2) NULL,
+>     MODIFY retencion_gastos DECIMAL(14,2) NULL;
+> ```
 >
 > **Ojo con las órdenes importadas por CSV**: `op_retenciones` antes guardaba la
 > suma de todas las retenciones y ahora guarda solo el IB. Si en producción hay
