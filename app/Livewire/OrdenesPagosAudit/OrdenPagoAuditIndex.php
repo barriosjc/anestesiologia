@@ -120,7 +120,12 @@ class OrdenPagoAuditIndex extends Component
     public function render(): \Illuminate\Contracts\View\View
     {
         $registros = OrdenPagoAuditCab::query()
-            ->with('profesional')
+            ->with([
+                'profesional',
+                // Solo el JSON: el documento tambien guarda markdown, items y
+                // la respuesta cruda de LlamaParse, que son muy pesados.
+                'documento' => fn ($query) => $query->select('id', 'json'),
+            ])
             ->when($this->busqueda !== '', function ($query) {
                 $busqueda = '%' . $this->busqueda . '%';
 

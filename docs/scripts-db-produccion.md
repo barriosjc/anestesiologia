@@ -379,6 +379,22 @@ ALTER TABLE ordenes_pagos_audit_cab
 
 ---
 
+## 14. `coberturas.cod_uom` admite varios códigos (texto separado por coma)
+
+Antes `cod_uom` era un entero y solo permitía un código UOM por cobertura. Ahora
+es texto y puede llevar varios separados por coma (`84,274`), para cubrir obras
+sociales que vienen con más de un código en distintas filas del PDF.
+
+```sql
+ALTER TABLE coberturas
+    MODIFY cod_uom VARCHAR(100) NULL;
+```
+
+> Correr una sola vez. Los valores existentes (`274`, `0`, etc.) se conservan
+> tal cual al pasar a texto.
+
+---
+
 ## Historial de cambios
 
 | Fecha | Cambio | Estado |
@@ -400,3 +416,4 @@ ALTER TABLE ordenes_pagos_audit_cab
 | 02/11/2026 | retiro de `coberturas.id_uom` (solo se usa `cod_uom`) | pendiente |
 | 02/11/2026 | renombre `id_uom_archivo`/`id_uom_sistema` a `cod_uom_archivo`/`cod_uom_sistema` en `ordenes_pagos_audit_det` | pendiente |
 | 04/11/2026 | columnas `retencion_caja` y `retencion_gastos` en `ordenes_pagos_audit_cab` (`op_retenciones` = IB) | pendiente |
+| 11/11/2026 | `coberturas.cod_uom` pasa a texto y admite varios códigos separados por coma | pendiente |

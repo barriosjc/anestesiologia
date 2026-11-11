@@ -112,7 +112,7 @@
                             <div class="col-md-3">
                                 <label class="small mb-1" for="m_cod_uom">Cód. UOM</label>
                                 <input wire:model="cod_uom" class="form-control form-control-sm" id="m_cod_uom"
-                                    type="text" placeholder="Ej: 78" />
+                                    type="text" placeholder="Ej: 78, 274" />
                                 @error('cod_uom') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                             <div class="col-md-3">
                                 <label class="small mb-1" for="m_cod_uom">Código UOM (archivo)</label>
                                 <input wire:model="cod_uom" class="form-control form-control-sm" id="m_cod_uom"
-                                    type="text" placeholder="Ej: 78" />
+                                    type="text" placeholder="Ej: 78, 274" />
                                 @error('cod_uom') <span class="text-danger small">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-md-2">

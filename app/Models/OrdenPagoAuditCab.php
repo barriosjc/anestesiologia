@@ -91,13 +91,42 @@ class OrdenPagoAuditCab extends Model
     /**
      * Retención = fila "Caja de Prof. de la salud" de la hoja Valores.
      *
-     * NULL cuando el archivo no informa el dato (no es lo mismo que cero).
+     * Si el PDF no informa el dato se toma 0 y se deja una advertencia en el
+     * documento (ver caja_no_informada).
      */
     public function getCajaProfSaludAttribute(): ?float
     {
-        return $this->retencion_caja === null
-            ? null
-            : round((float) $this->retencion_caja, 2);
+        if ($this->retencion_caja !== null) {
+            return round((float) $this->retencion_caja, 2);
+        }
+
+        // Auditorías generadas antes de guardar el 0: si el documento no
+        // informa la Caja, se muestra 0 igual.
+        return $this->caja_no_informada ? 0.0 : null;
+    }
+
+    /**
+     * Indica si el PDF no informó la retención de Caja de Prof. de la salud
+     * y por eso se toma 0. El dato queda como advertencia en el documento de
+     * origen para que el usuario analice si corresponde solicitarla.
+     */
+    public function getCajaNoInformadaAttribute(): bool
+    {
+        if ($this->documento_llamaparse_id === null) {
+            return false;
+        }
+
+        $json = $this->documento?->json;
+
+        foreach ((array) ($json['advertencias'] ?? []) as $advertencia) {
+            if (str_contains((string) $advertencia, 'Caja de Prof. de la salud')) {
+                return true;
+            }
+        }
+
+        // Documentos procesados antes de que se agregara la advertencia: si
+        // el JSON no trae el valor, la Caja no estaba informada.
+        return ($json['cabecera']['retencion_caja_centavos'] ?? null) === null;
     }
 
     /**

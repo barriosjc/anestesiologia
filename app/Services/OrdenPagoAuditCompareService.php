@@ -36,6 +36,14 @@ class OrdenPagoAuditCompareService
     private ?array $nombresObraSocial = null;
 
     /**
+     * Codigos de obra social del sistema (cod_uom) para validar que el
+     * archivo se pueda relacionar (cache de la corrida).
+     *
+     * @var array<string, bool>|null
+     */
+    private ?array $codigosObraSocial = null;
+
+    /**
      * Compara el documento contra la base y genera la auditoria.
      *
      * Con $validarEstricto en true (comportamiento de "Auditar PDF") se
@@ -93,14 +101,16 @@ class OrdenPagoAuditCompareService
 
         // Retenciones de la hoja "Valores" del XLSX:
         // - IB (Ingresos Brutos): muchas OP no lo tienen (queda en 0).
-        // - Caja de Prof. de la salud y Gastos Administrativos: NULL cuando el
-        //   archivo no informa el dato, para no confundirlo con el cero.
+        // - Caja de Prof. de la salud: si el PDF no la informa se toma 0 y el
+        //   documento queda con una advertencia para que el usuario analice
+        //   si corresponde solicitarla.
+        // - Gastos Administrativos: NULL cuando el archivo no informa el dato.
         $ib = isset($cabecera['retencion_ib_centavos'])
             ? ((int) $cabecera['retencion_ib_centavos']) / 100
             : 0.0;
         $retencionCaja = isset($cabecera['retencion_caja_centavos'])
             ? ((int) $cabecera['retencion_caja_centavos']) / 100
-            : null;
+            : 0.0;
         $retencionGastos = (
             isset($cabecera['retencion_gastos_11_centavos'])
             || isset($cabecera['retencion_gastos_5_centavos'])
@@ -337,7 +347,7 @@ class OrdenPagoAuditCompareService
                         $difValor = abs($diferencia) >= 0.01;
 
                         $difFecha = $this->fechasDistintas($fechaDetalle, $parte->fec_prestacion);
-                        $difObraSocial = $this->textosDistintos($codUomArchivo, $cobertura?->cod_uom);
+                        $difObraSocial = ! $this->coincideCodUom($codUomArchivo, $cobertura?->cod_uom);
                         $difDescripcion = $this->textosDistintos($descripcionBase, $descripcionSistema);
                         // El match es por codigo: la descripcion no cambia el
                         // estado. Valor, fecha y obra social si son diferencias.
@@ -1497,20 +1507,49 @@ class OrdenPagoAuditCompareService
     }
 
     /**
-     * Codigos de obra social del sistema (cod_uom, normalizados igual que el
-     * prefijo del archivo) para validar que se puedan relacionar.
+     * Codigos de obra social del sistema para validar que el archivo se
+     * pueda relacionar. Cada cobertura puede tener varios codigos UOM
+     * separados por coma ("84,274"); se registran todos.
      *
      * @return array<string, bool>
      */
     private function codigosObraSocialSistema(): array
     {
+        if ($this->codigosObraSocial !== null) {
+            return $this->codigosObraSocial;
+        }
+
         $codigos = [];
 
         foreach (Cobertura::query()->get(['cod_uom']) as $cobertura) {
-            $normalizado = $this->prefijoUom($this->texto($cobertura->cod_uom));
+            foreach ($this->codigosCobertura($cobertura->cod_uom) as $codigo => $_ignorar) {
+                $codigos[$codigo] = true;
+            }
+        }
 
-            if ($normalizado !== null) {
-                $codigos[$normalizado] = true;
+        return $this->codigosObraSocial = $codigos;
+    }
+
+    /**
+     * Codigos UOM de una cobertura, normalizados. El campo admite varios
+     * separados por coma, espacio o punto y coma.
+     *
+     * @return array<string, bool>
+     */
+    private function codigosCobertura(?string $codUom): array
+    {
+        $codigos = [];
+        $texto = $this->texto($codUom);
+
+        if ($texto === null) {
+            return $codigos;
+        }
+
+        foreach (preg_split('/\s*[,;]\s*/u', $texto) ?: [] as $parte) {
+            $codigo = $this->codigoKey($parte);
+
+            if ($codigo !== '') {
+                $codigos[$codigo] = true;
             }
         }
 
@@ -1518,13 +1557,29 @@ class OrdenPagoAuditCompareService
     }
 
     /**
+     * Indica si el codigo del archivo esta entre los codigos UOM de la
+     * cobertura (que puede tener varios separados por coma).
+     */
+    private function coincideCodUom(?string $codigoArchivo, ?string $codUomSistema): bool
+    {
+        $codigo = $this->codigoKey($codigoArchivo);
+
+        if ($codigo === '') {
+            return false;
+        }
+
+        return isset($this->codigosCobertura($codUomSistema)[$codigo]);
+    }
+
+    /**
      * Resuelve el cod_uom de la obra social que informa el archivo.
      *
      * Hay dos formatos de archivo:
-     * - Con codigo: "143 - UOM" -> 143.
+     * - Con codigo: "143 - UOM" -> 143. Se usa ese codigo tal cual: la
+     *   validacion luego lo busca en coberturas.cod_uom (que admite varios
+     *   codigos separados por coma). No se usa la descripcion para matchear.
      * - Con nombre: "Obra Social - Plan: OSDE - 310 GRAVADO" -> se busca la
-     *   sigla o el nombre de la cobertura en el sistema (OSDE -> 102,
-     *   OSAP -> 100) y se usa su cod_uom.
+     *   sigla o el nombre de la cobertura en el sistema (OSDE -> 102).
      *
      * @return array{cod_uom: string|null, motivo: string|null}
      */
@@ -1583,13 +1638,13 @@ class OrdenPagoAuditCompareService
         $nombres = [];
 
         foreach (Cobertura::query()->get(['nombre', 'sigla', 'cod_uom']) as $cobertura) {
-            $codUom = $this->prefijoUom($this->texto($cobertura->cod_uom));
+            $codigos = $this->codigosCobertura($cobertura->cod_uom);
 
             // El 0 no es un codigo de obra social: son coberturas todavia sin
             // codificar.
-            if ($codUom === '0') {
-                $codUom = null;
-            }
+            unset($codigos['0']);
+
+            $codUom = $codigos === [] ? null : (string) array_key_first($codigos);
 
             $sigla = $this->claveObraSocial($this->texto($cobertura->sigla));
 
@@ -1629,9 +1684,7 @@ class OrdenPagoAuditCompareService
             return false;
         }
 
-        $codUom = $this->codigoKey($cobertura->cod_uom);
-
-        return $codUom !== '' && $codUom === $this->codigoKey($codUomIoma);
+        return isset($this->codigosCobertura($cobertura->cod_uom)[$this->codigoKey($codUomIoma)]);
     }
 
     /**

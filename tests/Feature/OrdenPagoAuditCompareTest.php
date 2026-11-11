@@ -169,6 +169,72 @@ class OrdenPagoAuditCompareTest extends TestCase
         ]);
     }
 
+    public function test_usa_los_codigos_de_la_cobertura_cuando_vienen_separados_por_coma(): void
+    {
+        $profesional = Profesional::create([
+            'nombre' => 'PEREZ, JUAN',
+            'cuit'   => '20111222333',
+        ]);
+
+        // La misma obra social puede venir en el archivo con dos codigos
+        // distintos: se cargan ambos en cod_uom separados por coma.
+        $cobertura = Cobertura::create([
+            'nombre'  => 'La Pequeña Familia',
+            'sigla'   => 'La Pequeña Familia',
+            'cuit'    => '30-12345678-9',
+            'cod_uom' => '84,274',
+        ]);
+
+        foreach (['1177195', '1180905'] as $atencion) {
+            $parte = ParteCab::create([
+                'profesional_id' => $profesional->id,
+                'atencion'       => $atencion,
+                'fec_prestacion' => '2026-06-11 09:00:00',
+            ]);
+            $parte->cobertura_id = $cobertura->id;
+            $parte->save();
+        }
+
+        Nivel::create(['nivel' => '600011', 'cod_uom' => '600011', 'descripcion' => 'Especial F']);
+
+        $documento = DocumentoLlamaparse::create([
+            'uuid'            => '44444444-4444-4444-4444-444444444444',
+            'archivo'         => 'documento.pdf',
+            'nombre_original' => 'OP junio.pdf',
+            'mime'            => 'application/pdf',
+            'estado'          => 'procesado',
+            'json'            => [
+                'documento' => [
+                    'tipo'            => 'detalle_liquidacion',
+                    'fecha'           => '11/06/2026',
+                    'total_informado' => 200,
+                ],
+                'cabecera' => [
+                    'profesional' => 'PEREZ, JUAN',
+                    'cuit'        => '20111222333',
+                ],
+                'atenciones' => [
+                    $this->atencionArchivo('1177195', '84 - LA PEQUEÑA'),
+                    $this->atencionArchivo('1180905', '274 - LA PEQUEÑA'),
+                ],
+            ],
+        ]);
+
+        $resultado = app(OrdenPagoAuditCompareService::class)->auditar($documento, true);
+
+        // Ambos codigos (84 y 274) estan en coberturas.cod_uom: la validacion
+        // estricta no cancela la auditoria por la obra social.
+        $this->assertTrue($resultado['success'], $resultado['message']);
+
+        $fila84 = OrdenPagoAuditDet::where('obra_social_archivo', '84 - LA PEQUEÑA')->firstOrFail();
+        $fila274 = OrdenPagoAuditDet::where('obra_social_archivo', '274 - LA PEQUEÑA')->firstOrFail();
+
+        $this->assertSame('84', $fila84->cod_uom_archivo);
+        $this->assertSame('274', $fila274->cod_uom_archivo);
+        $this->assertFalse($fila84->dif_obra_social);
+        $this->assertFalse($fila274->dif_obra_social);
+    }
+
     public function test_toma_el_numero_de_la_orden_de_pago_del_markdown(): void
     {
         Profesional::create([
@@ -243,12 +309,13 @@ class OrdenPagoAuditCompareTest extends TestCase
         $this->assertSame(100.0, $orden->caja_prof_salud);
         $this->assertSame(320.0, $orden->gastos_admin);
         $this->assertSame(50.0, $orden->ib);
+        $this->assertFalse($orden->caja_no_informada);
 
         // A pagar = total - IB - caja - gastos admins = 1000 - 50 - 100 - 320
         $this->assertSame(530.0, $orden->a_pagar);
     }
 
-    public function test_cuando_el_archivo_no_informa_retenciones_no_hay_datos_para_calcular_el_a_pagar(): void
+    public function test_cuando_el_archivo_no_informa_caja_se_toma_cero_y_queda_a_pagar_el_total(): void
     {
         Profesional::create([
             'nombre' => 'PEREZ, JUAN',
@@ -269,14 +336,14 @@ class OrdenPagoAuditCompareTest extends TestCase
 
         $orden = OrdenPagoAuditCab::firstOrFail();
 
-        // Sin hoja "Valores" no hay dato de retenciones: NULL, no cero.
-        $this->assertNull($orden->retencion_caja);
-        $this->assertNull($orden->retencion_gastos);
-        $this->assertNull($orden->caja_prof_salud);
+        // Si el PDF no informa la Caja de Prof. de la salud se toma 0, para
+        // que el usuario analice si corresponde solicitarla.
+        $this->assertSame(0.0, $orden->caja_prof_salud);
+        $this->assertTrue($orden->caja_no_informada);
         $this->assertNull($orden->gastos_admin);
         // Muchas OP no tienen retencion de Ingresos Brutos.
         $this->assertSame(0.0, $orden->ib);
-        $this->assertNull($orden->a_pagar);
+        $this->assertSame(1000.0, $orden->a_pagar);
     }
 
     public function test_el_comando_repara_las_auditorias_que_quedaron_con_doc_id(): void
@@ -1827,7 +1894,7 @@ class OrdenPagoAuditCompareTest extends TestCase
                 $table->string('nombre');
                 $table->string('sigla')->nullable();
                 $table->string('cuit')->nullable();
-                $table->string('cod_uom', 10)->nullable();
+                $table->string('cod_uom', 100)->nullable();
                 $table->integer('porcentaje_adic')->nullable();
                 $table->integer('edad_desde')->nullable();
                 $table->integer('edad_hasta')->nullable();

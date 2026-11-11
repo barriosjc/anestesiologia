@@ -70,6 +70,7 @@ class XlsxJsonService
             $esLlamaParse = str_starts_with((string) ($hoja['nombre'] ?? ''), 'Page ');
             $esHojaValores = $this->esHojaValoresLlamaParse($filas);
             $esHojaComprobantes = $this->esHojaComprobantesLlamaParse($filas);
+            $esHojaRetenciones = $this->esHojaRetencionesLlamaParse($filas);
             $paginaHoja = $indiceHoja + 1;
 
             if ($esLlamaParse) {
@@ -92,6 +93,14 @@ class XlsxJsonService
                     $totalInformado
                 );
                 $hojasConDatos++;
+                continue;
+            }
+
+            // Hoja "Nombre del Contribuyente": trae la retención de Caja de
+            // Prof. de la salud en la columna "Retención". En algunos PDFs el
+            // dato no aparece en la hoja "Valores", por eso se lee también acá.
+            if ($esHojaRetenciones) {
+                $this->extraerRetencionesLlamaParse($filas, $cabecera);
                 continue;
             }
 
@@ -181,6 +190,15 @@ class XlsxJsonService
         if ($atencionOrdenPago !== null) {
             $atenciones[] = $atencionOrdenPago;
             $atencionOrdenPago = null;
+        }
+
+        // Si el PDF no informa la Caja de Prof. de la salud (ni en la hoja
+        // "Valores" ni en "Nombre del Contribuyente"), se deja en 0 y se
+        // avisa para que el usuario analice si corresponde solicitarla.
+        if (! isset($cabecera['retencion_caja_centavos'])) {
+            $cabecera['retencion_caja_centavos'] = 0;
+            $this->actualizarTotalRetenciones($cabecera);
+            $advertencias[] = 'No se informó la retención de Caja de Prof. de la salud en el PDF; se toma 0. Verificar si corresponde solicitarla.';
         }
 
         if ($hayOrdenPago) {
@@ -342,6 +360,22 @@ class XlsxJsonService
 
         return str_contains($primera, 'comprobante')
             && (str_contains($primera, 'neto') || str_contains($primera, 'total'));
+    }
+
+    /**
+     * Hoja "Nombre del Contribuyente" del XLSX de LlamaParse: el encabezado
+     * trae Concepto / Fecha / Importe / Min. Imp. / Base Imp. / Alicuota /
+     * Retención. La retención de Caja de Prof. de la salud viene en la
+     * columna "Retención" y no siempre se repite en la hoja "Valores".
+     *
+     * @param  array<int, array<string, mixed>>  $filas
+     */
+    private function esHojaRetencionesLlamaParse(array $filas): bool
+    {
+        $primera = $this->normalizarTexto($this->textoFila($filas[0]['celdas'] ?? []));
+
+        return str_contains($primera, 'concepto')
+            && str_contains($primera, 'retencion');
     }
 
     /**
@@ -576,17 +610,32 @@ class XlsxJsonService
 
                 // En los dos layouts de este formato la cantidad esta en la
                 // columna C (la misma que la descripcion en el layout con la
-                // fecha y el codigo juntos).
+                // fecha y el codigo juntos). Si esa columna trae el mismo
+                // importe que el total, se busca el primer numero que no sea
+                // el importe.
                 $cantidad = $this->textoCelda($cont[2] ?? []);
+                $centavosImporte = $importe !== null ? ImporteCentavos::aCentavos($importe) : null;
 
-                if ($cantidad === '' || preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', trim($cantidad)) !== 1) {
+                if ($cantidad === ''
+                    || preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', trim($cantidad)) !== 1
+                    || ($centavosImporte !== null
+                        && ImporteCentavos::aCentavos($cantidad) === $centavosImporte)) {
                     $cantidad = '';
 
                     foreach ($tokensCont as $token) {
-                        if (preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', trim($token)) === 1) {
-                            $cantidad = trim($token);
-                            break;
+                        $token = trim($token);
+
+                        if (preg_match('/^\d{1,5}(?:[.,]\d{1,2})?$/', $token) !== 1) {
+                            continue;
                         }
+
+                        if ($centavosImporte !== null
+                            && ImporteCentavos::aCentavos($token) === $centavosImporte) {
+                            continue;
+                        }
+
+                        $cantidad = $token;
+                        break;
                     }
                 }
 
@@ -915,6 +964,92 @@ class XlsxJsonService
             if ($transferencia > 0) {
                 $cabecera['transferencia_centavos'] = $transferencia;
             }
+        }
+    }
+
+    /**
+     * Lee las retenciones de la hoja "Nombre del Contribuyente". La columna
+     * "Retención" es la ultima del encabezado y el concepto viene en la
+     * primera celda ("Caja de Prof. de la salud", "Gastos Administrativos
+     * 11%", etc.).
+     *
+     * @param  array<int, array<string, mixed>>  $filas
+     * @param  array<string, mixed>  $cabecera
+     */
+    private function extraerRetencionesLlamaParse(array $filas, array &$cabecera): void
+    {
+        $encabezado = array_map(
+            fn ($celda) => $this->normalizarTexto($this->textoCelda($celda)),
+            $filas[0]['celdas'] ?? []
+        );
+        $indiceRetencion = $this->indiceEtiqueta($encabezado, 'retencion');
+
+        foreach (array_slice($filas, 1) as $fila) {
+            $celdas = $fila['celdas'] ?? [];
+            $texto = $this->normalizarTexto($this->textoFila($celdas));
+
+            if ($texto === '') {
+                continue;
+            }
+
+            $retencion = $indiceRetencion !== null
+                ? $this->textoCelda($celdas[$indiceRetencion] ?? [])
+                : '';
+
+            if (! $this->esImporteMonetario($retencion)) {
+                $ultima = $celdas === [] ? null : end($celdas);
+                $retencion = is_array($ultima) ? $this->textoCelda($ultima) : '';
+            }
+
+            if (! $this->esImporteMonetario($retencion)) {
+                continue;
+            }
+
+            $centavos = ImporteCentavos::desdeTexto($retencion)['centavos'];
+
+            if ($centavos === null) {
+                continue;
+            }
+
+            if (str_contains($texto, 'caja de prof')) {
+                $cabecera['retencion_caja_centavos'] = $centavos;
+            } elseif (str_contains($texto, 'gastos administrativos') && str_contains($texto, '11')) {
+                $cabecera['retencion_gastos_11_centavos'] = $centavos;
+            } elseif (str_contains($texto, 'gastos administrativos') && str_contains($texto, '5')) {
+                $cabecera['retencion_gastos_5_centavos'] = $centavos;
+            } elseif (str_contains($texto, 'ingresos brutos')
+                || preg_match('/\bib\b/u', $texto) === 1) {
+                $cabecera['retencion_ib_centavos'] = $centavos;
+            }
+        }
+
+        $this->actualizarTotalRetenciones($cabecera);
+    }
+
+    /**
+     * Recalcula el total de retenciones con los importes que haya informado
+     * el archivo (hoja "Valores" y/o "Nombre del Contribuyente").
+     *
+     * @param  array<string, mixed>  $cabecera
+     */
+    private function actualizarTotalRetenciones(array &$cabecera): void
+    {
+        $total = 0;
+        $hayRetenciones = false;
+
+        foreach ([
+            'retencion_caja_centavos',
+            'retencion_gastos_11_centavos',
+            'retencion_gastos_5_centavos',
+        ] as $campo) {
+            if (isset($cabecera[$campo])) {
+                $total += (int) $cabecera[$campo];
+                $hayRetenciones = true;
+            }
+        }
+
+        if ($hayRetenciones) {
+            $cabecera['total_retenciones_centavos'] = $total;
         }
     }
 

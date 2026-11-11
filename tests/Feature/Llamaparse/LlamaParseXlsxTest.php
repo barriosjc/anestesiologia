@@ -125,6 +125,34 @@ class LlamaParseXlsxTest extends TestCase
         $this->assertSame(138250, $json['cabecera']['transferencia_centavos']);
     }
 
+    public function test_lee_la_retencion_de_caja_desde_la_hoja_nombre_del_contribuyente(): void
+    {
+        $ruta = $this->crearXlsxLlamaParseRetencionContribuyente();
+
+        $json = app(XlsxJsonService::class)->documento($ruta, 'contribuyente.xlsx');
+        @unlink($ruta);
+
+        // La hoja "Valores" no trae la retención: solo aparece en la hoja
+        // "Nombre del Contribuyente", en la columna "Retención".
+        $this->assertSame(23742067, $json['cabecera']['retencion_caja_centavos']);
+        $this->assertSame(23742067, $json['cabecera']['total_retenciones_centavos']);
+    }
+
+    public function test_avisa_y_toma_cero_cuando_el_pdf_no_informa_la_caja_de_prof(): void
+    {
+        $ruta = $this->crearXlsxLlamaParseSinCaja();
+
+        $json = app(XlsxJsonService::class)->documento($ruta, 'sin-caja.xlsx');
+        @unlink($ruta);
+
+        $this->assertSame(0, $json['cabecera']['retencion_caja_centavos']);
+        $this->assertSame(8750, $json['cabecera']['total_retenciones_centavos']);
+        $this->assertContains(
+            'No se informó la retención de Caja de Prof. de la salud en el PDF; se toma 0. Verificar si corresponde solicitarla.',
+            $json['advertencias']
+        );
+    }
+
     public function test_extrae_el_cuit_de_la_tabla_agente_cuando_la_hoja_no_se_llama_page(): void
     {
         $spreadsheet = new Spreadsheet();
@@ -265,6 +293,57 @@ class LlamaParseXlsxTest extends TestCase
         ]);
 
         $ruta = storage_path('app/private/llamaparse-mixto-test-'.uniqid().'.xlsx');
+        (new Xlsx($spreadsheet))->save($ruta);
+
+        return $ruta;
+    }
+
+    private function crearXlsxLlamaParseRetencionContribuyente(): string
+    {
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+
+        $hoja = $spreadsheet->createSheet();
+        $hoja->setTitle('Page 1 - A');
+        $hoja->fromArray([
+            ['Comprobante', 'Fecha', 'Nº Liq.', 'Observaciones', 'Neto', 'IVA', 'Total', 'Cancela', 'Saldo'],
+            ['LQ L 0000-00114379', '15/09/2026', '97684', 'OSDE- ANESTESIA', '4,748,413.33', '0.00', '4,748,413.33', '4,748,413.33', '0.00'],
+        ]);
+
+        // Hoja "Valores" sin la fila de Caja de Prof. de la salud.
+        $hoja = $spreadsheet->createSheet();
+        $hoja->setTitle('Page 1 - B');
+        $hoja->fromArray([
+            ['Valor', 'Banco', 'Numero', 'Fecha', 'Importe'],
+            ['Transf. Bco. Prov. 5363810', 'PROVINCIA DE BS.AS.', '1', '16/09/2026', '4,748,413.33'],
+        ]);
+
+        $hoja = $spreadsheet->createSheet();
+        $hoja->setTitle('Page 1 - C');
+        $hoja->fromArray([
+            ['Concepto', 'Fecha', 'Importe', 'Min. Imp.', 'Base Imp.', 'Alicuota', 'Retención'],
+            ['Caja de Prof. de la salud', '16/09/2026', '4,748,413.33', '0.00', '4,748,413.33', '5.00', '237,420.67'],
+        ]);
+
+        $ruta = storage_path('app/private/llamaparse-retencion-test-'.uniqid().'.xlsx');
+        (new Xlsx($spreadsheet))->save($ruta);
+
+        return $ruta;
+    }
+
+    private function crearXlsxLlamaParseSinCaja(): string
+    {
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+
+        $hoja = $spreadsheet->createSheet();
+        $hoja->setTitle('Page 1 - B');
+        $hoja->fromArray([
+            ['Valor', 'Banco', 'Numero', 'Fecha', 'Importe'],
+            ['Gastos Administrativos 5%', 'S/D', null, null, '87.50'],
+        ]);
+
+        $ruta = storage_path('app/private/llamaparse-sin-caja-test-'.uniqid().'.xlsx');
         (new Xlsx($spreadsheet))->save($ruta);
 
         return $ruta;

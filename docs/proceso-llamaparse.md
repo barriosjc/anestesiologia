@@ -50,6 +50,12 @@ de LlamaParse. No requiere binarios ni comandos en el servidor: funciona con sal
   prefijo del texto del archivo. Así `Especial D valor base 30%` también
   resuelve el nivel `Especial D`. En estos casos no se usa el código como
   respaldo.
+- **Obra social**: se cruza por el código numérico del archivo (ej. `84 -
+  LA PEQUEÑA` → `84`) contra `coberturas.cod_uom`. `cod_uom` es texto y admite
+  varios códigos separados por coma (`84,274`), así una misma obra social puede
+  traer dos códigos distintos en distintas filas. No se usa la descripción para
+  matchear: solo el código. Los archivos que vienen sin código (formato
+  `Obra Social - Plan: OSDE`) se resuelven por sigla/nombre.
 - **Consumos**: se cruzan por nivel (o código, para IOMA) **y**
   `consumos_det.porcentaje`. Si el archivo no informa porcentaje se prioriza el
   100 % y, si no existe, se usa el único consumo disponible.
@@ -74,6 +80,14 @@ misma validación y la auditoría anterior queda sin cambios.
 - **Detalle Liquidación:** una fila por práctica, 9 columnas.
 - **Orden de Pago:** dos filas por práctica, 7 columnas, con porcentaje/cantidad.
 - **Mixto:** si un archivo trae ambos, cada hoja se procesa con el parser que corresponde.
+- **Retenciones:** la hoja `Valores` informa Caja de Prof. de la salud,
+  Gastos Administrativos e IB en la columna `Importe`. Si el PDF no trae la
+  Caja en esa hoja, se lee también de la hoja `Nombre del Contribuyente`
+  (encabezado `Concepto … Retención`), tomando el importe de la columna
+  `Retención` de la fila cuyo concepto es `Caja de Prof. de la salud`.
+  Si no se informa en ninguna de las dos, se guarda **0** y se agrega una
+  advertencia (`advertencias`) para que el usuario analice si corresponde
+  solicitarla.
 
 ## Configuración
 

@@ -78,9 +78,14 @@
         <div class="col-6 col-md-3 col-xl-2">
             <div class="card shadow-sm h-100">
                 <div class="card-body py-2 px-3">
-                    <div class="small text-muted">Retención
+                    <div class="small text-muted">
+                        Retención
+                        @if ($orden->caja_no_informada)
+                            <i class="fa-solid fa-triangle-exclamation text-warning ms-1"
+                                title="La Caja de Prof. de la salud no viene informada en el PDF"></i>
+                        @endif
                     </div>
-                    <div class="fw-semibold">
+                    <div class="fw-semibold {{ $orden->caja_no_informada ? 'text-warning-emphasis' : '' }}">
                         {{ $orden->caja_prof_salud === null ? '—' : '$ '.number_format((float) $orden->caja_prof_salud, 2, ',', '.') }}
                     </div>
                 </div>
@@ -163,6 +168,14 @@
             </div>
         </div>
     </div>
+
+    @if ($orden->caja_no_informada)
+        <div class="alert alert-warning py-2 small mb-3">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+            La retención de <strong>Caja de Prof. de la salud</strong> no viene informada en el PDF,
+            por lo que se toma <strong>$ 0,00</strong>. Verificá si corresponde solicitarla.
+        </div>
+    @endif
 
     <div class="card shadow-sm mb-3">
         <div class="card-body py-3">

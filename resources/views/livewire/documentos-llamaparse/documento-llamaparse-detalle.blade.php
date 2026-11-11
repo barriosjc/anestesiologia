@@ -55,6 +55,19 @@
         <div class="alert alert-danger py-2 small">{{ $message }}</div>
     @enderror
 
+    @if (! empty($json['advertencias']))
+        <div class="alert alert-warning py-2 small">
+            <div class="fw-semibold mb-1">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i>Advertencias del procesamiento
+            </div>
+            <ul class="mb-0">
+                @foreach ($json['advertencias'] as $advertencia)
+                    <li>{{ $advertencia }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if ($documento->estado->enProceso())
         <div class="alert alert-info d-flex align-items-center gap-2">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

@@ -104,7 +104,13 @@
                             </div>
                             <div class="ta-dato">
                                 <dt>Retención</dt>
-                                <dd>{{ $importe($item->caja_prof_salud) }}</dd>
+                                <dd>
+                                    {{ $importe($item->caja_prof_salud) }}
+                                    @if ($item->caja_no_informada)
+                                        <i class="fa-solid fa-triangle-exclamation text-warning ms-1"
+                                            title="La Caja de Prof. de la salud no viene informada en el PDF"></i>
+                                    @endif
+                                </dd>
                             </div>
                             <div class="ta-dato">
                                 <dt>Gast. Adm.</dt>
@@ -183,7 +189,13 @@
                                     <td>{{ $item->profesional?->nombre ?? '—' }}</td>
                                     <td>{{ $item->fecha ? $item->fecha->format('d/m/Y') : '—' }}</td>
                                     <td class="text-end text-nowrap">{{ $importe($item->op_total) }}</td>
-                                    <td class="text-end text-nowrap">{{ $importe($item->caja_prof_salud) }}</td>
+                                    <td class="text-end text-nowrap">
+                                        {{ $importe($item->caja_prof_salud) }}
+                                        @if ($item->caja_no_informada)
+                                            <i class="fa-solid fa-triangle-exclamation text-warning ms-1"
+                                                title="La Caja de Prof. de la salud no viene informada en el PDF"></i>
+                                        @endif
+                                    </td>
                                     <td class="text-end text-nowrap">{{ $importe($item->gastos_admin) }}</td>
                                     <td class="text-end text-nowrap">{{ $importeIb($item->ib) }}</td>
                                     <td class="text-end text-nowrap fw-bold">{{ $importe($item->a_pagar) }}</td>

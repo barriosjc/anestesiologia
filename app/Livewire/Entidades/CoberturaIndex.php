@@ -50,10 +50,12 @@ class CoberturaIndex extends Component
 
     public function guardar(): void
     {
+        $this->cod_uom = $this->normalizarCodUom($this->cod_uom);
+
         $this->validate([
             'nombre'          => ['required', 'string', 'max:200'],
             'cuit'            => ['required', 'string', 'max:15'],
-            'cod_uom'         => ['nullable', 'string', 'max:20'],
+            'cod_uom'         => ['nullable', 'string', 'max:100', 'regex:/^[0-9]+(\s*,\s*[0-9]+)*$/'],
             'sigla'           => ['required', 'string', 'max:45'],
             'edad_desde'      => ['nullable', 'integer'],
             'edad_hasta'      => ['nullable', 'integer'],
@@ -63,7 +65,8 @@ class CoberturaIndex extends Component
             'nombre.max'           => 'El nombre no puede superar los 200 caracteres.',
             'cuit.required'        => 'El CUIT es obligatorio.',
             'cuit.max'             => 'El CUIT no puede superar los 15 caracteres.',
-            'cod_uom.max'          => 'El código UOM no puede superar los 20 caracteres.',
+            'cod_uom.max'          => 'El código UOM no puede superar los 100 caracteres.',
+            'cod_uom.regex'        => 'Ingresá uno o más códigos UOM numéricos separados por coma (ej: 84, 274).',
             'sigla.required'       => 'La sigla es obligatoria.',
             'sigla.max'            => 'La sigla no puede superar los 45 caracteres.',
             'edad_desde.integer'   => 'La edad desde debe ser un número entero.',
@@ -108,6 +111,24 @@ class CoberturaIndex extends Component
             ->values();
 
         return view('livewire.entidades.cobertura-index', compact('coberturas'));
+    }
+
+    /**
+     * Normaliza el cod_uom: saca espacios, deja los códigos separados por
+     * coma y descarta las partes vacías. Ej: "84, 274" -> "84,274".
+     */
+    private function normalizarCodUom(?string $codUom): ?string
+    {
+        if ($codUom === null || trim($codUom) === '') {
+            return null;
+        }
+
+        $partes = array_values(array_filter(
+            array_map(fn (string $parte) => trim($parte), explode(',', $codUom)),
+            fn (string $parte) => $parte !== ''
+        ));
+
+        return $partes === [] ? null : implode(',', $partes);
     }
 
     /**

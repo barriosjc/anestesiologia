@@ -31,7 +31,7 @@ class CoberturaIndexTest extends TestCase
                 $table->string('nombre');
                 $table->string('sigla')->nullable();
                 $table->string('cuit')->nullable();
-                $table->string('cod_uom', 10)->nullable();
+                $table->string('cod_uom', 100)->nullable();
                 $table->integer('porcentaje_adic')->nullable();
                 $table->integer('edad_desde')->nullable();
                 $table->integer('edad_hasta')->nullable();
@@ -104,6 +104,23 @@ class CoberturaIndexTest extends TestCase
             ->set('text', '79')
             ->assertSee('Obra Social Palermo')
             ->assertDontSee('Medicina Prepaga');
+    }
+
+    public function test_guarda_cod_uom_con_varios_codigos_separados_por_coma(): void
+    {
+        Livewire::actingAs($this->usuario())
+            ->test(CoberturaIndex::class)
+            ->call('abrirModalNuevo')
+            ->set('nombre', 'La Pequeña Familia')
+            ->set('sigla', 'LA PEQUEÑA')
+            ->set('cuit', '30111222333')
+            ->set('cod_uom', '84, 274')
+            ->call('guardar')
+            ->assertHasNoErrors();
+
+        $cobertura = Cobertura::where('nombre', 'La Pequeña Familia')->firstOrFail();
+
+        $this->assertSame('84,274', $cobertura->cod_uom);
     }
 
     public function test_sin_busqueda_muestra_todas_las_coberturas(): void

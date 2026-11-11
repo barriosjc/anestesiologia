@@ -1,5 +1,49 @@
 # Tareas realizadas
 
+## 11/11/2026 — Obra social con dos códigos y retención en "Nombre del Contribuyente"
+
+### Objetivo
+
+Un mismo PDF puede informar la misma obra social con dos códigos distintos en
+distintas filas (ej. `84 - LA PEQUEÑA` y `274 - LA PEQUEÑA`), y la auditoría se
+cancelaba porque uno de esos códigos no existe en `coberturas.cod_uom`. Además,
+en algunos PDFs la retención de **Caja de Prof. de la salud** no aparece en la
+hoja *Valores*: viene en la hoja tipo *Nombre del Contribuyente*, con el
+encabezado `Concepto … Retención` y el valor debajo de esa última columna.
+
+### Cambios
+
+- `coberturas.cod_uom` pasa de entero a texto y admite **varios códigos UOM
+  separados por coma** (`84,274`). `OrdenPagoAuditCompareService` cruza el
+  código del archivo contra esa lista (no usa la descripción para matchear). Los
+  archivos sin código (formato `Obra Social - Plan: OSDE`) se siguen resolviendo
+  por sigla/nombre.
+- `XlsxJsonService` reconoce la hoja con encabezado `Concepto … Retención` y lee
+  de ahí `retencion_caja_centavos`, gastos administrativos e IB. Después
+  recalcula `total_retenciones_centavos`.
+- Si la Caja de Prof. de la salud no se informa en ninguna hoja, se guarda en
+  **0** y se agrega una advertencia al documento. El listado y el detalle de
+  auditoría muestran un ícono/aviso para que el usuario analice si corresponde
+  solicitarla.
+- Se corrigió la lectura de **cantidad** en el formato *Orden de Pago* cuando la
+  columna C trae el importe total en lugar de la cantidad.
+- Tests nuevos: retención tomada solo de la hoja *Nombre del Contribuyente*,
+  Caja ausente (0 + advertencia) y obra social con dos códigos separados por
+  coma (`84,274`).
+
+### Archivos principales
+
+- `app/Services/OrdenPagoAuditCompareService.php`
+- `app/Services/LlamaParse/XlsxJsonService.php`
+- `app/Livewire/Entidades/CoberturaIndex.php`
+- `database/migrations/2026_11_11_000000_change_coberturas_cod_uom_to_string.php`
+- `tests/Feature/OrdenPagoAuditCompareTest.php`
+- `tests/Feature/Llamaparse/LlamaParseXlsxTest.php`
+- `docs/proceso-llamaparse.md`
+- `docs/scripts-db-produccion.md`
+
+---
+
 ## 04/11/2026 — Niveles por descripción con porcentaje y texto adicional
 
 ### Objetivo
